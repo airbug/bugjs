@@ -2,13 +2,13 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@export('EventDispatcher')
+//@Export('EventDispatcher')
 
-//@require('Class')
-//@require('EventListener')
-//@require('List')
-//@require('Map')
-//@require('Obj')
+//@Require('Class')
+//@Require('EventListener')
+//@Require('List')
+//@Require('Map')
+//@Require('Obj')
 
 
 //-------------------------------------------------------------------------------

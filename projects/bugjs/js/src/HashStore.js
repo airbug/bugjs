@@ -2,11 +2,11 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@export('HashStore')
+//@Export('HashStore')
 
-//@require('Class')
-//@require('HashStoreNode')
-//@require('Obj')
+//@Require('Class')
+//@Require('HashStoreNode')
+//@Require('Obj')
 
 
 //-------------------------------------------------------------------------------

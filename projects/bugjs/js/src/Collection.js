@@ -7,11 +7,11 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@export('Collection')
+//@Export('Collection')
 
-//@require('Class')
-//@require('HashStore')
-//@require('Obj')
+//@Require('Class')
+//@Require('HashStore')
+//@Require('Obj')
 
 
 //-------------------------------------------------------------------------------

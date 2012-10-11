@@ -2,11 +2,11 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@export('GraphEdge')
+//@Export('GraphEdge')
 
-//@require('Class')
-//@require('GraphNode')
-//@require('Obj')
+//@Require('Class')
+//@Require('GraphNode')
+//@Require('Obj')
 
 
 //-------------------------------------------------------------------------------

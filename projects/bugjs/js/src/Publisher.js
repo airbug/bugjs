@@ -8,14 +8,14 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@export('Publisher')
+//@Export('Publisher')
 
-//@require('Class')
-//@require('List')
-//@require('Map')
-//@require('Message')
-//@require('Obj')
-//@require('PublisherSubscription')
+//@Require('Class')
+//@Require('List')
+//@Require('Map')
+//@Require('Message')
+//@Require('Obj')
+//@Require('PublisherSubscription')
 
 
 //-------------------------------------------------------------------------------

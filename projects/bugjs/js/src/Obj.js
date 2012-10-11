@@ -2,13 +2,13 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@export('Obj')
+//@Export('Obj')
 
-//@require('Class')
-//@require('HashUtil')
-//@require('IdGenerator')
-//@require('IHashCode')
-//@require('TypeUtil')
+//@Require('Class')
+//@Require('HashUtil')
+//@Require('IdGenerator')
+//@Require('IHashCode')
+//@Require('TypeUtil')
 
 
 //-------------------------------------------------------------------------------

@@ -2,11 +2,11 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@export('PublisherSubscription')
+//@Export('PublisherSubscription')
 
-//@require('Class')
-//@require('HashUtil')
-//@require('Obj')
+//@Require('Class')
+//@Require('HashUtil')
+//@Require('Obj')
 
 
 //-------------------------------------------------------------------------------

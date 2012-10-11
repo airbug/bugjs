@@ -2,10 +2,10 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@export('HashUtil')
+//@Export('HashUtil')
 
-//@require('IdGenerator')
-//@require('TypeUtil')
+//@Require('IdGenerator')
+//@Require('TypeUtil')
 
 
 //-------------------------------------------------------------------------------

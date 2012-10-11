@@ -9,14 +9,14 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@export('Graph')
+//@Export('Graph')
 
-//@require('Class')
-//@require('GraphEdge')
-//@require('GraphNode')
-//@require('Map')
-//@require('Obj')
-//@require('Set')
+//@Require('Class')
+//@Require('GraphEdge')
+//@Require('GraphNode')
+//@Require('Map')
+//@Require('Obj')
+//@Require('Set')
 
 
 //-------------------------------------------------------------------------------
