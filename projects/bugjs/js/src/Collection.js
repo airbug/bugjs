@@ -61,9 +61,9 @@ var Collection = Class.extend(Obj, {
     /**
      * @return {Array}
      */
-    getValues: function() {
+    getValueArray: function() {
         var valueArray = [];
-        return valueArray.concat(this.hashStore.getValues());
+        return valueArray.concat(this.hashStore.getValueArray());
     },
 
 
@@ -87,7 +87,7 @@ var Collection = Class.extend(Obj, {
     equals: function(value) {
         if (Class.doesExtend(value, Collection)) {
             if (value.getCount() === this.getCount()) {
-                var collectionValueArray = this.getValues();
+                var collectionValueArray = this.getValueArray();
                 for (var i = 0, size = collectionValueArray.length; i < size; i++) {
                     var collectionValue = collectionValueArray[i];
                     if (!value.contains(collectionValue)) {

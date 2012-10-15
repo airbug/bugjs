@@ -112,7 +112,7 @@ var HashStoreNode = Class.extend(Obj, {
     /**
      * @return {Array<*>}
      */
-    getValues: function() {
+    getValueArray: function() {
         return this.valueArray;
     },
 

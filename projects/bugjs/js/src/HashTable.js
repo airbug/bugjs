@@ -95,7 +95,7 @@ var HashTable = Class.extend(Obj, {
     forEach: function(func) {
         for (var keyHashCode in this.hashTableNodeObject) {
             var hashTableNode = this.hashTableNodeObject[keyHashCode];
-            hashTableNode.getValues().forEach(function(value) {
+            hashTableNode.getValueArray().forEach(function(value) {
                 func(value);
             });
         }
@@ -117,11 +117,11 @@ var HashTable = Class.extend(Obj, {
     /**
      * @return {Array<*>}
      */
-    getKeys: function() {
+    getKeyArray: function() {
         var keysArray = [];
         for (var keyHashCode in this.hashTableNodeObject) {
             var hashTableNode = this.hashTableNodeObject[keyHashCode];
-            keysArray.concat(hashTableNode.getKeys());
+            keysArray = keysArray.concat(hashTableNode.getKeyArray());
         }
         return keysArray;
     },
@@ -129,11 +129,11 @@ var HashTable = Class.extend(Obj, {
     /**
      * @return {Array<*>}
      */
-    getValues: function() {
+    getValueArray: function() {
         var valuesArray = [];
         for (var keyHashCode in this.hashTableNodeObject) {
             var hashTableNode = this.hashTableNodeObject[keyHashCode];
-            valuesArray.concat(hashTableNode.getValues());
+            valuesArray = valuesArray.concat(hashTableNode.getValueArray());
         }
         return valuesArray;
     },

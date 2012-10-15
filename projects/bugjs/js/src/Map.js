@@ -113,15 +113,37 @@ var Map = Class.extend(Obj, {
     /**
      * @return {Array<*>}
      */
-    getKeys: function() {
-        return this.hashTable.getKeys();
+    getKeyArray: function() {
+        return this.hashTable.getKeyArray();
+    },
+
+    /**
+     * @return {Collection}
+     */
+    getKeyCollection: function() {
+        var keyCollection = new Collection();
+        this.hashTable.getKeyArray().forEach(function(key) {
+            keyCollection.add(key);
+        });
+        return keyCollection;
     },
 
     /**
      * @return {Array<*>}
      */
-    getValues: function() {
-        return this.hashTable.getValues();
+    getValueArray: function() {
+        return this.hashTable.getValueArray();
+    },
+
+    /**
+     * @return {Collection}
+     */
+    getValueCollection: function() {
+        var valueCollection = new Collection();
+        this.hashTable.getValueArray().forEach(function(value) {
+            valueCollection.add(value);
+        });
+        return valueCollection;
     },
 
     /**
@@ -145,7 +167,7 @@ var Map = Class.extend(Obj, {
      */
     putAll: function(map) {
         if (Class.doesExtend(map, Map)) {
-            var keys = map.getKeys();
+            var keys = map.getKeyArray();
             keys.forEach(function(key) {
                 var value = map.get(key);
                 this.put(key, value);

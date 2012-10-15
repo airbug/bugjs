@@ -123,7 +123,7 @@ var HashTableNode = Class.extend(Obj, {
     /**
      * @return {Array<*>}
      */
-    getKeys: function() {
+    getKeyArray: function() {
         var keyArray = [];
         for (var i = 0, size = this.hashTableEntryArray.length; i < size; i++) {
             var hashTableEntry = this.hashTableEntryArray[i];
@@ -135,7 +135,7 @@ var HashTableNode = Class.extend(Obj, {
     /**
      * @return {Array<*>}
      */
-    getValues: function() {
+    getValueArray: function() {
         var valueArray = [];
         for (var i = 0, size = this.hashTableEntryArray.length; i < size; i++) {
             var hashTableEntry = this.hashTableEntryArray[i];

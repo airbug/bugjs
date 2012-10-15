@@ -55,7 +55,7 @@ var HashStore = Class.extend(Obj, {
     forEach: function(func) {
         for (var valueHashCode in this.hashStoreNodeObject) {
             var hashStoreNode = this.hashStoreNodeObject[valueHashCode];
-            hashStoreNode.getValues().forEach(function(value) {
+            hashStoreNode.getValueArray().forEach(function(value) {
                 func(value);
             });
         }
@@ -64,11 +64,11 @@ var HashStore = Class.extend(Obj, {
     /**
      * @return {Array}
      */
-    getValues: function() {
+    getValueArray: function() {
         var valueArray = [];
         for (var valueHashCode in this.hashStoreNodeObject) {
             var hashStoreNode = this.hashStoreNodeObject[valueHashCode];
-            valueArray = valueArray.concat(hashStoreNode.getValues());
+            valueArray = valueArray.concat(hashStoreNode.getValueArray());
         }
         return valueArray;
     },
