@@ -6,6 +6,7 @@
 
 //@Require('Class')
 //@Require('EventListener')
+//@Require('IEventDispatcher')
 //@Require('List')
 //@Require('Map')
 //@Require('Obj')
@@ -164,3 +165,4 @@ var EventDispatcher = Class.extend(Obj, {
         }
     }
 });
+Class.implement(EventDispatcher, IEventDispatcher);

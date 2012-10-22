@@ -7,6 +7,7 @@
 //@Require('Class')
 //@Require('HashUtil')
 //@Require('IdGenerator')
+//@Require('IEquals')
 //@Require('IHashCode')
 //@Require('TypeUtil')
 
@@ -22,6 +23,9 @@ var Obj = Class.declare({
     //-------------------------------------------------------------------------------
 
     _constructor: function() {
+
+        this._super();
+
 
         //-------------------------------------------------------------------------------
         // Declare Variables
@@ -58,20 +62,8 @@ var Obj = Class.declare({
 
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // IEquals Implementation
     //-------------------------------------------------------------------------------
-
-    clone: function() {
-        var classObject = this.getClass();
-        var cloneObject = new classObject();
-        for (var key in this) {
-            var value = this[key];
-            if (!TypeUtil.isFunction(value)) {
-                cloneObject[key] = value;
-            }
-        }
-        return cloneObject;
-    },
 
     /**
      * If two Objs are equal then they MUST return the same hashCode. Otherwise the world will end!
@@ -85,6 +77,11 @@ var Obj = Class.declare({
         return false;
     },
 
+
+    //-------------------------------------------------------------------------------
+    // IHashCode Implementation
+    //-------------------------------------------------------------------------------
+
     /**
      * Equal hash codes do not necessarily guarantee equality.
      * @return {number}
@@ -94,8 +91,26 @@ var Obj = Class.declare({
             this._hashCode = HashUtil.hash(this);
         }
         return this._hashCode;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Class Methods
+    //-------------------------------------------------------------------------------
+
+    clone: function() {
+        var classObject = this.getClass();
+        var cloneObject = new classObject();
+        for (var key in this) {
+            var value = this[key];
+            if (!TypeUtil.isFunction(value)) {
+                cloneObject[key] = value;
+            }
+        }
+        return cloneObject;
     }
 });
+Class.implement(Obj, IEquals);
 Class.implement(Obj, IHashCode);
 
 
@@ -110,7 +125,7 @@ Class.implement(Obj, IHashCode);
  * @return {boolean}
  */
 Obj.equals = function(value1, value2) {
-    if (Class.doesExtend(value1, Obj)) {
+    if (Class.doesImplement(value1, IEquals)) {
         return value1.equals(value2);
     }
     return value1 === value2;

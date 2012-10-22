@@ -21,19 +21,21 @@
 var Class = {};
 
 var Base = function() {};
-
 Base._interfaces = [];
 
-Base.getInterfaces = function() {
-    return Base._interfaces;
+var BaseStatic = {
+    getInterfaces: function() {
+        return this._interfaces;
+    }
 };
 
-Base.prototype._constructor = function() {
+var BasePrototype = {
+    _constructor: function() {
 
-};
-
-Base.prototype.getClass = function() {
-    return this._class;
+    },
+    getClass: function() {
+        return this._class;
+    }
 };
 
 
@@ -48,7 +50,29 @@ Class.extending = false;
 // Static Methods
 //-------------------------------------------------------------------------------
 
+/**
+ * Use this to adapt classes built on other extension models to our own model.
+ */
+Class.adapt = function(_class, declaration) {
+    Base.prototype = _class.prototype;
+    var prototype = new Base();
+    var newClass = function() {};
+    for (var name in BasePrototype) {
+        prototype[name] = BasePrototype[name];
+    }
+    prototype._constructor = function() {
+        _class.apply(this, arguments);
+    };
+    newClass.prototype = prototype;
+    newClass.constructor = newClass;
+    Class.static(newClass, BaseStatic);
+    newClass._interfaces = [];
+    return Class.extend(newClass, declaration);
+};
+
 Class.declare = function(declaration) {
+    Base.prototype = BasePrototype;
+    Class.static(Base, BaseStatic);
     return Class.extend(Base, declaration);
 };
 
@@ -78,10 +102,8 @@ Class.extend = function(_class, declaration) {
     };
     newClass.prototype = prototype;
     newClass.constructor = newClass;
+    Class.static(newClass, BaseStatic);
     newClass._interfaces = [];
-    newClass.getInterfaces = function() {
-        return newClass._interfaces;
-    };
     _class.getInterfaces().forEach(function(_interface) {
         newClass._interfaces.push(_interface);
     });
@@ -121,4 +143,14 @@ Class.doesImplement = function(value, _interface) {
         }
     }
     return false;
+};
+
+/**
+ * @param _class
+ * @param {Object} declaration
+ */
+Class.static = function(_class, declaration) {
+    for (var name in declaration) {
+        _class[name] = declaration[name];
+    }
 };
