@@ -8,15 +8,16 @@
 //@Require('Backbone')
 //@Require('Class')
 //@Require('ControllerRoute')
+//@Require('Event')
+//@Require('EventDispatcher')
 //@Require('List')
-//@Require('Obj')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Controller = Class.extend(Obj, {
+var Controller = Class.extend(EventDispatcher, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -65,6 +66,7 @@ var Controller = Class.extend(Obj, {
      * @param {Array<*>} args
      */
     processRoute: function(method, args) {
+        this.dispatchEvent(new Event(Controller.EventTypes.ACTIVATE_CONTROLLER, this));
         this.activate();
         method.apply(this, args);
     },
@@ -116,72 +118,18 @@ var Controller = Class.extend(Obj, {
      * @param {Object} options
      */
     navigate: function(fragment, options) {
-        this.deactivate();
         this.router.navigate(fragment, options);
     }
 });
 
 
 //-------------------------------------------------------------------------------
-// Private Static Variables
+// Static Variables
 //-------------------------------------------------------------------------------
 
 /**
- * @private
- * @type {List<Controller>}
+ * @enum {string}
  */
-Controller.registeredControllerList = new List();
-
-/**
- * @private
- * @type {List<ControllerRoute>}
- */
-Controller.registeredControllerRouteList = new List();
-
-/**
- * @private
- * @type {Backbone.Router}
- */
-Controller.backboneRouter = new Backbone.Router();
-
-
-//-------------------------------------------------------------------------------
-// Private Static Methods
-//-------------------------------------------------------------------------------
-
-/**
- * @private
- * @param controllerClass
- * @param annotateRouteList
- */
-Controller.registerController = function(controllerClass, annotateRouteList) {
-    var controller = new controllerClass(Controller.backboneRouter);
-    Controller.registeredControllerList.add(controller);
-    annotateRouteList.forEach(function(annotateRoute) {
-        Controller.registerControllerRoute(annotateRoute.getRoute(), controller, annotateRoute.getMethod());
-    });
+Controller.EventTypes = {
+    ACTIVATE_CONTROLLER: "Controller:ActivateController"
 };
-
-/**
- * @private
- * @param {string} route
- * @param {Controller} controller
- * @param {function()} controllerMethod
- */
-Controller.registerControllerRoute = function(route, controller, controllerMethod) {
-    var controllerRoute = new ControllerRoute(route, controller, controllerMethod);
-    Controller.registeredControllerRouteList.add(controllerRoute);
-
-    //TODO BRN (QUESTION): Is this the right place to initialize the route? Should this be broken in to some bootstrap?
-
-    controllerRoute.initialize(Controller.backboneRouter);
-};
-
-
-//-------------------------------------------------------------------------------
-// Bootstrap
-//-------------------------------------------------------------------------------
-
-Annotate.registerAnnotationProcessor('Controller', function(annotation) {
-    Controller.registerController(annotation.getReference(), annotation.getParamList());
-});
