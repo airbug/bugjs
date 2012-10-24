@@ -2,7 +2,7 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('View')
+//@Export('CarapaceView')
 
 //@Require('Backbone');
 //@Require('Class')
@@ -10,16 +10,16 @@
 //@Require('EventDispatcher')
 //@Require('HashUtil')
 //@Require('IEquals')
-//@Require('IEventDispatcher')
 //@Require('IHashCode')
 //@Require('List')
+//@Require('Proxy')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var View = Class.adapt(Backbone.View, {
+var CarapaceView = Class.adapt(Backbone.View, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -40,6 +40,7 @@ var View = Class.adapt(Backbone.View, {
         this._internalId = undefined;
 
         IdGenerator.injectId(this);
+
         /**
          * @private
          * @type {number}
@@ -54,18 +55,24 @@ var View = Class.adapt(Backbone.View, {
 
         /**
          * @private
-         * @type {List<View>}
-         */
-        this.viewChildList = new List();
-
-        /**
-         * @private
          * @type {EventDispatcher}
          */
         this.eventDispatcher = new EventDispatcher(this);
 
+        /**
+         * @private
+         * @type {List<CarapaceView>}
+         */
+        this.viewChildList = new List();
+
         this.cid = _.uniqueId('view');
         this._configure(options || {});
+
+        Proxy.proxy(this, this.eventDispatcher, [
+            "addEventListener",
+            "dispatchEvent",
+            "removeEventListener"
+        ]);
     },
 
 
@@ -99,37 +106,6 @@ var View = Class.adapt(Backbone.View, {
             this._hashCode = HashUtil.hash(this);
         }
         return this._hashCode;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // IEventDispatcher Implementation
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {string} eventType
-     * @param {function(Event)} listenerFunction
-     * @param {?Object} listenerContext (optional)
-     */
-    addEventListener: function(eventType, listenerFunction, listenerContext) {
-        this.eventDispatcher.addEventListener(eventType, listenerFunction, listenerContext);
-    },
-
-    /**
-     * @param {Event} event
-     * @param {?boolean=} bubbles
-     */
-    dispatchEvent: function(event, bubbles) {
-        this.eventDispatcher.dispatchEvent(event, bubbles);
-    },
-
-    /**
-     * @param {string} eventType
-     * @param {function(Event)} listenerFunction
-     * @param {Object} listenerContext
-     */
-    removeEventListener: function(eventType, listenerFunction, listenerContext) {
-        this.eventDispatcher.removeEventListener(eventType, listenerFunction, listenerContext);
     },
 
 
@@ -189,5 +165,5 @@ var View = Class.adapt(Backbone.View, {
         this.remove();
     }
 });
-Class.implement(View, IEquals);
-Class.implement(View, IHashCode);
+Class.implement(CarapaceView, IEquals);
+Class.implement(CarapaceView, IHashCode);

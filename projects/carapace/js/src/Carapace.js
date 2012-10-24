@@ -7,10 +7,11 @@
 //@Require('Annotate')
 //@Require('Backbone')
 //@Require('Class')
-//@Require('Controller')
+//@Require('CarapaceController')
 //@Require('ControllerRoute')
 //@Require('List')
 //@Require('Obj')
+//@Require('Proxy')
 
 
 //-------------------------------------------------------------------------------
@@ -46,7 +47,7 @@ var Carapace = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {List<Controller>}
+         * @type {List<CarapaceController>}
          */
         this.registeredControllerList = new List();
 
@@ -69,7 +70,7 @@ var Carapace = Class.extend(Obj, {
      */
     registerController: function(controllerClass, annotateRouteList) {
         var controller = new controllerClass(this.backboneRouter);
-        controller.addEventListener(Controller.EventTypes.ACTIVATE_CONTROLLER, this.hearControllerActivateControllerEvent, this);
+        controller.addEventListener(CarapaceController.EventTypes.ACTIVATE_CONTROLLER, this.hearControllerActivateControllerEvent, this);
         this.registeredControllerList.add(controller);
         var _this = this;
         annotateRouteList.forEach(function(annotateRoute) {
@@ -80,7 +81,7 @@ var Carapace = Class.extend(Obj, {
     /**
      * @private
      * @param {string} route
-     * @param {Controller} controller
+     * @param {CarapaceController} controller
      * @param {function()} controllerMethod
      */
     registerControllerRoute: function(route, controller, controllerMethod) {
@@ -109,7 +110,6 @@ var Carapace = Class.extend(Obj, {
     }
 });
 
-
 //-------------------------------------------------------------------------------
 // Private Static Variables
 //-------------------------------------------------------------------------------
@@ -122,24 +122,13 @@ Carapace.instance = null;
 
 
 //-------------------------------------------------------------------------------
-// Private Static Methods
-//-------------------------------------------------------------------------------
-
-/**
- * @private
- * @param controllerClass
- * @param annotateRouteList
- */
-Carapace.registerController = function(controllerClass, annotateRouteList) {
-    Carapace.instance.registerController(controllerClass, annotateRouteList);
-};
-
-
-//-------------------------------------------------------------------------------
 // Bootstrap
 //-------------------------------------------------------------------------------
 
 Carapace.instance = new Carapace();
+Proxy.proxy(Carapace, Carapace.instance, [
+    "registerController"
+]);
 Annotate.registerAnnotationProcessor('Controller', function(annotation) {
     Carapace.registerController(annotation.getReference(), annotation.getParamList());
 });

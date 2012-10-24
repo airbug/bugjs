@@ -2,7 +2,7 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('Controller')
+//@Export('CarapaceController')
 
 //@Require('Annotate')
 //@Require('Backbone')
@@ -17,7 +17,7 @@
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Controller = Class.extend(EventDispatcher, {
+var CarapaceController = Class.extend(EventDispatcher, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -66,7 +66,7 @@ var Controller = Class.extend(EventDispatcher, {
      * @param {Array<*>} args
      */
     processRoute: function(method, args) {
-        this.dispatchEvent(new Event(Controller.EventTypes.ACTIVATE_CONTROLLER, this));
+        this.dispatchEvent(new Event(CarapaceController.EventTypes.ACTIVATE_CONTROLLER, this));
         this.activate();
         method.apply(this, args);
     },
@@ -130,6 +130,6 @@ var Controller = Class.extend(EventDispatcher, {
 /**
  * @enum {string}
  */
-Controller.EventTypes = {
-    ACTIVATE_CONTROLLER: "Controller:ActivateController"
+CarapaceController.EventTypes = {
+    ACTIVATE_CONTROLLER: "CarapaceController:ActivateController"
 };

@@ -70,12 +70,21 @@ Class.adapt = function(_class, declaration) {
     return Class.extend(newClass, declaration);
 };
 
+/**
+ * @param {Object} declaration
+ * @return {new:Base}
+ */
 Class.declare = function(declaration) {
     Base.prototype = BasePrototype;
     Class.static(Base, BaseStatic);
     return Class.extend(Base, declaration);
 };
 
+/**
+ * @param {new:Base} _class
+ * @param {Object} declaration
+ * @return {new:Base}
+ */
 Class.extend = function(_class, declaration) {
     var _super = _class.prototype;
     Class.extending = true;
@@ -111,8 +120,8 @@ Class.extend = function(_class, declaration) {
 };
 
 /**
- * @param {function()} _class
- * @param {function()} _interface
+ * @param {new:Base} _class
+ * @param {new:Interface} _interface
  */
 Class.implement = function(_class, _interface) {
     _class.getInterfaces().forEach(function(implementedInterface) {
@@ -128,10 +137,20 @@ Class.implement = function(_class, _interface) {
     _class._interfaces.push(_interface);
 };
 
+/**
+ * @param {*} value
+ * @param {new:Base} _class
+ * @return {boolean}
+ */
 Class.doesExtend = function(value, _class) {
     return value instanceof _class;
 };
 
+/**
+ * @param {*} value
+ * @param {new:Interface} _interface
+ * @return {boolean}
+ */
 Class.doesImplement = function(value, _interface) {
     if (Class.doesExtend(value, Base)) {
         for (var i = 0, size = value.getClass().getInterfaces().length; i < size; i++) {
@@ -146,7 +165,7 @@ Class.doesImplement = function(value, _interface) {
 };
 
 /**
- * @param _class
+ * @param {new:Base} _class
  * @param {Object} declaration
  */
 Class.static = function(_class, declaration) {
