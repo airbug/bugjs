@@ -9,6 +9,8 @@
 //@Require('Event')
 //@Require('EventDispatcher')
 //@Require('HashUtil')
+//@Require('IdGenerator')
+//@Require('IDisposable')
 //@Require('IEquals')
 //@Require('IHashCode')
 //@Require('List')
@@ -55,6 +57,12 @@ var CarapaceView = Class.adapt(Backbone.View, {
 
         /**
          * @private
+         * @type {boolean}
+         */
+        this.disposed = false;
+
+        /**
+         * @private
          * @type {EventDispatcher}
          */
         this.eventDispatcher = new EventDispatcher(this);
@@ -73,6 +81,25 @@ var CarapaceView = Class.adapt(Backbone.View, {
             "dispatchEvent",
             "removeEventListener"
         ]);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // IDisposable Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     *
+     */
+    dispose: function() {
+        if (!this.disposed) {
+            this.disposed = true;
+            this.viewChildList.forEach(function(viewChild) {
+                viewChild.dispose();
+            });
+            this.undelegateEvents();
+            this.remove();
+        }
     },
 
 
@@ -114,12 +141,14 @@ var CarapaceView = Class.adapt(Backbone.View, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {View} viewChild
+     * @param {CarapaceView} viewChild
+     * @param {?string=} query
      */
-    addViewChild: function(target, viewChild) {
+    addViewChild: function(viewChild, query) {
         this.create();
         viewChild.create();
-        this.$el.find(target).append(viewChild.el);
+        var targetEl = query ? this.$el.find(query) : this.$el;
+        targetEl.append(viewChild.el);
         this.viewChildList.add(viewChild);
     },
 
@@ -133,16 +162,6 @@ var CarapaceView = Class.adapt(Backbone.View, {
         }
     },
 
-    /**
-     *
-     */
-    destroy: function() {
-        if (this.created) {
-            this.created = false;
-            this.destroyView();
-        }
-    },
-
 
     //-------------------------------------------------------------------------------
     // Protected Class Methods
@@ -153,17 +172,10 @@ var CarapaceView = Class.adapt(Backbone.View, {
      */
     createView: function() {
         this._ensureElement();
-        this.initialize.apply(this, arguments);
+        this.initialize();
         this.delegateEvents();
-    },
-
-    /**
-     * @protected
-     */
-    destroyView: function() {
-        this.undelegateEvents();
-        this.remove();
     }
 });
+Class.implement(CarapaceView, IDisposable);
 Class.implement(CarapaceView, IEquals);
 Class.implement(CarapaceView, IHashCode);

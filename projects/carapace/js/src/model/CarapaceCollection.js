@@ -26,12 +26,30 @@ var CarapaceCollection = Class.adapt(Backbone.Collection, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
+        /**
+         * @private
+         * @type {boolean}
+         */
+        this.disposed = false;
+    },
 
+
+    //-------------------------------------------------------------------------------
+    // IDisposable Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     *
+     */
+    dispose: function() {
+        if (!this.disposed) {
+            this.disposed = true;
+            //TODO BRN: Remove all listeners. Reset and eject any data.
+        }
     }
 
 
     //-------------------------------------------------------------------------------
     // Class Methods
     //-------------------------------------------------------------------------------
-
 });

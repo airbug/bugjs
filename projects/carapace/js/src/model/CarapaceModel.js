@@ -7,6 +7,8 @@
 //@Require('Backbone')
 //@Require('Class')
 //@Require('HashUtil')
+//@Require('IdGenerator')
+//@Require('IDisposable')
 //@Require('IEquals')
 //@Require('IHashCode')
 
@@ -21,15 +23,48 @@ var CarapaceModel = Class.adapt(Backbone.Model, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(data) {
 
-        this._super();
+        this._super(data);
 
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
 
+        /**
+         * @private
+         * @type {number}
+         */
+        this._internalId = undefined;
 
+        IdGenerator.injectId(this);
+
+        /**
+         * @private
+         * @type {number}
+         */
+        this._hashCode = undefined;
+
+        /**
+         * @private
+         * @type {boolean}
+         */
+        this.disposed = false;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // IDisposable Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     *
+     */
+    dispose: function() {
+        if (!this.disposed) {
+            this.disposed = true;
+            //TODO BRN: Remove all listeners. Reset and eject any data.
+        }
     },
 
 
@@ -69,9 +104,8 @@ var CarapaceModel = Class.adapt(Backbone.Model, {
     //-------------------------------------------------------------------------------
     // Class Methods
     //-------------------------------------------------------------------------------
-
-
 });
+Class.implement(CarapaceModel, IDisposable);
 Class.implement(CarapaceModel, IEquals);
 Class.implement(CarapaceModel, IHashCode);
 

@@ -85,7 +85,7 @@ var CarapaceController = Class.extend(EventDispatcher, {
 
     /**
      * @private
-     * @param {Model} model
+     * @param {CarapaceModel} model
      */
     addModel: function(model) {
         this.modelList.add(model);
@@ -93,7 +93,7 @@ var CarapaceController = Class.extend(EventDispatcher, {
 
     /**
      * @private
-     * @param {View} view
+     * @param {CarapaceView} view
      */
     addView: function(view) {
         this.viewList.add(view);
@@ -107,9 +107,12 @@ var CarapaceController = Class.extend(EventDispatcher, {
     deactivate: function() {
         this.activated = false;
         this.viewList.forEach(function(view) {
-            view.destroy();
+            view.dispose();
         });
         this.viewList.clear();
+        this.modelList.forEach(function(model) {
+            model.dispose();
+        });
     },
 
     /**
