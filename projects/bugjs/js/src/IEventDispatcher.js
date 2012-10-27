@@ -18,6 +18,16 @@ var IEventDispatcher = Interface.declare({
     //-------------------------------------------------------------------------------
 
     /**
+     * @return {EventDispatcher}
+     */
+    getParentDispatcher: function() {},
+
+    /**
+     * @param {EventDispatcher} parentDispatcher
+     */
+    setParentDispatcher: function(parentDispatcher) {},
+
+    /**
      * @param {string} eventType
      * @param {function(Event)} listenerFunction
      * @param {?Object} listenerContext (optional)
