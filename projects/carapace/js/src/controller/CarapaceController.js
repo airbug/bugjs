@@ -27,6 +27,7 @@ var CarapaceController = Class.extend(EventDispatcher, {
 
         this._super();
 
+
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
@@ -39,9 +40,21 @@ var CarapaceController = Class.extend(EventDispatcher, {
 
         /**
          * @private
-         * @type {List<Model>}
+         * @type {Publisher}
          */
-        this.modelList = new List();
+        this.apiPublisher = new Publisher();
+
+        /**
+         * @private
+         * @type {*}
+         */
+        this.containerTop = null;
+
+        /**
+         * @private
+         * @type {boolean}
+         */
+        this.created = false;
 
         /**
          * @private
@@ -51,9 +64,56 @@ var CarapaceController = Class.extend(EventDispatcher, {
 
         /**
          * @private
-         * @type {List<View>}
+         * @type {boolean}
          */
-        this.viewList = new List();
+        this.started = false;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {Publisher}
+     */
+    getApiPublisher: function() {
+        return this.publisher;
+    },
+
+    /**
+     * @return {CarapaceContainer}
+     */
+    getContainerTop: function() {
+        return this.containerTop;
+    },
+
+    /**
+     * @param {CarapaceContainer} container
+     */
+    setContainerTop: function(container) {
+        this.containerTop = container;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    isActivated: function() {
+        return this.activated;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    isCreated: function() {
+        return this.created;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    isStarted: function() {
+        return this.started;
     },
 
 
@@ -62,13 +122,78 @@ var CarapaceController = Class.extend(EventDispatcher, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @protected
+     */
+    activate: function() {
+        if (!this.activated) {
+            this.activated = true;
+            this.activateController();
+        }
+    },
+
+    /**
+     * @protected
+     */
+    create: function() {
+        if (!this.created) {
+            this.created = true;
+            this.createController();
+            this.initializeController();
+        }
+    },
+
+    /**
+     * @protected
+     */
+    deactivate: function() {
+        if (this.activated) {
+            this.activated = false;
+            this.deactivateController();
+        }
+    },
+
+    /**
+     * @protected
+     */
+    destroy: function() {
+        if (this.created) {
+            this.created = false;
+            this.deinitializeController();
+            this.destroyController();
+        }
+    },
+
+    /**
      * @param {function(...*)} method
      * @param {Array<*>} args
      */
     processRoute: function(method, args) {
         this.dispatchEvent(new Event(CarapaceController.EventTypes.ACTIVATE_CONTROLLER, this));
-        this.activate();
+        this.start();
         method.apply(this, args);
+    },
+
+
+    /**
+     *
+     */
+    start: function() {
+        if (!this.started) {
+            this.started = true;
+            this.create();
+            this.activate();
+        }
+    },
+
+    /**
+     *
+     */
+    stop: function() {
+        if (this.started) {
+            this.started = false;
+            this.deactivate();
+            this.destroy();
+        }
     },
 
 
@@ -79,49 +204,44 @@ var CarapaceController = Class.extend(EventDispatcher, {
     /**
      * @protected
      */
-    activate: function() {
-        this.activated = true;
-    },
-
-    /**
-     * @private
-     * @param {CarapaceModel} model
-     */
-    addModel: function(model) {
-        this.modelList.add(model);
-    },
-
-    /**
-     * @private
-     * @param {CarapaceView} view
-     */
-    addView: function(view) {
-        this.viewList.add(view);
-        view.create();
-        $('body').append(view.el);
+    activateController: function() {
+        this.containerTop.activate();
     },
 
     /**
      * @protected
      */
-    deactivate: function() {
-        this.activated = false;
-        this.viewList.forEach(function(view) {
-            view.dispose();
-        });
-        this.viewList.clear();
-        this.modelList.forEach(function(model) {
-            model.dispose();
-        });
+    createController: function() {
+
     },
 
     /**
      * @protected
-     * @param {string} fragment
-     * @param {Object} options
      */
-    navigate: function(fragment, options) {
-        this.router.navigate(fragment, options);
+    deactivateController: function() {
+        this.containerTop.deactivate();
+    },
+
+    /**
+     * @protected
+     */
+    deinitializeController: function() {
+
+    },
+
+    /**
+     * @protected
+     */
+    destroyController: function() {
+        this.containerTop.dispose();
+        this.containerTop = null;
+    },
+
+    /**
+     * @protected
+     */
+    initializeController: function() {
+
     }
 });
 

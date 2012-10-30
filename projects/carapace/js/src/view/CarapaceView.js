@@ -63,6 +63,12 @@ var CarapaceView = Class.adapt(Backbone.View, {
 
         /**
          * @private
+         * @type {$}
+         */
+        this.previousElParent = null;
+
+        /**
+         * @private
          * @type {EventDispatcher}
          */
         this.eventDispatcher = new EventDispatcher(this);
@@ -73,6 +79,16 @@ var CarapaceView = Class.adapt(Backbone.View, {
          */
         this.viewChildList = new List();
 
+        /**
+         * @private
+         * @type {CarapaceView}
+         */
+        this.viewParent = null;
+
+        /**
+         * @private
+         * @type {string}
+         */
         this.cid = _.uniqueId('view');
         this._configure(options || {});
 
@@ -87,6 +103,18 @@ var CarapaceView = Class.adapt(Backbone.View, {
 
 
     //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {boolean}
+     */
+    isCreated: function() {
+        return this.created;
+    },
+
+
+    //-------------------------------------------------------------------------------
     // IDisposable Implementation
     //-------------------------------------------------------------------------------
 
@@ -96,11 +124,7 @@ var CarapaceView = Class.adapt(Backbone.View, {
     dispose: function() {
         if (!this.disposed) {
             this.disposed = true;
-            this.viewChildList.forEach(function(viewChild) {
-                viewChild.dispose();
-            });
-            this.undelegateEvents();
-            this.remove();
+            this.destroy();
         }
     },
 
@@ -144,25 +168,76 @@ var CarapaceView = Class.adapt(Backbone.View, {
 
     /**
      * @param {CarapaceView} viewChild
-     * @param {?string=} query
+     * @param {?string=} domQuery
      */
-    addViewChild: function(viewChild, query) {
-        this.create();
-        viewChild.create();
+    addViewChild: function(viewChild, domQuery) {
+        if (!this.isCreated()) {
+            this.create();
+        }
+        if (!viewChild.isCreated()) {
+            viewChild.create();
+        }
         viewChild.setParentDispatcher(this.eventDispatcher);
-        var targetEl = query ? this.$el.find(query) : this.$el;
-        targetEl.append(viewChild.el);
+        viewChild.viewParent = this;
         this.viewChildList.add(viewChild);
+        var targetEl = domQuery ? this.$el.find(domQuery) : this.$el;
+        targetEl.append(viewChild.el);
+    },
+
+    /**
+     * @param {CarapaceView} viewChild
+     * @return {boolean}
+     */
+    hasViewChild: function(viewChild) {
+        return this.viewChildList.contains(viewChild);
+    },
+
+    /**
+     * @param {CarapaceView} viewChild
+     */
+    removeViewChild: function(viewChild) {
+        if (this.hasViewChild(viewChild)) {
+            this.viewChildList.remove(viewChild);
+            viewChild.viewParent = null;
+        }
     },
 
     /**
      *
      */
     create: function() {
-        if (!this.created) {
+        if (!this.created && !this.disposed) {
             this.created = true;
             this.createView();
+            this.createViewChildren();
+            this.initializeView();
         }
+    },
+
+    /**
+     *
+     */
+    destroy: function() {
+        if (this.created) {
+            this.created = false;
+            this.deinitializeView();
+            this.destroyViewChildren();
+            this.destroyView();
+        }
+    },
+
+    /**
+     *
+     */
+    elDetach: function() {
+        this.$el.detach();
+    },
+
+    /**
+     * @param {$} $el
+     */
+    elAppendTo: function($el) {
+        this.$el.appendTo($el);
     },
 
 
@@ -175,8 +250,50 @@ var CarapaceView = Class.adapt(Backbone.View, {
      */
     createView: function() {
         this._ensureElement();
-        this.initialize();
         this.delegateEvents();
+    },
+
+    /**
+     * @protected
+     */
+    createViewChildren: function() {
+
+    },
+
+    /**
+     * @protected
+     */
+    deinitializeView: function() {
+
+    },
+
+    /**
+     * @protected
+     */
+    destroyView: function() {
+        this.undelegateEvents();
+        this.remove();
+        this.model = null;
+        this.collection = null;
+    },
+
+    /**
+     * @protected
+     */
+    destroyViewChildren: function() {
+        var _this = this;
+        var viewChildListClone = this.viewChildList.clone();
+        viewChildListClone.forEach(function(viewChild) {
+            viewChild.dispose();
+            _this.removeViewChild(viewChild)
+        });
+    },
+
+    /**
+     * @protected
+     */
+    initializeView: function() {
+
     }
 });
 Class.implement(CarapaceView, IDisposable);

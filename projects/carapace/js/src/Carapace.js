@@ -104,7 +104,7 @@ var Carapace = Class.extend(Obj, {
      */
     hearControllerActivateControllerEvent: function(event) {
         if (this.activeController) {
-            this.activeController.deactivate();
+            this.activeController.stop();
         }
         this.activeController = event.getData();
     }
