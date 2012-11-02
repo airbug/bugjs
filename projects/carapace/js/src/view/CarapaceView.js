@@ -180,7 +180,10 @@ var CarapaceView = Class.adapt(Backbone.View, {
         viewChild.setParentDispatcher(this.eventDispatcher);
         viewChild.viewParent = this;
         this.viewChildList.add(viewChild);
-        var targetEl = domQuery ? this.$el.find(domQuery) : this.$el;
+        var targetEl = domQuery ? this.$el.find('*').andSelf().filter(domQuery) : this.$el;
+        if (targetEl.length == 0) {
+            throw new Error("No DOM element found for domQuery (" + domQuery + " )");
+        }
         targetEl.append(viewChild.el);
     },
 
@@ -226,20 +229,6 @@ var CarapaceView = Class.adapt(Backbone.View, {
         }
     },
 
-    /**
-     *
-     */
-    elDetach: function() {
-        this.$el.detach();
-    },
-
-    /**
-     * @param {$} $el
-     */
-    elAppendTo: function($el) {
-        this.$el.appendTo($el);
-    },
-
 
     //-------------------------------------------------------------------------------
     // Protected Class Methods
@@ -275,6 +264,9 @@ var CarapaceView = Class.adapt(Backbone.View, {
         this.remove();
         this.model = null;
         this.collection = null;
+        if (this.viewParent) {
+            this.viewParent.removeViewChild(this);
+        }
     },
 
     /**
@@ -285,7 +277,6 @@ var CarapaceView = Class.adapt(Backbone.View, {
         var viewChildListClone = this.viewChildList.clone();
         viewChildListClone.forEach(function(viewChild) {
             viewChild.dispose();
-            _this.removeViewChild(viewChild)
         });
     },
 
@@ -294,6 +285,26 @@ var CarapaceView = Class.adapt(Backbone.View, {
      */
     initializeView: function() {
 
+    },
+
+
+    //TODO BRN: We should improve the Proxy util to handle these cases.
+    //-------------------------------------------------------------------------------
+    // Proxy Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     *
+     */
+    hide: function() {
+        this.$el.hide();
+    },
+
+    /**
+     *
+     */
+    show: function() {
+        this.$el.show();
     }
 });
 Class.implement(CarapaceView, IDisposable);

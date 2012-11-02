@@ -138,6 +138,8 @@ var CarapaceController = Class.extend(EventDispatcher, {
         if (!this.created) {
             this.created = true;
             this.createController();
+            this.validateController();
+            this.getContainerTop().create();
             this.initializeController();
         }
     },
@@ -233,7 +235,7 @@ var CarapaceController = Class.extend(EventDispatcher, {
      * @protected
      */
     destroyController: function() {
-        this.containerTop.dispose();
+        this.containerTop.destroy();
         this.containerTop = null;
     },
 
@@ -242,6 +244,15 @@ var CarapaceController = Class.extend(EventDispatcher, {
      */
     initializeController: function() {
 
+    },
+
+    /**
+     * @protected
+     */
+    validateController: function() {
+        if (!this.getContainerTop()) {
+            throw new Error("Must set container top during container creation.");
+        }
     }
 });
 
