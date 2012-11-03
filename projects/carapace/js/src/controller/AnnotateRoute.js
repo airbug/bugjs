@@ -29,12 +29,6 @@ var AnnotateRoute = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {function(...*)}
-         */
-        this.method = null;
-
-        /**
-         * @private
          * @type {string}
          */
         this.route = route;
@@ -46,34 +40,11 @@ var AnnotateRoute = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {function(...*)}
-     */
-    getMethod: function() {
-        return this.method;
-    },
-
-    /**
      *
      * @return {string}
      */
     getRoute: function() {
         return this.route;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @return {function(...*)}
-     */
-    to: function(method) {
-        this.method = method;
-
-        // NOTE BRN: Return a reference to "this" so that this function can be used inline
-
-        return this;
     }
 });
 

@@ -212,7 +212,6 @@ var CarapaceView = Class.adapt(Backbone.View, {
         if (!this.created && !this.disposed) {
             this.created = true;
             this.createView();
-            this.createViewChildren();
             this.initializeView();
         }
     },
@@ -240,13 +239,6 @@ var CarapaceView = Class.adapt(Backbone.View, {
     createView: function() {
         this._ensureElement();
         this.delegateEvents();
-    },
-
-    /**
-     * @protected
-     */
-    createViewChildren: function() {
-
     },
 
     /**

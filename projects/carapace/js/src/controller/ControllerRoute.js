@@ -18,7 +18,7 @@ var ControllerRoute = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(route, controller, controllerMethod) {
+    _constructor: function(route, controller) {
 
         this._super();
 
@@ -29,15 +29,9 @@ var ControllerRoute = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {Controller}
+         * @type {CarapaceController}
          */
         this.controller = controller;
-
-        /**
-         * @private
-         * @type {function()}
-         */
-        this.controllerMethod = controllerMethod;
 
         /**
          * @private
@@ -66,7 +60,7 @@ var ControllerRoute = Class.extend(Obj, {
             var name = "ControllerRouter" + this.getId();
             var _this = this;
             backboneRouter.route(this.route, name, function() {
-                _this.controller.processRoute(_this.controllerMethod, arguments);
+                _this.controller.processRoute(arguments);
             });
         }
     }

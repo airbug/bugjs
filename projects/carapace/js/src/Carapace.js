@@ -74,7 +74,7 @@ var Carapace = Class.extend(Obj, {
         this.registeredControllerList.add(controller);
         var _this = this;
         annotateRouteList.forEach(function(annotateRoute) {
-            _this.registerControllerRoute(annotateRoute.getRoute(), controller, annotateRoute.getMethod());
+            _this.registerControllerRoute(annotateRoute.getRoute(), controller);
         });
     },
 
@@ -82,10 +82,9 @@ var Carapace = Class.extend(Obj, {
      * @private
      * @param {string} route
      * @param {CarapaceController} controller
-     * @param {function()} controllerMethod
      */
-    registerControllerRoute: function(route, controller, controllerMethod) {
-        var controllerRoute = new ControllerRoute(route, controller, controllerMethod);
+    registerControllerRoute: function(route, controller) {
+        var controllerRoute = new ControllerRoute(route, controller);
         this.registeredControllerRouteList.add(controllerRoute);
 
         //TODO BRN (QUESTION): Is this the right place to initialize the route? Should this be broken in to some bootstrap?

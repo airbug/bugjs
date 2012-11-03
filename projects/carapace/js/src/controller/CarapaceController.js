@@ -124,10 +124,10 @@ var CarapaceController = Class.extend(EventDispatcher, {
     /**
      * @protected
      */
-    activate: function() {
+    activate: function(routerArgs) {
         if (!this.activated) {
             this.activated = true;
-            this.activateController();
+            this.activateController(routerArgs);
         }
     },
 
@@ -166,24 +166,21 @@ var CarapaceController = Class.extend(EventDispatcher, {
     },
 
     /**
-     * @param {function(...*)} method
-     * @param {Array<*>} args
+     * @param {Array<*>} routerArgs
      */
-    processRoute: function(method, args) {
+    processRoute: function(routerArgs) {
         this.dispatchEvent(new Event(CarapaceController.EventTypes.ACTIVATE_CONTROLLER, this));
-        this.start();
-        method.apply(this, args);
+        this.start(routerArgs);
     },
 
-
     /**
-     *
+     * @param {Array<*>} routerArgs
      */
-    start: function() {
+    start: function(routerArgs) {
         if (!this.started) {
             this.started = true;
             this.create();
-            this.activate();
+            this.activate(routerArgs);
         }
     },
 
@@ -205,9 +202,10 @@ var CarapaceController = Class.extend(EventDispatcher, {
 
     /**
      * @protected
+     * @param {Array<*>} routerArgs
      */
-    activateController: function() {
-        this.containerTop.activate();
+    activateController: function(routerArgs) {
+        this.containerTop.activate(routerArgs);
     },
 
     /**

@@ -120,13 +120,13 @@ var CarapaceContainer = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @param {Array<*>} routerArgs
      */
-    activate: function() {
+    activate: function(routerArgs) {
         if (!this.activated) {
             this.activated = true;
-            this.activateContainer();
-            this.activateContainerChildren();
+            this.activateContainer(routerArgs);
+            this.activateContainerChildren(routerArgs);
         }
     },
 
@@ -238,17 +238,19 @@ var CarapaceContainer = Class.extend(Obj, {
 
     /**
      * @protected
+     * @param {Array<*>} routerArgs
      */
-    activateContainer: function() {
+    activateContainer: function(routerArgs) {
 
     },
 
     /**
      * @protected
+     * @param {Array<*>} routerArgs
      */
-    activateContainerChildren: function() {
+    activateContainerChildren: function(routerArgs) {
         this.containerChildList.forEach(function(containerChild) {
-            containerChild.activate();
+            containerChild.activate(routerArgs);
         });
     },
 

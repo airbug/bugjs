@@ -44,7 +44,8 @@ var CarapaceCollection = Class.adapt(Backbone.Collection, {
     dispose: function() {
         if (!this.disposed) {
             this.disposed = true;
-            //TODO BRN: Remove all listeners. Reset and eject any data.
+            this.unbind();
+            //TODO BRN: Reset and eject any data.
         }
     }
 
