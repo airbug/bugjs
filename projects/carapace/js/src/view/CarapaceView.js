@@ -180,7 +180,7 @@ var CarapaceView = Class.adapt(Backbone.View, {
         viewChild.setParentDispatcher(this.eventDispatcher);
         viewChild.viewParent = this;
         this.viewChildList.add(viewChild);
-        var targetEl = domQuery ? this.$el.find('*').andSelf().filter(domQuery) : this.$el;
+        var targetEl = domQuery ? this.findElement(domQuery) : this.$el;
         if (targetEl.length == 0) {
             throw new Error("No DOM element found for domQuery (" + domQuery + " )");
         }
@@ -265,7 +265,6 @@ var CarapaceView = Class.adapt(Backbone.View, {
      * @protected
      */
     destroyViewChildren: function() {
-        var _this = this;
         var viewChildListClone = this.viewChildList.clone();
         viewChildListClone.forEach(function(viewChild) {
             viewChild.dispose();
@@ -276,6 +275,36 @@ var CarapaceView = Class.adapt(Backbone.View, {
      * @protected
      */
     initializeView: function() {
+        if (this.model) {
+            this.model.bind('change', this.handleModelChange, this);
+        }
+    },
+
+    /**
+     * @protected
+     */
+    renderView: function() {
+        if (this.model) {
+            this.renderModel();
+        }
+    },
+
+    /**
+     * @protected
+     */
+    renderModel: function() {
+        var changedAttributes = this.model.changedAttributes();
+        for (var attributeName in changedAttributes) {
+            this.renderModelAttribute(attributeName, changedAttributes[attributeName]);
+        }
+    },
+
+    /**
+     * @protected
+     * @param {string} attributeName
+     * @param {string} attributeValue
+     */
+    renderModelAttribute: function(attributeName, attributeValue) {
 
     },
 
@@ -284,6 +313,13 @@ var CarapaceView = Class.adapt(Backbone.View, {
     //-------------------------------------------------------------------------------
     // Proxy Methods
     //-------------------------------------------------------------------------------
+
+    /**
+     * @param {string} domQuery
+     */
+    findElement: function(domQuery) {
+        return this.$el.find('*').andSelf().filter(domQuery);
+    },
 
     /**
      *
@@ -297,6 +333,18 @@ var CarapaceView = Class.adapt(Backbone.View, {
      */
     show: function() {
         this.$el.show();
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Model Event Hanlders
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     */
+    handleModelChange: function() {
+        this.renderView();
     }
 });
 Class.implement(CarapaceView, IDisposable);
