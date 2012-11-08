@@ -324,6 +324,13 @@ var CarapaceView = Class.adapt(Backbone.View, {
     /**
      *
      */
+    focus: function() {
+        this.$el.focus();
+    },
+
+    /**
+     *
+     */
     hide: function() {
         this.$el.hide();
     },
