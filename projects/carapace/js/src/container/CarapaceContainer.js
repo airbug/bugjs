@@ -196,6 +196,11 @@ var CarapaceContainer = Class.extend(Obj, {
         containerChild.containerParent = this;
 
         this.viewTop.addViewChild(containerChild.getViewTop(), domQuery);
+
+        if (this.isActivated()) {
+            //TODO BRN: Should we pass in the routerArgs here? How do we get a reference to those?
+            containerChild.activate([]);
+        }
     },
 
     /**
