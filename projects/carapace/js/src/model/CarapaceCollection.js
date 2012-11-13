@@ -18,9 +18,9 @@ var CarapaceCollection = Class.adapt(Backbone.Collection, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(data, id) {
 
-        this._super();
+        this._super(data);
 
         //-------------------------------------------------------------------------------
         // Declare Variables
@@ -31,6 +31,24 @@ var CarapaceCollection = Class.adapt(Backbone.Collection, {
          * @type {boolean}
          */
         this.disposed = false;
+
+        /**
+         * @private
+         * @type {string}
+         */
+        this.id = id;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {string}
+     */
+    getId: function() {
+        return this.id;
     },
 
 

@@ -6,6 +6,7 @@
 
 //@Require('Class')
 //@Require('List')
+//@Require('Map')
 //@Require('Obj')
 
 
@@ -42,6 +43,12 @@ var CarapaceContainer = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {Map<string, CarapaceCollection>}
+         */
+        this.collectionMap = new Map();
+
+        /**
+         * @private
          * @type {List<CarapaceContainer>}
          */
         this.containerChildList = new List();
@@ -60,9 +67,9 @@ var CarapaceContainer = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {List<CarapaceModel>}
+         * @type {Map<CarapaceModel>}
          */
-        this.modelList = new List();
+        this.modelMap = new Map();
 
         /**
          * @private
@@ -222,6 +229,44 @@ var CarapaceContainer = Class.extend(Obj, {
     },
 
 
+    // Collection Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     * @param {CarapaceCollection} collection
+     */
+    addCollection: function(collection) {
+        var collectionId = collection.getId();
+        if (!collectionId) {
+            throw new Error("Collection id must be defined!");
+        }
+        if (this.collectionMap.containsKey(collectionId)) {
+            throw new Error("A collection is already present for this id: " + collectionId);
+        }
+        this.collectionMap.put(collectionId, collection);
+    },
+
+    /**
+     * @protected
+     * @param {string} collectionId
+     * @return {CarapaceCollection}
+     */
+    getCollection: function(collectionId) {
+        return this.collectionMap.get(collectionId);
+    },
+
+    /**
+     * @protected
+     * @param {string} collectionId
+     */
+    removeCollection: function(collectionId) {
+        if (this.collectionMap.containsKey(collectionId)) {
+            this.collectionMap.remove(collectionId);
+        }
+    },
+
+
     // Model Methods
     //-------------------------------------------------------------------------------
 
@@ -230,7 +275,33 @@ var CarapaceContainer = Class.extend(Obj, {
      * @param {CarapaceModel} model
      */
     addModel: function(model) {
-        this.modelList.add(model);
+        var modelId = model.getId();
+        if (!modelId) {
+            throw new Error("Model id must be defined!");
+        }
+        if (this.modelMap.containsKey(modelId)) {
+            throw new Error("A model is already present for this id: " + modelId);
+        }
+        this.modelMap.put(modelId, model);
+    },
+
+    /**
+     * @protected
+     * @param {string} modelId
+     * @return {CarapaceModel}
+     */
+    getModel: function(modelId) {
+        return this.modelMap.get(modelId);
+    },
+
+    /**
+     * @protected
+     * @param {string} modelId
+     */
+    removeModel: function(modelId) {
+        if (this.modelMap.containsKey(modelId)) {
+            this.modelMap.remove(modelId);
+        }
     },
 
 
@@ -300,12 +371,17 @@ var CarapaceContainer = Class.extend(Obj, {
      * @proetected
      */
     destroyContainer: function() {
+        var _this = this;
         this.viewTop.dispose();
         this.viewTop = null;
-        this.modelList.forEach(function(model) {
+        this.collectionMap.forEach(function(collection) {
+            _this.removeCollection(collection.getId());
+            collection.dispose();
+        });
+        this.modelMap.forEach(function(model) {
+            _this.removeModel(model.getId());
             model.dispose();
         });
-        this.modelList.clear();
     },
 
     /**
@@ -325,5 +401,43 @@ var CarapaceContainer = Class.extend(Obj, {
      */
     initializeContainer: function() {
 
+    },
+
+
+    // View Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     * @param {string} id
+     * @return {CarapaceView}
+     */
+    findViewById: function(id) {
+        return this.findViewByIdRecursive(this.getViewTop(), id);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Private Class Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {CarapaceView} view
+     * @param {string} id
+     * @return {CarapaceView}
+     */
+    findViewByIdRecursive: function(view, id) {
+        if (view.getId() === id) {
+            return view;
+        } else {
+            for (var i = 0, size = view.getViewChildList().getCount(); i < size; i++) {
+                var result = this.findViewByIdRecursive(view.getViewChildList().getAt(i), id);
+                if (result !== null) {
+                    return result;
+                }
+            }
+        }
+        return null;
     }
 });

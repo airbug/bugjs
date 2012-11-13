@@ -22,10 +22,14 @@ var Class = {};
 
 var Base = function() {};
 Base._interfaces = [];
+Base._superclass = null;
 
 var BaseStatic = {
     getInterfaces: function() {
         return this._interfaces;
+    },
+    getSuperClass: function() {
+        return this._superclass;
     }
 };
 
@@ -113,6 +117,7 @@ Class.extend = function(_class, declaration) {
     newClass.constructor = newClass;
     Class.static(newClass, BaseStatic);
     newClass._interfaces = [];
+    newClass._superclass = _class;
     _class.getInterfaces().forEach(function(_interface) {
         newClass._interfaces.push(_interface);
     });

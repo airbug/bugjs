@@ -56,7 +56,7 @@ var Obj = Class.declare({
     /**
      * @return {number}
      */
-    getId: function() {
+    getInternalId: function() {
         return this._internalId;
     },
 

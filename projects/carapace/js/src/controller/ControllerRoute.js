@@ -57,7 +57,7 @@ var ControllerRoute = Class.extend(Obj, {
     initialize: function(backboneRouter) {
         if (!this.initialized) {
             this.initialized = true;
-            var name = "ControllerRouter" + this.getId();
+            var name = "ControllerRouter" + this.getInternalId();
             var _this = this;
             backboneRouter.route(this.route, name, function() {
                 _this.controller.processRoute(arguments);

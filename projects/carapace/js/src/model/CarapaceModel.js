@@ -23,7 +23,7 @@ var CarapaceModel = Class.adapt(Backbone.Model, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(data) {
+    _constructor: function(data, id) {
 
         this._super(data);
 
@@ -50,6 +50,24 @@ var CarapaceModel = Class.adapt(Backbone.Model, {
          * @type {boolean}
          */
         this.disposed = false;
+
+        /**
+         * @private
+         * @type {string}
+         */
+        this.id = id;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {string}
+     */
+    getId: function() {
+        return this.id;
     },
 
 

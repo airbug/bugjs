@@ -51,6 +51,12 @@ var CarapaceView = Class.adapt(Backbone.View, {
 
         /**
          * @private
+         * @type {Object}
+         */
+        this.attributes = {};
+
+        /**
+         * @private
          * @type {boolean}
          */
         this.created = false;
@@ -105,6 +111,20 @@ var CarapaceView = Class.adapt(Backbone.View, {
     //-------------------------------------------------------------------------------
     // Getters and Setters
     //-------------------------------------------------------------------------------
+
+    /**
+     * @return {string}
+     */
+    getId: function() {
+        return this.id;
+    },
+
+    /**
+     * @return {List<CarapaceView}
+     */
+    getViewChildList: function() {
+        return this.viewChildList;
+    },
 
     /**
      * @return {boolean}
