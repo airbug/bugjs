@@ -4,7 +4,6 @@
 
 //@Export('CarapaceController')
 
-//@Require('Annotate')
 //@Require('Backbone')
 //@Require('Class')
 //@Require('ControllerRoute')
@@ -58,7 +57,7 @@ var CarapaceController = Class.extend(EventDispatcher, {
 
         /**
          * @private
-         * @type {Backbone.Router}
+         * @type {CarapaceRouter}
          */
         this.router = router;
 

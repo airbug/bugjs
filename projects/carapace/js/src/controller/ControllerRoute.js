@@ -52,14 +52,14 @@ var ControllerRoute = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Backbone.Router} backboneRouter
+     * @param {CarapaceRouter} router
      */
-    initialize: function(backboneRouter) {
+    initialize: function(router) {
         if (!this.initialized) {
             this.initialized = true;
             var name = "ControllerRouter" + this.getInternalId();
             var _this = this;
-            backboneRouter.route(this.route, name, function() {
+            router.route(this.route, name, function() {
                 _this.controller.processRoute(arguments);
             });
         }

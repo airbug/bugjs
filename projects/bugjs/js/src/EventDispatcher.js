@@ -134,6 +134,13 @@ var EventDispatcher = Class.extend(Obj, {
         }
     },
 
+    /**
+     *
+     */
+    removeAllListeners: function() {
+        this.eventTypeListenerMap.clear();
+    },
+
 
     //-------------------------------------------------------------------------------
     // Private Class Methods

@@ -71,8 +71,16 @@ var Annotate = Class.extend(Obj, {
 // Static Variables
 //-------------------------------------------------------------------------------
 
+/**
+ * @private
+ * @type {Map<string, List<Annotation>>}
+ */
 Annotate.annotationMap = new Map();
 
+/**
+ * @private
+ * @type {Map<string, List<AnnotationProcessor>>}
+ */
 Annotate.annotationProcessorMap = new Map();
 
 Annotate.processingAnnotationsTimeout = null;

@@ -265,7 +265,7 @@ var CarapaceView = Class.adapt(Backbone.View, {
      * @protected
      */
     deinitializeView: function() {
-
+        this.eventDispatcher.removeAllListeners();
     },
 
     /**

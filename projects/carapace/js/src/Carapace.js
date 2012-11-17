@@ -5,9 +5,9 @@
 //@Export('Carapace')
 
 //@Require('Annotate')
-//@Require('Backbone')
 //@Require('Class')
 //@Require('CarapaceController')
+//@Require('CarapaceRouter')
 //@Require('ControllerRoute')
 //@Require('List')
 //@Require('Obj')
@@ -34,16 +34,16 @@ var Carapace = Class.extend(Obj, {
         //-------------------------------------------------------------------------------
 
         /**
-         *
-         * @type {*}
+         * @private
+         * @type {CarapaceController}
          */
         this.activeController = null;
 
         /**
          * @private
-         * @type {Backbone.Router}
+         * @type {CarapaceRouter}
          */
-        this.backboneRouter = new Backbone.Router();
+        this.router = new CarapaceRouter();
 
         /**
          * @private
@@ -69,7 +69,7 @@ var Carapace = Class.extend(Obj, {
      * @param annotateRouteList
      */
     registerController: function(controllerClass, annotateRouteList) {
-        var controller = new controllerClass(this.backboneRouter);
+        var controller = new controllerClass(this.router);
         controller.addEventListener(CarapaceController.EventTypes.ACTIVATE_CONTROLLER, this.hearControllerActivateControllerEvent, this);
         this.registeredControllerList.add(controller);
         var _this = this;
@@ -89,7 +89,7 @@ var Carapace = Class.extend(Obj, {
 
         //TODO BRN (QUESTION): Is this the right place to initialize the route? Should this be broken in to some bootstrap?
 
-        controllerRoute.initialize(this.backboneRouter);
+        controllerRoute.initialize(this.router);
     },
 
 
