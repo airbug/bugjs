@@ -39,12 +39,6 @@ var CarapaceController = Class.extend(EventDispatcher, {
 
         /**
          * @private
-         * @type {Publisher}
-         */
-        this.apiPublisher = new Publisher();
-
-        /**
-         * @private
          * @type {*}
          */
         this.containerTop = null;
@@ -66,13 +60,6 @@ var CarapaceController = Class.extend(EventDispatcher, {
     //-------------------------------------------------------------------------------
     // Getters and Setters
     //-------------------------------------------------------------------------------
-
-    /**
-     * @return {Publisher}
-     */
-    getApiPublisher: function() {
-        return this.publisher;
-    },
 
     /**
      * @return {CarapaceContainer}

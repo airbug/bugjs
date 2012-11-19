@@ -20,7 +20,7 @@ var CarapaceContainer = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(apiPublisher) {
+    _constructor: function() {
 
         this._super();
 
@@ -34,12 +34,6 @@ var CarapaceContainer = Class.extend(Obj, {
          * @type {boolean}
          */
         this.activated = false;
-
-        /**
-         * @private
-         * @type {Publisher}
-         */
-        this.apiPublisher = apiPublisher;
 
         /**
          * @private
