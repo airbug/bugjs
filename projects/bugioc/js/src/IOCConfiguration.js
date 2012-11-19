@@ -2,23 +2,24 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('HashTableEntry')
+//@Export('IOCConfiguration')
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('Set')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var HashTableEntry = Class.extend(Obj, {
+var IOCConfiguration = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(key, value) {
+    _constructor: function(configurationClass) {
 
         this._super();
 
@@ -29,15 +30,15 @@ var HashTableEntry = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {*}
+         * @type {Class}
          */
-        this.key = key;
+        this.configurationClass = configurationClass;
 
         /**
          * @private
-         * @type {*}
+         * @type {Set<IOCModule>}
          */
-        this.value = value;
+        this.iocModuleSet = new Set();
     },
 
 
@@ -46,24 +47,17 @@ var HashTableEntry = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {*}
+     * @return {string}
      */
-    getKey: function() {
-        return this.key;
+    getConfigurationClass: function() {
+        return this.configurationClass;
     },
 
     /**
-     * @return {*}
+     * @return {Set<IOCModule>}
      */
-    getValue: function() {
-        return this.value;
-    },
-
-    /**
-     * @param {*} value
-     */
-    setValue: function(value) {
-        this.value = value;
+    getIOCModuleSet: function() {
+        return this.iocModuleSet;
     },
 
 
@@ -72,19 +66,40 @@ var HashTableEntry = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {string}
+     * @param {*} value
+     * @return {boolean}
      */
-    toString: function() {
-        var output = "{";
-        output += "  key:" + this.key + ",\n";
-        output += "  value:" + this.value + "\n";
-        output += "}";
-        return output;
-    }
+    equals: function(value) {
+        if (Class.doesExtend(value, IOCConfiguration)) {
+            return Obj.equals(value.getConfigurationClass(), this.getConfigurationClass());
+        }
+        return false;
+    },
+
+    /**
+     * @return {number}
+     */
+    hashCode: function() {
+        if (!this._hashCode) {
+            this._hashCode = Obj.hashCode("[IOCConfiguration]" + Obj.hashCode(this.configurationClass));
+        }
+        return this._hashCode;
+    },
 
 
     //-------------------------------------------------------------------------------
     // Class Methods
     //-------------------------------------------------------------------------------
 
+    /**
+     * @param {IOCModule} iocModule
+     */
+    addIOCModule: function(iocModule) {
+        if (!this.iocModuleSet.contains(iocModule)) {
+            this.iocModuleSet.add(iocModule);
+            iocModule.setIOCConfiguration(this);
+        } else {
+            throw new Error("Configuration already contains an IOCModule by this name");
+        }
+    }
 });

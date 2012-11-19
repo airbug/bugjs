@@ -83,8 +83,6 @@ Annotate.annotationMap = new Map();
  */
 Annotate.annotationProcessorMap = new Map();
 
-Annotate.processingAnnotationsTimeout = null;
-
 
 //-------------------------------------------------------------------------------
 // Static Methods
@@ -107,6 +105,15 @@ Annotate.annotation = function(annotationType) {
 };
 
 /**
+ * @param {string} annotationType
+ * @return {List<Annotation>}
+ */
+Annotate.getAnnotationsByType = function(annotationType) {
+    //TODO BRN (QUESTION): Should we clone this list to prevent breakage?
+    return Annotate.annotationMap.get(annotationType);
+};
+
+/**
  * @param {Annotation} annotation
  */
 Annotate.processAnnotation = function(annotation) {
@@ -118,6 +125,10 @@ Annotate.processAnnotation = function(annotation) {
     }
 };
 
+/**
+ * @param {string} annotationType
+ * @param {function(Annotation)} annotationProcessorFunction
+ */
 Annotate.registerAnnotationProcessor = function(annotationType, annotationProcessorFunction) {
     var annotationProcessorTypeList = Annotate.annotationProcessorMap.get(annotationType);
     if (!annotationProcessorTypeList) {

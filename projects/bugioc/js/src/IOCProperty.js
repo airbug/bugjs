@@ -2,7 +2,7 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('GraphNode')
+//@Export('IOCProperty')
 
 //@Require('Class')
 //@Require('Obj')
@@ -12,13 +12,13 @@
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var GraphNode = Class.extend(Obj, {
+var IOCProperty = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(value) {
+    _constructor: function(name, ref) {
 
         this._super();
 
@@ -29,9 +29,15 @@ var GraphNode = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {*}
+         * @type {string}
          */
-        this.value = value;
+        this.name = name;
+
+        /**
+         * @private
+         * @type {string}
+         */
+        this.ref = ref;
     },
 
 
@@ -40,10 +46,17 @@ var GraphNode = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {*}
+     * @return {string}
      */
-    getValue: function() {
-        return this.value;
+    getName: function() {
+        return this.name;
+    },
+
+    /**
+     * @return {string}
+     */
+    getRef: function() {
+        return this.ref;
     },
 
 
@@ -56,9 +69,8 @@ var GraphNode = Class.extend(Obj, {
      * @return {boolean}
      */
     equals: function(value) {
-        if (Class.doesExtend(value, GraphNode)) {
-            var value = value.getValue();
-            return Obj.equals(value, this.value);
+        if (Class.doesExtend(value, IOCProperty)) {
+            return Obj.equals(value.getName(), this.getName());
         }
         return false;
     },
@@ -68,19 +80,8 @@ var GraphNode = Class.extend(Obj, {
      */
     hashCode: function() {
         if (!this._hashCode) {
-            this._hashCode = Obj.hashCode("[GraphNode]" + Obj.hashCode(this.value));
+            this._hashCode = Obj.hashCode("[IOCProperty]" + Obj.hashCode(this.name));
         }
         return this._hashCode;
-    },
-
-    /**
-     * @return {string}
-     */
-    toString: function() {
-        var output = "";
-        output += "{\n";
-        output += "  " + this.value.toString() + "\n";
-        output += "}\n";
-        return output;
     }
 });

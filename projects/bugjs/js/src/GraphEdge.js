@@ -65,6 +65,10 @@ var GraphEdge = Class.extend(Obj, {
     // Object Implementation
     //-------------------------------------------------------------------------------
 
+    /**
+     * @param {*} value
+     * @return {boolean}
+     */
     equals: function(value) {
         if (Class.doesExtend(value, GraphEdge)) {
             return (Obj.equals(value.getFromNode(), this.getFromNode()) && Obj.equals(value.getToNode(), this.getToNode()));
@@ -72,6 +76,9 @@ var GraphEdge = Class.extend(Obj, {
         return false;
     },
 
+    /**
+     * @return {number}
+     */
     hashCode: function() {
         if (!this._hashCode) {
             this._hashCode = Obj.hashCode("[GraphEdge]" + Obj.hashCode(this.fromNode) + "_" + Obj.hashCode(this.toNode));

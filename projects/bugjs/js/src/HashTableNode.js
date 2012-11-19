@@ -36,9 +36,15 @@ var HashTableNode = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {Array<HashTableEntry>}
+         * @type {Array<*>}
          */
-        this.hashTableEntryArray = [];
+        this.hashTableKeyArray = [];
+
+        /**
+         * @private
+         * @type {Array<*>}
+         */
+        this.hashTableValueArray = [];
     },
 
 
@@ -64,8 +70,13 @@ var HashTableNode = Class.extend(Obj, {
     toString: function() {
         var output = "{";
         output += "  count:" + this.getCount() + ",\n";
-        output += "  hashTableEntryArray:[\n";
-        this.hashTableEntryArray.forEach(function(value) {
+        output += "  hashTableKeyArray:[\n";
+        this.hashTableKeyArray.forEach(function(value) {
+            output += value.toString() + ",";
+        });
+        output += "  ]";
+        output += "  hashTableValueArray:[\n";
+        this.hashTableValueArray.forEach(function(value) {
             output += value.toString() + ",";
         });
         output += "  ]";
@@ -83,9 +94,9 @@ var HashTableNode = Class.extend(Obj, {
      * @return {boolean}
      */
     containsKey: function(key) {
-        for (var i = 0, size = this.hashTableEntryArray.length; i < size; i++) {
-            var hashTableEntry = this.hashTableEntryArray[i];
-            if (Obj.equals(key, hashTableEntry.getKey())) {
+        for (var i = 0, size = this.hashTableKeyArray.length; i < size; i++) {
+            var hashTableKey = this.hashTableKeyArray[i];
+            if (Obj.equals(key, hashTableKey)) {
                 return true;
             }
         }
@@ -97,9 +108,9 @@ var HashTableNode = Class.extend(Obj, {
      * @return {boolean}
      */
     containsValue: function(value) {
-        for (var i = 0, size = this.hashTableEntryArray.length; i < size; i++) {
-            var hashTableEntry = this.hashTableEntryArray[i];
-            if (Obj.equals(value, hashTableEntry.getValue())) {
+        for (var i = 0, size = this.hashTableValueArray.length; i < size; i++) {
+            var hashTableValue = this.hashTableValueArray[i];
+            if (Obj.equals(value, hashTableValue)) {
                 return true;
             }
         }
@@ -111,10 +122,10 @@ var HashTableNode = Class.extend(Obj, {
      * @return {*}
      */
     get: function(key) {
-        for (var i = 0, size = this.hashTableEntryArray.length; i < size; i++) {
-            var hashTableEntry = this.hashTableEntryArray[i];
-            if (Obj.equals(key, hashTableEntry.getKey())) {
-                return hashTableEntry.getValue();
+        for (var i = 0, size = this.hashTableKeyArray.length; i < size; i++) {
+            var hashTableKey = this.hashTableKeyArray[i];
+            if (Obj.equals(key, hashTableKey)) {
+                return this.hashTableValueArray[i];
             }
         }
         return undefined;
@@ -124,24 +135,14 @@ var HashTableNode = Class.extend(Obj, {
      * @return {Array<*>}
      */
     getKeyArray: function() {
-        var keyArray = [];
-        for (var i = 0, size = this.hashTableEntryArray.length; i < size; i++) {
-            var hashTableEntry = this.hashTableEntryArray[i];
-            keyArray.push(hashTableEntry.getKey());
-        }
-        return keyArray;
+        return this.hashTableKeyArray;
     },
 
     /**
      * @return {Array<*>}
      */
     getValueArray: function() {
-        var valueArray = [];
-        for (var i = 0, size = this.hashTableEntryArray.length; i < size; i++) {
-            var hashTableEntry = this.hashTableEntryArray[i];
-            valueArray.push(hashTableEntry.getValue());
-        }
-        return valueArray;
+        return this.hashTableValueArray;
     },
 
     /**
@@ -150,19 +151,19 @@ var HashTableNode = Class.extend(Obj, {
      * @return {*}
      */
     put: function(key, value) {
-        for (var i = 0, size = this.hashTableEntryArray.length; i < size; i++) {
-            var hashTableEntry = this.hashTableEntryArray[i];
-            if (Obj.equals(key, hashTableEntry.getKey())) {
-                var previousValue = hashTableEntry.getValue();
-                hashTableEntry.setValue(value);
+        for (var i = 0, size = this.hashTableKeyArray.length; i < size; i++) {
+            var hashTableKey = this.hashTableKeyArray[i];
+            if (Obj.equals(key, hashTableKey)) {
+                var previousValue = this.hashTableValueArray[i];
+                this.hashTableValueArray[i] = value;
                 return previousValue;
             }
         }
 
         //NOTE BRN: If we make it to here it means we did not find a hash table entry that already exists for this key.
 
-        var newHashTableEntry = new HashTableEntry(key, value);
-        this.hashTableEntryArray.push(newHashTableEntry);
+        this.hashTableKeyArray.push(key);
+        this.hashTableValueArray.push(value);
         this.count++;
         return undefined;
     },
@@ -172,12 +173,14 @@ var HashTableNode = Class.extend(Obj, {
      * @return {*}
      */
     remove: function(key) {
-        for (var i = 0, size = this.hashTableEntryArray.length; i < size; i++) {
-            var hashTableEntry = this.hashTableEntryArray[i];
-            if (Obj.equals(key, hashTableEntry.getKey())) {
-                this.hashTableEntryArray.splice(i, 1);
+        for (var i = 0, size = this.hashTableKeyArray.length; i < size; i++) {
+            var hashTableKey = this.hashTableKeyArray[i];
+            if (Obj.equals(key, hashTableKey)) {
+                var removedValue = this.hashTableValueArray[i];
+                this.hashTableKeyArray.splice(i, 1);
+                this.hashTableValueArray.splice(i, 1);
                 this.count--;
-                return hashTableEntry.getValue();
+                return removedValue;
             }
         }
         return undefined;

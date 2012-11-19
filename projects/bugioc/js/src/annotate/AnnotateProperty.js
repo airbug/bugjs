@@ -2,7 +2,7 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('GraphNode')
+//@Export('AnnotateProperty')
 
 //@Require('Class')
 //@Require('Obj')
@@ -12,13 +12,13 @@
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var GraphNode = Class.extend(Obj, {
+var AnnotateProperty = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(value) {
+    _constructor: function(propertyName) {
 
         this._super();
 
@@ -29,9 +29,15 @@ var GraphNode = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {*}
+         * @type {string}
          */
-        this.value = value;
+        this.propertyName = propertyName;
+
+        /**
+         * @private
+         * @type {string}
+         */
+        this.propertyRef = null;
     },
 
 
@@ -40,47 +46,43 @@ var GraphNode = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {*}
+     *
+     * @return {string}
      */
-    getValue: function() {
-        return this.value;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Object Implementation
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {*} value
-     * @return {boolean}
-     */
-    equals: function(value) {
-        if (Class.doesExtend(value, GraphNode)) {
-            var value = value.getValue();
-            return Obj.equals(value, this.value);
-        }
-        return false;
-    },
-
-    /**
-     * @return {number}
-     */
-    hashCode: function() {
-        if (!this._hashCode) {
-            this._hashCode = Obj.hashCode("[GraphNode]" + Obj.hashCode(this.value));
-        }
-        return this._hashCode;
+    getName: function() {
+        return this.propertyName;
     },
 
     /**
      * @return {string}
      */
-    toString: function() {
-        var output = "";
-        output += "{\n";
-        output += "  " + this.value.toString() + "\n";
-        output += "}\n";
-        return output;
+    getRef: function() {
+        return this.propertyRef;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Class Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {string} propertyRef
+     */
+    ref: function(propertyRef) {
+        this.propertyRef = propertyRef;
+        return this;
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Static Methods
+//-------------------------------------------------------------------------------
+
+/**
+ * @param {string} propertyName
+ * @return {AnnotateProperty}
+ */
+AnnotateProperty.property = function(propertyName) {
+    return new AnnotateProperty(propertyName);
+};

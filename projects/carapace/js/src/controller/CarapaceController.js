@@ -22,7 +22,7 @@ var CarapaceController = Class.extend(EventDispatcher, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(router) {
+    _constructor: function() {
 
         this._super();
 
@@ -54,12 +54,6 @@ var CarapaceController = Class.extend(EventDispatcher, {
          * @type {boolean}
          */
         this.created = false;
-
-        /**
-         * @private
-         * @type {CarapaceRouter}
-         */
-        this.router = router;
 
         /**
          * @private

@@ -2,7 +2,7 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('GraphNode')
+//@Export('AnnotateArg')
 
 //@Require('Class')
 //@Require('Obj')
@@ -12,13 +12,13 @@
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var GraphNode = Class.extend(Obj, {
+var AnnotateArg = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(value) {
+    _constructor: function() {
 
         this._super();
 
@@ -29,9 +29,9 @@ var GraphNode = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {*}
+         * @type {string}
          */
-        this.value = value;
+        this.argRef = null;
     },
 
 
@@ -40,47 +40,34 @@ var GraphNode = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {*}
-     */
-    getValue: function() {
-        return this.value;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Object Implementation
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {*} value
-     * @return {boolean}
-     */
-    equals: function(value) {
-        if (Class.doesExtend(value, GraphNode)) {
-            var value = value.getValue();
-            return Obj.equals(value, this.value);
-        }
-        return false;
-    },
-
-    /**
-     * @return {number}
-     */
-    hashCode: function() {
-        if (!this._hashCode) {
-            this._hashCode = Obj.hashCode("[GraphNode]" + Obj.hashCode(this.value));
-        }
-        return this._hashCode;
-    },
-
-    /**
      * @return {string}
      */
-    toString: function() {
-        var output = "";
-        output += "{\n";
-        output += "  " + this.value.toString() + "\n";
-        output += "}\n";
-        return output;
+    getRef: function() {
+        return this.argRef;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Class Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {string} argRef
+     */
+    ref: function(argRef) {
+        this.argRef = argRef;
+        return this;
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Static Methods
+//-------------------------------------------------------------------------------
+
+/**
+ * @return {AnnotateArg}
+ */
+AnnotateArg.arg = function() {
+    return new AnnotateArg();
+};

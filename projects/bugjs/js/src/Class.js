@@ -109,8 +109,8 @@ Class.extend = function(_class, declaration) {
     }
     var newClass = function() {
         if (!Class.extending && this._constructor) {
-            this._constructor.apply(this, arguments);
             this._class = newClass;
+            this._constructor.apply(this, arguments);
         }
     };
     newClass.prototype = prototype;
@@ -157,7 +157,7 @@ Class.doesExtend = function(value, _class) {
  * @return {boolean}
  */
 Class.doesImplement = function(value, _interface) {
-    if (Class.doesExtend(value, Base)) {
+    if (TypeUtil.isFunction(value.getClass)) {
         for (var i = 0, size = value.getClass().getInterfaces().length; i < size; i++) {
             var implementedInterface = value.getClass().getInterfaces()[i];
             var implementedInterfaceInstance = new implementedInterface();

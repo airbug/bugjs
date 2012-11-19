@@ -94,6 +94,12 @@ var Graph = Class.extend(Obj, {
     addEdgeFromValueToValue: function(fromValue, toValue) {
         var fromNode = this.getNode(fromValue);
         var toNode = this.getNode(toValue);
+        if (!fromNode) {
+            throw new Error("GraphNode for the fromValue does not exist");
+        }
+        if (!toNode) {
+            throw new Error("GraphNode for the toValue does not exist");
+        }
         var edge = new GraphEdge(fromNode, toNode);
         this.addEdge(edge);
     },
@@ -108,10 +114,11 @@ var Graph = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // Private Class Methods
+    // Protected Class Methods
     //-------------------------------------------------------------------------------
 
     /**
+     * @protected
      * @param {GraphEdge} edge
      */
     addEdge: function(edge) {
@@ -135,6 +142,7 @@ var Graph = Class.extend(Obj, {
     },
 
     /**
+     * @protected
      * @param {GraphNode} node
      */
     addNode: function(node) {
