@@ -66,13 +66,13 @@ var AutowiredScan = Class.extend(Obj, {
      */
     processAutowiredAnnotation: function(autowiredAnnotation) {
         var autowiredClass = autowiredAnnotation.getReference();
-        var annotatePropertyList = autowiredAnnotation.getParamList();
+        var propertyAnnotationArray = autowiredAnnotation.getProperties();
         var currentConstructor = autowiredClass.prototype._constructor;
         autowiredClass.prototype._constructor = function() {
             var _this = this;
             currentConstructor.apply(this, arguments);
-            annotatePropertyList.forEach(function(annotateProperty) {
-                _this[annotateProperty.getName()] = BugIOC.generateModuleByName(annotateProperty.getRef());;
+            propertyAnnotationArray.forEach(function(propertyAnnotation) {
+                _this[propertyAnnotation.getName()] = BugIOC.generateModuleByName(propertyAnnotation.getRef());
             });
         };
     }

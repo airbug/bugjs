@@ -2,25 +2,25 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('AnnotateRoute')
+//@Export('PropertyAnnotation')
 
+//@Require('Annotation')
 //@Require('Class')
-//@Require('Obj')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var AnnotateRoute = Class.extend(Obj, {
+var PropertyAnnotation = Class.extend(Annotation, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(route) {
+    _constructor: function(propertyName) {
 
-        this._super();
+        this._super("Property");
 
 
         //-------------------------------------------------------------------------------
@@ -31,7 +31,13 @@ var AnnotateRoute = Class.extend(Obj, {
          * @private
          * @type {string}
          */
-        this.route = route;
+        this.propertyName = propertyName;
+
+        /**
+         * @private
+         * @type {string}
+         */
+        this.propertyRef = null;
     },
 
 
@@ -43,8 +49,28 @@ var AnnotateRoute = Class.extend(Obj, {
      *
      * @return {string}
      */
-    getRoute: function() {
-        return this.route;
+    getName: function() {
+        return this.propertyName;
+    },
+
+    /**
+     * @return {string}
+     */
+    getRef: function() {
+        return this.propertyRef;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Class Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {string} propertyRef
+     */
+    ref: function(propertyRef) {
+        this.propertyRef = propertyRef;
+        return this;
     }
 });
 
@@ -54,9 +80,9 @@ var AnnotateRoute = Class.extend(Obj, {
 //-------------------------------------------------------------------------------
 
 /**
- * @param {string} route
- * @return {AnnotateRoute}
+ * @param {string} propertyName
+ * @return {PropertyAnnotation}
  */
-AnnotateRoute.route = function(route) {
-    return new AnnotateRoute(route);
+PropertyAnnotation.property = function(propertyName) {
+    return new PropertyAnnotation(propertyName);
 };

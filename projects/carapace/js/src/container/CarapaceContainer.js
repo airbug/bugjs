@@ -121,13 +121,13 @@ var CarapaceContainer = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Array<*>} routerArgs
+     * @param {Array<*>} routingArgs
      */
-    activate: function(routerArgs) {
+    activate: function(routingArgs) {
         if (!this.activated) {
             this.activated = true;
-            this.activateContainer(routerArgs);
-            this.activateContainerChildren(routerArgs);
+            this.activateContainer(routingArgs);
+            this.activateContainerChildren(routingArgs);
         }
     },
 
@@ -199,7 +199,7 @@ var CarapaceContainer = Class.extend(Obj, {
         this.viewTop.addViewChild(containerChild.getViewTop(), domQuery);
 
         if (this.isActivated()) {
-            //TODO BRN: Should we pass in the routerArgs here? How do we get a reference to those?
+            //TODO BRN: Should we pass in the routingArgs here? How do we get a reference to those?
             containerChild.activate([]);
         }
     },
@@ -308,19 +308,19 @@ var CarapaceContainer = Class.extend(Obj, {
 
     /**
      * @protected
-     * @param {Array<*>} routerArgs
+     * @param {Array<*>} routingArgs
      */
-    activateContainer: function(routerArgs) {
+    activateContainer: function(routingArgs) {
 
     },
 
     /**
      * @protected
-     * @param {Array<*>} routerArgs
+     * @param {Array<*>} routingArgs
      */
-    activateContainerChildren: function(routerArgs) {
+    activateContainerChildren: function(routingArgs) {
         this.containerChildList.forEach(function(containerChild) {
-            containerChild.activate(routerArgs);
+            containerChild.activate(routingArgs);
         });
     },
 

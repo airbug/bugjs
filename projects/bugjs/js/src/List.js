@@ -6,6 +6,7 @@
 
 //@Require('Class')
 //@Require('Collection')
+//@Require('Obj')
 
 
 //-------------------------------------------------------------------------------
@@ -170,7 +171,12 @@ var List = Class.extend(Collection, {
      * @return {number}
      */
     indexOfFirst: function(value) {
-        return this.valueArray.indexOf(value);
+        for (var i = 0, size = this.valueArray.length; i < size; i++) {
+            if (Obj.equals(this.valueArray[i], value)) {
+                return i;
+            }
+        }
+        return -1;
     },
 
     /**
@@ -178,7 +184,12 @@ var List = Class.extend(Collection, {
      * @return {number}
      */
     indexOfLast: function(value) {
-        return this.valueArray.lastIndexOf(value);
+        for (var size = this.valueArray.length, i = size - 1; i >= 0; i--) {
+            if (Obj.equals(this.valueArray[i], value)) {
+                return i;
+            }
+        }
+        return -1;
     },
 
     /**

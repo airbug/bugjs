@@ -43,6 +43,18 @@ var IEventDispatcher = Interface.declare({
     /**
      * @param {string} eventType
      * @param {function(Event)} listenerFunction
+     * @param {?Object} listenerContext (optional)
+     */
+    hasEventListener: function(eventType, listenerFunction, listenerContext) {},
+
+    /**
+     *
+     */
+    removeAllListeners: function() {},
+
+    /**
+     * @param {string} eventType
+     * @param {function(Event)} listenerFunction
      * @param {Object} listenerContext
      */
     removeEventListener: function(eventType, listenerFunction, listenerContext) {}

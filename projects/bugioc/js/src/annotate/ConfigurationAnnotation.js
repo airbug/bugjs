@@ -2,17 +2,17 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('AnnotateArg')
+//@Export('ConfigurationAnnotation')
 
+//@Require('Annotation')
 //@Require('Class')
-//@Require('Obj')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var AnnotateArg = Class.extend(Obj, {
+var ConfigurationAnnotation = Class.extend(Annotation, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -20,7 +20,7 @@ var AnnotateArg = Class.extend(Obj, {
 
     _constructor: function() {
 
-        this._super();
+        this._super("Configuration");
 
 
         //-------------------------------------------------------------------------------
@@ -29,9 +29,9 @@ var AnnotateArg = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {string}
+         * @type {Array<ModuleAnnotation>}
          */
-        this.argRef = null;
+        this.moduleArray = [];
     },
 
 
@@ -40,10 +40,10 @@ var AnnotateArg = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {string}
+     * @return {Array<ModuleAnnotation>}
      */
-    getRef: function() {
-        return this.argRef;
+    getModules: function() {
+        return this.moduleArray;
     },
 
 
@@ -52,10 +52,10 @@ var AnnotateArg = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {string} argRef
+     * @param {Array<ModuleAnnotation>} moduleArray
      */
-    ref: function(argRef) {
-        this.argRef = argRef;
+    modules: function(moduleArray) {
+        this.moduleArray = moduleArray;
         return this;
     }
 });
@@ -66,8 +66,8 @@ var AnnotateArg = Class.extend(Obj, {
 //-------------------------------------------------------------------------------
 
 /**
- * @return {AnnotateArg}
+ * @return {ConfigurationAnnotation}
  */
-AnnotateArg.arg = function() {
-    return new AnnotateArg();
+ConfigurationAnnotation.configuration = function() {
+    return new ConfigurationAnnotation();
 };

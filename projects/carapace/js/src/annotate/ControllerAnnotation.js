@@ -2,21 +2,17 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('BugUnit')
+//@Export('ControllerAnnotation')
 
-//@Require('Annotate')
+//@Require('Annotation')
 //@Require('Class')
-//@Require('Obj')
-//@Require('ReportCard')
-//@Require('Set')
-//@Require('TestRunner')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var BugUnit = Class.extend(Obj, {
+var ControllerAnnotation = Class.extend(Annotation, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -24,31 +20,46 @@ var BugUnit = Class.extend(Obj, {
 
     _constructor: function() {
 
-        this._super();
+        this._super("Controller");
+
 
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-    }
+        /**
+         * @private
+         * @type {string}
+         */
+        this.controllerRoute = "";
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     *
+     * @return {string}
+     */
+    getRoute: function() {
+        return this.controllerRoute;
+    },
 
 
     //-------------------------------------------------------------------------------
     // Class Methods
     //-------------------------------------------------------------------------------
 
+    /**
+     * @param {string} controllerRoute
+     */
+    route: function(controllerRoute) {
+        this.controllerRoute = controllerRoute;
+        return this;
+    }
 });
-
-
-//-------------------------------------------------------------------------------
-// Static Variables
-//-------------------------------------------------------------------------------
-
-/**
- * @private
- * @type {Set<Test>}
- */
-BugUnit.registeredTestSet = new Set();
 
 
 //-------------------------------------------------------------------------------
@@ -56,23 +67,8 @@ BugUnit.registeredTestSet = new Set();
 //-------------------------------------------------------------------------------
 
 /**
- * @param {Test} test
+ * @return {ControllerAnnotation}
  */
-BugUnit.registerTest = function(test) {
-    if (!BugUnit.registeredTestSet.contains(test)) {
-        BugUnit.registeredTestSet.add(test);
-    }
-};
-
-/**
- * @param {boolean} logResults
- * @return {ReportCard}
- */
-BugUnit.runTests = function(logResults) {
-    var reportCard = new ReportCard();
-    BugUnit.registeredTestSet.forEach(function(test) {
-        var testResult = TestRunner.runTest(test, logResults);
-        reportCard.addTestResult(testResult);
-    });
-    return reportCard;
+ControllerAnnotation.controller = function() {
+    return new ControllerAnnotation();
 };

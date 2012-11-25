@@ -57,8 +57,8 @@ var ControllerScan = Class.extend(Obj, {
         if (controllerAnnotations) {
             controllerAnnotations.forEach(function(annotation) {
                 var controllerClass = annotation.getReference();
-                var annotateRouteList = annotation.getParamList();
-                _this.createController(controllerClass, annotateRouteList);
+                var controllerRoute = annotation.getRoute();
+                _this.createController(controllerClass, controllerRoute);
             });
         }
     },
@@ -71,19 +71,15 @@ var ControllerScan = Class.extend(Obj, {
     /**
      * @private
      * @param {Class} controllerClass
-     * @param {List<AnnotateRoute>} annotateRouteList
+     * @param {string} controllerRoute
      */
-    createController: function(controllerClass, annotateRouteList) {
+    createController: function(controllerClass, controllerRoute) {
         var _this = this;
         if (!this.controllerClassToControllerMap.containsKey(controllerClass)) {
             var controller = new controllerClass();
             this.application.registerController(controller);
-            annotateRouteList.forEach(function(annotateRoute) {
-                var route = annotateRoute.getRoute();
-                var controllerRoute = new ControllerRoute(route, controller);
-                _this.application.registerControllerRoute(controllerRoute);
-            });
             this.controllerClassToControllerMap.put(controllerClass, controller);
+            _this.application.registerControllerRoute(new ControllerRoute(controllerRoute, controller));
         }
     }
 });

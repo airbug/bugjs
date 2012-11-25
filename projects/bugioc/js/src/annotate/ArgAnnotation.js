@@ -2,25 +2,25 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('AnnotateProperty')
+//@Export('ArgAnnotation')
 
+//@Require('Annotation')
 //@Require('Class')
-//@Require('Obj')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var AnnotateProperty = Class.extend(Obj, {
+var ArgAnnotation = Class.extend(Annotation, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(propertyName) {
+    _constructor: function() {
 
-        this._super();
+        this._super("Arg");
 
 
         //-------------------------------------------------------------------------------
@@ -31,13 +31,7 @@ var AnnotateProperty = Class.extend(Obj, {
          * @private
          * @type {string}
          */
-        this.propertyName = propertyName;
-
-        /**
-         * @private
-         * @type {string}
-         */
-        this.propertyRef = null;
+        this.argRef = null;
     },
 
 
@@ -46,18 +40,10 @@ var AnnotateProperty = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     *
-     * @return {string}
-     */
-    getName: function() {
-        return this.propertyName;
-    },
-
-    /**
      * @return {string}
      */
     getRef: function() {
-        return this.propertyRef;
+        return this.argRef;
     },
 
 
@@ -66,10 +52,10 @@ var AnnotateProperty = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {string} propertyRef
+     * @param {string} argRef
      */
-    ref: function(propertyRef) {
-        this.propertyRef = propertyRef;
+    ref: function(argRef) {
+        this.argRef = argRef;
         return this;
     }
 });
@@ -80,9 +66,8 @@ var AnnotateProperty = Class.extend(Obj, {
 //-------------------------------------------------------------------------------
 
 /**
- * @param {string} propertyName
- * @return {AnnotateProperty}
+ * @return {ArgAnnotation}
  */
-AnnotateProperty.property = function(propertyName) {
-    return new AnnotateProperty(propertyName);
+ArgAnnotation.arg = function() {
+    return new ArgAnnotation();
 };

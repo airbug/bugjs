@@ -157,7 +157,7 @@ Class.doesExtend = function(value, _class) {
  * @return {boolean}
  */
 Class.doesImplement = function(value, _interface) {
-    if (TypeUtil.isFunction(value.getClass)) {
+    if (TypeUtil.isObject(value) && TypeUtil.isFunction(value.getClass)) {
         for (var i = 0, size = value.getClass().getInterfaces().length; i < size; i++) {
             var implementedInterface = value.getClass().getInterfaces()[i];
             var implementedInterfaceInstance = new implementedInterface();

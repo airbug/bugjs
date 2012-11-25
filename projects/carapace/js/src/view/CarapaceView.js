@@ -53,7 +53,7 @@ var CarapaceView = Class.adapt(Backbone.View, {
          * @private
          * @type {Object}
          */
-        this.attributes = {};
+        this.attributes = this.attributes ? JsonUtil.clone(this.attributes) : {};
 
         /**
          * @private
@@ -95,8 +95,7 @@ var CarapaceView = Class.adapt(Backbone.View, {
          * @private
          * @type {string}
          */
-        this.cid = _.uniqueId('view');
-        this._configure(options || {});
+        this.cid = "";
 
         Proxy.proxy(this, this.eventDispatcher, [
             "getParentDispatcher",
@@ -105,6 +104,8 @@ var CarapaceView = Class.adapt(Backbone.View, {
             "dispatchEvent",
             "removeEventListener"
         ]);
+
+        this.configure(options);
     },
 
 
@@ -252,6 +253,20 @@ var CarapaceView = Class.adapt(Backbone.View, {
     //-------------------------------------------------------------------------------
     // Protected Class Methods
     //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     * @param {Object} options
+     */
+    configure: function(options) {
+        options = options || {};
+        this.cid = _.uniqueId('view');
+        if (options.attributes) {
+            JsonUtil.munge(options.attributes, this.attributes);
+            delete options.attributes;
+        }
+        this._configure(options);
+    },
 
     /**
      * @protected

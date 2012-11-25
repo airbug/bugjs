@@ -5,14 +5,14 @@
 //@Export('ControllerRoute')
 
 //@Require('Class')
-//@Require('Obj')
+//@Require('EventDispatcher')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ControllerRoute = Class.extend(Obj, {
+var ControllerRoute = Class.extend(EventDispatcher, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -44,24 +44,69 @@ var ControllerRoute = Class.extend(Obj, {
          * @type {string}
          */
         this.route = route;
+
+        /**
+         * @private
+         * @type {string}
+         */
+        this.routeId = "ControllerRouter" + this.getInternalId();
     },
 
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {CarapaceController}
+     */
+    getController: function() {
+        return this.controller;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Public Class Methods
     //-------------------------------------------------------------------------------
 
     /**
      * @param {CarapaceRouter} router
      */
-    initialize: function(router) {
+    setupRoute: function(router) {
         if (!this.initialized) {
             this.initialized = true;
-            var name = "ControllerRouter" + this.getInternalId();
             var _this = this;
-            router.route(this.route, name, function() {
-                _this.controller.processRoute(arguments);
+            router.route(this.route, this.routeId, function() {
+                _this.requestRouting(arguments);
             });
         }
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Protected Class Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     * @param {Array<*>} routingArgs
+     */
+    requestRouting: function(routingArgs) {
+        var routingRequest = new RoutingRequest(this, routingArgs);
+        this.dispatchEvent(new Event(ControllerRoute.EventType.ROUTING_REQUESTED, {
+            routingRequest: routingRequest
+        }));
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Static Variables
+//-------------------------------------------------------------------------------
+
+/**
+ * @enum {string}
+ */
+ControllerRoute.EventType = {
+    ROUTING_REQUESTED: "ControlerRoute:RoutingRequested"
+};

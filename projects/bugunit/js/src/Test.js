@@ -180,7 +180,7 @@ var Test = Class.extend(EventDispatcher, {
      */
     dispatchAssertionResultEvent: function(valid, message) {
         var assertionResult = new AssertionResult(valid, message);
-        this.dispatchEvent(new Event(Test.EventTypes.ASSERTION_RESULT, assertionResult));
+        this.dispatchEvent(new Event(Test.EventType.ASSERTION_RESULT, assertionResult));
     },
 
     /**
@@ -228,6 +228,6 @@ var Test = Class.extend(EventDispatcher, {
 // Static Event Types
 //-------------------------------------------------------------------------------
 
-Test.EventTypes = {
+Test.EventType = {
     ASSERTION_RESULT: 'assertion_result'
 };

@@ -2,21 +2,17 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('BugUnit')
+//@Export('AutowiredAnnotation')
 
-//@Require('Annotate')
+//@Require('Annotation')
 //@Require('Class')
-//@Require('Obj')
-//@Require('ReportCard')
-//@Require('Set')
-//@Require('TestRunner')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var BugUnit = Class.extend(Obj, {
+var AutowiredAnnotation = Class.extend(Annotation, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -24,31 +20,45 @@ var BugUnit = Class.extend(Obj, {
 
     _constructor: function() {
 
-        this._super();
+        this._super("Autowired");
+
 
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-    }
+        /**
+         * @private
+         * @type {Array<PropertyAnnotation>}
+         */
+        this.propertyArray = [];
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {Array<PropertyAnnotation>}
+     */
+    getProperties: function() {
+        return this.propertyArray;
+    },
 
 
     //-------------------------------------------------------------------------------
     // Class Methods
     //-------------------------------------------------------------------------------
 
+    /**
+     * @param {Array<PropertyAnnotation>} propertyArray
+     */
+    properties: function(propertyArray) {
+        this.propertyArray = propertyArray;
+        return this;
+    }
 });
-
-
-//-------------------------------------------------------------------------------
-// Static Variables
-//-------------------------------------------------------------------------------
-
-/**
- * @private
- * @type {Set<Test>}
- */
-BugUnit.registeredTestSet = new Set();
 
 
 //-------------------------------------------------------------------------------
@@ -56,23 +66,8 @@ BugUnit.registeredTestSet = new Set();
 //-------------------------------------------------------------------------------
 
 /**
- * @param {Test} test
+ * @return {ConfigurationAnnotation}
  */
-BugUnit.registerTest = function(test) {
-    if (!BugUnit.registeredTestSet.contains(test)) {
-        BugUnit.registeredTestSet.add(test);
-    }
-};
-
-/**
- * @param {boolean} logResults
- * @return {ReportCard}
- */
-BugUnit.runTests = function(logResults) {
-    var reportCard = new ReportCard();
-    BugUnit.registeredTestSet.forEach(function(test) {
-        var testResult = TestRunner.runTest(test, logResults);
-        reportCard.addTestResult(testResult);
-    });
-    return reportCard;
+AutowiredAnnotation.autowired = function() {
+    return new AutowiredAnnotation();
 };

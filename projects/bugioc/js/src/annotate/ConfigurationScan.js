@@ -55,8 +55,8 @@ var ConfigurationScan = Class.extend(Obj, {
         if (configurationAnnotations) {
             configurationAnnotations.forEach(function(annotation) {
                 var configurationClass = annotation.getReference();
-                var annotateModuleList = annotation.getParamList();
-                _this.createIOCConfiguration(configurationClass, annotateModuleList);
+                var moduleAnnotationArray = annotation.getModules();
+                _this.createIOCConfiguration(configurationClass, moduleAnnotationArray);
             });
             BugIOC.process();
         }
@@ -69,24 +69,24 @@ var ConfigurationScan = Class.extend(Obj, {
 
     /**
      * @private
-     * @param {AnnotateArg} annotateArg
+     * @param {ArgAnnotation} argAnnotation
      * @return {IOCArg}
      */
-    createIOCArg: function(annotateArg) {
-        return new IOCArg(annotateArg.getRef());
+    createIOCArg: function(argAnnotation) {
+        return new IOCArg(argAnnotation.getRef());
     },
 
     /**
      * @private
      * @param {Class} configurationClass
-     * @param {List<AnnotateModule>} annotateModuleList
+     * @param {Array<ModuleAnnotation>} moduleAnnotationArray
      */
-    createIOCConfiguration: function(configurationClass, annotateModuleList) {
+    createIOCConfiguration: function(configurationClass, moduleAnnotationArray) {
         var _this = this;
         if (!this.configurationClassToIOCConfigurationMap.containsKey(configurationClass)) {
             var iocConfiguration = new IOCConfiguration(configurationClass);
-            annotateModuleList.forEach(function(annotateModule) {
-                var iocModule = _this.createIOCModule(annotateModule);
+            moduleAnnotationArray.forEach(function(moduleAnnotation) {
+                var iocModule = _this.createIOCModule(moduleAnnotation);
                 iocConfiguration.addIOCModule(iocModule)
             });
             this.configurationClassToIOCConfigurationMap.put(configurationClass, iocConfiguration);
@@ -96,20 +96,20 @@ var ConfigurationScan = Class.extend(Obj, {
 
     /**
      * @private
-     * @param {AnnotateModule} annotateModule
+     * @param {ModuleAnnotation} moduleAnnotation
      * @return {IOCModule}
      */
-    createIOCModule: function(annotateModule) {
+    createIOCModule: function(moduleAnnotation) {
         var _this = this;
-        var iocModule = new IOCModule(annotateModule.getMethodName(), annotateModule.getName(), annotateModule.getScope());
-        var annotateArgArray = annotateModule.getArgs();
-        annotateArgArray.forEach(function(annotateArg) {
-            var iocArg = _this.createIOCArg(annotateArg);
+        var iocModule = new IOCModule(moduleAnnotation.getMethodName(), moduleAnnotation.getName(), moduleAnnotation.getScope());
+        var argAnnotationArray = moduleAnnotation.getArgs();
+        argAnnotationArray.forEach(function(argAnnotation) {
+            var iocArg = _this.createIOCArg(argAnnotation);
             iocModule.addIOCArg(iocArg);
         });
-        var annotatePropertyArray = annotateModule.getProperties();
-        annotatePropertyArray.forEach(function(annotateProperty) {
-            var iocProperty = _this.createIOCProperty(annotateProperty);
+        var propertyAnnotationArray = moduleAnnotation.getProperties();
+        propertyAnnotationArray.forEach(function(propertyAnnotation) {
+            var iocProperty = _this.createIOCProperty(propertyAnnotation);
             iocModule.addIOCProperty(iocProperty);
         });
         return iocModule;
@@ -117,10 +117,10 @@ var ConfigurationScan = Class.extend(Obj, {
 
     /**
      * @private
-     * @param {AnnotateProperty} annotateProperty
+     * @param {PropertyAnnotation} propertyAnnotation
      * @return {IOCProperty}
      */
-    createIOCProperty: function(annotateProperty) {
-        return new IOCProperty(annotateProperty.getName(), annotateProperty.getRef());
+    createIOCProperty: function(propertyAnnotation) {
+        return new IOCProperty(propertyAnnotation.getName(), propertyAnnotation.getRef());
     }
 });

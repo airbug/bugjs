@@ -2,17 +2,17 @@
 // Requires
 //-------------------------------------------------------------------------------
 
-//@Export('AnnotateModule')
+//@Export('ModuleAnnotation')
 
+//@Require('Annnotation')
 //@Require('Class')
-//@Require('Obj')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var AnnotateModule = Class.extend(Obj, {
+var ModuleAnnotation = Class.extend(Annotation, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -20,7 +20,7 @@ var AnnotateModule = Class.extend(Obj, {
 
     _constructor: function(moduleMethodName) {
 
-        this._super();
+        this._super("Module");
 
 
         //-------------------------------------------------------------------------------
@@ -29,7 +29,7 @@ var AnnotateModule = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {Array<AnnotateArg>}
+         * @type {Array<ArgAnnotation>}
          */
         this.moduleArgs = [];
 
@@ -47,13 +47,13 @@ var AnnotateModule = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {Array<AnnotateProperty>}
+         * @type {Array<PropertyAnnotation>}
          */
         this.moduleProperties = [];
 
         /**
          * @private
-         * @type {AnnotateModule.Scope}
+         * @type {ModuleAnnotation.Scope}
          */
         this.moduleScope = null;
     },
@@ -64,7 +64,7 @@ var AnnotateModule = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {Array<AnnotateArg>}
+     * @return {Array<ArgAnnotation>}
      */
     getArgs: function() {
         return this.moduleArgs;
@@ -85,14 +85,14 @@ var AnnotateModule = Class.extend(Obj, {
     },
 
     /**
-     * @return {Array<AnnotateProperty>}
+     * @return {Array<PropertyAnnotation>}
      */
     getProperties: function() {
         return this.moduleProperties;
     },
 
     /**
-     * @return {AnnotateModule.Scope}
+     * @return {ModuleAnnotation.Scope}
      */
     getScope: function() {
         return this.moduleScope;
@@ -104,7 +104,7 @@ var AnnotateModule = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Array<AnnotateArg>} moduleArgs
+     * @param {Array<ArgAnnotation>} moduleArgs
      */
     args: function(moduleArgs) {
         this.moduleArgs = moduleArgs;
@@ -120,7 +120,7 @@ var AnnotateModule = Class.extend(Obj, {
     },
 
     /**
-     * @param {Array<AnnotateProperty>} moduleProperties
+     * @param {Array<PropertyAnnotation>} moduleProperties
      */
     properties: function(moduleProperties) {
         this.moduleProperties = moduleProperties;
@@ -128,7 +128,7 @@ var AnnotateModule = Class.extend(Obj, {
     },
 
     /**
-     * @param {AnnotateModule.Scope} methodScope
+     * @param {ModuleAnnotation.Scope} methodScope
      */
     scope: function(methodScope) {
         this.moduleScope = methodScope;
@@ -143,8 +143,8 @@ var AnnotateModule = Class.extend(Obj, {
 
 /**
  * @param {string} moduleMethodName
- * @return {AnnotateModule}
+ * @return {ModuleAnnotation}
  */
-AnnotateModule.module = function(moduleMethodName) {
-    return new AnnotateModule(moduleMethodName);
+ModuleAnnotation.module = function(moduleMethodName) {
+    return new ModuleAnnotation(moduleMethodName);
 };

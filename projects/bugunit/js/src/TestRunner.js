@@ -30,7 +30,7 @@ TestRunner.runTest = function(test, logResults) {
         }
         testResult.addAssertionResult(assertionResult);
     };
-    test.addEventListener(Test.EventTypes.ASSERTION_RESULT, hearAssertionResult);
+    test.addEventListener(Test.EventType.ASSERTION_RESULT, hearAssertionResult);
     try {
         if (logResults) {
             console.log("Running test [" + test.getName() + "]");
@@ -48,6 +48,6 @@ TestRunner.runTest = function(test, logResults) {
         }
         testResult.setError(error);
     }
-    test.removeEventListener(Test.EventTypes.ASSERTION_RESULT, hearAssertionResult);
+    test.removeEventListener(Test.EventType.ASSERTION_RESULT, hearAssertionResult);
     return testResult;
 };

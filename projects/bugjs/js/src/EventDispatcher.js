@@ -124,6 +124,20 @@ var EventDispatcher = Class.extend(Obj, {
     /**
      * @param {string} eventType
      * @param {function(Event)} listenerFunction
+     * @param {?Object} listenerContext (optional)
+     */
+    hasEventListener: function(eventType, listenerFunction, listenerContext) {
+        var eventTypeListenerList = this.eventTypeListenerMap.get(eventType);
+        if (eventTypeListenerList) {
+            var eventListener = new EventListener(listenerFunction, listenerContext);
+            return eventTypeListenerList.contains(eventListener);
+        }
+        return false;
+    },
+
+    /**
+     * @param {string} eventType
+     * @param {function(Event)} listenerFunction
      * @param {Object} listenerContext
      */
     removeEventListener: function(eventType, listenerFunction, listenerContext) {

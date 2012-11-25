@@ -7,16 +7,15 @@
 //@Require('Backbone')
 //@Require('Class')
 //@Require('ControllerRoute')
-//@Require('Event')
-//@Require('EventDispatcher')
 //@Require('List')
+//@Require('Obj')
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var CarapaceController = Class.extend(EventDispatcher, {
+var CarapaceController = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -104,10 +103,10 @@ var CarapaceController = Class.extend(EventDispatcher, {
     /**
      * @protected
      */
-    activate: function(routerArgs) {
+    activate: function(routingArgs) {
         if (!this.activated) {
             this.activated = true;
-            this.activateController(routerArgs);
+            this.activateController(routingArgs);
         }
     },
 
@@ -146,21 +145,20 @@ var CarapaceController = Class.extend(EventDispatcher, {
     },
 
     /**
-     * @param {Array<*>} routerArgs
+     * @param {RoutingRequest} routingRequest
      */
-    processRoute: function(routerArgs) {
-        this.dispatchEvent(new Event(CarapaceController.EventTypes.ACTIVATE_CONTROLLER, this));
-        this.start(routerArgs);
+    route: function(routingRequest) {
+        this.filterRouting(routingRequest);
     },
 
     /**
-     * @param {Array<*>} routerArgs
+     * @param {Array<*>} routingArgs
      */
-    start: function(routerArgs) {
+    start: function(routingArgs) {
         if (!this.started) {
             this.started = true;
             this.create();
-            this.activate(routerArgs);
+            this.activate(routingArgs);
         }
     },
 
@@ -180,12 +178,15 @@ var CarapaceController = Class.extend(EventDispatcher, {
     // Protected Class Methods
     //-------------------------------------------------------------------------------
 
+    // Controller Lifecycle Methods
+    //-------------------------------------------------------------------------------
+
     /**
      * @protected
-     * @param {Array<*>} routerArgs
+     * @param {Array<*>} routingArgs
      */
-    activateController: function(routerArgs) {
-        this.containerTop.activate(routerArgs);
+    activateController: function(routingArgs) {
+        this.containerTop.activate(routingArgs);
     },
 
     /**
@@ -231,17 +232,17 @@ var CarapaceController = Class.extend(EventDispatcher, {
         if (!this.getContainerTop()) {
             throw new Error("Must set container top during container creation.");
         }
+    },
+
+
+    // Route Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     * @param {RoutingRequest} routingRequest
+     */
+    filterRouting: function(routingRequest) {
+        routingRequest.accept();
     }
 });
-
-
-//-------------------------------------------------------------------------------
-// Static Variables
-//-------------------------------------------------------------------------------
-
-/**
- * @enum {string}
- */
-CarapaceController.EventTypes = {
-    ACTIVATE_CONTROLLER: "CarapaceController:ActivateController"
-};
