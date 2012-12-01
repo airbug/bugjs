@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Dependencies
 //-------------------------------------------------------------------------------
 
 //@Export('ConfigurationScan')
@@ -13,6 +13,25 @@
 //@Require('IOCProperty')
 //@Require('Map')
 //@Require('Obj')
+
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('ConfigurationScan');
+
+var Annotate = bugpack.require('Annotate');
+var BugIOC = bugpack.require('BugIOC');
+var Class = bugpack.require('Class');
+var IOCArg = bugpack.require('IOCArg');
+var IOCConfiguration = bugpack.require('IOCConfiguration');
+var IOCModule = bugpack.require('IOCModule');
+var IOCProperty = bugpack.require('IOCProperty');
+var Map = bugpack.require('Map');
+var Obj = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
@@ -124,3 +143,10 @@ var ConfigurationScan = Class.extend(Obj, {
         return new IOCProperty(propertyAnnotation.getName(), propertyAnnotation.getRef());
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(ConfigurationScan);

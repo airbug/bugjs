@@ -7,6 +7,18 @@
 //@Require('Annotation')
 //@Require('Class')
 
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('PropertyAnnotation');
+
+var Annotation = bugpack.require('Annotation');
+var Class = bugpack.require('Class');
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
@@ -86,3 +98,10 @@ var PropertyAnnotation = Class.extend(Annotation, {
 PropertyAnnotation.property = function(propertyName) {
     return new PropertyAnnotation(propertyName);
 };
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(PropertyAnnotation);

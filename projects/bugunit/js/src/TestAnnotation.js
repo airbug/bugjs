@@ -7,6 +7,18 @@
 //@Require('Annotation')
 //@Require('Class')
 
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('TestAnnotation');
+
+var Annotation = bugpack.require('Annotation');
+var Class = bugpack.require('Class');
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
@@ -72,3 +84,10 @@ var TestAnnotation = Class.extend(Annotation, {
 TestAnnotation.test = function() {
     return new TestAnnotation();
 };
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(TestAnnotation);

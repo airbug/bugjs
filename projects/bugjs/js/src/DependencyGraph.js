@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Dependencies
 //-------------------------------------------------------------------------------
 
 //@Export('DependencyGraph')
@@ -12,6 +12,24 @@
 //@Require('Map')
 //@Require('Obj')
 //@Require('Set')
+
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('DependencyGraph');
+
+var Class = bugpack.require('Class');
+var Graph = bugpack.require('Graph');
+var GraphEdge = bugpack.require('GraphEdge');
+var GraphNode = bugpack.require('GraphNode');
+var List = bugpack.require('List');
+var Map = bugpack.require('Map');
+var Obj = bugpack.require('Obj');
+var Set = bugpack.require('Set');
 
 
 //-------------------------------------------------------------------------------
@@ -109,3 +127,10 @@ var DependencyGraph = Class.extend(Graph, {
         currentNodePathSet.remove(graphNode);
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(DependencyGraph);

@@ -10,6 +10,21 @@
 //@Require('List')
 //@Require('Obj')
 
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('CarapaceController');
+
+var Backbone = bugpack.require('Backbone');
+var Class = bugpack.require('Class');
+var ControllerRoute = bugpack.require('ControllerRoute');
+var List = bugpack.require('List');
+var Obj = bugpack.require('Obj');
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
@@ -246,3 +261,10 @@ var CarapaceController = Class.extend(Obj, {
         routingRequest.accept();
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(CarapaceController);

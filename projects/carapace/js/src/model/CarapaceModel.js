@@ -12,6 +12,23 @@
 //@Require('IEquals')
 //@Require('IHashCode')
 
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('CarapaceModel');
+
+var Backbone = bugpack.require('Backbone');
+var Class = bugpack.require('Class');
+var HashUtil = bugpack.require('HashUtil');
+var IdGenerator = bugpack.require('IdGenerator');
+var IDisposable = bugpack.require('IDisposable');
+var IEquals = bugpack.require('IEquals');
+var IHashCode = bugpack.require('IHashCode');
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
@@ -132,3 +149,10 @@ Class.implement(CarapaceModel, IHashCode);
 //-------------------------------------------------------------------------------
 // Static Variables
 //-------------------------------------------------------------------------------
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(CarapaceModel);

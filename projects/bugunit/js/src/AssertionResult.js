@@ -7,6 +7,18 @@
 //@Require('Class')
 //@Require('Obj')
 
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('AssertionResult');
+
+var Class = bugpack.require('Class');
+var Obj = bugpack.require('Obj');
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
@@ -54,3 +66,10 @@ var AssertionResult = Class.extend(Obj, {
         return !this.passed;
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(AssertionResult);

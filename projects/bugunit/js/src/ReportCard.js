@@ -8,6 +8,19 @@
 //@Require('List')
 //@Require('Obj')
 
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('ReportCard');
+
+var Class = bugpack.require('Class');
+var List = bugpack.require('List');
+var Obj = bugpack.require('Obj');
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
@@ -66,3 +79,10 @@ var ReportCard = Class.extend(Obj, {
         return (this.testResultList.getCount() - this.failedTestResultList.getCount());
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(ReportCard);

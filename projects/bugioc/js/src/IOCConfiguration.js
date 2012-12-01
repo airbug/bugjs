@@ -8,6 +8,19 @@
 //@Require('Obj')
 //@Require('Set')
 
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('IOCConfiguration');
+
+var Class = bugpack.require('Class');
+var Obj = bugpack.require('Obj');
+var Set = bugpack.require('Set');
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
@@ -103,3 +116,10 @@ var IOCConfiguration = Class.extend(Obj, {
         }
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(IOCConfiguration);

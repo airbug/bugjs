@@ -1,10 +1,21 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Dependencies
 //-------------------------------------------------------------------------------
 
 //@Export('IEventDispatcher')
 
 //@Require('Interface')
+
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('IEventDispatcher');
+
+var Interface = bugpack.require('Interface');
 
 
 //-------------------------------------------------------------------------------
@@ -59,3 +70,10 @@ var IEventDispatcher = Interface.declare({
      */
     removeEventListener: function(eventType, listenerFunction, listenerContext) {}
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(IEventDispatcher);

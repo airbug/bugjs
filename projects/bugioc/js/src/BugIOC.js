@@ -6,11 +6,30 @@
 
 //@Require('Class')
 //@Require('DependencyGraph')
+//@Require('Map')
 //@Require('Obj')
 //@Require('PrototypeScope')
 //@Require('Proxy')
 //@Require('Set')
 //@Require('SingletonScope')
+
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('BugIOC');
+
+var Class = bugpack.require('Class');
+var DependencyGraph = bugpack.require('DependencyGraph');
+var Map = bugpack.require('Map');
+var Obj = bugpack.require('Obj');
+var PrototypeScope = bugpack.require('PrototypeScope');
+var Proxy = bugpack.require('Proxy');
+var Set = bugpack.require('Set');
+var SingletonScope = bugpack.require('SingletonScope');
 
 
 //-------------------------------------------------------------------------------
@@ -274,3 +293,10 @@ Proxy.proxy(BugIOC, BugIOC.instance, [
     "process",
     "registerIOCConfiguration"
 ]);
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(BugIOC);

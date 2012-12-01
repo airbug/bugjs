@@ -6,7 +6,7 @@
  */
 
 //-------------------------------------------------------------------------------
-// Requires
+// Dependencies
 //-------------------------------------------------------------------------------
 
 //@Export('Graph')
@@ -17,6 +17,22 @@
 //@Require('Map')
 //@Require('Obj')
 //@Require('Set')
+
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('Graph');
+
+var Class = bugpack.require('Class');
+var GraphEdge = bugpack.require('GraphEdge');
+var GraphNode = bugpack.require('GraphNode');
+var Map = bugpack.require('Map');
+var Obj = bugpack.require('Obj');
+var Set = bugpack.require('Set');
 
 
 //-------------------------------------------------------------------------------
@@ -217,3 +233,10 @@ var Graph = Class.extend(Obj, {
         return nodesToSet;
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(Graph);

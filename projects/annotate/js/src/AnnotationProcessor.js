@@ -7,6 +7,18 @@
 //@Require('Class')
 //@Require('Obj')
 
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('AnnotationProcessor');
+
+var Class = bugpack.require('Class');
+var Obj = bugpack.require('Obj');
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
@@ -39,3 +51,10 @@ var AnnotationProcessor = Class.extend(Obj, {
         this.processorFunction(annotation);
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(AnnotationProcessor);

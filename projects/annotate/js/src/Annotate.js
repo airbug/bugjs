@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Dependencies
 //-------------------------------------------------------------------------------
 
 //@Export('Annotate')
@@ -10,6 +10,22 @@
 //@Require('List')
 //@Require('Map')
 //@Require('Obj')
+
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('Annotate');
+
+var Annotation = bugpack.require('Annotation');
+var AnnotationProcessor = bugpack.require('AnnotationProcessor');
+var Class = bugpack.require('Class');
+var List = bugpack.require('List');
+var Map = bugpack.require('Map');
+var Obj = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
@@ -147,3 +163,10 @@ Annotate.registerAnnotationProcessor = function(annotationType, annotationProces
         });
     }
 };
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(Annotate);

@@ -1,11 +1,23 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Dependencies
 //-------------------------------------------------------------------------------
 
 //@Export('Proxy')
 
 //@Require('Class')
 //@Require('Obj')
+
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('Proxy');
+
+var Class = bugpack.require('Class');
+var Obj = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
@@ -41,3 +53,10 @@ Proxy.generateProxyFunction = function(proxiedInstance, functionName) {
         return proxiedInstance[functionName].apply(proxiedInstance, arguments);
     };
 };
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(Proxy);

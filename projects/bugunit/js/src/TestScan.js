@@ -10,6 +10,21 @@
 //@Require('Obj')
 //@Require('Test')
 
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('TestScan');
+
+var Annotate = bugpack.require('Annotate');
+var BugUnit = bugpack.require('BugUnit');
+var Class = bugpack.require('Class');
+var Obj = bugpack.require('Obj');
+var Test = bugpack.require('Test');
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
@@ -53,3 +68,10 @@ var TestScan = Class.extend(Obj, {
         }
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(TestScan);

@@ -10,6 +10,21 @@
 //@Require('ControllerRoute')
 //@Require('Obj')
 
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('ControllerScan');
+
+var Annotation = bugpack.require('Annotation');
+var Carapace = bugpack.require('Carapace');
+var Class = bugpack.require('Class');
+var ControllerRoute = bugpack.require('ControllerRoute');
+var Obj = bugpack.require('Obj');
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
@@ -83,3 +98,10 @@ var ControllerScan = Class.extend(Obj, {
         }
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(ControllerScan);

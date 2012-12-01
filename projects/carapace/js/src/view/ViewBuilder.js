@@ -7,6 +7,18 @@
 //@Require('Class')
 //@Require('Obj')
 
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('ViewBuilder');
+
+var Class = bugpack.require('Class');
+var Obj = bugpack.require('Obj');
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
@@ -181,3 +193,10 @@ var ViewBuilder = Class.extend(Obj, {
 ViewBuilder.view = function(viewClass) {
     return new ViewBuilder(viewClass);
 };
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(ViewBuilder);

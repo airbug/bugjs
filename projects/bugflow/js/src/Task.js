@@ -2,10 +2,10 @@
 // Dependencies
 //-------------------------------------------------------------------------------
 
-//@Export('ArgAnnotation')
+//@Export('Task')
 
-//@Require('Annotation')
 //@Require('Class')
+//@Require('Obj')
 
 var bugpack = require('bugpack');
 
@@ -14,25 +14,25 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('ArgAnnotation');
+bugpack.declare('Task');
 
-var Annotation = bugpack.require('Annotation');
 var Class = bugpack.require('Class');
+var Obj = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ArgAnnotation = Class.extend(Annotation, {
+var Task = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(taskMethod) {
 
-        this._super("Arg");
+        this._super();
 
 
         //-------------------------------------------------------------------------------
@@ -41,9 +41,15 @@ var ArgAnnotation = Class.extend(Annotation, {
 
         /**
          * @private
-         * @type {string}
+         * @type {*}
          */
-        this.argRef = null;
+        this.result = null;
+
+        /**
+         * @private
+         * @type {boolean}
+         */
+        this.taskMethod = taskMethod;
     },
 
 
@@ -52,10 +58,10 @@ var ArgAnnotation = Class.extend(Annotation, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {string}
+     * @return {*}
      */
-    getRef: function() {
-        return this.argRef;
+    getResult: function() {
+        return this.result;
     },
 
 
@@ -64,30 +70,16 @@ var ArgAnnotation = Class.extend(Annotation, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {string} argRef
+     *
      */
-    ref: function(argRef) {
-        this.argRef = argRef;
-        return this;
+    execute: function() {
+        this.taskMethod();
     }
 });
 
 
 //-------------------------------------------------------------------------------
-// Static Methods
+// Export
 //-------------------------------------------------------------------------------
 
-/**
- * @return {ArgAnnotation}
- */
-ArgAnnotation.arg = function() {
-    return new ArgAnnotation();
-};
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export(ArgAnnotation);
-
+bugpack.export(Task);

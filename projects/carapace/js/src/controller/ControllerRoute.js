@@ -7,6 +7,18 @@
 //@Require('Class')
 //@Require('EventDispatcher')
 
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('ControllerRoute');
+
+var Class = bugpack.require('Class');
+var EventDispatcher = bugpack.require('EventDispatcher');
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
@@ -110,3 +122,10 @@ var ControllerRoute = Class.extend(EventDispatcher, {
 ControllerRoute.EventType = {
     ROUTING_REQUESTED: "ControlerRoute:RoutingRequested"
 };
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(ControllerRoute);

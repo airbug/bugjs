@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Dependencies
 //-------------------------------------------------------------------------------
 
 //@Export('PublisherSubscription')
@@ -7,6 +7,19 @@
 //@Require('Class')
 //@Require('HashUtil')
 //@Require('Obj')
+
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('PublisherSubscription');
+
+var Class = bugpack.require('Class');
+var HashUtil = bugpack.require('HashUtil');
+var Obj = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
@@ -112,3 +125,10 @@ var PublisherSubscription = Class.extend(Obj, {
         this.subscriberFunction.call(this.subscriberContext, message);
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(PublisherSubscription);

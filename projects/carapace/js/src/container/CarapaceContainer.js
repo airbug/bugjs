@@ -9,6 +9,20 @@
 //@Require('Map')
 //@Require('Obj')
 
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('CarapaceContainer');
+
+var Class = bugpack.require('Class');
+var List = bugpack.require('List');
+var Map = bugpack.require('Map');
+var Obj = bugpack.require('Obj');
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
@@ -435,3 +449,10 @@ var CarapaceContainer = Class.extend(Obj, {
         return null;
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(CarapaceContainer);

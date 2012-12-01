@@ -8,6 +8,19 @@
 //@Require('List')
 //@Require('Scope')
 
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('PrototypeScope');
+
+var Class = bugpack.require('Class');
+var List = bugpack.require('List');
+var Scope = bugpack.require('Scope');
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
@@ -49,3 +62,10 @@ var PrototypeScope = Class.extend(Scope, {
         return module;
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(PrototypeScope);

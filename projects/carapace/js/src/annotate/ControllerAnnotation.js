@@ -7,6 +7,18 @@
 //@Require('Annotation')
 //@Require('Class')
 
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('ControllerAnnotation');
+
+var Annotation = bugpack.require('Annotation');
+var Class = bugpack.require('Class');
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
@@ -72,3 +84,10 @@ var ControllerAnnotation = Class.extend(Annotation, {
 ControllerAnnotation.controller = function() {
     return new ControllerAnnotation();
 };
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(ControllerAnnotation);

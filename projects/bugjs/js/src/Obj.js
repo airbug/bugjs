@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Dependencies
 //-------------------------------------------------------------------------------
 
 //@Export('Obj')
@@ -10,6 +10,22 @@
 //@Require('IEquals')
 //@Require('IHashCode')
 //@Require('TypeUtil')
+
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('Obj');
+
+var Class = bugpack.require('Class');
+var HashUtil = bugpack.require('HashUtil');
+var IdGenerator = bugpack.require('IdGenerator');
+var IEquals = bugpack.require('IEquals');
+var IHashCode = bugpack.require('IHashCode');
+var TypeUtil = bugpack.require('TypeUtil');
 
 
 //-------------------------------------------------------------------------------
@@ -143,3 +159,10 @@ Obj.hashCode = function(value) {
         return HashUtil.hash(value);
     }
 };
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(Obj);

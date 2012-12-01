@@ -7,6 +7,18 @@
 //@Require('Annnotation')
 //@Require('Class')
 
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('ModuleAnnotation');
+
+var Annotation = bugpack.require('Annotation');
+var Class = bugpack.require('Class');
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
@@ -148,3 +160,10 @@ var ModuleAnnotation = Class.extend(Annotation, {
 ModuleAnnotation.module = function(moduleMethodName) {
     return new ModuleAnnotation(moduleMethodName);
 };
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(ModuleAnnotation);

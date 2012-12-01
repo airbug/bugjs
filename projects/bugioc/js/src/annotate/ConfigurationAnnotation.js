@@ -7,6 +7,18 @@
 //@Require('Annotation')
 //@Require('Class')
 
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('ConfigurationAnnotation');
+
+var Annotation = bugpack.require('Annotation');
+var Class = bugpack.require('Class');
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
@@ -71,3 +83,10 @@ var ConfigurationAnnotation = Class.extend(Annotation, {
 ConfigurationAnnotation.configuration = function() {
     return new ConfigurationAnnotation();
 };
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(ConfigurationAnnotation);

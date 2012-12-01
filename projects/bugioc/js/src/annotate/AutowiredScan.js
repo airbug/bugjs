@@ -5,10 +5,28 @@
 //@Export('AutowiredScan')
 
 //@Require('Annotate')
+//@Require('BugIOC')
 //@require('Carapace')
 //@Require('Class')
 //@Require('ControllerRoute')
 //@Require('Obj')
+
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('AutowiredScan');
+
+var Annotation = bugpack.require('Annotation');
+var BugIOC = bugpack.require('BugIOC');
+var Carapace = bugpack.require('Carapace');
+var Class = bugpack.require('Class');
+var ControllerRoute = bugpack.require('ControllerRoute');
+var Map = bugpack.require('Map');
+var Obj = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
@@ -77,3 +95,10 @@ var AutowiredScan = Class.extend(Obj, {
         };
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(AutowiredScan);

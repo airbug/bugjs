@@ -1,11 +1,23 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Dependencies
 //-------------------------------------------------------------------------------
 
 //@Export('AutowiredAnnotation')
 
 //@Require('Annotation')
 //@Require('Class')
+
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('AutowiredAnnotation');
+
+var Annotation = bugpack.require('Annotation');
+var Class = bugpack.require('Class');
 
 
 //-------------------------------------------------------------------------------
@@ -71,3 +83,10 @@ var AutowiredAnnotation = Class.extend(Annotation, {
 AutowiredAnnotation.autowired = function() {
     return new AutowiredAnnotation();
 };
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(AutowiredAnnotation);

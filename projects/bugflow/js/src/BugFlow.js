@@ -2,24 +2,26 @@
 // Dependencies
 //-------------------------------------------------------------------------------
 
-//@Export('StringUtil')
+//@Export('BugFlow')
 
+//@Require('Task')
 
 var bugpack = require('bugpack');
 
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-bugpack.declare('StringUtil');
+var AsyncTask = bugpack.require('AsyncTask');
+var Task = bugpack.require('Task');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var StringUtil = {};
+var BugFlow = {};
+
+
+//-------------------------------------------------------------------------------
+// Static Variables
+//-------------------------------------------------------------------------------
 
 
 //-------------------------------------------------------------------------------
@@ -27,23 +29,32 @@ var StringUtil = {};
 //-------------------------------------------------------------------------------
 
 /**
- * @param {string} value
- * @param {char} padCharacter
- * @param {number} size
- * @return {String}
+ * @param {function()} taskMethod
+ * @param {function()} callback
+ * @return {AsyncTask}
  */
-StringUtil.pad = function(value, padCharacter, size) {
-    // Ensure string
-    var result = value+"";
-    while (result.length < size) {
-        result = padCharacter + result;
-    }
-    return result;
+BugFlow.asyncTask = function(taskMethod, callback) {
+    return new AsyncTask(taskMethod, callback);
+};
+
+/**
+ * @param {Array<(function()|Task)>} tasksArray
+ */
+BugFlow.series = function(tasksArray) {
+
+};
+
+/**
+ * @param {function()} taskMethod
+ * @return {Task}
+ */
+BugFlow.task = function(taskMethod) {
+    return new Task(taskMethod);
 };
 
 
 //-------------------------------------------------------------------------------
-// Exports
+// Export
 //-------------------------------------------------------------------------------
 
-bugpack.export(StringUtil);
+bugpack.export(BugFlow);

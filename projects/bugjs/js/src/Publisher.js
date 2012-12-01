@@ -5,7 +5,7 @@
 
 
 //-------------------------------------------------------------------------------
-// Requires
+// Dependencies
 //-------------------------------------------------------------------------------
 
 //@Export('Publisher')
@@ -16,6 +16,22 @@
 //@Require('Message')
 //@Require('Obj')
 //@Require('PublisherSubscription')
+
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('Publisher');
+
+var Class = bugpack.require('Class');
+var List = bugpack.require('List');
+var Map = bugpack.require('Map');
+var Message = bugpack.require('Message');
+var Obj = bugpack.require('Obj');
+var PublisherSubscription = bugpack.require('PublisherSubscription');
 
 
 //-------------------------------------------------------------------------------
@@ -204,3 +220,10 @@ var Publisher = Class.extend(Obj, {
         return false;
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(Publisher);

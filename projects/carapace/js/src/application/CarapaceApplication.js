@@ -12,6 +12,23 @@
 //@Require('RoutingRequest')
 //@Require('Set')
 
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('CarapaceApplication');
+
+var Backbone = bugpack.require('Backbone');
+var Class = bugpack.require('Class');
+var CarapaceController = bugpack.require('CarapaceController');
+var ControllerRoute = bugpack.require('ControllerRoute');
+var Obj = bugpack.require('Obj');
+var RoutingRequest = bugpack.require('RoutingRequest');
+var Set = bugpack.require('Set');
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
@@ -217,3 +234,10 @@ var CarapaceApplication = Class.extend(Obj, {
         this.processRoutingRequestResults(routingRequest);
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(CarapaceApplication);

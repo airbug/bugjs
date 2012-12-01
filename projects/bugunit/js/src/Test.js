@@ -12,6 +12,23 @@
 //@Require('Obj')
 //@Require('TypeUtil')
 
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('Test');
+
+var AssertionResult = bugpack.require('AssertionResult');
+var Class = bugpack.require('Class');
+var Event = bugpack.require('Event');
+var EventDispatcher = bugpack.require('EventDispatcher');
+var HashUtil = bugpack.require('HashUtil');
+var Obj = bugpack.require('Obj');
+var TypeUtil = bugpack.require('TypeUtil');
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
@@ -231,3 +248,10 @@ var Test = Class.extend(EventDispatcher, {
 Test.EventType = {
     ASSERTION_RESULT: 'assertion_result'
 };
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(Test);

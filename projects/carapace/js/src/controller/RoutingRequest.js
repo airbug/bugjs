@@ -7,6 +7,18 @@
 //@Require('Class')
 //@Require('EventDispatcher')
 
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('RoutingRequest');
+
+var Class = bugpack.require('Class');
+var EventDispatcher = bugpack.require('EventDispatcher');
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
@@ -204,3 +216,10 @@ RoutingRequest.RejectedReason = {
     UNKNOWN_ROUTE: "RoutingRequest:UnknownRoute",
     UNAUTHORIZED_ROUTE: "RoutingRequest:UnauthorizedRoute"
 };
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(RoutingRequest);

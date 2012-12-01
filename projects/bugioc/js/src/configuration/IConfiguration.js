@@ -6,6 +6,17 @@
 
 //@Require('Interface')
 
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('IConfiguration');
+
+var Interface = bugpack.require('Interface');
+
 
 //-------------------------------------------------------------------------------
 // Declare Interface
@@ -22,3 +33,10 @@ var IConfiguration = Interface.declare({
      */
     initializeConfiguration: function() {}
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(IConfiguration);

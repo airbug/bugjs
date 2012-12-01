@@ -9,11 +9,26 @@
 //@Require('Test')
 //@Require('TestResult')
 
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('TestRunner');
+
+var Class = bugpack.require('Class');
+var List = bugpack.require('List');
+var Test = bugpack.require('Test');
+var TestResult = bugpack.require('TestResult');
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
+//TODO BRN: Merge this back in to BugUnit
 var TestRunner = {};
 
 
@@ -51,3 +66,10 @@ TestRunner.runTest = function(test, logResults) {
     test.removeEventListener(Test.EventType.ASSERTION_RESULT, hearAssertionResult);
     return testResult;
 };
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(TestRunner);

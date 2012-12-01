@@ -8,6 +8,19 @@
 //@Require('Obj')
 //@Require('Set')
 
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('IOCModule');
+
+var Class = bugpack.require('Class');
+var Obj = bugpack.require('Obj');
+var Set = bugpack.require('Set');
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
@@ -187,3 +200,10 @@ IOCModule.Scope = {
     PROTOTYPE: "prototype",
     SINGLETON: "singleton"
 };
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(IOCModule);

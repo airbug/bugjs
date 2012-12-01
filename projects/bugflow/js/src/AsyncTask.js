@@ -2,10 +2,10 @@
 // Dependencies
 //-------------------------------------------------------------------------------
 
-//@Export('ArgAnnotation')
+//@Export('AsyncTask')
 
-//@Require('Annotation')
 //@Require('Class')
+//@Require('Task')
 
 var bugpack = require('bugpack');
 
@@ -14,25 +14,25 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('ArgAnnotation');
+bugpack.declare('AsyncTask');
 
-var Annotation = bugpack.require('Annotation');
 var Class = bugpack.require('Class');
+var Task = bugpack.require('Task');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ArgAnnotation = Class.extend(Annotation, {
+var AsyncTask = Class.extend(Task, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(taskMethod, callback) {
 
-        this._super("Arg");
+        this._super(taskMethod, callback);
 
 
         //-------------------------------------------------------------------------------
@@ -41,9 +41,9 @@ var ArgAnnotation = Class.extend(Annotation, {
 
         /**
          * @private
-         * @type {string}
+         * @type {function()}
          */
-        this.argRef = null;
+        this.callback = callback;
     },
 
 
@@ -51,12 +51,6 @@ var ArgAnnotation = Class.extend(Annotation, {
     // Getters and Setters
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {string}
-     */
-    getRef: function() {
-        return this.argRef;
-    },
 
 
     //-------------------------------------------------------------------------------
@@ -64,30 +58,16 @@ var ArgAnnotation = Class.extend(Annotation, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {string} argRef
+     *
      */
-    ref: function(argRef) {
-        this.argRef = argRef;
-        return this;
+    complete: function() {
+        this.callback();
     }
 });
 
 
 //-------------------------------------------------------------------------------
-// Static Methods
+// Export
 //-------------------------------------------------------------------------------
 
-/**
- * @return {ArgAnnotation}
- */
-ArgAnnotation.arg = function() {
-    return new ArgAnnotation();
-};
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export(ArgAnnotation);
-
+bugpack.export(AsyncTask);

@@ -7,6 +7,18 @@
 //@Require('Class')
 //@Require('Scope')
 
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('SingletonScope');
+
+var Class = bugpack.require('Class');
+var Scope = bugpack.require('Scope');
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
@@ -49,3 +61,10 @@ var SingletonScope = Class.extend(Scope, {
         return this.singletonModule;
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(SingletonScope);

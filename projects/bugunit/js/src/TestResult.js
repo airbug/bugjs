@@ -8,6 +8,19 @@
 //@Require('List')
 //@Require('Obj')
 
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('TestAnnotation');
+
+var Class = bugpack.require('Class');
+var List = bugpack.require('List');
+var Obj = bugpack.require('Obj');
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
@@ -94,3 +107,10 @@ var TestResult = Class.extend(Obj, {
         return (this.assertionResultList.getCount() - this.failedAssertionResultList.getCount());
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(TestResult);

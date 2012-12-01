@@ -8,6 +8,19 @@
 //@Require('Class')
 //@Require('List')
 
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('CarapaceRouter');
+
+var Backbone = bugpack.require('Backbone');
+var Class = bugpack.require('Class');
+var List = bugpack.require('List');
+
 
 //-------------------------------------------------------------------------------
 // Declare Class
@@ -136,3 +149,10 @@ var CarapaceRouter = Class.adapt(Backbone.Router, {
         this.storeRoute();
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(CarapaceRouter);

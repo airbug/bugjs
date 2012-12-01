@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Dependencies
 //-------------------------------------------------------------------------------
 
 //@Export('Disposable')
@@ -8,6 +8,20 @@
 //@Require('IDisposable')
 //@Require('IEquals')
 //@Require('Obj')
+
+var bugpack = require('bugpack');
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('Disposable');
+
+var Class = bugpack.require('Class');
+var IDisposable = bugpack.require('IDisposable');
+var IEquals = bugpack.require('IEquals');
+var Obj = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
@@ -42,3 +56,10 @@ var Disposable = Class.extend(Obj, {
     }
 });
 Class.implement(Disposable, IDisposable);
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export(Disposable);
