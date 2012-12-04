@@ -2,10 +2,11 @@
 // Dependencies
 //-------------------------------------------------------------------------------
 
-//@Export('Task')
+//@Export('Flow')
 
 //@Require('Class')
-//@Require('Flow')
+//@Require('Event')
+//@Require('EventDispatcher')
 
 var bugpack = require('bugpack');
 
@@ -14,25 +15,26 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('Task');
+bugpack.declare('Flow');
 
 var Class = bugpack.require('Class');
-var Flow = bugpack.require('Flow');
+var Event = bugpack.require('Event');
+var EventDispatcher = bugpack.require('EventDispatcher');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Task = Class.extend(Flow, {
+var Flow = Class.extend(EventDispatcher, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(taskMethod, callback) {
+    _constructor: function(callback) {
 
-        this._super(callback);
+        this._super();
 
 
         //-------------------------------------------------------------------------------
@@ -41,27 +43,9 @@ var Task = Class.extend(Flow, {
 
         /**
          * @private
-         * @type {*}
+         * @type {function()}
          */
-        this.result = null;
-
-        /**
-         * @private
-         * @type {boolean}
-         */
-        this.taskMethod = taskMethod;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @return {*}
-     */
-    getResult: function() {
-        return this.result;
+        this.callback = callback;
     },
 
 
@@ -72,14 +56,36 @@ var Task = Class.extend(Flow, {
     /**
      *
      */
+    complete: function() {
+        if (this.callback) {
+            this.callback();
+        }
+        this.dispatchEvent(new Event(Flow.EventType.COMPLETE));
+    },
+
+    /**
+     * @abstract
+     */
     execute: function() {
-        this.taskMethod();
+        // abstract
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Static Variables
+//-------------------------------------------------------------------------------
+
+/**
+ * @enum {string}
+ */
+Flow.EventType = {
+    COMPLETE: "Task:Complete"
+};
 
 
 //-------------------------------------------------------------------------------
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export(Task);
+bugpack.export(Flow);

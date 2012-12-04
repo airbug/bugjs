@@ -1,14 +1,11 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Dependencies
 //-------------------------------------------------------------------------------
 
-//@Export('ControllerScan')
+//@Export('Series')
 
-//@Require('Annotate')
-//@require('Carapace')
 //@Require('Class')
-//@Require('ControllerRoute')
-//@Require('Obj')
+//@Require('Flow')
 
 var bugpack = require('bugpack');
 
@@ -17,28 +14,25 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('ControllerScan');
+bugpack.declare('Series');
 
-var Annotate = bugpack.require('Annotate');
-var Carapace = bugpack.require('Carapace');
 var Class = bugpack.require('Class');
-var ControllerRoute = bugpack.require('ControllerRoute');
-var Obj = bugpack.require('Obj');
+var Flow = bugpack.require('Flow');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ControllerScan = Class.extend(Obj, {
+var Series = Class.extend(Flow, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(application) {
+    _constructor: function(flowArray, callback) {
 
-        this._super();
+        this._super(callback);
 
 
         //-------------------------------------------------------------------------------
@@ -47,35 +41,38 @@ var ControllerScan = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {CarapaceApplication}
+         * @type {*}
          */
-        this.application = application;
+        this.flowArray = flowArray;
 
         /**
          * @private
-         * @type {Map<Class, CarapaceController>}
+         * @type {*}
          */
-        this.controllerClassToControllerMap = new Map();
+        this.callback = callback;
+
+        /**
+         * @private
+         * @type {number}
+         */
+        this.index = -1;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Public Class Methods
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+
+    //-------------------------------------------------------------------------------
+    // Class Methods
     //-------------------------------------------------------------------------------
 
     /**
      *
      */
-    scan: function() {
-        var _this = this;
-        var controllerAnnotations = Annotate.getAnnotationsByType("Controller");
-        if (controllerAnnotations) {
-            controllerAnnotations.forEach(function(annotation) {
-                var controllerClass = annotation.getReference();
-                var controllerRoute = annotation.getRoute();
-                _this.createController(controllerClass, controllerRoute);
-            });
-        }
+    execute: function() {
+        this.startNextFlow();
     },
 
 
@@ -85,23 +82,35 @@ var ControllerScan = Class.extend(Obj, {
 
     /**
      * @private
-     * @param {Class} controllerClass
-     * @param {string} controllerRoute
      */
-    createController: function(controllerClass, controllerRoute) {
-        var _this = this;
-        if (!this.controllerClassToControllerMap.containsKey(controllerClass)) {
-            var controller = new controllerClass();
-            this.application.registerController(controller);
-            this.controllerClassToControllerMap.put(controllerClass, controller);
-            _this.application.registerControllerRoute(new ControllerRoute(controllerRoute, controller));
+    startNextFlow: function() {
+        this.index++;
+        if (this.index < this.flowArray.length) {
+            var nextFlow = this.flowArray[this.index];
+            nextFlow.addEventListener(Flow.EventType.COMPLETE, this.handleFlowComplete, this);
+            nextFlow.execute();
+        } else {
+            this.complete();
         }
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Event Listeners
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {Event} event
+     */
+    handleFlowComplete: function(event) {
+        this.startNextFlow();
     }
 });
 
 
 //-------------------------------------------------------------------------------
-// Exports
+// Export
 //-------------------------------------------------------------------------------
 
-bugpack.export(ControllerScan);
+bugpack.export(Series);

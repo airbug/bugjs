@@ -2,10 +2,10 @@
 // Dependencies
 //-------------------------------------------------------------------------------
 
-//@Export('AsyncTask')
+//@Export('Parallel')
 
 //@Require('Class')
-//@Require('Task')
+//@Require('Flow')
 
 var bugpack = require('bugpack');
 
@@ -14,25 +14,25 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('AsyncTask');
+bugpack.declare('Parallel');
 
 var Class = bugpack.require('Class');
-var Task = bugpack.require('Task');
+var Flow = bugpack.require('Flow');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var AsyncTask = Class.extend(Task, {
+var Parallel = Class.extend(Flow, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(taskMethod, callback) {
+    _constructor: function(flowArray, callback) {
 
-        this._super(taskMethod, callback);
+        this._super(callback);
 
 
         //-------------------------------------------------------------------------------
@@ -41,16 +41,22 @@ var AsyncTask = Class.extend(Task, {
 
         /**
          * @private
-         * @type {function()}
+         * @type {Array<Flow>}
+         */
+        this.flowArray = flowArray;
+
+        /**
+         * @private
+         * @type {*}
          */
         this.callback = callback;
+
+        /**
+         * @private
+         * @type {number}
+         */
+        this.numberComplete = 0;
     },
-
-
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
-
 
 
     //-------------------------------------------------------------------------------
@@ -60,8 +66,28 @@ var AsyncTask = Class.extend(Task, {
     /**
      *
      */
-    complete: function() {
-        this.callback();
+    execute: function() {
+        var _this = this;
+        this.flowArray.forEach(function(flow) {
+            flow.addEventListener(Flow.EventType.COMPLETE, _this.handleFlowComplete, _this);
+            flow.execute();
+        });
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Event Listeners
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {Event} event
+     */
+    handleFlowComplete: function(event) {
+        this.numberComplete++;
+        if (this.numberComplete >= this.flowArray.length) {
+            this.complete();
+        }
     }
 });
 
@@ -70,4 +96,4 @@ var AsyncTask = Class.extend(Task, {
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export(AsyncTask);
+bugpack.export(Parallel);

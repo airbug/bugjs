@@ -4,11 +4,21 @@
 
 //@Export('BugFlow')
 
+//@Require('Parallel')
+//@Require('Series')
 //@Require('Task')
 
 var bugpack = require('bugpack');
 
-var AsyncTask = bugpack.require('AsyncTask');
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+bugpack.declare('BugFlow');
+
+var Parallel = bugpack.require('Parallel');
+var Series = bugpack.require('Series');
 var Task = bugpack.require('Task');
 
 
@@ -29,27 +39,30 @@ var BugFlow = {};
 //-------------------------------------------------------------------------------
 
 /**
- * @param {function()} taskMethod
+ * @param {Array<(function()|Task)>} tasksArray
  * @param {function()} callback
- * @return {AsyncTask}
+ * @return {Parallel}
  */
-BugFlow.asyncTask = function(taskMethod, callback) {
-    return new AsyncTask(taskMethod, callback);
+BugFlow.parallel = function(tasksArray, callback) {
+    return new Parallel(tasksArray, callback);
 };
 
 /**
  * @param {Array<(function()|Task)>} tasksArray
+ * @param {function()} callback
+ * @return {Series}
  */
-BugFlow.series = function(tasksArray) {
-
+BugFlow.series = function(tasksArray, callback) {
+    return new Series(tasksArray, callback);
 };
 
 /**
  * @param {function()} taskMethod
+ * @param {function()} callback
  * @return {Task}
  */
-BugFlow.task = function(taskMethod) {
-    return new Task(taskMethod);
+BugFlow.task = function(taskMethod, callback) {
+    return new Task(taskMethod, callback);
 };
 
 
