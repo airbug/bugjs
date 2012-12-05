@@ -24,6 +24,8 @@ var Flow = bugpack.require('Flow');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+//NOTE BRN: An instance of this class is designed to be used only once.
+
 var Task = Class.extend(Flow, {
 
     //-------------------------------------------------------------------------------
@@ -66,14 +68,14 @@ var Task = Class.extend(Flow, {
 
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Flow Extensions
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @param {...*} var_args
      */
-    execute: function() {
-        this.taskMethod();
+    executeFlow: function() {
+        this.taskMethod.apply(this, arguments);
     }
 });
 

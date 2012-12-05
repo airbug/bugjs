@@ -41,6 +41,12 @@ var Series = Class.extend(Flow, {
 
         /**
          * @private
+         * @type {Array<*>}
+         */
+        this.execArgs = null;
+
+        /**
+         * @private
          * @type {*}
          */
         this.flowArray = flowArray;
@@ -60,18 +66,15 @@ var Series = Class.extend(Flow, {
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
-
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
+    // Flow Extensions
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @protected
+     * @param {...*} var_args
      */
-    execute: function() {
+    executeFlow: function() {
+        this.execArgs = arguments;
         this.startNextFlow();
     },
 
@@ -88,7 +91,7 @@ var Series = Class.extend(Flow, {
         if (this.index < this.flowArray.length) {
             var nextFlow = this.flowArray[this.index];
             nextFlow.addEventListener(Flow.EventType.COMPLETE, this.handleFlowComplete, this);
-            nextFlow.execute();
+            nextFlow.execute.apply(nextFlow, this.execArgs);
         } else {
             this.complete();
         }

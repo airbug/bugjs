@@ -46,6 +46,18 @@ var Flow = Class.extend(EventDispatcher, {
          * @type {function()}
          */
         this.callback = callback;
+
+        /**
+         * @privte
+         * @type {boolean}
+         */
+        this.completed = false;
+
+        /**
+         * @private
+         * @type {boolean}
+         */
+        this.executed = false;
     },
 
 
@@ -57,6 +69,35 @@ var Flow = Class.extend(EventDispatcher, {
      *
      */
     complete: function() {
+        if (!this.completed) {
+            this.completed = true;
+            this.completeFlow();
+        } else {
+            throw new Error("Can only complete a flow once.");
+        }
+    },
+
+    /**
+     * @param {...*} var_args
+     */
+    execute: function() {
+        if (!this.executed) {
+            this.executed = true;
+            this.executeFlow.apply(this, arguments);
+        } else {
+            throw new Error("A flow can only be executed once.");
+        }
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Protected Class Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     */
+    completeFlow: function() {
         if (this.callback) {
             this.callback();
         }
@@ -65,8 +106,9 @@ var Flow = Class.extend(EventDispatcher, {
 
     /**
      * @abstract
+     * @param {...*} var_args
      */
-    execute: function() {
+    executeFlow: function() {
         // abstract
     }
 });

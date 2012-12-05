@@ -41,6 +41,12 @@ var Parallel = Class.extend(Flow, {
 
         /**
          * @private
+         * @type {Array<*>}
+         */
+        this.execArgs = null;
+
+        /**
+         * @private
          * @type {Array<Flow>}
          */
         this.flowArray = flowArray;
@@ -60,17 +66,19 @@ var Parallel = Class.extend(Flow, {
 
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Flow Extensions
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @protected
+     * @param {...*} var_args
      */
-    execute: function() {
+    executeFlow: function() {
         var _this = this;
+        this.execArgs = arguments;
         this.flowArray.forEach(function(flow) {
             flow.addEventListener(Flow.EventType.COMPLETE, _this.handleFlowComplete, _this);
-            flow.execute();
+            flow.execute.apply(flow, _this.execArgs);
         });
     },
 
@@ -84,6 +92,8 @@ var Parallel = Class.extend(Flow, {
      * @param {Event} event
      */
     handleFlowComplete: function(event) {
+        var flow = event.getTarget();
+        flow.removeEventListener(Flow.EventType.COMPLETE, this.handleFlowComplete, this);
         this.numberComplete++;
         if (this.numberComplete >= this.flowArray.length) {
             this.complete();
