@@ -2,7 +2,7 @@
 // Dependencies
 //-------------------------------------------------------------------------------
 
-//@Export('BugFlow')
+//@Export('BugBoil')
 
 //@Require('Parallel')
 //@Require('Series')
@@ -15,18 +15,16 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('BugFlow');
+bugpack.declare('BugBoil');
 
-var Parallel = bugpack.require('Parallel');
-var Series = bugpack.require('Series');
-var Task = bugpack.require('Task');
+var Each = bugpack.require('Each');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var BugFlow = {};
+var BugBoil = {};
 
 
 //-------------------------------------------------------------------------------
@@ -34,27 +32,11 @@ var BugFlow = {};
 //-------------------------------------------------------------------------------
 
 /**
- * @param {Array<(Task)>} tasksArray
+ * @param {Array<*>} data
  * @return {Parallel}
  */
-BugFlow.parallel = function(tasksArray) {
-    return new Parallel(tasksArray);
-};
-
-/**
- * @param {Array<(Task)>} tasksArray
- * @return {Series}
- */
-BugFlow.series = function(tasksArray) {
-    return new Series(tasksArray);
-};
-
-/**
- * @param {function()} taskMethod
- * @return {Task}
- */
-BugFlow.task = function(taskMethod) {
-    return new Task(taskMethod);
+BugBoil.each = function(data, iteratorMethod) {
+    return new Each(data, iteratorMethod);
 };
 
 
@@ -62,4 +44,4 @@ BugFlow.task = function(taskMethod) {
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export(BugFlow);
+bugpack.export(BugBoil);

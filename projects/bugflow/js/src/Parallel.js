@@ -30,9 +30,9 @@ var Parallel = Class.extend(Flow, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(flowArray, callback) {
+    _constructor: function(flowArray) {
 
-        this._super(callback);
+        this._super();
 
 
         //-------------------------------------------------------------------------------
@@ -41,21 +41,9 @@ var Parallel = Class.extend(Flow, {
 
         /**
          * @private
-         * @type {Array<*>}
-         */
-        this.execArgs = null;
-
-        /**
-         * @private
          * @type {Array<Flow>}
          */
         this.flowArray = flowArray;
-
-        /**
-         * @private
-         * @type {*}
-         */
-        this.callback = callback;
 
         /**
          * @private
@@ -71,15 +59,43 @@ var Parallel = Class.extend(Flow, {
 
     /**
      * @protected
-     * @param {...*} var_args
+     * @param {Array<*>} args
      */
-    executeFlow: function() {
+    executeFlow: function(args) {
         var _this = this;
-        this.execArgs = arguments;
-        this.flowArray.forEach(function(flow) {
-            flow.addEventListener(Flow.EventType.COMPLETE, _this.handleFlowComplete, _this);
-            flow.execute.apply(flow, _this.execArgs);
-        });
+        if (this.flowArray.length > 0) {
+            this.flowArray.forEach(function(flow) {
+                _this.addFlowListeners(flow);
+                flow.execute(args);
+            });
+        } else {
+            this.complete();
+        }
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Private Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {Flow} flow
+     */
+    addFlowListeners: function(flow) {
+        flow.addEventListener(Flow.EventType.COMPLETE, this.handleFlowComplete, this);
+        flow.addEventListener(Flow.EventType.EXIT, this.handleFlowExit, this);
+        flow.addEventListener(Flow.EventType.ERROR, this.handleFlowError, this);
+    },
+
+    /**
+     * @private
+     * @param {Flow} flow
+     */
+    removeFlowListeners: function(flow) {
+        flow.removeEventListener(Flow.EventType.COMPLETE, this.handleFlowComplete, this);
+        flow.removeEventListener(Flow.EventType.EXIT, this.handleFlowExit, this);
+        flow.removeEventListener(Flow.EventType.ERROR, this.handleFlowError, this);
     },
 
 
@@ -93,11 +109,34 @@ var Parallel = Class.extend(Flow, {
      */
     handleFlowComplete: function(event) {
         var flow = event.getTarget();
-        flow.removeEventListener(Flow.EventType.COMPLETE, this.handleFlowComplete, this);
+        this.removeFlowListeners(flow);
         this.numberComplete++;
         if (this.numberComplete >= this.flowArray.length) {
             this.complete();
         }
+    },
+
+    /**
+     * @private
+     * @param {Event} event
+     */
+    handleFlowExit: function(event) {
+        var flow = event.getTarget();
+        this.removeFlowListeners(flow);
+
+        //NOTE BRN: Matching break logic here. Only "exiting" out of one layer of iteration.
+
+        this.complete();
+    },
+
+    /**
+     * @private
+     * @param {Event} event
+     */
+    handleFlowError: function(event) {
+        var flow = event.getTarget();
+        this.removeFlowListeners(flow);
+        this.error(event.getData().error);
     }
 });
 

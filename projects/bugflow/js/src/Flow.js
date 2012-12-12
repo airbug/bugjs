@@ -32,7 +32,7 @@ var Flow = Class.extend(EventDispatcher, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(callback) {
+    _constructor: function() {
 
         this._super();
 
@@ -45,7 +45,7 @@ var Flow = Class.extend(EventDispatcher, {
          * @private
          * @type {function()}
          */
-        this.callback = callback;
+        this.callback = null;
 
         /**
          * @privte
@@ -57,7 +57,51 @@ var Flow = Class.extend(EventDispatcher, {
          * @private
          * @type {boolean}
          */
+        this.exited = false;
+
+        /**
+         * @private
+         * @type {boolean}
+         */
+        this.errored = false;
+
+        /**
+         * @private
+         * @type {boolean}
+         */
         this.executed = false;
+
+        /**
+         * @private
+         * @type {Error}
+         */
+        this.flowError = null;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {boolean}
+     */
+    hasCompleted: function() {
+        return this.completed;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    hasErrored: function() {
+        return this.errored;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    hasExited: function() {
+        return this.exited;
     },
 
 
@@ -66,24 +110,77 @@ var Flow = Class.extend(EventDispatcher, {
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @param {Error} error
      */
-    complete: function() {
-        if (!this.completed) {
-            this.completed = true;
-            this.completeFlow();
+    complete: function(error) {
+        var _this = this;
+        if (error) {
+            this.error(error);
         } else {
-            throw new Error("Can only complete a flow once.");
+            if (this.hasErrored()) {
+                throw new Error("Cannot complete flow. Flow has already errored out.");
+            }
+            if (this.hasExited()) {
+                throw new Error("Cannot complete flow. Flow has already exited.");
+            }
+            if (this.hasCompleted()) {
+                throw new Error("Can only complete a flow once.");
+            }
+            this.completed = true;
+            setTimeout(function() {
+                _this.completeFlow();
+            }, 0);
         }
     },
 
     /**
-     * @param {...*} var_args
+     * @param {Error} error
      */
-    execute: function() {
+    exit: function(error) {
+        if (error) {
+            this.error(error);
+        } else {
+            if (this.hasErrored()) {
+                throw new Error("Cannot exit flow. Flow has already errored out.");
+            }
+            if (this.hasExited()) {
+                throw new Error("Can only exit a flow once.");
+            }
+            if (this.hasCompleted()) {
+                throw new Error("Cannot exit flow. Flow has already completed.");
+            }
+
+            this.exited = true;
+            this.exitFlow();
+        }
+    },
+
+    /**
+     * @param {Error} error
+     */
+    error: function(error) {
+        if (this.hasErrored()) {
+            throw new Error("Can only error flow once.");
+        }
+        if (this.hasExited()) {
+            throw new Error("Cannot error flow. Flow has already exited.");
+        }
+        if (this.hasCompleted()) {
+            throw new Error("Cannot error flow. Flow has already completed.");
+        }
+        this.errored = true;
+        this.errorFlow(error);
+    },
+
+    /**
+     * @param {Array<*>} args
+     * @param {function(Error)} callback
+     */
+    execute: function(args, callback) {
+        this.callback = callback;
         if (!this.executed) {
             this.executed = true;
-            this.executeFlow.apply(this, arguments);
+            this.executeFlow(args);
         } else {
             throw new Error("A flow can only be executed once.");
         }
@@ -105,12 +202,34 @@ var Flow = Class.extend(EventDispatcher, {
     },
 
     /**
-     * @abstract
-     * @param {...*} var_args
+     * @protected
      */
-    executeFlow: function() {
-        // abstract
+    exitFlow: function() {
+        if (this.callback) {
+            this.callback();
+        }
+        this.dispatchEvent(new Event(Flow.EventType.EXIT));
+    },
+
+    /**
+     * @protected
+     * @param {Error} error
+     */
+    errorFlow: function(error) {
+        this.flowError = error;
+        if (this.callback) {
+            this.callback(error);
+        }
+        this.dispatchEvent(new Event(Flow.EventType.ERROR), {error: error});
     }
+
+    /**
+     * @abstract
+     * @param {Array<*>} args
+     */
+    /*executeFlow: function(args) {
+        // abstract
+    }*/
 });
 
 
@@ -122,7 +241,9 @@ var Flow = Class.extend(EventDispatcher, {
  * @enum {string}
  */
 Flow.EventType = {
-    COMPLETE: "Task:Complete"
+    COMPLETE: "Task:Complete",
+    EXIT: "Task:Exit",
+    ERROR: "Task:Error"
 };
 
 

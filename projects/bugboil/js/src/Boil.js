@@ -2,7 +2,7 @@
 // Dependencies
 //-------------------------------------------------------------------------------
 
-//@Export('Task')
+//@Export('Boil')
 
 //@Require('Class')
 //@Require('Flow')
@@ -14,7 +14,7 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('Task');
+bugpack.declare('Boil');
 
 var Class = bugpack.require('Class');
 var Flow = bugpack.require('Flow');
@@ -24,15 +24,13 @@ var Flow = bugpack.require('Flow');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-//NOTE BRN: An instance of this class is designed to be used only once.
-
-var Task = Class.extend(Flow, {
+var Boil = Class.extend(Flow, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(taskMethod) {
+    _constructor: function(data) {
 
         this._super();
 
@@ -41,24 +39,36 @@ var Task = Class.extend(Flow, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
+        // TODO BRN: Add support for BugJs data objects that implement the IIterate interface
+
         /**
          * @private
-         * @type {boolean}
+         * @type {Array<*>}
          */
-        this.taskMethod = taskMethod;
+        this.data = data;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Flow Extensions
+    // Getters and Setters
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Array<*>} args
+     * @return {Array<*>}
      */
-    executeFlow: function(args) {
-        this.taskMethod.apply(null, ([this]).concat(args));
-    }
+    getData: function(args) {
+        return this.data;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Class Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @abstract
+     */
+    bubble: function() {}
 });
 
 
@@ -66,4 +76,4 @@ var Task = Class.extend(Flow, {
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export(Task);
+bugpack.export(Boil);

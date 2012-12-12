@@ -30,9 +30,9 @@ var Series = Class.extend(Flow, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(flowArray, callback) {
+    _constructor: function(flowArray) {
 
-        this._super(callback);
+        this._super();
 
 
         //-------------------------------------------------------------------------------
@@ -53,12 +53,6 @@ var Series = Class.extend(Flow, {
 
         /**
          * @private
-         * @type {*}
-         */
-        this.callback = callback;
-
-        /**
-         * @private
          * @type {number}
          */
         this.index = -1;
@@ -71,17 +65,37 @@ var Series = Class.extend(Flow, {
 
     /**
      * @protected
-     * @param {...*} var_args
+     * @param {Array<*>} args
      */
-    executeFlow: function() {
-        this.execArgs = arguments;
+    executeFlow: function(args) {
+        this.execArgs = args;
         this.startNextFlow();
     },
 
 
     //-------------------------------------------------------------------------------
-    // Private Class Methods
+    // Private Methods
     //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {Flow} flow
+     */
+    addFlowListeners: function(flow) {
+        flow.addEventListener(Flow.EventType.COMPLETE, this.handleFlowComplete, this);
+        flow.addEventListener(Flow.EventType.EXIT, this.handleFlowExit, this);
+        flow.addEventListener(Flow.EventType.ERROR, this.handleFlowError, this);
+    },
+
+    /**
+     * @private
+     * @param {Flow} flow
+     */
+    removeFlowListeners: function(flow) {
+        flow.removeEventListener(Flow.EventType.COMPLETE, this.handleFlowComplete, this);
+        flow.removeEventListener(Flow.EventType.EXIT, this.handleFlowExit, this);
+        flow.removeEventListener(Flow.EventType.ERROR, this.handleFlowError, this);
+    },
 
     /**
      * @private
@@ -90,8 +104,8 @@ var Series = Class.extend(Flow, {
         this.index++;
         if (this.index < this.flowArray.length) {
             var nextFlow = this.flowArray[this.index];
-            nextFlow.addEventListener(Flow.EventType.COMPLETE, this.handleFlowComplete, this);
-            nextFlow.execute.apply(nextFlow, this.execArgs);
+            this.addFlowListeners(nextFlow);
+            nextFlow.execute(this.execArgs);
         } else {
             this.complete();
         }
@@ -107,7 +121,33 @@ var Series = Class.extend(Flow, {
      * @param {Event} event
      */
     handleFlowComplete: function(event) {
+        var flow = event.getTarget();
+        this.removeFlowListeners(flow);
+        this.numberComplete++;
         this.startNextFlow();
+    },
+
+    /**
+     * @private
+     * @param {Event} event
+     */
+    handleFlowExit: function(event) {
+        var flow = event.getTarget();
+        this.removeFlowListeners(flow);
+
+        //NOTE BRN: Matching break logic here. Only "exiting" out of one layer of iteration.
+
+        this.complete();
+    },
+
+    /**
+     * @private
+     * @param {Event} event
+     */
+    handleFlowError: function(event) {
+        var flow = event.getTarget();
+        this.removeFlowListeners(flow);
+        this.error(event.getData().error);
     }
 });
 

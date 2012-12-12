@@ -2,7 +2,7 @@
 // Dependencies
 //-------------------------------------------------------------------------------
 
-//@Export('Task')
+//@Export('Boil')
 
 //@Require('Class')
 //@Require('Flow')
@@ -14,38 +14,65 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('Task');
+bugpack.declare('ForEach');
 
+var Boil = bugpack.require('Boil');
 var Class = bugpack.require('Class');
-var Flow = bugpack.require('Flow');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-//NOTE BRN: An instance of this class is designed to be used only once.
-
-var Task = Class.extend(Flow, {
+var Each = Class.extend(Boil, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(taskMethod) {
+    _constructor: function(data, iteratorMethod) {
 
-        this._super();
+        this._super(data);
 
 
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
 
+        // TODO BRN: Add support for BugJs data objects that implement the IIterate interface
+
         /**
          * @private
-         * @type {boolean}
+         * @type {function(Boil, *)}
          */
-        this.taskMethod = taskMethod;
+        this.iteratorMethod = iteratorMethod;
+
+        /**
+         *
+         * @type {Number}
+         */
+        this.numberIterationsComplete = 0;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Boil Extensions
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {Error} error
+     */
+    bubble: function(error) {
+        if (error) {
+            if (!this.hasErrored()) {
+                this.error(error);
+            }
+        } else {
+            this.numberIterationsComplete++;
+            if (this.numberIterationsComplete >= this.getData().length && !this.hasErrored()) {
+                this.complete()
+            }
+        }
     },
 
 
@@ -57,7 +84,14 @@ var Task = Class.extend(Flow, {
      * @param {Array<*>} args
      */
     executeFlow: function(args) {
-        this.taskMethod.apply(null, ([this]).concat(args));
+        var _this = this;
+        if (this.data.length > 0) {
+            this.data.forEach(function(value, index) {
+                _this.iteratorMethod.call(null, this, value, index);
+            });
+        } else {
+            this.complete();
+        }
     }
 });
 
@@ -66,4 +100,4 @@ var Task = Class.extend(Flow, {
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export(Task);
+bugpack.export(Each);
