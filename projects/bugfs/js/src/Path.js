@@ -137,20 +137,28 @@ var Path = Class.extend(Obj, {
      * @param {(Path|string)} intoPath
      * @param {?(boolean|function(Error))=} recursive (defaults to true)
      * @param {?(boolean|function(Error))=} overwrite (defaults to true)
-     * @param {?function(Error, Path)=} callback
+     * @param {?function(Error, Path)} callback
      */
     copy: function(intoPath, recursive, overwrite, callback) {
+        if (TypeUtil.isFunction(recursive)) {
+            callback = recursive;
+            recursive = true;
+            overwrite = true;
+        }
+        if (TypeUtil.isFunction(overwrite)) {
+            callback = overwrite;
+            overwrite = true;
+        }
+        intoPath = TypeUtil.isString(intoPath) ? new Path(intoPath) : intoPath;
+        recursive = TypeUtil.isBoolean(recursive) ? recursive : true;
+        overwrite = TypeUtil.isBoolean(overwrite) ? overwrite : true;
         var _this = this;
-        var isDirectory = false;
-        var isFile = false;
-        var exists = false;
-
+        var _copyPath = null;
         series([
             task(function(flow) {
-                _this.exists(function(_exists) {
-                    exists = _exists;
+                _this.exists(function(exists) {
                     if (!exists) {
-                        flow.exit(new Error("Cannot copy path '" + _this.getAbsolutePath() + "' because it does " +
+                        flow.error(new Error("Cannot copy path '" + _this.getAbsolutePath() + "' because it does " +
                             "not exist."));
                     } else {
                         flow.complete();
@@ -158,39 +166,45 @@ var Path = Class.extend(Obj, {
                 });
             }),
             task(function(flow) {
-                if (exists) {
-                    _this.isDirectory(function(error, _isDirectory) {
-                        isDirectory = _isDirectory;
-                        flow.complete(error);
-                    });
-                }
+                _this.isDirectory(function(error, isDirectory) {
+                    if (!error) {
+                        if (isDirectory) {
+                            _this._copyDirectory(intoPath, recursive, overwrite, function(error, copyPath) {
+                                if (!error) {
+                                    _copyPath = copyPath;
+                                    flow.exit();
+                                } else {
+                                    flow.error(error);
+                                }
+                            });
+                        } else {
+                            flow.complete();
+                        }
+                    } else {
+                        flow.error(error);
+                    }
+                });
             }),
             task(function(flow) {
-                if (isDirectory) {
-                    _this._copyDirectory(intoPath, recursive, overwrite, function(error) {
-                        flow.complete(error);
-                    });
-                }
-            }),
-            task(function(flow) {
-                if (!isDirectory && exists) {
-                    _this.isFile(function(error, _isFile) {
-                        isFile = _isFile;
-                        flow.complete(error);
-                    })
-                }
-            }),
-            task(function(flow) {
-                if (isFile) {
-                    flow._copyFile(intoPath, overwrite, function(error) {
-                        flow.complete(error);
-                    })
-                } else {
-                    flow.error(new Error("Cannot copy path '" + _this.getAbsolutePath() + "' because it is an " +
-                        "unknown type."));
-                }
+                _this.isFile(function(error, isFile) {
+                    if (isFile) {
+                        flow._copyFile(intoPath, overwrite, function(error, copyPath) {
+                            if (!error) {
+                                _copyPath = copyPath;
+                                flow.complete();
+                            } else {
+                                flow.error(error);
+                            }
+                        });
+                    } else {
+                        flow.error(new Error("Cannot copy path '" + _this.getAbsolutePath() + "' because it is an " +
+                            "unknown type."));
+                    }
+                })
             })
-        ]).execute([], callback);
+        ]).execute([], function(error) {
+            callback(error, _copyPath);
+        });
     },
 
     /**
@@ -200,11 +214,14 @@ var Path = Class.extend(Obj, {
      * @return {Path}
      */
     copySync: function(intoPath, recursive, overwrite) {
+        intoPath = TypeUtil.isString(intoPath) ? new Path(intoPath) : intoPath;
+        recursive = TypeUtil.isBoolean(recursive) ? recursive : true;
+        overwrite = TypeUtil.isBoolean(overwrite) ? overwrite : true;
         if (this.existsSync()) {
             if (this.isDirectorySync()) {
-                return this.copyDirectorySync(intoPath, recursive, overwrite);
+                return this._copyDirectorySync(intoPath, recursive, overwrite);
             } else if (this.isFileSync()) {
-                return this.copyFileSync(intoPath, overwrite);
+                return this._copyFileSync(intoPath, overwrite);
             } else {
                 throw new Error("Cannot copy path '" + this.getAbsolutePath() + "' because it is an unknown type.");
             }
@@ -228,12 +245,12 @@ var Path = Class.extend(Obj, {
      * @param {(Path|string)} intoPath
      * @param {?(boolean|function(Error))=} recursive (defaults to true)
      * @param {?(boolean|function(Error))=} overwrite (defaults to true)
-     * @param {?function(Error, Path)=} callback
+     * @param {?function(Error, Path)} callback
      */
     copyDirectory: function(intoPath, recursive, overwrite, callback) {
         if (TypeUtil.isFunction(recursive)) {
             callback = recursive;
-            recursive = false;
+            recursive = true;
             overwrite = true;
         }
         if (TypeUtil.isFunction(overwrite)) {
@@ -245,39 +262,44 @@ var Path = Class.extend(Obj, {
         overwrite = TypeUtil.isBoolean(overwrite) ? overwrite : true;
 
         var _this = this;
-        var isDirectory = false;
-        var exists = false;
-
+        var _copyPath = null;
         series([
             task(function(flow) {
-                _this.exists(function(_exists) {
+                _this.exists(function(exists) {
                     if (!exists) {
                         flow.error(new Error("Cannot copy directory '" + _this.getAbsolutePath() + "' because it does not exist."));
                     } else {
-                        exists = _exists;
                         flow.complete();
                     }
                 });
             }),
             task(function(flow) {
-                if (exists) {
-                    _this.isDirectory(function(error, _isDirectory) {
-                        isDirectory = _isDirectory;
-                        flow.complete(error);
-                    });
-                }
+                _this.isDirectory(function(error, isDirectory) {
+                    if (!error) {
+                        if (isDirectory) {
+                            flow.complete();
+                        } else {
+                            flow.error(new Error("Cannot perform a directory copy on '" + _this.getAbsolutePath() + "' because it is " +
+                                "not a directory."));
+                        }
+                    } else {
+                        flow.error(error);
+                    }
+                });
             }),
             task(function(flow) {
-                if (isDirectory) {
-                    _this._copyDirectory(intoPath, recursive, overwrite, function(error) {
+                _this._copyDirectory(intoPath, recursive, overwrite, function(error, copyPath) {
+                    if (!error) {
+                        _copyPath = copyPath;
                         flow.complete(error);
-                    });
-                } else {
-                    flow.error("Cannot perform a directory copy on '" + _this.getAbsolutePath() + "' because it is " +
-                        "not a directory.");
-                }
+                    } else {
+                        flow.error(error);
+                    }
+                });
             })
-        ]).execute([], callback);
+        ]).execute([], function(error) {
+            callback(error, _copyPath);
+        });
     },
 
     /**
@@ -307,14 +329,14 @@ var Path = Class.extend(Obj, {
      * 3) If the intoPath does not exist, this function will attempt to create the intoPath and then copy the contents.
      * 4) This will not copy files recursively unless the "recursive" option is set to true.
      * @param {(Path|string)} intoPath
-     * @param {?(boolean|function(Error))=} recursive
+     * @param {?(boolean|function(Error))=} recursive (defaults to true)
      * @param {?(boolean|function(Error))=} overwrite (defaults to true)
      * @param {?function(Error)=} callback
      */
     copyDirectoryContents: function(intoPath, recursive, overwrite, callback) {
         if (TypeUtil.isFunction(recursive)) {
             callback = recursive;
-            recursive = false;
+            recursive = true;
             overwrite = true;
         }
         if (TypeUtil.isFunction(overwrite)) {
@@ -439,6 +461,7 @@ var Path = Class.extend(Obj, {
     /**
      * @param {(Path|string)} intoPath
      * @param {?boolean=} overwrite (defaults to true)
+     * @return {Path}
      */
     copyFileSync: function(intoPath, overwrite) {
         intoPath = TypeUtil.isString(intoPath) ? new Path(intoPath) : intoPath;
@@ -450,7 +473,7 @@ var Path = Class.extend(Obj, {
             throw new Error("Cannot perform a file copy on '" + this.getAbsolutePath() + "' because it is not " +
                 "a file.");
         }
-        this._copyFileSync(intoPath, overwrite);
+        return this._copyFileSync(intoPath, overwrite);
     },
 
     /**
@@ -607,43 +630,183 @@ var Path = Class.extend(Obj, {
      * @param {?function(Error)} callback
      */
     delete: function(recursive, callback) {
-        //TODO BRN: Implementation
+        if (TypeUtil.isFunction(recursive)) {
+            callback = recursive;
+            recursive = true;
+        }
+        recursive = TypeUtil.isBoolean(recursive) ? recursive : true;
+
+        var _this = this;
+        series([
+            task(function(flow) {
+                _this.exists(function(exists) {
+                    if (!exists) {
+                        flow.error(new Error("Cannot delete path '" + _this.getAbsolutePath() + "' because it does " +
+                            "not exist."));
+                    } else {
+                        flow.complete();
+                    }
+                });
+            }),
+            task(function(flow) {
+                _this.isDirectory(function(error, isDirectory) {
+                    if (!error) {
+                        if (isDirectory) {
+                            _this._deleteDirectory(recursive, function(error) {
+                                flow.exit(error);
+                            });
+                        } else {
+                            flow.complete();
+                        }
+                    } else {
+                        flow.error(error);
+                    }
+                });
+            }),
+            task(function(flow) {
+                _this.isFile(function(error, isFile) {
+                    if (isFile) {
+                        flow._deleteFile(overwrite, function(error) {
+                            flow.complete(error);
+                        })
+                    } else {
+                        flow.error(new Error("Cannot copy path '" + _this.getAbsolutePath() + "' because it is an " +
+                            "unknown type."));
+                    }
+                })
+            })
+        ]).execute([], callback);
     },
 
     /**
      * @param {?boolean=} recursive
      */
     deleteSync: function(recursive) {
-        //TODO BRN: Implementation
+        recursive = TypeUtil.isBoolean(recursive) ? recursive : true;
+        if (this.existsSync()) {
+            if (this.isDirectorySync()) {
+                return this._deleteDirectorySync(recursive);
+            } else if (this.isFileSync()) {
+                return this._deleteFileSync();
+            } else {
+                throw new Error("Cannot delete path '" + this.getAbsolutePath() + "' because it is an unknown type.");
+            }
+        } else {
+            throw new Error("Cannot delete path '" + this.getAbsolutePath() + "' because it does not exist.")
+        }
     },
 
     /**
-     * @param {?(boolean|function(Error))=} recursive
+     * @param {?(boolean|function(Error))=} recursive (defaults to true)
      * @param {?function(Error)} callback
      */
     deleteDirectory: function(recursive, callback) {
-        //TODO BRN: Implementation
+        if (TypeUtil.isFunction(recursive)) {
+            callback = recursive;
+            recursive = true;
+        }
+        recursive = TypeUtil.isBoolean(recursive) ? recursive : true;
+
+        var _this = this;
+        series([
+            task(function(flow) {
+                _this.exists(function(exists) {
+                    if (!exists) {
+                        flow.error(new Error("Cannot delete directory '" + _this.getAbsolutePath() + "' because it " +
+                            "does not exist."));
+                    } else {
+                        flow.complete();
+                    }
+                });
+            }),
+            task(function(flow) {
+                _this.isDirectory(function(error, isDirectory) {
+                    if (!error) {
+                        if (isDirectory) {
+                            flow.complete();
+                        } else {
+                            flow.error(new Error("Cannot perform a directory delete on '" + _this.getAbsolutePath() +
+                                "' because it is not a directory."));
+                        }
+                    } else {
+                        flow.error(error);
+                    }
+                });
+            }),
+            task(function(flow) {
+                _this._deleteDirectory(recursive, function(error) {
+                    flow.complete(error);
+                });
+            })
+        ]).execute([], callback);
     },
 
     /**
      * @param {?boolean=} recursive
      */
     deleteDirectorySync: function(recursive) {
-        //TODO BRN: Implementation
+        recursive = TypeUtil.isBoolean(recursive) ? recursive : true;
+        if (!this.existsSync()) {
+            throw new Error("Cannot delete directory '" + this.getAbsolutePath() + "' because it does " +
+                "not exist.");
+        }
+        if (!this.isDirectorySync()) {
+            throw new Error("Cannot perform a directory delete on '" + this.getAbsolutePath() +
+                    "' because it is not a directory.")
+        }
+        this._deleteDirectorySync(recursive);
     },
 
     /**
      * @param {?function(Error)} callback
      */
-    deleteFile: function(recursive, callback) {
-        //TODO BRN: Implementation
+    deleteFile: function(callback) {
+        var _this = this;
+        series([
+            task(function(flow) {
+                _this.exists(function(exists) {
+                    if (!exists) {
+                        flow.error(new Error("Cannot delete file '" + _this.getAbsolutePath() + "' because it does " +
+                            "not exist."));
+                    } else {
+                        flow.complete();
+                    }
+                });
+            }),
+            task(function(flow) {
+                _this.isFile(function(error, isFile) {
+                    if (!error) {
+                        if (isFile) {
+                            flow.complete();
+                        } else {
+                            flow.error("Cannot perform a file delete on '" + _this.getAbsolutePath() + "' because it " +
+                                "is not a file.");
+                        }
+                    } else {
+                        flow.error(error);
+                    }
+                });
+            }),
+            task(function(flow) {
+                _this._deleteFile(function(error) {
+                    flow.complete(error);
+                });
+            })
+        ]).execute([], callback);
     },
 
     /**
      *
      */
     deleteFileSync: function() {
-        //TODO BRN: Implementation
+        if (!this.existsSync()) {
+            throw new Error("Cannot delete file '" + this.getAbsolutePath() + "' because it does not exist.");
+        }
+        if (!this.isFileSync()) {
+            throw new Error("Cannot perform a file delete on '" + this.getAbsolutePath() + "' because it is not " +
+                "a file.");
+        }
+        this._deleteFileSync();
     },
 
     /**
@@ -681,6 +844,67 @@ var Path = Class.extend(Obj, {
     isDirectorySync: function() {
         var stats = fs.statSync(this.getAbsolutePath());
         return stats.isDirectory();
+    },
+
+    /**
+     * @param {function(Error, boolean)} callback
+     */
+    isDirectoryEmpty: function(callback) {
+        var _this = this;
+        var _isEmpty = null;
+        series([
+            task(function(flow) {
+                _this.exists(function(exists) {
+                    if (!exists) {
+                        flow.error(new Error("Cannot check if directory '" + _this.getAbsolutePath() + "' is empty because it " +
+                            "does not exist."));
+                    } else {
+                        flow.complete();
+                    }
+                });
+            }),
+            task(function(flow) {
+                _this.isDirectory(function(error, isDirectory) {
+                    if (!error) {
+                        if (isDirectory) {
+                            flow.complete();
+                        } else {
+                            flow.error(new Error("Cannot perform an empty directory check on '" + _this.getAbsolutePath() +
+                                "' because it is not a directory."));
+                        }
+                    } else {
+                        flow.error(error);
+                    }
+                });
+            }),
+            task(function(flow) {
+                _this._isDirectoryEmpty(function(error, isEmpty) {
+                    if (!error) {
+                        _isEmpty = isEmpty;
+                        flow.complete();
+                    } else {
+                        flow.error(error);
+                    }
+                });
+            })
+        ]).execute([], function(error) {
+            callback(error, _isEmpty);
+        });
+    },
+
+    /**
+     * @return {boolean}
+     */
+    isDirectoryEmptySync: function() {
+        if (!this.existsSync()) {
+            throw new Error("Cannot check if directory '" + this.getAbsolutePath() + "' is empty because it does " +
+                "not exist.");
+        }
+        if (!this.isDirectorySync()) {
+            throw new Error("Cannot perform an empty directory check on '" + this.getAbsolutePath() +
+                "' because it is not a directory.");
+        }
+        return this._isDirectoryEmptySync();
     },
 
     //TODO BRN: Should this return false if the path does not exist, or should it throw an error like it does now?
@@ -860,8 +1084,8 @@ var Path = Class.extend(Obj, {
          }*/
 
         var _this = this;
-        var dirCopyPath = null;
-        var dirCopyPathExists = false;
+        var _copyPath = null;
+        var _copyPathExists = false;
 
         series([
             task(function(flow) {
@@ -887,30 +1111,30 @@ var Path = Class.extend(Obj, {
                 });
             }),
             task(function(flow) {
-                dirCopyPath = new Path(intoPath.getAbsolutePath() + path.sep + this.getName());
-                dirCopyPath.exists(function(exists) {
-                    dirCopyPathExists = exists;
+                _copyPath = new Path(intoPath.getAbsolutePath() + path.sep + this.getName());
+                _copyPath.exists(function(exists) {
+                    _copyPathExists = exists;
                     flow.complete();
                 });
             }),
             task(function(flow) {
-                if (!dirCopyPathExists) {
-                    dirCopyPath._createDirectory(true, "0777", function(error) {
+                if (!_copyPathExists) {
+                    _copyPath._createDirectory(true, "0777", function(error) {
                         flow.complete(error);
                     });
                 } else {
-                    dirCopyPath.isDirectory(function(error, isDirectory) {
+                    _copyPath.isDirectory(function(error, isDirectory) {
                         if (!error) {
                             if (isDirectory) {
                                 if (overwrite) {
                                     flow.complete();
                                 } else {
                                     flow.error(new Error("Cannot copy directory '" + this.getAbsolutePath() + "' to " +
-                                        "' " + dirCopyPath.getAbsolutePath() + "' because it already exists and " +
+                                        "' " + _copyPath.getAbsolutePath() + "' because it already exists and " +
                                         "overwrite is not turned on."));
                                 }
                             } else {
-                                flow.error(new Error("Cannot copy to directory '" + dirCopyPath.getAbsolutePath() +
+                                flow.error(new Error("Cannot copy to directory '" + _copyPath.getAbsolutePath() +
                                     "' because it is not a directory."));
                             }
                         } else {
@@ -920,11 +1144,13 @@ var Path = Class.extend(Obj, {
                 }
             }),
             task(function(flow) {
-                _this._copyDirectoryContents(dirCopyPath, true, "0777", function(error) {
+                _this._copyDirectoryContents(_copyPath, true, "0777", function(error) {
                     flow.complete(error);
                 });
             })
-        ]).execute([], callback);
+        ]).execute([], function(error) {
+            callback(error, _copyPath);
+        });
     },
 
     /**
@@ -941,23 +1167,24 @@ var Path = Class.extend(Obj, {
             throw new Error("Cannot copy to path '" + intoPath.getAbsolutePath() + "' because it is not a " +
                 "directory.");
         }
-        var dirCopyPath = new Path(intoPath.getAbsolutePath() + path.sep + this.getName());
-        if (!dirCopyPath.existsSync()) {
-            dirCopyPath._createDirectorySync(true, "0777");
-            this._copyDirectoryContentsSync(dirCopyPath, recursive, overwrite);
+        var copyPath = new Path(intoPath.getAbsolutePath() + path.sep + this.getName());
+        if (!copyPath.existsSync()) {
+            copyPath._createDirectorySync(true, "0777");
+            this._copyDirectoryContentsSync(copyPath, recursive, overwrite);
         } else {
-            if (dirCopyPath.isDirectorySync()) {
+            if (copyPath.isDirectorySync()) {
                 if (overwrite) {
-                    this._copyDirectoryContentsSync(dirCopyPath, recursive, overwrite);
+                    this._copyDirectoryContentsSync(copyPath, recursive, overwrite);
                 } else {
                     throw new Error("Cannot copy directory '" + this.getAbsolutePath() + "' to '" +
-                        dirCopyPath.getAbsolutePath() + "' because it already exists and overwrite is not turned on.");
+                        copyPath.getAbsolutePath() + "' because it already exists and overwrite is not turned on.");
                 }
             } else {
-                throw new Error("Cannot copy to directory '" + dirCopyPath.getAbsolutePath() + "' because it is not " +
+                throw new Error("Cannot copy to directory '" + copyPath.getAbsolutePath() + "' because it is not " +
                     "a directory.");
             }
         }
+        return copyPath;
     },
 
     /**
@@ -1083,8 +1310,8 @@ var Path = Class.extend(Obj, {
 
         //TODO BRN: Add support for limiting the number of open file handles. Checkout ncp module https://github.com/AvianFlu/ncp/blob/master/lib/ncp.js
         var _this = this;
-        var fileCopyPath = null;
-        var fileCopyPathExists = false;
+        var _copyPath = null;
+        var _copyPathExists = false;
         series([
             task(function(flow) {
                 intoPath.exists(function(exists) {
@@ -1112,19 +1339,19 @@ var Path = Class.extend(Obj, {
                 });
             }),
             task(function(flow) {
-                var fileCopyPath = new Path(intoPath.getAbsolutePath() + path.sep + this.getName());
-                fileCopyPath.exists(function(exists) {
-                    fileCopyPathExists = exists;
+                var _copyPath = new Path(intoPath.getAbsolutePath() + path.sep + this.getName());
+                _copyPath.exists(function(exists) {
+                    _copyPathExists = exists;
                     flow.complete();
                 });
             }),
             task(function(flow) {
-                if (!fileCopyPathExists) {
-                    fileCopyPath.createFile(false, function(error) {
+                if (!_copyPathExists) {
+                    _copyPath.createFile(false, function(error) {
                         flow.complete(error);
                     });
                 } else {
-                    fileCopyPath.isFile(function(error, isFile) {
+                    _copyPath.isFile(function(error, isFile) {
                         if (!error) {
                             if (!isFile) {
 
@@ -1143,32 +1370,39 @@ var Path = Class.extend(Obj, {
                 }
             }),
             task(function(flow) {
-                var readStream = this.createReadStream();
-                var writeStream = fileCopyPath.createWriteStream();
-                readStream.pipe(writeStream);
-                readStream.on('end', function() {
-                    readStream.removeAllListeners();
-                    writeStream.removeAllListeners();
+                if (overwrite || !_copyPathExists) {
+                    var readStream = this.createReadStream();
+                    var writeStream = _copyPath.createWriteStream();
+                    readStream.pipe(writeStream);
+                    readStream.on('end', function() {
+                        readStream.removeAllListeners();
+                        writeStream.removeAllListeners();
+                        flow.complete();
+                    });
+                    readStream.on('error', function(error) {
+                        readStream.removeAllListeners();
+                        writeStream.removeAllListeners();
+                        flow.error(error);
+                    });
+                    writeStream.on('error', function(error) {
+                        readStream.removeAllListeners();
+                        writeStream.removeAllListeners();
+                        flow.error(error);
+                    });
+                } else {
                     flow.complete();
-                });
-                readStream.on('error', function(error) {
-                    readStream.removeAllListeners();
-                    writeStream.removeAllListeners();
-                    flow.error(error);
-                });
-                writeStream.on('error', function(error) {
-                    readStream.removeAllListeners();
-                    writeStream.removeAllListeners();
-                    flow.error(error);
-                });
+                }
             })
-        ]).execute([], callback);
+        ]).execute([], function(error) {
+            callback(error, _copyPath);
+        });
     },
 
     /**
      * @private
      * @param {Path} intoPath
      * @param {boolean} overwrite
+     * @return {Path}
      */
     _copyFileSync: function(intoPath, overwrite) {
 
@@ -1211,6 +1445,7 @@ var Path = Class.extend(Obj, {
             fs.closeSync(fdRead);
             fs.closeSync(fdWrite);
         }
+        return fileCopyPath;
     },
 
     /**
@@ -1295,8 +1530,23 @@ var Path = Class.extend(Obj, {
      */
     _deleteDirectory: function(recursive, callback) {
 
-        //TODO BRN: This will not delete a directory if it has contents in it. Need to add a recursive mode
+        /*if (!intoPath.existsSync()) {
+            intoPath.createDirectorySync(true, "0777");
+        }
 
+        if (!intoPath.isDirectorySync()) {
+            throw new Error("Cannot copy contents to directory '" + intoPath.getAbsolutePath() + "' because it is " +
+                "not a directory.");
+        }
+
+        var childPathArray = intoPath._readDirectorySync();
+        childPathArray.forEach(function(childPath) {
+            if (childPath.isDirectorySync() && recursive) {
+                childPath._copyDirectorySync(intoPath, recursive, overwrite);
+            } else if (childPath.isFileSync()) {
+                childPath._copyFileSync(intoPath, overwrite);
+            }
+        });*/
         fs.rmdir(this.getAbsolutePath(), callback);
     },
 
@@ -1324,6 +1574,29 @@ var Path = Class.extend(Obj, {
      */
     _deleteFileSync: function() {
         fs.unlinkSync(this.getAbsolutePath());
+    },
+
+    /**
+     * @private
+     * @param {?function(Error, boolean)} callback
+     */
+    _isDirectoryEmpty: function(callback) {
+        this._readDirectory(function(error, pathArray) {
+            if (!error) {
+                callback(null, (pathArray.length === 0))
+            } else {
+                callback(error);
+            }
+        });
+    },
+
+    /**
+     * @private
+     * @return {boolean}
+     */
+    _isDirectoryEmptySync: function() {
+        var pathArray = this._readDirectorySync();
+        return (pathArray.length === 0);
     },
 
     /**
