@@ -14,7 +14,7 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('ForEach');
+bugpack.declare('Each');
 
 var Boil = bugpack.require('Boil');
 var Class = bugpack.require('Class');

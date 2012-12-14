@@ -134,7 +134,7 @@ var Path = Class.extend(Obj, {
      * Rules for copy
      * 1) If this Path is a directory, it will perform a copyDirectory call
      * 2) If this Path is a file, it will perform a copyFile call
-     * @param {(Path|string)} intoPath
+     * @param {(string|Path)} intoPath
      * @param {?(boolean|function(Error))=} recursive (defaults to true)
      * @param {?(boolean|function(Error))=} overwrite (defaults to true)
      * @param {?function(Error, Path)} callback
@@ -208,7 +208,7 @@ var Path = Class.extend(Obj, {
     },
 
     /**
-     * @param {(Path|string)} intoPath
+     * @param {(string|Path)} intoPath
      * @param {?boolean=} recursive
      * @param {?boolean=} overwrite
      * @return {Path}
@@ -242,7 +242,7 @@ var Path = Class.extend(Obj, {
      * 3c) If a directory by the name of this one does NOT exist, it will create a directory with this name. The
      * directory's contents will then be copied in to the newly created directory.
      * 6) This will not copy files recursively unless the "recursive" option is set to true.
-     * @param {(Path|string)} intoPath
+     * @param {(string|Path)} intoPath
      * @param {?(boolean|function(Error))=} recursive (defaults to true)
      * @param {?(boolean|function(Error))=} overwrite (defaults to true)
      * @param {?function(Error, Path)} callback
@@ -303,7 +303,7 @@ var Path = Class.extend(Obj, {
     },
 
     /**
-     * @param {(Path|string)} intoPath
+     * @param {(string|Path)} intoPath
      * @param {?boolean=} recursive (defaults to true)
      * @param {?boolean=} overwrite (defaults to true)
      * @return {Path}
@@ -328,10 +328,10 @@ var Path = Class.extend(Obj, {
      * 2) If the intoPath exists, this function will copy the CONTENTS of this path INTO the intoPath
      * 3) If the intoPath does not exist, this function will attempt to create the intoPath and then copy the contents.
      * 4) This will not copy files recursively unless the "recursive" option is set to true.
-     * @param {(Path|string)} intoPath
+     * @param {(string|Path)} intoPath
      * @param {?(boolean|function(Error))=} recursive (defaults to true)
      * @param {?(boolean|function(Error))=} overwrite (defaults to true)
-     * @param {?function(Error)=} callback
+     * @param {?function(Error)} callback
      */
     copyDirectoryContents: function(intoPath, recursive, overwrite, callback) {
         if (TypeUtil.isFunction(recursive)) {
@@ -383,9 +383,10 @@ var Path = Class.extend(Obj, {
     },
 
     /**
-     * @param {(Path|string)} intoPath
+     * @param {(string|Path)} intoPath
      * @param {?boolean=} recursive (defaults to true)
      * @param {?boolean=} overwrite (defaults to true)
+     * @return {Path}
      */
     copyDirectoryContentsSync: function(intoPath, recursive, overwrite) {
         intoPath = TypeUtil.isString(intoPath) ? new Path(intoPath) : intoPath;
@@ -412,9 +413,9 @@ var Path = Class.extend(Obj, {
      * 2) If the intoPath exists and overwrite is true, the intoPath file's CONTENTS will be replace with this file's
      * contents.
      * 3) If the intoPath exists and overwrite is false, the file will not be copied.
-     * @param {(Path|string)} intoPath
+     * @param {(string|Path)} intoPath
      * @param {?(boolean|function(Error))=} overwrite (defaults to true)
-     * @param {?function(Error)=} callback
+     * @param {?function(Error, Path)} callback
      */
     copyFile: function(intoPath, overwrite, callback) {
         intoPath = TypeUtil.isString(intoPath) ? new Path(intoPath) : intoPath;
@@ -425,6 +426,7 @@ var Path = Class.extend(Obj, {
         }
 
         var _this = this;
+        var _copyPath = null;
         series([
             task(function(flow) {
                 _this.exists(function(exists) {
@@ -451,15 +453,22 @@ var Path = Class.extend(Obj, {
                 });
             }),
             task(function(flow) {
-                _this._copyFile(intoPath, overwrite, function(error) {
-                    flow.complete(error);
+                _this._copyFile(intoPath, overwrite, function(error, copyPath) {
+                    if (!error) {
+                        _copyPath = copyPath;
+                        flow.complete();
+                    } else {
+                        flow.error(error);
+                    }
                 });
             })
-        ]).execute([], callback);
+        ]).execute([], function(error) {
+             callback(error, _copyPath);
+        });
     },
 
     /**
-     * @param {(Path|string)} intoPath
+     * @param {(string|Path)} intoPath
      * @param {?boolean=} overwrite (defaults to true)
      * @return {Path}
      */
@@ -481,7 +490,7 @@ var Path = Class.extend(Obj, {
      * 1) If the directory already exists, it is NOT MODIFIED
      * @param {?(boolean|function(Error))=} createParentDirectories (defaults to true)
      * @param {?(string|function(Error))=} mode (defaults to '0777')
-     * @param {?function(Error)=} callback
+     * @param {?function(Error, Path)} callback
      */
     createDirectory: function(createParentDirectories, mode, callback) {
         if (TypeUtil.isFunction(createParentDirectories)) {
@@ -528,12 +537,19 @@ var Path = Class.extend(Obj, {
                     });
                 }
             })
-        ]).execute([], callback);
+        ]).execute([], function(error) {
+            if (!error) {
+                callback(null, this);
+            } else {
+                callback(error);
+            }
+        });
     },
 
     /**
      * @param {?boolean=} createParentDirectories
      * @param {?string=} mode
+     * @return {Path}
      */
     createDirectorySync: function(createParentDirectories, mode) {
         createParentDirectories = TypeUtil.isBoolean(createParentDirectories) ? createParentDirectories : true;
@@ -541,6 +557,7 @@ var Path = Class.extend(Obj, {
 
         if (!this.existsSync()) {
             this._createDirectorySync(createParentDirectories, mode);
+            return this;
         } else if (!this.isDirectorySync()) {
             throw new Error("Could not create directory '" + this.getAbsolutePath() + "' because it already exists " +
                 "and is not a directory.");
@@ -552,7 +569,7 @@ var Path = Class.extend(Obj, {
      * 1) If the file already exists, it is NOT MODIFIED.
      * 2) If the path already exists and it is not a file, the function will throw an error.
      * @param {?(boolean|function(Error))=} createParentDirectories (defaults to true)
-     * @param {?function(Error)} callback
+     * @param {?function(Error, Path)} callback
      */
     createFile: function(createParentDirectories, callback) {
         if (TypeUtil.isFunction(createParentDirectories)) {
@@ -593,7 +610,13 @@ var Path = Class.extend(Obj, {
                     });
                 }
             })
-        ]).execute([], callback);
+        ]).execute([], function(error) {
+            if (!error) {
+                callback(null, this);
+            } else {
+                callback(error);
+            }
+        });
     },
 
     /**
@@ -603,6 +626,7 @@ var Path = Class.extend(Obj, {
         createParentDirectories = TypeUtil.isBoolean(createParentDirectories) ? createParentDirectories : true;
         if (!this.existsSync()) {
             this._createFileSync(createParentDirectories);
+            return this;
         } else if (!this.isFileSync()) {
             throw new Error("Could not create file '" + this.getAbsolutePath() + "' because it already exists " +
                 "and is not a file.");
@@ -641,8 +665,10 @@ var Path = Class.extend(Obj, {
             task(function(flow) {
                 _this.exists(function(exists) {
                     if (!exists) {
-                        flow.error(new Error("Cannot delete path '" + _this.getAbsolutePath() + "' because it does " +
-                            "not exist."));
+
+                        // NOTE BRN: We don't throw an error here. We just fail gracefully.
+
+                        flow.exit();
                     } else {
                         flow.complete();
                     }
@@ -691,8 +717,6 @@ var Path = Class.extend(Obj, {
             } else {
                 throw new Error("Cannot delete path '" + this.getAbsolutePath() + "' because it is an unknown type.");
             }
-        } else {
-            throw new Error("Cannot delete path '" + this.getAbsolutePath() + "' because it does not exist.")
         }
     },
 
@@ -712,8 +736,7 @@ var Path = Class.extend(Obj, {
             task(function(flow) {
                 _this.exists(function(exists) {
                     if (!exists) {
-                        flow.error(new Error("Cannot delete directory '" + _this.getAbsolutePath() + "' because it " +
-                            "does not exist."));
+                        flow.exit();
                     } else {
                         flow.complete();
                     }
@@ -746,15 +769,13 @@ var Path = Class.extend(Obj, {
      */
     deleteDirectorySync: function(recursive) {
         recursive = TypeUtil.isBoolean(recursive) ? recursive : true;
-        if (!this.existsSync()) {
-            throw new Error("Cannot delete directory '" + this.getAbsolutePath() + "' because it does " +
-                "not exist.");
-        }
-        if (!this.isDirectorySync()) {
-            throw new Error("Cannot perform a directory delete on '" + this.getAbsolutePath() +
+        if (this.existsSync()) {
+            if (!this.isDirectorySync()) {
+                throw new Error("Cannot perform a directory delete on '" + this.getAbsolutePath() +
                     "' because it is not a directory.")
+            }
+            this._deleteDirectorySync(recursive);
         }
-        this._deleteDirectorySync(recursive);
     },
 
     /**
@@ -766,8 +787,7 @@ var Path = Class.extend(Obj, {
             task(function(flow) {
                 _this.exists(function(exists) {
                     if (!exists) {
-                        flow.error(new Error("Cannot delete file '" + _this.getAbsolutePath() + "' because it does " +
-                            "not exist."));
+                        flow.exit();
                     } else {
                         flow.complete();
                     }
@@ -799,14 +819,13 @@ var Path = Class.extend(Obj, {
      *
      */
     deleteFileSync: function() {
-        if (!this.existsSync()) {
-            throw new Error("Cannot delete file '" + this.getAbsolutePath() + "' because it does not exist.");
+        if (this.existsSync()) {
+            if (!this.isFileSync()) {
+                throw new Error("Cannot perform a file delete on '" + this.getAbsolutePath() + "' because it is not " +
+                    "a file.");
+            }
+            this._deleteFileSync();
         }
-        if (!this.isFileSync()) {
-            throw new Error("Cannot perform a file delete on '" + this.getAbsolutePath() + "' because it is not " +
-                "a file.");
-        }
-        this._deleteFileSync();
     },
 
     /**
@@ -932,7 +951,7 @@ var Path = Class.extend(Obj, {
 
     //TODO BRN: Handle the case where a move is across a network or through a symlink
     /**
-     * @param {(Path|string)} intoPath
+     * @param {(string|Path)} intoPath
      * @param {?(boolean|function(Error))=} overwrite (defaults to true)
      * @param {?function(Error)} callback
      */
@@ -954,7 +973,7 @@ var Path = Class.extend(Obj, {
     },
 
     /**
-     * @param {(Path|string)} intoPath
+     * @param {(string|Path)} intoPath
      * @param {?(boolean|function(Error))=} overwrite (defaults to false)
      * @param {?function(Error)} callback
      */
@@ -969,7 +988,7 @@ var Path = Class.extend(Obj, {
     },
 
     /**
-     * @param {(Path|string)} intoPath
+     * @param {(string|Path)} intoPath
      * @param {?boolean=} overwrite (defaults to false)
      */
     moveFileSync: function(intoPath, overwrite) {
@@ -1601,7 +1620,7 @@ var Path = Class.extend(Obj, {
 
     /**
      * @private
-     * @param {(Path|string)} intoPath
+     * @param {(string|Path)} intoPath
      * @param {?(boolean|function(Error))=} overwrite (defaults to false)
      * @param {?function(Error)} callback
      */
