@@ -14,8 +14,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('HashUtil');
-
 var IdGenerator = bugpack.require('IdGenerator');
 var TypeUtil = bugpack.require('TypeUtil');
 

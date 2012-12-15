@@ -14,8 +14,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('Task');
-
 var Class = bugpack.require('Class');
 var Flow = bugpack.require('Flow');
 

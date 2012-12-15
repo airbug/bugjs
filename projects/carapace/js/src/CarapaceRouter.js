@@ -15,8 +15,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('CarapaceRouter');
-
 var Backbone = bugpack.require('Backbone');
 var Class = bugpack.require('Class');
 var List = bugpack.require('List');

@@ -14,8 +14,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('ModuleAnnotation');
-
 var Annotation = bugpack.require('Annotation');
 var Class = bugpack.require('Class');
 

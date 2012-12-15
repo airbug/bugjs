@@ -2,7 +2,7 @@
 // Dependencies
 //-------------------------------------------------------------------------------
 
-//@Export('Boil')
+//@Export('Each')
 
 //@Require('Class')
 //@Require('Flow')
@@ -13,8 +13,6 @@ var bugpack = require('bugpack');
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
-
-bugpack.declare('Each');
 
 var Boil = bugpack.require('Boil');
 var Class = bugpack.require('Class');
@@ -87,7 +85,7 @@ var Each = Class.extend(Boil, {
         var _this = this;
         if (this.data.length > 0) {
             this.data.forEach(function(value, index) {
-                _this.iteratorMethod.call(null, this, value, index);
+                _this.iteratorMethod.call(null, _this, value, index);
             });
         } else {
             this.complete();

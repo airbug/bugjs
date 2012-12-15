@@ -15,11 +15,10 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('Flow');
-
 var Class = bugpack.require('Class');
 var Event = bugpack.require('Event');
 var EventDispatcher = bugpack.require('EventDispatcher');
+var TypeUtil = bugpack.require('TypeUtil');
 
 
 //-------------------------------------------------------------------------------
@@ -177,6 +176,10 @@ var Flow = Class.extend(EventDispatcher, {
      * @param {function(Error)} callback
      */
     execute: function(args, callback) {
+        if (TypeUtil.isFunction(args)) {
+            callback = args;
+            args = [];
+        }
         this.callback = callback;
         if (!this.executed) {
             this.executed = true;
@@ -220,7 +223,7 @@ var Flow = Class.extend(EventDispatcher, {
         if (this.callback) {
             this.callback(error);
         }
-        this.dispatchEvent(new Event(Flow.EventType.ERROR), {error: error});
+        this.dispatchEvent(new Event(Flow.EventType.ERROR, {error: error}));
     }
 
     /**

@@ -20,8 +20,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('BugIOC');
-
 var Class = bugpack.require('Class');
 var DependencyGraph = bugpack.require('DependencyGraph');
 var Map = bugpack.require('Map');

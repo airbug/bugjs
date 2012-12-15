@@ -13,8 +13,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('Interface');
-
 var TypeUtil = bugpack.require('TypeUtil');
 
 

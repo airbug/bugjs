@@ -23,8 +23,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('CarapaceView');
-
 var Backbone = bugpack.require('Backbone');
 var Class = bugpack.require('Class');
 var Event = bugpack.require('Event');

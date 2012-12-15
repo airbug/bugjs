@@ -21,8 +21,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('Class');
-
 var TypeUtil = bugpack.require('TypeUtil');
 
 

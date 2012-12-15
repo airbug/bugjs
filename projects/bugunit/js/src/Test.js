@@ -19,8 +19,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('Test');
-
 var AssertionResult = bugpack.require('AssertionResult');
 var Class = bugpack.require('Class');
 var Event = bugpack.require('Event');

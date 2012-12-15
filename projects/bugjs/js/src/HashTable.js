@@ -15,8 +15,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('HashTable');
-
 var Class = bugpack.require('Class');
 var HashTableNode = bugpack.require('HashTableNode');
 var Obj = bugpack.require('Obj');

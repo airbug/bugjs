@@ -15,8 +15,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('BugBoil');
-
 var Each = bugpack.require('Each');
 
 

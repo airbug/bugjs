@@ -17,8 +17,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('ControllerScan');
-
 var Annotate = bugpack.require('Annotate');
 var Carapace = bugpack.require('Carapace');
 var Class = bugpack.require('Class');

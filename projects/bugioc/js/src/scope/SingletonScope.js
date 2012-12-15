@@ -14,8 +14,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('SingletonScope');
-
 var Class = bugpack.require('Class');
 var Scope = bugpack.require('Scope');
 

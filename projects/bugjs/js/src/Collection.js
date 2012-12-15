@@ -21,8 +21,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('Collection');
-
 var Class = bugpack.require('Class');
 var HashStore = bugpack.require('HashStore');
 var Obj = bugpack.require('Obj');

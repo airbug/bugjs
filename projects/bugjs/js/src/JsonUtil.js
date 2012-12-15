@@ -13,8 +13,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('JsonUtil');
-
 var TypeUtil = bugpack.require('TypeUtil');
 
 

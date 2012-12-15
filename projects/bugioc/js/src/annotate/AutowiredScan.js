@@ -18,8 +18,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('AutowiredScan');
-
 var Annotation = bugpack.require('Annotation');
 var BugIOC = bugpack.require('BugIOC');
 var Carapace = bugpack.require('Carapace');

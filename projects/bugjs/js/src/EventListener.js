@@ -15,8 +15,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('EventListener');
-
 var Class = bugpack.require('Class');
 var Obj = bugpack.require('Obj');
 

@@ -15,8 +15,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('PublisherSubscription');
-
 var Class = bugpack.require('Class');
 var HashUtil = bugpack.require('HashUtil');
 var Obj = bugpack.require('Obj');

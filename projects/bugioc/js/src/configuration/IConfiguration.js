@@ -13,8 +13,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('IConfiguration');
-
 var Interface = bugpack.require('Interface');
 
 

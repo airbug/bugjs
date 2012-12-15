@@ -21,8 +21,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('ConfigurationScan');
-
 var Annotate = bugpack.require('Annotate');
 var BugIOC = bugpack.require('BugIOC');
 var Class = bugpack.require('Class');

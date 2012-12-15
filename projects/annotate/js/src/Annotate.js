@@ -18,8 +18,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('Annotate');
-
 var Annotation = bugpack.require('Annotation');
 var AnnotationProcessor = bugpack.require('AnnotationProcessor');
 var Class = bugpack.require('Class');

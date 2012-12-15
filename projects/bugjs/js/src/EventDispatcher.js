@@ -18,8 +18,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('EventDispatcher');
-
 var Class = bugpack.require('Class');
 var EventListener = bugpack.require('EventListener');
 var IEventDispatcher = bugpack.require('IEventDispatcher');

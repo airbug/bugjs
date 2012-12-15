@@ -19,8 +19,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('CarapaceApplication');
-
 var Backbone = bugpack.require('Backbone');
 var Class = bugpack.require('Class');
 var CarapaceController = bugpack.require('CarapaceController');

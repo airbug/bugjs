@@ -18,8 +18,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('Obj');
-
 var Class = bugpack.require('Class');
 var HashUtil = bugpack.require('HashUtil');
 var IdGenerator = bugpack.require('IdGenerator');

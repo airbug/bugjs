@@ -24,8 +24,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('Publisher');
-
 var Class = bugpack.require('Class');
 var List = bugpack.require('List');
 var Map = bugpack.require('Map');

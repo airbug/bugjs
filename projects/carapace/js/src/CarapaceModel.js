@@ -19,8 +19,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('CarapaceModel');
-
 var Backbone = bugpack.require('Backbone');
 var Class = bugpack.require('Class');
 var HashUtil = bugpack.require('HashUtil');

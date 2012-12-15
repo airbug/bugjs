@@ -16,8 +16,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('Disposable');
-
 var Class = bugpack.require('Class');
 var IDisposable = bugpack.require('IDisposable');
 var IEquals = bugpack.require('IEquals');

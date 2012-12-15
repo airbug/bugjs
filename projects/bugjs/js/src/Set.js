@@ -23,8 +23,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('Set');
-
 var Class = bugpack.require('Class');
 var Collection = bugpack.require('Collection');
 

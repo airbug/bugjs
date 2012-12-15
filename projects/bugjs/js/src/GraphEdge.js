@@ -15,8 +15,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('GraphEdge');
-
 var Class = bugpack.require('Class');
 var GraphNode = bugpack.require('GraphNode');
 var Obj = bugpack.require('Obj');

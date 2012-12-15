@@ -17,8 +17,6 @@ var path = require('path');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('Path');
-
 var BugBoil = bugpack.require('BugBoil');
 var BugFlow = bugpack.require('BugFlow');
 var Class = bugpack.require('Class');
@@ -166,43 +164,16 @@ var Path = Class.extend(Obj, {
                 });
             }),
             task(function(flow) {
-                _this.isDirectory(function(error, isDirectory) {
+                _this._copy(intoPath, recursive, overwrite, function(error, copyPath) {
                     if (!error) {
-                        if (isDirectory) {
-                            _this._copyDirectory(intoPath, recursive, overwrite, function(error, copyPath) {
-                                if (!error) {
-                                    _copyPath = copyPath;
-                                    flow.exit();
-                                } else {
-                                    flow.error(error);
-                                }
-                            });
-                        } else {
-                            flow.complete();
-                        }
+                        _copyPath = copyPath;
+                        flow.complete();
                     } else {
                         flow.error(error);
                     }
                 });
-            }),
-            task(function(flow) {
-                _this.isFile(function(error, isFile) {
-                    if (isFile) {
-                        flow._copyFile(intoPath, overwrite, function(error, copyPath) {
-                            if (!error) {
-                                _copyPath = copyPath;
-                                flow.complete();
-                            } else {
-                                flow.error(error);
-                            }
-                        });
-                    } else {
-                        flow.error(new Error("Cannot copy path '" + _this.getAbsolutePath() + "' because it is an " +
-                            "unknown type."));
-                    }
-                })
             })
-        ]).execute([], function(error) {
+        ]).execute(function(error) {
             callback(error, _copyPath);
         });
     },
@@ -297,7 +268,7 @@ var Path = Class.extend(Obj, {
                     }
                 });
             })
-        ]).execute([], function(error) {
+        ]).execute(function(error) {
             callback(error, _copyPath);
         });
     },
@@ -351,7 +322,7 @@ var Path = Class.extend(Obj, {
 
         series([
             task(function(flow) {
-                _this.exists(function(_exists) {
+                _this.exists(function(exists) {
                     if (!exists) {
                         flow.error(new Error("Cannot copy contents of directory '" + _this.getAbsolutePath() + "' " +
                             "because it does not exist."));
@@ -379,7 +350,7 @@ var Path = Class.extend(Obj, {
                     flow.complete(error);
                 });
             })
-        ]).execute([], callback);
+        ]).execute(callback);
     },
 
     /**
@@ -462,7 +433,7 @@ var Path = Class.extend(Obj, {
                     }
                 });
             })
-        ]).execute([], function(error) {
+        ]).execute(function(error) {
              callback(error, _copyPath);
         });
     },
@@ -537,7 +508,7 @@ var Path = Class.extend(Obj, {
                     });
                 }
             })
-        ]).execute([], function(error) {
+        ]).execute(function(error) {
             if (!error) {
                 callback(null, this);
             } else {
@@ -610,7 +581,7 @@ var Path = Class.extend(Obj, {
                     });
                 }
             })
-        ]).execute([], function(error) {
+        ]).execute(function(error) {
             if (!error) {
                 callback(null, this);
             } else {
@@ -675,33 +646,11 @@ var Path = Class.extend(Obj, {
                 });
             }),
             task(function(flow) {
-                _this.isDirectory(function(error, isDirectory) {
-                    if (!error) {
-                        if (isDirectory) {
-                            _this._deleteDirectory(recursive, function(error) {
-                                flow.exit(error);
-                            });
-                        } else {
-                            flow.complete();
-                        }
-                    } else {
-                        flow.error(error);
-                    }
+                _this._delete(recursive, overwrite, function(error) {
+                    flow.complete(error);
                 });
-            }),
-            task(function(flow) {
-                _this.isFile(function(error, isFile) {
-                    if (isFile) {
-                        flow._deleteFile(overwrite, function(error) {
-                            flow.complete(error);
-                        })
-                    } else {
-                        flow.error(new Error("Cannot copy path '" + _this.getAbsolutePath() + "' because it is an " +
-                            "unknown type."));
-                    }
-                })
             })
-        ]).execute([], callback);
+        ]).execute(callback);
     },
 
     /**
@@ -710,13 +659,7 @@ var Path = Class.extend(Obj, {
     deleteSync: function(recursive) {
         recursive = TypeUtil.isBoolean(recursive) ? recursive : true;
         if (this.existsSync()) {
-            if (this.isDirectorySync()) {
-                return this._deleteDirectorySync(recursive);
-            } else if (this.isFileSync()) {
-                return this._deleteFileSync();
-            } else {
-                throw new Error("Cannot delete path '" + this.getAbsolutePath() + "' because it is an unknown type.");
-            }
+            this._deleteSync(recursive);
         }
     },
 
@@ -761,7 +704,7 @@ var Path = Class.extend(Obj, {
                     flow.complete(error);
                 });
             })
-        ]).execute([], callback);
+        ]).execute(callback);
     },
 
     /**
@@ -812,7 +755,7 @@ var Path = Class.extend(Obj, {
                     flow.complete(error);
                 });
             })
-        ]).execute([], callback);
+        ]).execute(callback);
     },
 
     /**
@@ -847,9 +790,9 @@ var Path = Class.extend(Obj, {
      * @param {function(Error, boolean)} callback
      */
     isDirectory: function(callback) {
-        fs.stat(this.absolutePath, function(error, stats) {
+        fs.lstat(this.getAbsolutePath(), function(error, stats) {
             if (error) {
-                callback(error, false);
+                callback(new Error(error.message), false);
             } else {
                 callback(null, stats.isDirectory());
             }
@@ -861,7 +804,7 @@ var Path = Class.extend(Obj, {
      * @return {boolean}
      */
     isDirectorySync: function() {
-        var stats = fs.statSync(this.getAbsolutePath());
+        var stats = fs.lstatSync(this.getAbsolutePath());
         return stats.isDirectory();
     },
 
@@ -906,7 +849,7 @@ var Path = Class.extend(Obj, {
                     }
                 });
             })
-        ]).execute([], function(error) {
+        ]).execute(function(error) {
             callback(error, _isEmpty);
         });
     },
@@ -931,9 +874,9 @@ var Path = Class.extend(Obj, {
      * @param {function(Error, boolean)} callback
      */
     isFile: function(callback) {
-        fs.stat(this.absolutePath, function(error, stats) {
+        fs.lstat(this.absolutePath, function(error, stats) {
             if (error) {
-                callback(error, false);
+                callback(new Error(error.message), false);
             } else {
                 callback(null, stats.isFile());
             }
@@ -945,8 +888,29 @@ var Path = Class.extend(Obj, {
      * @return {boolean}
      */
     isFileSync: function() {
-        var stats = fs.statSync(this.getAbsolutePath());
+        var stats = fs.lstatSync(this.getAbsolutePath());
         return stats.isFile();
+    },
+
+    /**
+     * @param {function(Error, boolean)} callback
+     */
+    isSymbolicLink: function(callback) {
+        fs.lstat(this.absolutePath, function(error, stats) {
+            if (error) {
+                callback(new Error(error.message), false);
+            } else {
+                callback(null, stats.isSymbolicLink());
+            }
+        });
+    },
+
+    /**
+     * @return {boolean}
+     */
+    isSymbolicLinkSync: function() {
+        var stats = fs.lstatSync(this.getAbsolutePath());
+        return stats.isSymbolicLink();
     },
 
     //TODO BRN: Handle the case where a move is across a network or through a symlink
@@ -1038,7 +1002,7 @@ var Path = Class.extend(Obj, {
                     flow.complete(error);
                 });
             })
-        ]).execute([], callback);
+        ]).execute(callback);
 
     },
 
@@ -1069,7 +1033,7 @@ var Path = Class.extend(Obj, {
             encoding = 'utf8';
         }
         encoding = TypeUtil.isString(encoding) ? encoding : 'utf8';
-        this._writeFile(this.getAbsolutePath(), data, encoding, callback);
+        this._writeFile(data, encoding, callback);
     },
 
     /**
@@ -1085,6 +1049,61 @@ var Path = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
     // Private Class Methods
     //-------------------------------------------------------------------------------
+
+    /**
+     * Rules for copy
+     * 1) If this Path is a directory, it will perform a copyDirectory call
+     * 2) If this Path is a file, it will perform a copyFile call
+     * @param {Path} intoPath
+     * @param {boolean} recursive (defaults to true)
+     * @param {boolean} overwrite (defaults to true)
+     * @param {?function(Error, Path)} callback
+     */
+    _copy: function(intoPath, recursive, overwrite, callback) {
+        var _this = this;
+        var _copyPath = null;
+        series([
+            task(function(flow) {
+                _this.isDirectory(function(error, isDirectory) {
+                    if (!error) {
+                        if (isDirectory) {
+                            _this._copyDirectory(intoPath, recursive, overwrite, function(error, copyPath) {
+                                if (!error) {
+                                    _copyPath = copyPath;
+                                    flow.exit();
+                                } else {
+                                    flow.error(error);
+                                }
+                            });
+                        } else {
+                            flow.complete();
+                        }
+                    } else {
+                        flow.error(error);
+                    }
+                });
+            }),
+            task(function(flow) {
+                _this.isFile(function(error, isFile) {
+                    if (isFile) {
+                        flow._copyFile(intoPath, overwrite, function(error, copyPath) {
+                            if (!error) {
+                                _copyPath = copyPath;
+                                flow.complete();
+                            } else {
+                                flow.error(error);
+                            }
+                        });
+                    } else {
+                        flow.error(new Error("Cannot copy path '" + _this.getAbsolutePath() + "' because it is an " +
+                            "unknown type."));
+                    }
+                })
+            })
+        ]).execute(function(error) {
+            callback(error, _copyPath);
+        });
+    },
 
     /**
      * @private
@@ -1130,7 +1149,7 @@ var Path = Class.extend(Obj, {
                 });
             }),
             task(function(flow) {
-                _copyPath = new Path(intoPath.getAbsolutePath() + path.sep + this.getName());
+                _copyPath = new Path(intoPath.getAbsolutePath() + path.sep + _this.getName());
                 _copyPath.exists(function(exists) {
                     _copyPathExists = exists;
                     flow.complete();
@@ -1148,7 +1167,7 @@ var Path = Class.extend(Obj, {
                                 if (overwrite) {
                                     flow.complete();
                                 } else {
-                                    flow.error(new Error("Cannot copy directory '" + this.getAbsolutePath() + "' to " +
+                                    flow.error(new Error("Cannot copy directory '" + _this.getAbsolutePath() + "' to " +
                                         "' " + _copyPath.getAbsolutePath() + "' because it already exists and " +
                                         "overwrite is not turned on."));
                                 }
@@ -1167,7 +1186,7 @@ var Path = Class.extend(Obj, {
                     flow.complete(error);
                 });
             })
-        ]).execute([], function(error) {
+        ]).execute(function(error) {
             callback(error, _copyPath);
         });
     },
@@ -1224,6 +1243,8 @@ var Path = Class.extend(Obj, {
                         intoPath._createDirectory(true, "0777", function(error) {
                             flow.complete(error);
                         });
+                    } else {
+                        flow.complete();
                     }
                 });
             }),
@@ -1242,7 +1263,7 @@ var Path = Class.extend(Obj, {
                 });
             }),
             task(function(flow) {
-                intoPath._readDirectory(function(error, pathArray) {
+                _this._readDirectory(function(error, pathArray) {
                     if (!error) {
                         childPathArray = pathArray;
                         flow.complete();
@@ -1285,11 +1306,11 @@ var Path = Class.extend(Obj, {
                             boil.bubble(error);
                         }
                     });
-                }).execute([], function(error) {
+                }).execute(function(error) {
                     flow.complete(error);
                 });
             })
-        ]).execute([], callback);
+        ]).execute(callback);
     },
 
     /**
@@ -1358,7 +1379,7 @@ var Path = Class.extend(Obj, {
                 });
             }),
             task(function(flow) {
-                var _copyPath = new Path(intoPath.getAbsolutePath() + path.sep + this.getName());
+                _copyPath = new Path(intoPath.getAbsolutePath() + path.sep + _this.getName());
                 _copyPath.exists(function(exists) {
                     _copyPathExists = exists;
                     flow.complete();
@@ -1390,7 +1411,7 @@ var Path = Class.extend(Obj, {
             }),
             task(function(flow) {
                 if (overwrite || !_copyPathExists) {
-                    var readStream = this.createReadStream();
+                    var readStream = _this.createReadStream();
                     var writeStream = _copyPath.createWriteStream();
                     readStream.pipe(writeStream);
                     readStream.on('end', function() {
@@ -1412,7 +1433,7 @@ var Path = Class.extend(Obj, {
                     flow.complete();
                 }
             })
-        ]).execute([], function(error) {
+        ]).execute(function(error) {
             callback(error, _copyPath);
         });
     },
@@ -1487,10 +1508,14 @@ var Path = Class.extend(Obj, {
             }),
             task(function(flow) {
                 fs.mkdir(_this.getAbsolutePath(), mode, function(error) {
-                    flow.complete(error);
+                    if (!error) {
+                        flow.complete();
+                    } else {
+                        flow.error(new Error(error.message));
+                    }
                 });
             })
-        ]).execute([], callback);
+        ]).execute(callback);
     },
 
     /**
@@ -1525,10 +1550,14 @@ var Path = Class.extend(Obj, {
             }),
             task(function(flow) {
                 fs.writeFile(_this.getAbsolutePath(), "", function(error) {
-                    flow.complete(error);
+                    if (!error) {
+                        flow.complete();
+                    } else {
+                        flow.error(new Error(error.message));
+                    }
                 });
             })
-        ]).execute([], callback);
+        ]).execute(callback);
     },
 
     /**
@@ -1543,30 +1572,104 @@ var Path = Class.extend(Obj, {
     },
 
     /**
+     * @param {boolean} recursive
+     * @param {?function(Error)} callback
+     */
+    _delete: function(recursive, callback) {
+        var _this = this;
+        series([
+            task(function(flow) {
+                _this.isDirectory(function(error, isDirectory) {
+                    if (!error) {
+                        if (isDirectory) {
+                            _this._deleteDirectory(recursive, function(error) {
+                                flow.exit(error);
+                            });
+                        } else {
+                            flow.complete();
+                        }
+                    } else {
+                        flow.error(error);
+                    }
+                });
+            }),
+            task(function(flow) {
+                _this.isFile(function(error, isFile) {
+                    if (isFile) {
+                        _this._deleteFile(function(error) {
+                            flow.complete(error);
+                        })
+                    } else {
+                        flow.error(new Error("Cannot delete path '" + _this.getAbsolutePath() + "' because it is an " +
+                            "unknown type."));
+                    }
+                })
+            })
+        ]).execute([], callback);
+    },
+
+    /**
+     * @private
+     * @param {boolean} recursive
+     * @return {*}
+     */
+    _deleteSync: function(recursive) {
+        if (this.isDirectorySync()) {
+            this._deleteDirectorySync(recursive);
+        } else if (this.isFileSync()) {
+            this._deleteFileSync();
+        } else {
+            throw new Error("Cannot delete path '" + this.getAbsolutePath() + "' because it is an unknown type.");
+        }
+    },
+
+    /**
      * @private
      * @param {boolean} recursive
      * @param {?function(Error)} callback
      */
     _deleteDirectory: function(recursive, callback) {
-
-        /*if (!intoPath.existsSync()) {
-            intoPath.createDirectorySync(true, "0777");
-        }
-
-        if (!intoPath.isDirectorySync()) {
-            throw new Error("Cannot copy contents to directory '" + intoPath.getAbsolutePath() + "' because it is " +
-                "not a directory.");
-        }
-
-        var childPathArray = intoPath._readDirectorySync();
-        childPathArray.forEach(function(childPath) {
-            if (childPath.isDirectorySync() && recursive) {
-                childPath._copyDirectorySync(intoPath, recursive, overwrite);
-            } else if (childPath.isFileSync()) {
-                childPath._copyFileSync(intoPath, overwrite);
-            }
-        });*/
-        fs.rmdir(this.getAbsolutePath(), callback);
+        var _this = this;
+        var childPathArray = [];
+        series([
+            task(function(flow) {
+                _this._readDirectory(function(error, pathArray) {
+                    if (!error) {
+                        childPathArray = pathArray;
+                        flow.complete();
+                    } else {
+                        flow.error(error);
+                    }
+                });
+            }),
+            task(function(flow) {
+                if (childPathArray.length > 0) {
+                    if (recursive) {
+                        each(childPathArray, function(boil, childPath) {
+                            childPath._delete(recursive, function(error) {
+                                boil.bubble(error);
+                            });
+                        }).execute([], function(error) {
+                            flow.complete(error);
+                        });
+                    } else {
+                        flow.error(new Error("Cannot delete a non-empty directory. Must delete recursively to " +
+                            "delete a non-empty directory."));
+                    }
+                } else {
+                    flow.complete();
+                }
+            }),
+            task(function(flow) {
+                fs.rmdir(_this.getAbsolutePath(), function(error) {
+                    if (!error) {
+                        flow.complete();
+                    } else {
+                        flow.error(new Error(error.message));
+                    }
+                });
+            })
+        ]).execute(callback);
     },
 
     /**
@@ -1574,9 +1677,17 @@ var Path = Class.extend(Obj, {
      * @param {boolean} recursive
      */
     _deleteDirectorySync: function(recursive) {
-
-        //TODO BRN: This will not delete a directory if it has contents in it. Need to add a recursive mode
-
+        var childPathArray = this._readDirectorySync();
+        if (childPathArray.length > 0) {
+            if (recursive) {
+                childPathArray.forEach(function(childPath) {
+                    childPath._deleteSync(recursive);
+                });
+            } else {
+                throw new Error("Cannot delete a non-empty directory. Must delete recursively to delete a " +
+                    "non-empty directory.");
+            }
+        }
         fs.rmdirSync(this.getAbsolutePath());
     },
 
@@ -1585,7 +1696,12 @@ var Path = Class.extend(Obj, {
      * @param {?function(Error)} callback
      */
     _deleteFile: function(callback) {
-        fs.unlink(this.getAbsolutePath(), callback);
+        fs.unlink(this.getAbsolutePath(), function(error) {
+            if (error) {
+                error = new Error(error.message);
+            }
+            callback(error);
+        });
     },
 
     /**
@@ -1668,16 +1784,22 @@ var Path = Class.extend(Obj, {
             }),
             task(function(flow) {
                 fs.link(_this.getAbsolutePath(), intoPath.getAbsolutePath(), function(error) {
+                    if (error) {
+                        error = new Error(error.message);
+                    }
                     flow.complete(error);
                 })
             }),
             task(function(flow) {
                 fs.unlink(_this.getAbsolutePath(), function(error) {
                     //TODO BRN: What to do if the unlink fails? Should we undo the link created in the last task?
+                    if (error) {
+                        error = new Error(error.message);
+                    }
                     flow.complete(error);
                 });
             })
-        ]).execute([], callback);
+        ]).execute(callback);
     },
 
     /**
@@ -1703,15 +1825,17 @@ var Path = Class.extend(Obj, {
      * @param {?function(Error, Array.<Path>)} callback
      */
     _readDirectory: function(callback) {
+        var _this = this;
         fs.readdir(this.getAbsolutePath(), function(error, files) {
             if (!error) {
                 var pathArray = [];
-                files.forEach(function(file) {
-                    pathArray.push(new Path(file));
+                files.forEach(function(name) {
+                    var childPathString = _this.getAbsolutePath() + path.sep + name;
+                    pathArray.push(new Path(childPathString));
                 });
                 callback(null, pathArray);
             } else {
-                callback(error);
+                callback(new Error(error.message));
             }
         });
     },
@@ -1738,7 +1862,16 @@ var Path = Class.extend(Obj, {
      * @param {?function(Error)} callback
      */
     _writeFile: function(data, encoding, callback) {
-        fs.writeFile(this.getAbsolutePath(), data, encoding, callback);
+        fs.writeFile(this.getAbsolutePath(), data, encoding, function(error) {
+            if (error) {
+                error = new Error(error.message);
+            }
+            if (callback) {
+                callback(error);
+            } else {
+                throw error;
+            }
+        });
     },
 
     /**

@@ -17,8 +17,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('TestScan');
-
 var Annotate = bugpack.require('Annotate');
 var BugUnit = bugpack.require('BugUnit');
 var Class = bugpack.require('Class');

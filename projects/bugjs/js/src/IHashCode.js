@@ -13,8 +13,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('IHashCode');
-
 var Interface = bugpack.require('Interface');
 
 

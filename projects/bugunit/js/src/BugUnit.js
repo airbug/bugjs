@@ -15,8 +15,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('BugUnit');
-
 var ReportCard = bugpack.require('ReportCard');
 var Set = bugpack.require('Set');
 var TestRunner = bugpack.require('TestRunner');

@@ -15,8 +15,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('List');
-
 var Class = bugpack.require('Class');
 var Collection = bugpack.require('Collection');
 var Obj = bugpack.require('Obj');

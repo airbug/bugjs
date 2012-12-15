@@ -14,8 +14,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('RoutingRequest');
-
 var Class = bugpack.require('Class');
 var EventDispatcher = bugpack.require('EventDispatcher');
 

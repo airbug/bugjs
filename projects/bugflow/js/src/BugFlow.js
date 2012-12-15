@@ -15,8 +15,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('BugFlow');
-
 var Parallel = bugpack.require('Parallel');
 var Series = bugpack.require('Series');
 var Task = bugpack.require('Task');

@@ -15,8 +15,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('IOCModule');
-
 var Class = bugpack.require('Class');
 var Obj = bugpack.require('Obj');
 var Set = bugpack.require('Set');

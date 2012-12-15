@@ -15,8 +15,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('TestAnnotation');
-
 var Class = bugpack.require('Class');
 var List = bugpack.require('List');
 var Obj = bugpack.require('Obj');

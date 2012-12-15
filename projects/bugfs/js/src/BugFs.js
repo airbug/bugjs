@@ -14,8 +14,6 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.declare('BugFs');
-
 var Path = bugpack.require('Path');
 var TypeUtil = bugpack.require('TypeUtil');
 
