@@ -41,7 +41,7 @@ var Task = Class.extend(Flow, {
 
         /**
          * @private
-         * @type {boolean}
+         * @type {function(Flow)}
          */
         this.taskMethod = taskMethod;
     },

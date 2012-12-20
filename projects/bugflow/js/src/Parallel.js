@@ -63,37 +63,13 @@ var Parallel = Class.extend(Flow, {
         var _this = this;
         if (this.flowArray.length > 0) {
             this.flowArray.forEach(function(flow) {
-                _this.addFlowListeners(flow);
-                flow.execute(args);
+                flow.execute(args, function(error) {
+                    _this.flowCallback(error);
+                });
             });
         } else {
             this.complete();
         }
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Private Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     * @param {Flow} flow
-     */
-    addFlowListeners: function(flow) {
-        flow.addEventListener(Flow.EventType.COMPLETE, this.handleFlowComplete, this);
-        flow.addEventListener(Flow.EventType.EXIT, this.handleFlowExit, this);
-        flow.addEventListener(Flow.EventType.ERROR, this.handleFlowError, this);
-    },
-
-    /**
-     * @private
-     * @param {Flow} flow
-     */
-    removeFlowListeners: function(flow) {
-        flow.removeEventListener(Flow.EventType.COMPLETE, this.handleFlowComplete, this);
-        flow.removeEventListener(Flow.EventType.EXIT, this.handleFlowExit, this);
-        flow.removeEventListener(Flow.EventType.ERROR, this.handleFlowError, this);
     },
 
 
@@ -103,38 +79,17 @@ var Parallel = Class.extend(Flow, {
 
     /**
      * @private
-     * @param {Event} event
+     * @param {Error} error
      */
-    handleFlowComplete: function(event) {
-        var flow = event.getTarget();
-        this.removeFlowListeners(flow);
-        this.numberComplete++;
-        if (this.numberComplete >= this.flowArray.length) {
-            this.complete();
+    flowCallback: function(error) {
+        if (error) {
+            this.error(error);
+        } else {
+            this.numberComplete++;
+            if (this.numberComplete >= this.flowArray.length) {
+                this.complete();
+            }
         }
-    },
-
-    /**
-     * @private
-     * @param {Event} event
-     */
-    handleFlowExit: function(event) {
-        var flow = event.getTarget();
-        this.removeFlowListeners(flow);
-
-        //NOTE BRN: Matching break logic here. Only "exiting" out of one layer of iteration.
-
-        this.complete();
-    },
-
-    /**
-     * @private
-     * @param {Event} event
-     */
-    handleFlowError: function(event) {
-        var flow = event.getTarget();
-        this.removeFlowListeners(flow);
-        this.error(event.getData().error);
     }
 });
 

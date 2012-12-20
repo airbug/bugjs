@@ -77,33 +77,15 @@ var Series = Class.extend(Flow, {
 
     /**
      * @private
-     * @param {Flow} flow
-     */
-    addFlowListeners: function(flow) {
-        flow.addEventListener(Flow.EventType.COMPLETE, this.handleFlowComplete, this);
-        flow.addEventListener(Flow.EventType.EXIT, this.handleFlowExit, this);
-        flow.addEventListener(Flow.EventType.ERROR, this.handleFlowError, this);
-    },
-
-    /**
-     * @private
-     * @param {Flow} flow
-     */
-    removeFlowListeners: function(flow) {
-        flow.removeEventListener(Flow.EventType.COMPLETE, this.handleFlowComplete, this);
-        flow.removeEventListener(Flow.EventType.EXIT, this.handleFlowExit, this);
-        flow.removeEventListener(Flow.EventType.ERROR, this.handleFlowError, this);
-    },
-
-    /**
-     * @private
      */
     startNextFlow: function() {
+        var _this = this;
         this.index++;
         if (this.index < this.flowArray.length) {
             var nextFlow = this.flowArray[this.index];
-            this.addFlowListeners(nextFlow);
-            nextFlow.execute(this.execArgs);
+            nextFlow.execute(this.execArgs, function(error) {
+                _this.flowCallback(error);
+            });
         } else {
             this.complete();
         }
@@ -116,36 +98,14 @@ var Series = Class.extend(Flow, {
 
     /**
      * @private
-     * @param {Event} event
+     * @param {Error} error
      */
-    handleFlowComplete: function(event) {
-        var flow = event.getTarget();
-        this.removeFlowListeners(flow);
-        this.numberComplete++;
-        this.startNextFlow();
-    },
-
-    /**
-     * @private
-     * @param {Event} event
-     */
-    handleFlowExit: function(event) {
-        var flow = event.getTarget();
-        this.removeFlowListeners(flow);
-
-        //NOTE BRN: Matching break logic here. Only "exiting" out of one layer of iteration.
-
-        this.complete();
-    },
-
-    /**
-     * @private
-     * @param {Event} event
-     */
-    handleFlowError: function(event) {
-        var flow = event.getTarget();
-        this.removeFlowListeners(flow);
-        this.error(event.getData().error);
+    flowCallback: function(error) {
+        if (error) {
+            this.error(error);
+        } else  {
+            this.startNextFlow();
+        }
     }
 });
 

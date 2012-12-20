@@ -15,6 +15,7 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
+var If = bugpack.require('If');
 var Parallel = bugpack.require('Parallel');
 var Series = bugpack.require('Series');
 var Task = bugpack.require('Task');
@@ -31,11 +32,15 @@ var BugFlow = {};
 // Static Methods
 //-------------------------------------------------------------------------------
 
+BugFlow.$if = function(ifMethod, task) {
+    return new IfFlow(ifMethod, task);
+};
+
 /**
  * @param {Array<(Task)>} tasksArray
  * @return {Parallel}
  */
-BugFlow.parallel = function(tasksArray) {
+BugFlow.$parallel = function(tasksArray) {
     return new Parallel(tasksArray);
 };
 
@@ -43,7 +48,7 @@ BugFlow.parallel = function(tasksArray) {
  * @param {Array<(Task)>} tasksArray
  * @return {Series}
  */
-BugFlow.series = function(tasksArray) {
+BugFlow.$series = function(tasksArray) {
     return new Series(tasksArray);
 };
 
@@ -51,7 +56,7 @@ BugFlow.series = function(tasksArray) {
  * @param {function()} taskMethod
  * @return {Task}
  */
-BugFlow.task = function(taskMethod) {
+BugFlow.$task = function(taskMethod) {
     return new Task(taskMethod);
 };
 

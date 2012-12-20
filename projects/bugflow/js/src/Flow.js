@@ -5,8 +5,8 @@
 //@Export('Flow')
 
 //@Require('Class')
-//@Require('Event')
-//@Require('EventDispatcher')
+//@Require('Obj')
+//@Require('TypeUtil')
 
 var bugpack = require('bugpack');
 
@@ -16,8 +16,7 @@ var bugpack = require('bugpack');
 //-------------------------------------------------------------------------------
 
 var Class = bugpack.require('Class');
-var Event = bugpack.require('Event');
-var EventDispatcher = bugpack.require('EventDispatcher');
+var Obj = bugpack.require('Obj');
 var TypeUtil = bugpack.require('TypeUtil');
 
 
@@ -25,7 +24,7 @@ var TypeUtil = bugpack.require('TypeUtil');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Flow = Class.extend(EventDispatcher, {
+var Flow = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -42,7 +41,7 @@ var Flow = Class.extend(EventDispatcher, {
 
         /**
          * @private
-         * @type {function()}
+         * @type {function(Error)}
          */
         this.callback = null;
 
@@ -56,12 +55,6 @@ var Flow = Class.extend(EventDispatcher, {
          * @private
          * @type {boolean}
          */
-        this.exited = false;
-
-        /**
-         * @private
-         * @type {boolean}
-         */
         this.errored = false;
 
         /**
@@ -69,12 +62,6 @@ var Flow = Class.extend(EventDispatcher, {
          * @type {boolean}
          */
         this.executed = false;
-
-        /**
-         * @private
-         * @type {Error}
-         */
-        this.flowError = null;
     },
 
 
@@ -96,13 +83,6 @@ var Flow = Class.extend(EventDispatcher, {
         return this.errored;
     },
 
-    /**
-     * @return {boolean}
-     */
-    hasExited: function() {
-        return this.exited;
-    },
-
 
     //-------------------------------------------------------------------------------
     // Class Methods
@@ -110,47 +90,24 @@ var Flow = Class.extend(EventDispatcher, {
 
     /**
      * @param {Error} error
+     * @param {...*} var_args
      */
     complete: function(error) {
         var _this = this;
         if (error) {
             this.error(error);
         } else {
+            var args = arguments;
             if (this.hasErrored()) {
                 throw new Error("Cannot complete flow. Flow has already errored out.");
-            }
-            if (this.hasExited()) {
-                throw new Error("Cannot complete flow. Flow has already exited.");
             }
             if (this.hasCompleted()) {
                 throw new Error("Can only complete a flow once.");
             }
             this.completed = true;
             setTimeout(function() {
-                _this.completeFlow();
+                _this.completeFlow(args);
             }, 0);
-        }
-    },
-
-    /**
-     * @param {Error} error
-     */
-    exit: function(error) {
-        if (error) {
-            this.error(error);
-        } else {
-            if (this.hasErrored()) {
-                throw new Error("Cannot exit flow. Flow has already errored out.");
-            }
-            if (this.hasExited()) {
-                throw new Error("Can only exit a flow once.");
-            }
-            if (this.hasCompleted()) {
-                throw new Error("Cannot exit flow. Flow has already completed.");
-            }
-
-            this.exited = true;
-            this.exitFlow();
         }
     },
 
@@ -160,9 +117,6 @@ var Flow = Class.extend(EventDispatcher, {
     error: function(error) {
         if (this.hasErrored()) {
             throw new Error("Can only error flow once.");
-        }
-        if (this.hasExited()) {
-            throw new Error("Cannot error flow. Flow has already exited.");
         }
         if (this.hasCompleted()) {
             throw new Error("Cannot error flow. Flow has already completed.");
@@ -197,21 +151,10 @@ var Flow = Class.extend(EventDispatcher, {
     /**
      * @protected
      */
-    completeFlow: function() {
+    completeFlow: function(args) {
         if (this.callback) {
-            this.callback();
+            this.callback.apply(this, args);
         }
-        this.dispatchEvent(new Event(Flow.EventType.COMPLETE));
-    },
-
-    /**
-     * @protected
-     */
-    exitFlow: function() {
-        if (this.callback) {
-            this.callback();
-        }
-        this.dispatchEvent(new Event(Flow.EventType.EXIT));
     },
 
     /**
@@ -219,11 +162,11 @@ var Flow = Class.extend(EventDispatcher, {
      * @param {Error} error
      */
     errorFlow: function(error) {
-        this.flowError = error;
         if (this.callback) {
             this.callback(error);
+        } else {
+            throw error;
         }
-        this.dispatchEvent(new Event(Flow.EventType.ERROR, {error: error}));
     }
 
     /**
@@ -234,20 +177,6 @@ var Flow = Class.extend(EventDispatcher, {
         // abstract
     }*/
 });
-
-
-//-------------------------------------------------------------------------------
-// Static Variables
-//-------------------------------------------------------------------------------
-
-/**
- * @enum {string}
- */
-Flow.EventType = {
-    COMPLETE: "Task:Complete",
-    EXIT: "Task:Exit",
-    ERROR: "Task:Error"
-};
 
 
 //-------------------------------------------------------------------------------

@@ -15,7 +15,7 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Each = bugpack.require('Each');
+var ForEach = bugpack.require('ForEach');
 
 
 //-------------------------------------------------------------------------------
@@ -33,8 +33,8 @@ var BugBoil = {};
  * @param {Array<*>} data
  * @return {Parallel}
  */
-BugBoil.each = function(data, iteratorMethod) {
-    return new Each(data, iteratorMethod);
+BugBoil.$foreach = function(data, iteratorMethod) {
+    return new ForEach(data, iteratorMethod);
 };
 
 

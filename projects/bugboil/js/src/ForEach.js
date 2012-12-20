@@ -2,7 +2,7 @@
 // Dependencies
 //-------------------------------------------------------------------------------
 
-//@Export('Each')
+//@Export('ForEach')
 
 //@Require('Class')
 //@Require('Flow')
@@ -22,7 +22,7 @@ var Class = bugpack.require('Class');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Each = Class.extend(Boil, {
+var ForEach = Class.extend(Boil, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -98,4 +98,4 @@ var Each = Class.extend(Boil, {
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export(Each);
+bugpack.export(ForEach);
