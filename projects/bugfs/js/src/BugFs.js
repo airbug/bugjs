@@ -33,93 +33,93 @@ var BugFs = {};
  * @param {(string|Path)} fromPath
  * @param {(string|Path)} intoPath
  * @param {?(boolean|function(Error))=} recursive (defaults to true)
- * @param {?(boolean|function(Error))=} overwrite (defaults to true)
+ * @param {?(Path.SyncMode|function(Error))=} syncMode (defaults to Path.SyncMode.STOP)
  * @param {?function(Error, Path)} callback
  */
-BugFs.copy = function(fromPath, intoPath, recursive, overwrite, callback) {
+BugFs.copy = function(fromPath, intoPath, recursive, syncMode, callback) {
     fromPath = TypeUtil.isString(fromPath) ? new Path(fromPath) : fromPath;
-    fromPath.copy(intoPath, recursive, overwrite, callback);
+    fromPath.copy(intoPath, recursive, syncMode, callback);
 };
 
 /**
  * @param {(string|Path)} fromPath
  * @param {(string|Path)} intoPath
  * @param {?boolean=} recursive
- * @param {?boolean=} overwrite
+ * @param {?Path.SyncMode=} syncMode (defaults to Path.SyncMode.STOP)
  * @return {Path}
  */
-BugFs.copySync = function(fromPath, intoPath, recursive, overwrite) {
+BugFs.copySync = function(fromPath, intoPath, recursive, syncMode) {
     fromPath = TypeUtil.isString(fromPath) ? new Path(fromPath) : fromPath;
-    return fromPath.copySync(intoPath, recursive, overwrite);
+    return fromPath.copySync(intoPath, recursive, syncMode);
 };
 
 /**
  * @param {(string|Path)} fromPath
  * @param {(string|Path)} intoPath
  * @param {?(boolean|function(Error))=} recursive (defaults to true)
- * @param {?(boolean|function(Error))=} overwrite (defaults to true)
+ * @param {?(Path.SyncMode|function(Error))=} syncMode (defaults to Path.SyncMode.STOP)
  * @param {?function(Error, Path)} callback
  */
-BugFs.copyDirectory = function(fromPath, intoPath, recursive, overwrite, callback) {
+BugFs.copyDirectory = function(fromPath, intoPath, recursive, syncMode, callback) {
     fromPath = TypeUtil.isString(fromPath) ? new Path(fromPath) : fromPath;
-    fromPath.copyDirectory(intoPath, recursive, overwrite, callback);
+    fromPath.copyDirectory(intoPath, recursive, syncMode, callback);
 };
 
 /**
  * @param {(string|Path)} fromPath
  * @param {(string|Path)} intoPath
  * @param {?boolean=} recursive (defaults to true)
- * @param {?boolean=} overwrite (defaults to true)
+ * @param {?Path.SyncMode=} syncMode (defaults to Path.SyncMode.STOP)
  * @return {Path}
  */
-BugFs.copyDirectorySync = function(fromPath, intoPath, recursive, overwrite) {
+BugFs.copyDirectorySync = function(fromPath, intoPath, recursive, syncMode) {
     fromPath = TypeUtil.isString(fromPath) ? new Path(fromPath) : fromPath;
-    return fromPath.copyDirectorySync(intoPath, recursive, overwrite);
+    return fromPath.copyDirectorySync(intoPath, recursive, syncMode);
 };
 
 /**
  * @param {(string|Path)} fromPath
  * @param {(string|Path)} intoPath
  * @param {?(boolean|function(Error))=} recursive (defaults to true)
- * @param {?(boolean|function(Error))=} overwrite (defaults to true)
+ * @param {?(Path.SyncMode|function(Error))=} syncMode (defaults to Path.SyncMode.STOP)
  * @param {?function(Error)} callback
  */
-BugFs.copyDirectoryContents = function(fromPath, intoPath, recursive, overwrite, callback) {
+BugFs.copyDirectoryContents = function(fromPath, intoPath, recursive, syncMode, callback) {
     fromPath = TypeUtil.isString(fromPath) ? new Path(fromPath) : fromPath;
-    fromPath.copyDirectoryContents(intoPath, recursive, overwrite, callback);
+    fromPath.copyDirectoryContents(intoPath, recursive, syncMode, callback);
 };
 
 /**
  * @param {(string|Path)} fromPath
  * @param {(string|Path)} intoPath
  * @param {?boolean=} recursive (defaults to true)
- * @param {?boolean=} overwrite (defaults to true)
+ * @param {?Path.SyncMode=} syncMode (defaults to Path.SyncMode.STOP)
  */
-BugFs.copyDirectoryContentsSync = function(fromPath, intoPath, recursive, overwrite) {
+BugFs.copyDirectoryContentsSync = function(fromPath, intoPath, recursive, syncMode) {
     fromPath = TypeUtil.isString(fromPath) ? new Path(fromPath) : fromPath;
-    return fromPath.copyDirectorySync(intoPath, recursive, overwrite);
+    return fromPath.copyDirectorySync(intoPath, recursive, syncMode);
 };
 
 /**
  * @param {(string|Path)} fromPath
  * @param {(string|Path)} intoPath
- * @param {?(boolean|function(Error))=} overwrite (defaults to true)
+ * @param {?(Path.SyncMode|function(Error))=} syncMode (defaults to Path.SyncMode.STOP)
  * @param {?function(Error, Path)} callback
  */
-BugFs.copyFile = function(fromPath, intoPath, overwrite, callback) {
+BugFs.copyFile = function(fromPath, intoPath, syncMode, callback) {
     fromPath = TypeUtil.isString(fromPath) ? new Path(fromPath) : fromPath;
-    fromPath.copyFile(intoPath, overwrite, callback);
+    fromPath.copyFile(intoPath, syncMode, callback);
 };
 
 /**
  * @param {(string|Path)} fromPath
  * @param {(string|Path)} intoPath
- * @param {?boolean=} overwrite (defaults to true)
+ * @param {?Path.SyncMode=} syncMode (defaults to Path.SyncMode.STOP)
  * @return {Path}
  */
-BugFs.copyFileSync = function(fromPath, intoPath, overwrite) {
+BugFs.copyFileSync = function(fromPath, intoPath, syncMode) {
     fromPath = TypeUtil.isString(fromPath) ? new Path(fromPath) : fromPath;
-    return fromPath.copyFileSync(intoPath, overwrite);
+    return fromPath.copyFileSync(intoPath, syncMode);
 };
 
 /**
@@ -242,26 +242,28 @@ BugFs.deleteFileSync = function(filePath) {
 /**
  * @param {(string|Path)} fromPath
  * @param {(string|Path)} intoPath
- * @param {function(Error)} callback
+ * @param {?(Path.SyncMode|function(Error))=} syncMode (defaults to Path.SyncMode.STOP) 
+ * @param {?function(Error)} callback
  */
-BugFs.move = function(fromPath, intoPath, callback) {
+BugFs.move = function(fromPath, intoPath, syncMode, callback) {
     fromPath = TypeUtil.isString(fromPath) ? new Path(fromPath) : fromPath;
-    fromPath.move(intoPath, callback);
+    fromPath.move(intoPath, syncMode, callback);
 };
 
 /**
  * @param {(string|Path)} fromPath
  * @param {(string|Path)} intoPath
+ * @param {?Path.SyncMode=} syncMode (defaults to Path.SyncMode.STOP)
  */
-BugFs.moveSync = function(fromPath, intoPath) {
+BugFs.moveSync = function(fromPath, intoPath, syncMode) {
     fromPath = TypeUtil.isString(fromPath) ? new Path(fromPath) : fromPath;
-    fromPath.moveSync(intoPath);
+    fromPath.moveSync(intoPath, syncMode);
 };
 
 /**
  * @param {(string|Path)} filePath
  * @param {string} data
- * @param {string|function(Error)} encoding
+ * @param {?(string|function(Error))=} encoding
  * @param {?function(Error)} callback
  */
 BugFs.writeFile = function(filePath, data, encoding, callback) {
@@ -272,7 +274,7 @@ BugFs.writeFile = function(filePath, data, encoding, callback) {
 /**
  * @param {(string|Path)} filePath
  * @param {string} data
- * @param {?string} encoding
+ * @param {?string=} encoding
  */
 BugFs.writeFileSync = function(filePath, data, encoding) {
     filePath = TypeUtil.isString(filePath) ? new Path(filePath) : filePath;

@@ -33,7 +33,7 @@ var BugFlow = {};
 //-------------------------------------------------------------------------------
 
 BugFlow.$if = function(ifMethod, task) {
-    return new IfFlow(ifMethod, task);
+    return new If(ifMethod, task);
 };
 
 /**

@@ -2126,7 +2126,7 @@ var Path = Class.extend(Obj, {
                     }
                 });
             },
-            $task(function(error) {
+            $task(function(flow) {
                 _this._deleteFile(function(error) {
                     flow.complete(error);
                 })
