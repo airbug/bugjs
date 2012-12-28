@@ -40,7 +40,7 @@ JsonUtil.munge = function(from, into) {
             var intoValue = into[fromName];
             if ((TypeUtil.isObject(fromValue) && TypeUtil.isObject(intoValue)) ||
                 (TypeUtil.isArray(fromValue) && TypeUtil.isArray(intoValue))) {
-                into[fromName] = TypeUtil.merge(fromValue, intoValue);
+                into[fromName] = JsonUtil.merge(fromValue, intoValue);
             } else {
                 into[fromName] = fromValue;
             }
