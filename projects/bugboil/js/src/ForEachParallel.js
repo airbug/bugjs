@@ -2,7 +2,7 @@
 // Dependencies
 //-------------------------------------------------------------------------------
 
-//@Export('ForEach')
+//@Export('ForEachParallel')
 
 //@Require('Class')
 //@Require('Flow')
@@ -22,7 +22,7 @@ var Class = bugpack.require('Class');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ForEach = Class.extend(Boil, {
+var ForEachParallel = Class.extend(Boil, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -46,8 +46,8 @@ var ForEach = Class.extend(Boil, {
         this.iteratorMethod = iteratorMethod;
 
         /**
-         *
-         * @type {Number}
+         * @private
+         * @type {number}
          */
         this.numberIterationsComplete = 0;
     },
@@ -98,4 +98,4 @@ var ForEach = Class.extend(Boil, {
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export(ForEach);
+bugpack.export(ForEachParallel);

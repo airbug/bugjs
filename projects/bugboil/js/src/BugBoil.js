@@ -15,7 +15,8 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-var ForEach = bugpack.require('ForEach');
+var ForEachParallel = bugpack.require('ForEachParallel');
+var ForEachSeries = bugpack.require('ForEachSeries');
 
 
 //-------------------------------------------------------------------------------
@@ -31,10 +32,20 @@ var BugBoil = {};
 
 /**
  * @param {Array<*>} data
- * @return {Parallel}
+ * @param {function(Boil, *)} iteratorMethod
+ * @return {ForEachParallel}
  */
-BugBoil.$foreach = function(data, iteratorMethod) {
-    return new ForEach(data, iteratorMethod);
+BugBoil.$foreachParallel = function(data, iteratorMethod) {
+    return new ForEachParallel(data, iteratorMethod);
+};
+
+/**
+ * @param {Array<*>} data
+ * @param {function(Boil, *)} iteratorMethod
+ * @return {ForEachSeries}
+ */
+BugBoil.$foreachSeries = function(data, iteratorMethod) {
+    return new ForEachSeries(data, iteratorMethod);
 };
 
 

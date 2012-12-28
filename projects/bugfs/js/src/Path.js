@@ -28,7 +28,7 @@ var TypeUtil = bugpack.require('TypeUtil');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var $foreach = BugBoil.$foreach;
+var $foreachParallel = BugBoil.$foreachParallel;
 var $if = BugFlow.$if;
 var $series = BugFlow.$series;
 var $task = BugFlow.$task;
@@ -172,10 +172,12 @@ var Path = Class.extend(Obj, {
                 });
             })
         ]).execute(function(error) {
-            if (!error) {
-                callback(null, _copyPath);
-            } else {
-                callback(error);
+            if (callback) {
+                if (!error) {
+                    callback(null, _copyPath);
+                } else {
+                    callback(error);
+                }
             }
         });
     },
@@ -280,7 +282,9 @@ var Path = Class.extend(Obj, {
                 });
             })
         ]).execute(function(error) {
-            callback(error, _copyPath);
+            if (callback) {
+                callback(error, _copyPath);
+            }
         });
     },
 
@@ -465,10 +469,12 @@ var Path = Class.extend(Obj, {
                 });
             })
         ]).execute(function(error) {
-            if (!error) {
-                callback(error, _copyPath);
-            } else {
-                callback(error);
+            if (callback) {
+                if (!error) {
+                    callback(error, _copyPath);
+                } else {
+                    callback(error);
+                }
             }
         });
     },
@@ -542,10 +548,12 @@ var Path = Class.extend(Obj, {
                 });
             })
         ).execute(function(error) {
-            if (!error) {
-                callback(null, this);
-            } else {
-                callback(error);
+            if (callback) {
+                if (!error) {
+                    callback(null, this);
+                } else {
+                    callback(error);
+                }
             }
         });
     },
@@ -609,10 +617,12 @@ var Path = Class.extend(Obj, {
                 });
             })
         ).execute(function(error) {
-            if (!error) {
-                callback(null, this);
-            } else {
-                callback(error);
+            if (callback) {
+                if (!error) {
+                    callback(null, this);
+                } else {
+                    callback(error);
+                }
             }
         });
     },
@@ -924,6 +934,23 @@ var Path = Class.extend(Obj, {
         return stats.isSymbolicLink();
     },
 
+    /**
+     * If an argument is not a string or a Path it is ignored.
+     * @param {...(string|Path)} var_args
+     * @return {Path}
+     */
+    joinPaths: function() {
+        var pathStrings = [this];
+        arguments.forEach(function(arg) {
+            if (Class.doesExtend(arg, Path)) {
+                pathStrings.push(arg.getAbsolutePath());
+            } else if (TypeUtil.isString(arg)) {
+                pathStrings.push(arg);
+            }
+        });
+        return new Path(path.join.apply(path, pathStrings));
+    },
+
     //TODO BRN: Handle the case where a move is across a network or through a symlink
     /**
      * @param {(string|Path)} intoPath
@@ -961,10 +988,12 @@ var Path = Class.extend(Obj, {
                 });
             })
         ]).execute(function(error) {
-            if (!error) {
-                callback(error, _movePath);
-            } else {
-                callback(error);
+            if (callback) {
+                if (!error) {
+                    callback(error, _movePath);
+                } else {
+                    callback(error);
+                }
             }
         });
     },
@@ -1047,10 +1076,12 @@ var Path = Class.extend(Obj, {
                 });
             })
         ]).execute(function(error) {
-            if (!error) {
-                callback(error, _movePath);
-            } else {
-                callback(error);
+            if (callback) {
+                if (!error) {
+                    callback(error, _movePath);
+                } else {
+                    callback(error);
+                }
             }
         });
     },
@@ -1202,10 +1233,12 @@ var Path = Class.extend(Obj, {
                 });
             })
         ]).execute(function(error) {
-            if (!error) {
-                callback(error, _movePath);
-            } else {
-                callback(error);
+            if (callback) {
+                if (!error) {
+                    callback(error, _movePath);
+                } else {
+                    callback(error);
+                }
             }
         });
     },
@@ -1251,9 +1284,9 @@ var Path = Class.extend(Obj, {
                 });
             }),
             $task(function(flow) {
-                _this.isDirectory(function(error, isFile) {
+                _this.isDirectory(function(error, isDirectory) {
                     if (!error) {
-                        if (isFile) {
+                        if (isDirectory) {
                             flow.complete();
                         } else {
                             flow.error("Cannot read directory '" + _this.getAbsolutePath() + "' because it " +
@@ -1270,7 +1303,15 @@ var Path = Class.extend(Obj, {
                     flow.complete(error);
                 });
             })
-        ]).execute(callback);
+        ]).execute(function(error) {
+            if (callback) {
+                if (!error) {
+                    callback(null, dirPaths);
+                } else {
+                    callback(error);
+                }
+            }
+        });
 
     },
 
@@ -1287,6 +1328,71 @@ var Path = Class.extend(Obj, {
             }
         } else {
             throw new Error("Cannot ready directory '" + this.getAbsolutePath() + "' because it does not exist.");
+        }
+    },
+
+    /**
+     * @param {?(string|function(Error, string))=} encoding
+     * @param {function(Error, string)} callback
+     */
+    readFile: function(encoding, callback) {
+        if (TypeUtil.isFunction(encoding)) {
+            callback = encoding;
+        }
+        encoding = TypeUtil.isString(encoding) ? encoding : undefined;
+        var _this = this;
+        var _data = null;
+        $series([
+            $task(function(flow) {
+                _this.exists(function(exists) {
+                    if (!exists) {
+                        flow.error(new Error("Cannot read file '" + _this.getAbsolutePath() + "' because it " +
+                            "does not exist."));
+                    } else {
+                        flow.complete();
+                    }
+                });
+            }),
+            $task(function(flow) {
+                _this.isFile(function(error, isFile) {
+                    if (!error) {
+                        if (isFile) {
+                            flow.complete();
+                        } else {
+                            flow.error("Cannot read file '" + _this.getAbsolutePath() + "' because it " +
+                                "is not a file.");
+                        }
+                    } else {
+                        flow.error(error);
+                    }
+                });
+            }),
+            $task(function(flow) {
+                _this._readFile(encoding, function(error, data) {
+                    _data = data;
+                    flow.complete(error);
+                });
+            })
+        ]).execute(function(error) {
+            if (callback) {
+                callback(error, _data);
+            }
+        });
+    },
+
+    /**
+     * @param {?string=} encoding
+     */
+    readFileSync: function(encoding) {
+        if (this.existsSync()) {
+            if (this.isFileSync()) {
+                return this._readFileSync(encoding);
+            } else {
+                throw new Error("Cannot read file '" + this.getAbsolutePath() + "' because it is not a " +
+                    "file.");
+            }
+        } else {
+            throw new Error("Cannot read file '" + this.getAbsolutePath() + "' because it does not exist.");
         }
     },
 
@@ -1681,7 +1787,7 @@ var Path = Class.extend(Obj, {
                 });
             }),
             $task(function(flow) {
-                $foreach(childPathArray, function(boil, childPath) {
+                $foreachParallel(childPathArray, function(boil, childPath) {
                     var copyPath = new Path(intoPath.getAbsolutePath() + path.sep + childPath.getName());
                     childPath.isDirectory(function(error, isDirectory) {
                         if (!error) {
@@ -2171,7 +2277,7 @@ var Path = Class.extend(Obj, {
             $task(function(flow) {
                 if (childPathArray.length > 0) {
                     if (recursive) {
-                        $foreach(childPathArray, function(boil, childPath) {
+                        $foreachParallel(childPathArray, function(boil, childPath) {
                             childPath._delete(recursive, function(error) {
                                 boil.bubble(error);
                             });
@@ -2584,7 +2690,7 @@ var Path = Class.extend(Obj, {
                 });
             }),
             $task(function(flow) {
-                $foreach(childPathArray, function(boil, childPath) {
+                $foreachParallel(childPathArray, function(boil, childPath) {
                     var movePath = new Path(intoPath.getAbsolutePath() + path.sep + childPath.getName());
                     childPath._move(movePath, syncMode, function(error) {
                         boil.bubble(error);
@@ -2846,6 +2952,23 @@ var Path = Class.extend(Obj, {
             pathArray.push(new Path(childPathString));
         });
         return pathArray;
+    },
+
+    /**
+     * @private
+     * @param {?string} encoding
+     * @param {function(Error, string)} callback
+     */
+    _readFile: function(encoding, callback) {
+        fs.readFile(this.getAbsolutePath(), encoding, callback);
+    },
+
+    /**
+     * @private
+     * @param {?string} encoding
+     */
+    _readFileSync: function(encoding) {
+        return fs.readFileSync(encoding);
     },
 
     /**

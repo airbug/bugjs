@@ -240,6 +240,32 @@ BugFs.deleteFileSync = function(filePath) {
 };
 
 /**
+ * @param {string} aPath
+ * @param {?function(boolean)} callback
+ */
+BugFs.exists = function(aPath, callback) {
+    aPath = TypeUtil.isString(aPath) ? new Path(aPath) : aPath;
+    aPath.exists(callback);
+};
+
+/**
+ * @param {string} aPath
+ * @return {boolean}
+ */
+BugFs.existsSync = function(aPath) {
+    aPath = TypeUtil.isString(aPath) ? new Path(aPath) : aPath;
+    return aPath.existsSync();
+};
+
+/**
+ * @param {string} pathString
+ * @return {Path}
+ */
+BugFs.path = function(pathString) {
+    return new Path(pathString);
+};
+
+/**
  * @param {(string|Path)} fromPath
  * @param {(string|Path)} intoPath
  * @param {?(Path.SyncMode|function(Error))=} syncMode (defaults to Path.SyncMode.STOP) 
@@ -258,6 +284,35 @@ BugFs.move = function(fromPath, intoPath, syncMode, callback) {
 BugFs.moveSync = function(fromPath, intoPath, syncMode) {
     fromPath = TypeUtil.isString(fromPath) ? new Path(fromPath) : fromPath;
     fromPath.moveSync(intoPath, syncMode);
+};
+
+/**
+ * @param {(string|Path)} aPath
+ * @return {Path}
+ */
+BugFs.parentPath = function(aPath) {
+    aPath = TypeUtil.isString(aPath) ? new Path(aPath) : aPath;
+    return aPath.getParentPath();
+};
+
+/**
+ * @param {(string|Path)} filePath
+ * @param {?(string|function(Error, string))=} encoding
+ * @param {function(Error, string)} callback
+ */
+BugFs.readFile = function(filePath, encoding, callback) {
+    filePath = TypeUtil.isString(filePath) ? new Path(filePath) : filePath;
+    filePath.readFile(encoding, callback);
+};
+
+/**
+ * @param {(string|Path)} filePath
+ * @param {?string=} encoding
+ * @return {*}
+ */
+BugFs.readFileSync = function(filePath, encoding) {
+    filePath = TypeUtil.isString(filePath) ? new Path(filePath) : filePath;
+    return filePath.readFileSync(encoding);
 };
 
 /**
