@@ -57,7 +57,7 @@ var Path = Class.extend(Obj, {
          * @private
          * @type {string}
          */
-        this.absolutePath = path.normalize(givenPath);
+        this.givenPath = givenPath;
     },
 
 
@@ -69,7 +69,21 @@ var Path = Class.extend(Obj, {
      * @return {string}
      */
     getAbsolutePath: function() {
-        return this.absolutePath;
+        return path.normalize(this.givenPath);
+    },
+
+    /**
+     * @return {string}
+     */
+    getExtName: function() {
+        return path.extname(this.getAbsolutePath());
+    },
+
+    /**
+     * @return {string}
+     */
+    getGivenPath: function() {
+        return this.givenPath;
     },
 
     /**
@@ -895,7 +909,7 @@ var Path = Class.extend(Obj, {
      * @param {function(Error, boolean)} callback
      */
     isFile: function(callback) {
-        fs.lstat(this.absolutePath, function(error, stats) {
+        fs.lstat(this.getAbsolutePath(), function(error, stats) {
             if (error) {
                 callback(new Error(error.message), false);
             } else {
@@ -917,7 +931,7 @@ var Path = Class.extend(Obj, {
      * @param {function(Error, boolean)} callback
      */
     isSymbolicLink: function(callback) {
-        fs.lstat(this.absolutePath, function(error, stats) {
+        fs.lstat(this.getAbsolutePath(), function(error, stats) {
             if (error) {
                 callback(new Error(error.message), false);
             } else {
@@ -936,18 +950,19 @@ var Path = Class.extend(Obj, {
 
     /**
      * If an argument is not a string or a Path it is ignored.
-     * @param {...(string|Path)} var_args
+     * @param {Array.<(string|Path)>} paths
      * @return {Path}
      */
-    joinPaths: function() {
-        var pathStrings = [this];
-        arguments.forEach(function(arg) {
-            if (Class.doesExtend(arg, Path)) {
-                pathStrings.push(arg.getAbsolutePath());
-            } else if (TypeUtil.isString(arg)) {
-                pathStrings.push(arg);
+    joinPaths: function(paths) {
+        var pathStrings = [this.getGivenPath()];
+        for (var i = 0, size = paths.length; i < size; i++) {
+            var _path = paths[i];
+            if (Class.doesExtend(_path, Path)) {
+                pathStrings.push(_path.getGivenPath());
+            } else if (TypeUtil.isString(_path)) {
+                pathStrings.push(_path);
             }
-        });
+        }
         return new Path(path.join.apply(path, pathStrings));
     },
 
@@ -2968,7 +2983,7 @@ var Path = Class.extend(Obj, {
      * @param {?string} encoding
      */
     _readFileSync: function(encoding) {
-        return fs.readFileSync(encoding);
+        return fs.readFileSync(this.getAbsolutePath(), encoding);
     },
 
     /**

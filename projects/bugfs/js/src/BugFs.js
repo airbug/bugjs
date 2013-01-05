@@ -4,8 +4,9 @@
 
 //@Export('BugFs')
 
-//@Require('Directory')
-//@Require('File')
+//@Require('Class')
+//@Require('Path')
+//@Require('TypeUtil')
 
 var bugpack = require('bugpack');
 
@@ -14,6 +15,7 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
+var Class = bugpack.require('Class');
 var Path = bugpack.require('Path');
 var TypeUtil = bugpack.require('TypeUtil');
 
@@ -258,11 +260,26 @@ BugFs.existsSync = function(aPath) {
 };
 
 /**
- * @param {string} pathString
+ * @param {Array.<(string|Path)>} pathArray
  * @return {Path}
  */
-BugFs.path = function(pathString) {
-    return new Path(pathString);
+BugFs.joinPaths = function(pathArray) {
+    var paths = [];
+    for (var i = 0, size = pathArray.length; i < size; i++) {
+        var path = BugFs.path(pathArray[i]);
+        if (path) {
+            paths.push(path);
+        }
+    }
+
+    if (paths.length > 1) {
+        var firstPath = paths.shift();
+        return firstPath.joinPaths(paths);
+    } else if (paths.length === 1) {
+        return paths[0];
+    } else {
+        throw new Error("joinPaths requires at least one path argument");
+    }
 };
 
 /**
@@ -293,6 +310,19 @@ BugFs.moveSync = function(fromPath, intoPath, syncMode) {
 BugFs.parentPath = function(aPath) {
     aPath = TypeUtil.isString(aPath) ? new Path(aPath) : aPath;
     return aPath.getParentPath();
+};
+
+/**
+ * @param {(string|Path)} pathString
+ * @return {Path}
+ */
+BugFs.path = function(pathString) {
+    if (Class.doesExtend(pathString, Path)) {
+        return pathString;
+    } else if (TypeUtil.isString(pathString)) {
+        return new Path(pathString);
+    }
+    //Ignore if not a string or path
 };
 
 /**

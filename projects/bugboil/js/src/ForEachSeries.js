@@ -92,6 +92,9 @@ var ForEachSeries = Class.extend(Boil, {
      */
     next: function() {
         this.iteratorIndex++;
+        if (!this.data) {
+            this.error("data value must be iterable");
+        }
         if (this.iteratorIndex >= this.data.length) {
             this.complete();
         } else {

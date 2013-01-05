@@ -38,15 +38,14 @@ JsonUtil.munge = function(from, into) {
         for (var fromName in from) {
             var fromValue = from[fromName];
             var intoValue = into[fromName];
-            if ((TypeUtil.isObject(fromValue) && TypeUtil.isObject(intoValue)) ||
-                (TypeUtil.isArray(fromValue) && TypeUtil.isArray(intoValue))) {
+            if (TypeUtil.isObject(fromValue) && TypeUtil.isObject(intoValue)) {
                 into[fromName] = JsonUtil.merge(fromValue, intoValue);
             } else {
                 into[fromName] = fromValue;
             }
         }
-    } else if (TypeUtil.isArray(from) && TypeUtil.isArray(into)) {
-        //TODO BRN
+    } else {
+        throw new Error("both from and into parameters must be objects");
     }
 };
 
