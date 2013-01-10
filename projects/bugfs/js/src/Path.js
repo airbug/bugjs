@@ -21,6 +21,7 @@ var BugBoil = bugpack.require('BugBoil');
 var BugFlow = bugpack.require('BugFlow');
 var Class = bugpack.require('Class');
 var Obj = bugpack.require('Obj');
+var Semaphore = bugpack.require('Semaphore');
 var TypeUtil = bugpack.require('TypeUtil');
 
 
@@ -162,37 +163,42 @@ var Path = Class.extend(Obj, {
         intoPath = TypeUtil.isString(intoPath) ? new Path(intoPath) : intoPath;
         recursive = TypeUtil.isBoolean(recursive) ? recursive : true;
         syncMode = TypeUtil.isString(syncMode) ? syncMode : Path.SyncMode.STOP;
+
         var _this = this;
         var _copyPath = new Path(intoPath.getAbsolutePath() + path.sep + _this.getName());
-        $series([
-            $task(function(flow) {
-                _this.exists(function(exists) {
-                    if (!exists) {
-                        flow.error(new Error("Cannot copy path '" + _this.getAbsolutePath() + "' because it does " +
-                            "not exist."));
+
+        Path.transactionSemaphore.acquire(function() {
+            $series([
+                $task(function(flow) {
+                    _this._exists(function(exists) {
+                        if (!exists) {
+                            flow.error(new Error("Cannot copy path '" + _this.getAbsolutePath() + "' because it does " +
+                                "not exist."));
+                        } else {
+                            flow.complete();
+                        }
+                    });
+                }),
+                $task(function(flow) {
+                    _this.ensureCopyIntoPath(intoPath, function(error) {
+                        flow.complete(error);
+                    });
+                }),
+                $task(function(flow) {
+                    _this._copy(_copyPath, recursive, syncMode, function(error) {
+                        flow.complete(error);
+                    });
+                })
+            ]).execute(function(error) {
+                Path.transactionSemaphore.release();
+                if (callback) {
+                    if (!error) {
+                        callback(null, _copyPath);
                     } else {
-                        flow.complete();
+                        callback(error);
                     }
-                });
-            }),
-            $task(function(flow) {
-                _this.ensureCopyIntoPath(intoPath, function(error) {
-                    flow.complete(error);
-                });
-            }),
-            $task(function(flow) {
-                _this._copy(_copyPath, recursive, syncMode, function(error) {
-                    flow.complete(error);
-                });
-            })
-        ]).execute(function(error) {
-            if (callback) {
-                if (!error) {
-                    callback(null, _copyPath);
-                } else {
-                    callback(error);
                 }
-            }
+            });
         });
     },
 
@@ -261,44 +267,48 @@ var Path = Class.extend(Obj, {
 
         var _this = this;
         var _copyPath = new Path(intoPath.getAbsolutePath() + path.sep + _this.getName());
-        $series([
-            $task(function(flow) {
-                _this.exists(function(exists) {
-                    if (!exists) {
-                        flow.error(new Error("Cannot copy directory '" + _this.getAbsolutePath() + "' because it does not exist."));
-                    } else {
-                        flow.complete();
-                    }
-                });
-            }),
-            $task(function(flow) {
-                _this.isDirectory(function(error, isDirectory) {
-                    if (!error) {
-                        if (isDirectory) {
-                            flow.complete();
+
+        Path.transactionSemaphore.acquire(function() {
+            $series([
+                $task(function(flow) {
+                    _this._exists(function(exists) {
+                        if (!exists) {
+                            flow.error(new Error("Cannot copy directory '" + _this.getAbsolutePath() + "' because it does not exist."));
                         } else {
-                            flow.error(new Error("Cannot perform a directory copy on '" + _this.getAbsolutePath() + "' because it is " +
-                                "not a directory."));
+                            flow.complete();
                         }
-                    } else {
-                        flow.error(error);
-                    }
-                });
-            }),
-            $task(function(flow) {
-                _this.ensureCopyIntoPath(intoPath, function(error) {
-                    flow.complete(error);
-                });
-            }),
-            $task(function(flow) {
-                _this._copyDirectory(_copyPath, recursive, syncMode, function(error) {
-                    flow.complete(error);
-                });
-            })
-        ]).execute(function(error) {
-            if (callback) {
-                callback(error, _copyPath);
-            }
+                    });
+                }),
+                $task(function(flow) {
+                    _this._isDirectory(function(error, isDirectory) {
+                        if (!error) {
+                            if (isDirectory) {
+                                flow.complete();
+                            } else {
+                                flow.error(new Error("Cannot perform a directory copy on '" + _this.getAbsolutePath() + "' because it is " +
+                                    "not a directory."));
+                            }
+                        } else {
+                            flow.error(error);
+                        }
+                    });
+                }),
+                $task(function(flow) {
+                    _this.ensureCopyIntoPath(intoPath, function(error) {
+                        flow.complete(error);
+                    });
+                }),
+                $task(function(flow) {
+                    _this._copyDirectory(_copyPath, recursive, syncMode, function(error) {
+                        flow.complete(error);
+                    });
+                })
+            ]).execute(function(error) {
+                Path.transactionSemaphore.release();
+                if (callback) {
+                    callback(error, _copyPath);
+                }
+            });
         });
     },
 
@@ -338,6 +348,10 @@ var Path = Class.extend(Obj, {
      * @param {?function(Error)} callback
      */
     copyDirectoryContents: function(intoPath, recursive, syncMode, callback) {
+
+        //TEST
+        console.log("Copy directory " + this.getAbsolutePath() + " contents into path " + intoPath.getAbsolutePath());
+
         if (TypeUtil.isFunction(recursive)) {
             callback = recursive;
         }
@@ -349,42 +363,52 @@ var Path = Class.extend(Obj, {
         syncMode = TypeUtil.isString(syncMode) ? syncMode : Path.SyncMode.STOP;
 
         var _this = this;
-        $series([
-            $task(function(flow) {
-                _this.exists(function(exists) {
-                    if (!exists) {
-                        flow.error(new Error("Cannot copy contents of directory '" + _this.getAbsolutePath() + "' " +
-                            "because it does not exist."));
-                    } else {
-                        flow.complete();
-                    }
-                });
-            }),
-            $task(function(flow) {
-                _this.isDirectory(function(error, isDirectory) {
-                    if (!error) {
-                        if (isDirectory) {
-                            flow.complete();
+
+        Path.transactionSemaphore.acquire(function() {
+            $series([
+                $task(function(flow) {
+                    _this._exists(function(exists) {
+                        if (!exists) {
+                            flow.error(new Error("Cannot copy contents of directory '" + _this.getAbsolutePath() + "' " +
+                                "because it does not exist."));
                         } else {
-                            flow.error(new Error("Cannot perform a directory contents copy on '" +
-                                _this.getAbsolutePath() + "' because it is not a directory."));
+                            flow.complete();
                         }
-                    } else {
-                        flow.error(error);
-                    }
-                });
-            }),
-            $task(function(flow) {
-                _this.ensureCopyIntoPath(intoPath, function(error) {
-                    flow.complete(error);
-                });
-            }),
-            $task(function(flow) {
-                _this._copyDirectoryContents(intoPath, recursive, syncMode, function(error) {
-                    flow.complete(error);
-                });
-            })
-        ]).execute(callback);
+                    });
+                }),
+                $task(function(flow) {
+                    _this._isDirectory(function(error, isDirectory) {
+                        if (!error) {
+                            if (isDirectory) {
+                                flow.complete();
+                            } else {
+                                flow.error(new Error("Cannot perform a directory contents copy on '" +
+                                    _this.getAbsolutePath() + "' because it is not a directory."));
+                            }
+                        } else {
+                            flow.error(error);
+                        }
+                    });
+                }),
+                $task(function(flow) {
+                    _this.ensureCopyIntoPath(intoPath, function(error) {
+                        flow.complete(error);
+                    });
+                }),
+                $task(function(flow) {
+                    _this._copyDirectoryContents(intoPath, recursive, syncMode, function(error) {
+                        flow.complete(error);
+                    });
+                })
+            ]).execute(function(error) {
+
+                //TEST
+                console.log("completed copyDirectoryContents");
+
+                Path.transactionSemaphore.release();
+                callback(error);
+            });
+        });
     },
 
     /**
@@ -447,49 +471,53 @@ var Path = Class.extend(Obj, {
 
         var _this = this;
         var _copyPath = new Path(intoPath.getAbsolutePath() + path.sep + this.getName());
-        $series([
-            $task(function(flow) {
-                _this.exists(function(exists) {
-                    if (!exists) {
-                        flow.error(new Error("Cannot copy file '" + _this.getAbsolutePath() + "' because it does " +
-                            "not exist."));
-                    } else {
-                        flow.complete();
-                    }
-                });
-            }),
-            $task(function(flow) {
-                _this.isFile(function(error, isFile) {
-                    if (!error) {
-                        if (isFile) {
-                            flow.complete();
+
+        Path.transactionSemaphore.acquire(function() {
+            $series([
+                $task(function(flow) {
+                    _this._exists(function(exists) {
+                        if (!exists) {
+                            flow.error(new Error("Cannot copy file '" + _this.getAbsolutePath() + "' because it does " +
+                                "not exist."));
                         } else {
-                            flow.error("Cannot perform a file copy on '" + _this.getAbsolutePath() + "' because it " +
-                                "is not a file.");
+                            flow.complete();
                         }
+                    });
+                }),
+                $task(function(flow) {
+                    _this._isFile(function(error, isFile) {
+                        if (!error) {
+                            if (isFile) {
+                                flow.complete();
+                            } else {
+                                flow.error(new Error("Cannot perform a file copy on '" + _this.getAbsolutePath() +
+                                    "' because it is not a file."));
+                            }
+                        } else {
+                            flow.error(error);
+                        }
+                    });
+                }),
+                $task(function(flow) {
+                    _this.ensureCopyIntoPath(intoPath, function(error) {
+                        flow.complete(error);
+                    });
+                }),
+                $task(function(flow) {
+                    _this._copyFile(_copyPath, syncMode, function(error) {
+                        flow.complete(error);
+                    });
+                })
+            ]).execute(function(error) {
+                Path.transactionSemaphore.release();
+                if (callback) {
+                    if (!error) {
+                        callback(error, _copyPath);
                     } else {
-                        flow.error(error);
+                        callback(error);
                     }
-                });
-            }),
-            $task(function(flow) {
-                _this.ensureCopyIntoPath(intoPath, function(error) {
-                    flow.complete(error);
-                });
-            }),
-            $task(function(flow) {
-                _this._copyFile(_copyPath, syncMode, function(error) {
-                    flow.complete(error);
-                });
-            })
-        ]).execute(function(error) {
-            if (callback) {
-                if (!error) {
-                    callback(error, _copyPath);
-                } else {
-                    callback(error);
                 }
-            }
+            });
         });
     },
 
@@ -533,42 +561,46 @@ var Path = Class.extend(Obj, {
         mode = TypeUtil.isString(mode) ? mode : '0777';
 
         var _this = this;
-        $if (function(flow) {
-                _this.exists(function(exists) {
-                    flow.assert(!exists);
-                });
-            },
-            $task(function(flow) {
-                _this._createDirectory(createParentDirectories, mode, function(error) {
-                    flow.complete(error);
-                });
-            })
-        ).$else(
-            $task(function(flow) {
 
-                // NOTE BRN: We check this to make sure that the given path did not exist already as a file.
+        Path.transactionSemaphore.acquire(function() {
+            $if (function(flow) {
+                    _this._exists(function(exists) {
+                        flow.assert(!exists);
+                    });
+                },
+                $task(function(flow) {
+                    _this._createDirectory(createParentDirectories, mode, function(error) {
+                        flow.complete(error);
+                    });
+                })
+            ).$else(
+                $task(function(flow) {
 
-                _this.isDirectory(function(error, isDirectory) {
-                    if (!error) {
-                        if (!isDirectory) {
-                            flow.error(new Error("Could not create directory '" + _this.getAbsolutePath() +
-                                "' because it already exists and is not a directory."));
+                    // NOTE BRN: We check this to make sure that the given path did not exist already as a file.
+
+                    _this._isDirectory(function(error, isDirectory) {
+                        if (!error) {
+                            if (!isDirectory) {
+                                flow.error(new Error("Could not create directory '" + _this.getAbsolutePath() +
+                                    "' because it already exists and is not a directory."));
+                            } else {
+                                flow.complete();
+                            }
                         } else {
-                            flow.complete();
+                            flow.error(error);
                         }
+                    });
+                })
+            ).execute(function(error) {
+                Path.transactionSemaphore.release();
+                if (callback) {
+                    if (!error) {
+                        callback(null, this);
                     } else {
-                        flow.error(error);
+                        callback(error);
                     }
-                });
-            })
-        ).execute(function(error) {
-            if (callback) {
-                if (!error) {
-                    callback(null, this);
-                } else {
-                    callback(error);
                 }
-            }
+            });
         });
     },
 
@@ -604,40 +636,44 @@ var Path = Class.extend(Obj, {
         createParentDirectories = TypeUtil.isBoolean(createParentDirectories) ? createParentDirectories : true;
 
         var _this = this;
-        $if (function(flow) {
-                _this.exists(function(exists) {
-                    flow.assert(!exists);
-                });
-            },
-            $task(function(flow) {
-                _this._createFile(createParentDirectories, function(error) {
-                    flow.complete(error);
-                });
-            })
-        ).$else(
-            // NOTE BRN: We check this to make sure that the given path did not exist already as a file.
-            $task(function(flow) {
-                _this.isFile(function(error, isFile) {
-                    if (!error) {
-                        if (!isFile) {
-                            flow.error(new Error("Could not create file '" + _this.getAbsolutePath() +
-                                "' because it already exists and is not a file."));
+
+        Path.transactionSemaphore.acquire(function() {
+            $if (function(flow) {
+                    _this._exists(function(exists) {
+                        flow.assert(!exists);
+                    });
+                },
+                $task(function(flow) {
+                    _this._createFile(createParentDirectories, function(error) {
+                        flow.complete(error);
+                    });
+                })
+            ).$else(
+                // NOTE BRN: We check this to make sure that the given path did not exist already as a file.
+                $task(function(flow) {
+                    _this._isFile(function(error, isFile) {
+                        if (!error) {
+                            if (!isFile) {
+                                flow.error(new Error("Could not create file '" + _this.getAbsolutePath() +
+                                    "' because it already exists and is not a file."));
+                            } else {
+                                flow.complete();
+                            }
                         } else {
-                            flow.complete();
+                            flow.error(error);
                         }
+                    });
+                })
+            ).execute(function(error) {
+                Path.transactionSemaphore.release();
+                if (callback) {
+                    if (!error) {
+                        callback(null, this);
                     } else {
-                        flow.error(error);
+                        callback(error);
                     }
-                });
-            })
-        ).execute(function(error) {
-            if (callback) {
-                if (!error) {
-                    callback(null, this);
-                } else {
-                    callback(error);
                 }
-            }
+            });
         });
     },
 
@@ -655,6 +691,7 @@ var Path = Class.extend(Obj, {
         return this;
     },
 
+    //TODO BRN: Figure out how to integrate the file handle semaphore in to these stream functions.
     /**
      * @param {Object} options
      * @return {ReadStream}
@@ -682,17 +719,23 @@ var Path = Class.extend(Obj, {
         recursive = TypeUtil.isBoolean(recursive) ? recursive : true;
 
         var _this = this;
-        $if (function(flow) {
-                _this.exists(function(exists) {
-                    flow.assert(exists);
-                });
-            },
-            $task(function(flow) {
-                _this._delete(recursive, function(error) {
-                    flow.complete(error);
-                });
-            })
-        ).execute(callback);
+
+        Path.transactionSemaphore.acquire(function() {
+            $if (function(flow) {
+                    _this._exists(function(exists) {
+                        flow.assert(exists);
+                    });
+                },
+                $task(function(flow) {
+                    _this._delete(recursive, function(error) {
+                        flow.complete(error);
+                    });
+                })
+            ).execute(function(error) {
+                Path.transactionSemaphore.release();
+                callback(error);
+            });
+        });
     },
 
     /**
@@ -716,33 +759,39 @@ var Path = Class.extend(Obj, {
         recursive = TypeUtil.isBoolean(recursive) ? recursive : true;
 
         var _this = this;
-        $if (function(flow) {
-                _this.exists(function(exists) {
-                    flow.assert(exists);
-                });
-            },
-            $series([
-                $task(function(flow) {
-                    _this.isDirectory(function(error, isDirectory) {
-                        if (!error) {
-                            if (isDirectory) {
-                                flow.complete();
+
+        Path.transactionSemaphore.acquire(function() {
+            $if (function(flow) {
+                    _this._exists(function(exists) {
+                        flow.assert(exists);
+                    });
+                },
+                $series([
+                    $task(function(flow) {
+                        _this._isDirectory(function(error, isDirectory) {
+                            if (!error) {
+                                if (isDirectory) {
+                                    flow.complete();
+                                } else {
+                                    flow.error(new Error("Cannot perform a directory delete on '" + _this.getAbsolutePath() +
+                                        "' because it is not a directory."));
+                                }
                             } else {
-                                flow.error(new Error("Cannot perform a directory delete on '" + _this.getAbsolutePath() +
-                                    "' because it is not a directory."));
+                                flow.error(error);
                             }
-                        } else {
-                            flow.error(error);
-                        }
-                    });
-                }),
-                $task(function(flow) {
-                    _this._deleteDirectory(recursive, function(error) {
-                        flow.complete(error);
-                    });
-                })
-            ])
-        ).execute(callback);
+                        });
+                    }),
+                    $task(function(flow) {
+                        _this._deleteDirectory(recursive, function(error) {
+                            flow.complete(error);
+                        });
+                    })
+                ])
+            ).execute(function(error) {
+                Path.transactionSemaphore.release();
+                callback(error);
+            });
+        });
     },
 
     /**
@@ -764,33 +813,39 @@ var Path = Class.extend(Obj, {
      */
     deleteFile: function(callback) {
         var _this = this;
-        $if (function(flow) {
-                _this.exists(function(exists) {
-                    flow.assert(exists);
-                });
-            },
-            $series([
-                $task(function(flow) {
-                    _this.isFile(function(error, isFile) {
-                        if (!error) {
-                            if (isFile) {
-                                flow.complete();
+
+        Path.transactionSemaphore.acquire(function() {
+            $if (function(flow) {
+                    _this._exists(function(exists) {
+                        flow.assert(exists);
+                    });
+                },
+                $series([
+                    $task(function(flow) {
+                        _this._isFile(function(error, isFile) {
+                            if (!error) {
+                                if (isFile) {
+                                    flow.complete();
+                                } else {
+                                    flow.error("Cannot perform a file delete on '" + _this.getAbsolutePath() + "' because it " +
+                                        "is not a file.");
+                                }
                             } else {
-                                flow.error("Cannot perform a file delete on '" + _this.getAbsolutePath() + "' because it " +
-                                    "is not a file.");
+                                flow.error(error);
                             }
-                        } else {
-                            flow.error(error);
-                        }
-                    });
-                }),
-                $task(function(flow) {
-                    _this._deleteFile(function(error) {
-                        flow.complete(error);
-                    });
-                })
-            ])
-        ).execute(callback);
+                        });
+                    }),
+                    $task(function(flow) {
+                        _this._deleteFile(function(error) {
+                            flow.complete(error);
+                        });
+                    })
+                ])
+            ).execute(function(error) {
+                Path.transactionSemaphore.release();
+                callback(error);
+            });
+        })
     },
 
     /**
@@ -810,7 +865,13 @@ var Path = Class.extend(Obj, {
      * @param {function(boolean)} callback
      */
     exists: function(callback) {
-        fs.exists(this.getAbsolutePath(), callback);
+        var _this = this;
+        Path.transactionSemaphore.acquire(function() {
+            _this._exists(function(result) {
+                Path.transactionSemaphore.release();
+                callback(result);
+            })
+        });
     },
 
     /**
@@ -825,12 +886,12 @@ var Path = Class.extend(Obj, {
      * @param {function(Error, boolean)} callback
      */
     isDirectory: function(callback) {
-        fs.lstat(this.getAbsolutePath(), function(error, stats) {
-            if (error) {
-                callback(new Error(error.message), false);
-            } else {
-                callback(null, stats.isDirectory());
-            }
+        var _this = this;
+        Path.transactionSemaphore.acquire(function() {
+            _this._isDirectory(function(error, result) {
+                Path.transactionSemaphore.release();
+                callback(error, result);
+            })
         });
     },
 
@@ -849,43 +910,46 @@ var Path = Class.extend(Obj, {
     isDirectoryEmpty: function(callback) {
         var _this = this;
         var _isEmpty = null;
-        $series([
-            $task(function(flow) {
-                _this.exists(function(exists) {
-                    if (!exists) {
-                        flow.error(new Error("Cannot check if directory '" + _this.getAbsolutePath() + "' is empty because it " +
-                            "does not exist."));
-                    } else {
-                        flow.complete();
-                    }
-                });
-            }),
-            $task(function(flow) {
-                _this.isDirectory(function(error, isDirectory) {
-                    if (!error) {
-                        if (isDirectory) {
+        Path.transactionSemaphore.acquire(function() {
+            $series([
+                $task(function(flow) {
+                    _this._exists(function(exists) {
+                        if (!exists) {
+                            flow.error(new Error("Cannot check if directory '" + _this.getAbsolutePath() + "' is empty because it " +
+                                "does not exist."));
+                        } else {
+                            flow.complete();
+                        }
+                    });
+                }),
+                $task(function(flow) {
+                    _this._isDirectory(function(error, isDirectory) {
+                        if (!error) {
+                            if (isDirectory) {
+                                flow.complete();
+                            } else {
+                                flow.error(new Error("Cannot perform an empty directory check on '" + _this.getAbsolutePath() +
+                                    "' because it is not a directory."));
+                            }
+                        } else {
+                            flow.error(error);
+                        }
+                    });
+                }),
+                $task(function(flow) {
+                    _this._isDirectoryEmpty(function(error, isEmpty) {
+                        if (!error) {
+                            _isEmpty = isEmpty;
                             flow.complete();
                         } else {
-                            flow.error(new Error("Cannot perform an empty directory check on '" + _this.getAbsolutePath() +
-                                "' because it is not a directory."));
+                            flow.error(error);
                         }
-                    } else {
-                        flow.error(error);
-                    }
-                });
-            }),
-            $task(function(flow) {
-                _this._isDirectoryEmpty(function(error, isEmpty) {
-                    if (!error) {
-                        _isEmpty = isEmpty;
-                        flow.complete();
-                    } else {
-                        flow.error(error);
-                    }
-                });
-            })
-        ]).execute(function(error) {
-            callback(error, _isEmpty);
+                    });
+                })
+            ]).execute(function(error) {
+                Path.transactionSemaphore.release();
+                callback(error, _isEmpty);
+            });
         });
     },
 
@@ -909,12 +973,12 @@ var Path = Class.extend(Obj, {
      * @param {function(Error, boolean)} callback
      */
     isFile: function(callback) {
-        fs.lstat(this.getAbsolutePath(), function(error, stats) {
-            if (error) {
-                callback(new Error(error.message), false);
-            } else {
-                callback(null, stats.isFile());
-            }
+        var _this = this;
+        Path.transactionSemaphore.acquire(function() {
+            _this._isFile(function(error, result) {
+                Path.transactionSemaphore.release();
+                callback(error, result);
+            })
         });
     },
 
@@ -931,12 +995,12 @@ var Path = Class.extend(Obj, {
      * @param {function(Error, boolean)} callback
      */
     isSymbolicLink: function(callback) {
-        fs.lstat(this.getAbsolutePath(), function(error, stats) {
-            if (error) {
-                callback(new Error(error.message), false);
-            } else {
-                callback(null, stats.isSymbolicLink());
-            }
+        var _this = this;
+        Path.transactionSemaphore.acquire(function() {
+            _this._isSymbolicLink(function(error, result) {
+                Path.transactionSemaphore.release();
+                callback(error, result);
+            })
         });
     },
 
@@ -966,7 +1030,7 @@ var Path = Class.extend(Obj, {
         return new Path(path.join.apply(path, pathStrings));
     },
 
-    //TODO BRN: Handle the case where a move is across a network or through a symlink
+    //TODO BRN: Handle the case where a move is across a network or through a symlink, need to copy instead of rename
     /**
      * @param {(string|Path)} intoPath
      * @param {?(Path.SyncMode|function(Error))=} syncMode (defaults to Path.SyncMode.STOP)
@@ -981,35 +1045,39 @@ var Path = Class.extend(Obj, {
 
         var _this = this;
         var _movePath = new Path(intoPath.getAbsolutePath() + path.sep + this.getName());
-        $series([
-            $task(function(flow) {
-                _this.exists(function(exists) {
-                    if (!exists) {
-                        flow.error(new Error("Cannot move path '" + _this.getAbsolutePath() + "' because it does " +
-                            "not exist."));
+
+        Path.transactionSemaphore.acquire(function() {
+            $series([
+                $task(function(flow) {
+                    _this._exists(function(exists) {
+                        if (!exists) {
+                            flow.error(new Error("Cannot move path '" + _this.getAbsolutePath() + "' because it does " +
+                                "not exist."));
+                        } else {
+                            flow.complete();
+                        }
+                    });
+                }),
+                $task(function(flow) {
+                    _this.ensureCopyIntoPath(intoPath, function(error) {
+                        flow.complete(error);
+                    });
+                }),
+                $task(function(flow) {
+                    _this._move(_movePath, syncMode, function(error) {
+                        flow.complete(error);
+                    });
+                })
+            ]).execute(function(error) {
+                Path.transactionSemaphore.release();
+                if (callback) {
+                    if (!error) {
+                        callback(error, _movePath);
                     } else {
-                        flow.complete();
+                        callback(error);
                     }
-                });
-            }),
-            $task(function(flow) {
-                _this.ensureCopyIntoPath(intoPath, function(error) {
-                    flow.complete(error);
-                });
-            }),
-            $task(function(flow) {
-                _this._move(_movePath, syncMode, function(error) {
-                    flow.complete(error);
-                });
-            })
-        ]).execute(function(error) {
-            if (callback) {
-                if (!error) {
-                    callback(error, _movePath);
-                } else {
-                    callback(error);
                 }
-            }
+            });
         });
     },
 
@@ -1055,49 +1123,53 @@ var Path = Class.extend(Obj, {
 
         var _this = this;
         var _movePath = new Path(intoPath.getAbsolutePath() + path.sep + this.getName());
-        $series([
-            $task(function(flow) {
-                _this.exists(function(exists) {
-                    if (!exists) {
-                        flow.error(new Error("Cannot move directory '" + _this.getAbsolutePath() + "' because it " +
-                            "does not exist."));
-                    } else {
-                        flow.complete();
-                    }
-                });
-            }),
-            $task(function(flow) {
-                _this.isDirectory(function(error, isDirectory) {
-                    if (!error) {
-                        if (isDirectory) {
-                            flow.complete();
+
+        Path.transactionSemaphore.acquire(function() {
+            $series([
+                $task(function(flow) {
+                    _this._exists(function(exists) {
+                        if (!exists) {
+                            flow.error(new Error("Cannot move directory '" + _this.getAbsolutePath() + "' because it " +
+                                "does not exist."));
                         } else {
-                            flow.error(new Error("Cannot perform a directory move on '" + _this.getAbsolutePath() +
-                                "' because it is not a directory."));
+                            flow.complete();
                         }
+                    });
+                }),
+                $task(function(flow) {
+                    _this._isDirectory(function(error, isDirectory) {
+                        if (!error) {
+                            if (isDirectory) {
+                                flow.complete();
+                            } else {
+                                flow.error(new Error("Cannot perform a directory move on '" + _this.getAbsolutePath() +
+                                    "' because it is not a directory."));
+                            }
+                        } else {
+                            flow.error(error);
+                        }
+                    });
+                }),
+                $task(function(flow) {
+                    _this.ensureCopyIntoPath(intoPath, function(error) {
+                        flow.complete(error);
+                    });
+                }),
+                $task(function(flow) {
+                    _this._moveDirectory(intoPath, syncMode, function(error) {
+                        flow.complete(error);
+                    });
+                })
+            ]).execute(function(error) {
+                Path.transactionSemaphore.release();
+                if (callback) {
+                    if (!error) {
+                        callback(error, _movePath);
                     } else {
-                        flow.error(error);
+                        callback(error);
                     }
-                });
-            }),
-            $task(function(flow) {
-                _this.ensureCopyIntoPath(intoPath, function(error) {
-                    flow.complete(error);
-                });
-            }),
-            $task(function(flow) {
-                _this._moveDirectory(intoPath, syncMode, function(error) {
-                    flow.complete(error);
-                });
-            })
-        ]).execute(function(error) {
-            if (callback) {
-                if (!error) {
-                    callback(error, _movePath);
-                } else {
-                    callback(error);
                 }
-            }
+            });
         });
     },
 
@@ -1141,42 +1213,48 @@ var Path = Class.extend(Obj, {
         syncMode = TypeUtil.isString(syncMode) ? syncMode : Path.SyncMode.STOP;
 
         var _this = this;
-        $series([
-            $task(function(flow) {
-                _this.exists(function(exists) {
-                    if (!exists) {
-                        flow.error(new Error("Cannot move contents of directory '" + _this.getAbsolutePath() + "' " +
-                            "because it does not exist."));
-                    } else {
-                        flow.complete();
-                    }
-                });
-            }),
-            $task(function(flow) {
-                _this.isDirectory(function(error, isDirectory) {
-                    if (!error) {
-                        if (isDirectory) {
-                            flow.complete();
+
+        Path.transactionSemaphore.acquire(function() {
+            $series([
+                $task(function(flow) {
+                    _this._exists(function(exists) {
+                        if (!exists) {
+                            flow.error(new Error("Cannot move contents of directory '" + _this.getAbsolutePath() + "' " +
+                                "because it does not exist."));
                         } else {
-                            flow.error(new Error("Cannot perform a directory contents move on '" +
-                                _this.getAbsolutePath() + "' because it is not a directory."));
+                            flow.complete();
                         }
-                    } else {
-                        flow.error(error);
-                    }
-                });
-            }),
-            $task(function(flow) {
-                _this.ensureCopyIntoPath(intoPath, function(error) {
-                    flow.complete(error);
-                });
-            }),
-            $task(function(flow) {
-                _this._moveDirectoryContents(intoPath, syncMode, function(error) {
-                    flow.complete(error);
-                });
-            })
-        ]).execute(callback);
+                    });
+                }),
+                $task(function(flow) {
+                    _this._isDirectory(function(error, isDirectory) {
+                        if (!error) {
+                            if (isDirectory) {
+                                flow.complete();
+                            } else {
+                                flow.error(new Error("Cannot perform a directory contents move on '" +
+                                    _this.getAbsolutePath() + "' because it is not a directory."));
+                            }
+                        } else {
+                            flow.error(error);
+                        }
+                    });
+                }),
+                $task(function(flow) {
+                    _this.ensureCopyIntoPath(intoPath, function(error) {
+                        flow.complete(error);
+                    });
+                }),
+                $task(function(flow) {
+                    _this._moveDirectoryContents(intoPath, syncMode, function(error) {
+                        flow.complete(error);
+                    });
+                })
+            ]).execute(function(error) {
+                Path.transactionSemaphore.release();
+                callback(error);
+            });
+        });
     },
 
     /**
@@ -1212,49 +1290,53 @@ var Path = Class.extend(Obj, {
 
         var _this = this;
         var _movePath = new Path(intoPath.getAbsolutePath() + path.sep + this.getName());
-        $series([
-            $task(function(flow) {
-                _this.exists(function(exists) {
-                    if (!exists) {
-                        flow.error(new Error("Cannot move file '" + _this.getAbsolutePath() + "' because it does " +
-                            "not exist."));
-                    } else {
-                        flow.complete();
-                    }
-                });
-            }),
-            $task(function(flow) {
-                _this.isFile(function(error, isFile) {
-                    if (!error) {
-                        if (isFile) {
-                            flow.complete();
+
+        Path.transactionSemaphore.acquire(function() {
+            $series([
+                $task(function(flow) {
+                    _this._exists(function(exists) {
+                        if (!exists) {
+                            flow.error(new Error("Cannot move file '" + _this.getAbsolutePath() + "' because it does " +
+                                "not exist."));
                         } else {
-                            flow.error(new Error("Cannot perform a file move on '" + _this.getAbsolutePath() + "' because it " +
-                                "is not a file."));
+                            flow.complete();
                         }
+                    });
+                }),
+                $task(function(flow) {
+                    _this._isFile(function(error, isFile) {
+                        if (!error) {
+                            if (isFile) {
+                                flow.complete();
+                            } else {
+                                flow.error(new Error("Cannot perform a file move on '" + _this.getAbsolutePath() + "' because it " +
+                                    "is not a file."));
+                            }
+                        } else {
+                            flow.error(error);
+                        }
+                    });
+                }),
+                $task(function(flow) {
+                    _this.ensureCopyIntoPath(intoPath, function(error) {
+                        flow.complete(error);
+                    });
+                }),
+                $task(function(flow) {
+                    _this._moveFile(_movePath, syncMode, function(error) {
+                        flow.complete(error);
+                    });
+                })
+            ]).execute(function(error) {
+                Path.transactionSemaphore.release();
+                if (callback) {
+                    if (!error) {
+                        callback(error, _movePath);
                     } else {
-                        flow.error(error);
+                        callback(error);
                     }
-                });
-            }),
-            $task(function(flow) {
-                _this.ensureCopyIntoPath(intoPath, function(error) {
-                    flow.complete(error);
-                });
-            }),
-            $task(function(flow) {
-                _this._moveFile(_movePath, syncMode, function(error) {
-                    flow.complete(error);
-                });
-            })
-        ]).execute(function(error) {
-            if (callback) {
-                if (!error) {
-                    callback(error, _movePath);
-                } else {
-                    callback(error);
                 }
-            }
+            });
         });
     },
 
@@ -1287,47 +1369,50 @@ var Path = Class.extend(Obj, {
     readDirectory: function(callback) {
         var _this = this;
         var dirPaths = null;
-        $series([
-            $task(function(flow) {
-                _this.exists(function(exists) {
-                    if (!exists) {
-                        flow.error(new Error("Cannot read directory '" + _this.getAbsolutePath() + "' because it " +
-                            "does not exist."));
-                    } else {
-                        flow.complete();
-                    }
-                });
-            }),
-            $task(function(flow) {
-                _this.isDirectory(function(error, isDirectory) {
-                    if (!error) {
-                        if (isDirectory) {
-                            flow.complete();
-                        } else {
-                            flow.error("Cannot read directory '" + _this.getAbsolutePath() + "' because it " +
-                                "is not a directory.");
-                        }
-                    } else {
-                        flow.error(error);
-                    }
-                });
-            }),
-            $task(function(flow) {
-                _this._readDirectory(function(error, _dirPaths) {
-                    dirPaths = _dirPaths;
-                    flow.complete(error);
-                });
-            })
-        ]).execute(function(error) {
-            if (callback) {
-                if (!error) {
-                    callback(null, dirPaths);
-                } else {
-                    callback(error);
-                }
-            }
-        });
 
+        Path.transactionSemaphore.acquire(function() {
+            $series([
+                $task(function(flow) {
+                    _this._exists(function(exists) {
+                        if (!exists) {
+                            flow.error(new Error("Cannot read directory '" + _this.getAbsolutePath() + "' because it " +
+                                "does not exist."));
+                        } else {
+                            flow.complete();
+                        }
+                    });
+                }),
+                $task(function(flow) {
+                    _this._isDirectory(function(error, isDirectory) {
+                        if (!error) {
+                            if (isDirectory) {
+                                flow.complete();
+                            } else {
+                                flow.error("Cannot read directory '" + _this.getAbsolutePath() + "' because it " +
+                                    "is not a directory.");
+                            }
+                        } else {
+                            flow.error(error);
+                        }
+                    });
+                }),
+                $task(function(flow) {
+                    _this._readDirectory(function(error, _dirPaths) {
+                        dirPaths = _dirPaths;
+                        flow.complete(error);
+                    });
+                })
+            ]).execute(function(error) {
+                Path.transactionSemaphore.release();
+                if (callback) {
+                    if (!error) {
+                        callback(null, dirPaths);
+                    } else {
+                        callback(error);
+                    }
+                }
+            });
+        });
     },
 
     /**
@@ -1357,41 +1442,45 @@ var Path = Class.extend(Obj, {
         encoding = TypeUtil.isString(encoding) ? encoding : undefined;
         var _this = this;
         var _data = null;
-        $series([
-            $task(function(flow) {
-                _this.exists(function(exists) {
-                    if (!exists) {
-                        flow.error(new Error("Cannot read file '" + _this.getAbsolutePath() + "' because it " +
-                            "does not exist."));
-                    } else {
-                        flow.complete();
-                    }
-                });
-            }),
-            $task(function(flow) {
-                _this.isFile(function(error, isFile) {
-                    if (!error) {
-                        if (isFile) {
-                            flow.complete();
+
+        Path.transactionSemaphore.acquire(function() {
+            $series([
+                $task(function(flow) {
+                    _this._exists(function(exists) {
+                        if (!exists) {
+                            flow.error(new Error("Cannot read file '" + _this.getAbsolutePath() + "' because it " +
+                                "does not exist."));
                         } else {
-                            flow.error("Cannot read file '" + _this.getAbsolutePath() + "' because it " +
-                                "is not a file.");
+                            flow.complete();
                         }
-                    } else {
-                        flow.error(error);
-                    }
-                });
-            }),
-            $task(function(flow) {
-                _this._readFile(encoding, function(error, data) {
-                    _data = data;
-                    flow.complete(error);
-                });
-            })
-        ]).execute(function(error) {
-            if (callback) {
-                callback(error, _data);
-            }
+                    });
+                }),
+                $task(function(flow) {
+                    _this._isFile(function(error, isFile) {
+                        if (!error) {
+                            if (isFile) {
+                                flow.complete();
+                            } else {
+                                flow.error("Cannot read file '" + _this.getAbsolutePath() + "' because it " +
+                                    "is not a file.");
+                            }
+                        } else {
+                            flow.error(error);
+                        }
+                    });
+                }),
+                $task(function(flow) {
+                    _this._readFile(encoding, function(error, data) {
+                        _data = data;
+                        flow.complete(error);
+                    });
+                })
+            ]).execute(function(error) {
+                Path.transactionSemaphore.release();
+                if (callback) {
+                    callback(error, _data);
+                }
+            });
         });
     },
 
@@ -1422,7 +1511,14 @@ var Path = Class.extend(Obj, {
             encoding = 'utf8';
         }
         encoding = TypeUtil.isString(encoding) ? encoding : 'utf8';
-        this._writeFile(data, encoding, callback);
+
+        var _this = this;
+        Path.transactionSemaphore.acquire(function() {
+            _this._writeFile(data, encoding, function(error) {
+                Path.transactionSemaphore.release();
+                callback(error);
+            });
+        });
     },
 
     /**
@@ -1448,7 +1544,7 @@ var Path = Class.extend(Obj, {
     _copy: function(copyPath, recursive, syncMode, callback) {
         var _this = this;
         $if (function(flow) {
-                _this.isDirectory(function(error, isDirectory) {
+                _this._isDirectory(function(error, isDirectory) {
                     if (!error) {
                         flow.assert(isDirectory);
                     } else {
@@ -1462,7 +1558,7 @@ var Path = Class.extend(Obj, {
                 });
             })
         ).$elseIf (function(flow) {
-                _this.isFile(function(error, isFile) {
+                _this._isFile(function(error, isFile) {
                     if (!error) {
                         flow.assert(isFile);
                     } else {
@@ -1507,17 +1603,9 @@ var Path = Class.extend(Obj, {
      * @param {?function(Error)} callback
      */
     _copyDirectory: function(copyPath, recursive, syncMode, callback) {
-
-        //TODO BRN: Add support for limiting the number of open file handles. Checkout ncp module https://github.com/AvianFlu/ncp/blob/master/lib/ncp.js
-        /*if (running >= limit) {
-         return process.nextTick(function () {
-         getStats(source);
-         });
-         }*/
-
         var _this = this;
         $if (function(flow) {
-                copyPath.exists(function(exists) {
+                copyPath._exists(function(exists) {
                     flow.assert(exists);
                 });
             },
@@ -1596,7 +1684,7 @@ var Path = Class.extend(Obj, {
     _copyDirectoryMergeReplace: function(copyPath, recursive, syncMode, callback) {
         var _this = this;
         $if (function(flow) {
-                copyPath.isDirectory(function(error, isDirectory) {
+                copyPath._isDirectory(function(error, isDirectory) {
                     if (!error) {
                         flow.assert(isDirectory);
                     } else {
@@ -1610,7 +1698,7 @@ var Path = Class.extend(Obj, {
                 });
             })
         ).$elseIf(function(flow) {
-                copyPath.isFile(function(error, isFile) {
+                copyPath._isFile(function(error, isFile) {
                     if (!error) {
                         flow.assert(isFile);
                     } else {
@@ -1625,6 +1713,10 @@ var Path = Class.extend(Obj, {
                     })
                 }),
                 $task(function(flow) {
+
+                    //TEST
+                    console.log("_copyDirectoryMergeReplace - _copyDirectoryReplace");
+
                     copyPath._createDirectory(true, "0777", function(error) {
                         flow.complete(error);
                     });
@@ -1666,7 +1758,7 @@ var Path = Class.extend(Obj, {
      */
     _copyDirectoryMergeStop: function(copyPath, recursive, syncMode, callback) {
         var _this = this;
-        copyPath.isDirectory(function(error, isDirectory) {
+        copyPath._isDirectory(function(error, isDirectory) {
             if (!error) {
                 if (isDirectory) {
                     _this._copyDirectoryContents(copyPath, recursive, syncMode, callback);
@@ -1704,7 +1796,7 @@ var Path = Class.extend(Obj, {
     _copyDirectoryReplace: function(copyPath, recursive, syncMode, callback) {
         var _this = this;
         $if (function(flow) {
-                copyPath.isDirectory(function(error, isDirectory) {
+                copyPath._isDirectory(function(error, isDirectory) {
                     if (!error) {
                         flow.assert(isDirectory);
                     } else {
@@ -1719,6 +1811,10 @@ var Path = Class.extend(Obj, {
                     });
                 }),
                 $task(function(flow) {
+
+                    //TEST
+                    console.log("_copyDirectoryReplace - if - _copyDirectoryReplace");
+
                     copyPath._createDirectory(true, "0777", function(error) {
                         flow.complete(error);
                     });
@@ -1730,7 +1826,7 @@ var Path = Class.extend(Obj, {
                 })
             ])
         ).$elseIf(function(flow) {
-                copyPath.isFile(function(error, isFile) {
+                copyPath._isFile(function(error, isFile) {
                     if (!error) {
                         flow.assert(isFile);
                     } else {
@@ -1745,6 +1841,10 @@ var Path = Class.extend(Obj, {
                     })
                 }),
                 $task(function(flow) {
+
+                    //TEST
+                    console.log("_copyDirectoryReplace - else if - _copyDirectoryReplace");
+
                     copyPath._createDirectory(true, "0777", function(error) {
                         flow.complete(error);
                     });
@@ -1787,7 +1887,10 @@ var Path = Class.extend(Obj, {
      * @param {?function(Error)} callback
      */
     _copyDirectoryContents: function(intoPath, recursive, syncMode, callback) {
-        //TODO BRN: Add support for limiting the number of open file handles. Checkout ncp module https://github.com/AvianFlu/ncp/blob/master/lib/ncp.js
+
+        //TEST
+        console.log("_copyDirectoryContents");
+
         var _this = this;
         var childPathArray = [];
         $series([
@@ -1804,7 +1907,7 @@ var Path = Class.extend(Obj, {
             $task(function(flow) {
                 $foreachParallel(childPathArray, function(boil, childPath) {
                     var copyPath = new Path(intoPath.getAbsolutePath() + path.sep + childPath.getName());
-                    childPath.isDirectory(function(error, isDirectory) {
+                    childPath._isDirectory(function(error, isDirectory) {
                         if (!error) {
                             if (isDirectory) {
                                 if (recursive) {
@@ -1815,7 +1918,7 @@ var Path = Class.extend(Obj, {
                                     boil.bubble();
                                 }
                             } else {
-                                childPath.isFile(function(error, isFile) {
+                                childPath._isFile(function(error, isFile) {
                                     if (!error) {
                                         if (isFile) {
                                             childPath._copyFile(copyPath, syncMode, function(error) {
@@ -1869,11 +1972,9 @@ var Path = Class.extend(Obj, {
      * @param {?function(Error)} callback
      */
     _copyFile: function(copyPath, syncMode, callback) {
-
-        //TODO BRN: Add support for limiting the number of open file handles. Checkout ncp module https://github.com/AvianFlu/ncp/blob/master/lib/ncp.js
         var _this = this;
         $if (function(flow) {
-                copyPath.exists(function(exists) {
+                copyPath._exists(function(exists) {
                     flow.assert(exists);
                 });
             },
@@ -1942,7 +2043,7 @@ var Path = Class.extend(Obj, {
     _copyFileMergeReplace: function(copyPath, callback) {
         var _this = this;
         $if (function(flow) {
-                copyPath.isDirectory(function(error, isDirectory) {
+                copyPath._isDirectory(function(error, isDirectory) {
                     if (!error) {
                         flow.assert(isDirectory);
                     } else {
@@ -1968,7 +2069,7 @@ var Path = Class.extend(Obj, {
                 })
             ])
         ).$elseIf(function(flow) {
-                copyPath.isFile(function(error, isFile) {
+                copyPath._isFile(function(error, isFile) {
                     if (!error) {
                         flow.assert(isFile);
                     } else {
@@ -2009,7 +2110,7 @@ var Path = Class.extend(Obj, {
     _copyFileReplace: function(copyPath, callback) {
         var _this = this;
         $if (function(flow) {
-                copyPath.isDirectory(function(error, isDirectory) {
+                copyPath._isDirectory(function(error, isDirectory) {
                     if (!error) {
                         flow.assert(isDirectory);
                     } else {
@@ -2035,7 +2136,7 @@ var Path = Class.extend(Obj, {
                 })
             ])
         ).$elseIf(function(flow) {
-                copyPath.isFile(function(error, isFile) {
+                copyPath._isFile(function(error, isFile) {
                     if (!error) {
                         flow.assert(isFile);
                     } else {
@@ -2088,29 +2189,38 @@ var Path = Class.extend(Obj, {
      * @param {?function(Error)} callback
      */
     _copyFileContents: function(copyPath, callback) {
+        var _this = this;
         var readStream = this.createReadStream();
         var writeStream = copyPath.createWriteStream();
-        readStream.pipe(writeStream);
-        readStream.on('end', function() {
-            readStream.removeAllListeners();
-            writeStream.removeAllListeners();
-            if (callback) {
-                callback();
-            }
-        });
-        readStream.on('error', function(error) {
-            readStream.removeAllListeners();
-            writeStream.removeAllListeners();
-            if (callback) {
-                callback(error);
-            }
-        });
-        writeStream.on('error', function(error) {
-            readStream.removeAllListeners();
-            writeStream.removeAllListeners();
-            if (callback) {
-                callback(error);
-            }
+
+        //TODO BRN: Not sure if this counts as a file handle. Need to look in to this.
+
+        Path.fileHandleSemaphore.acquire(function() {
+            readStream.pipe(writeStream);
+            readStream.on('end', function() {
+                readStream.removeAllListeners();
+                writeStream.removeAllListeners();
+                Path.fileHandleSemaphore.release();
+                if (callback) {
+                    callback();
+                }
+            });
+            readStream.on('error', function(error) {
+                readStream.removeAllListeners();
+                writeStream.removeAllListeners();
+                Path.fileHandleSemaphore.release();
+                if (callback) {
+                    callback(error);
+                }
+            });
+            writeStream.on('error', function(error) {
+                readStream.removeAllListeners();
+                writeStream.removeAllListeners();
+                Path.fileHandleSemaphore.release();
+                if (callback) {
+                    callback(error);
+                }
+            });
         });
     },
 
@@ -2145,7 +2255,7 @@ var Path = Class.extend(Obj, {
         $series([
             $task(function(flow) {
                 if (createParentDirectories) {
-                    _this.ensureParentDirectories(function(error) {
+                    _this.ensureParentDirectories(mode, function(error) {
                         flow.complete(error);
                     });
                 } else {
@@ -2195,12 +2305,15 @@ var Path = Class.extend(Obj, {
                 }
             }),
             $task(function(flow) {
-                fs.writeFile(_this.getAbsolutePath(), "", function(error) {
-                    if (!error) {
-                        flow.complete();
-                    } else {
-                        flow.error(new Error(error.message));
-                    }
+                Path.fileHandleSemaphore.acquire(function() {
+                    fs.writeFile(_this.getAbsolutePath(), "", function(error) {
+                        Path.fileHandleSemaphore.release();
+                        if (!error) {
+                            flow.complete();
+                        } else {
+                            flow.error(new Error(error.message));
+                        }
+                    });
                 });
             })
         ]).execute(callback);
@@ -2214,7 +2327,7 @@ var Path = Class.extend(Obj, {
         if (createParentDirectories) {
             this.ensureParentDirectoriesSync("0777");
         }
-        fs.writeFileSync(this.getAbsolutePath(), "");
+        fs.writeFileSync(_this.getAbsolutePath(), "");
     },
 
     /**
@@ -2224,7 +2337,7 @@ var Path = Class.extend(Obj, {
     _delete: function(recursive, callback) {
         var _this = this;
         $if (function(flow) {
-                _this.isDirectory(function(error, isDirectory) {
+                _this._isDirectory(function(error, isDirectory) {
                     if (!error) {
                         flow.assert(isDirectory);
                     } else {
@@ -2238,7 +2351,7 @@ var Path = Class.extend(Obj, {
                 });
             })
         ).$elseIf(function(flow) {
-                _this.isFile(function(error, isFile) {
+                _this._isFile(function(error, isFile) {
                     if (isFile) {
                         flow.assert(isFile);
                     } else {
@@ -2360,6 +2473,28 @@ var Path = Class.extend(Obj, {
 
     /**
      * @private
+     * @param {function(boolean)} callback
+     */
+    _exists: function(callback) {
+        fs.exists(this.getAbsolutePath(), callback);
+    },
+
+    /**
+     * @private
+     * @param {function(error, boolean)} callback
+     */
+    _isDirectory: function(callback) {
+        fs.lstat(this.getAbsolutePath(), function(error, stats) {
+            if (error) {
+                callback(new Error(error.message), false);
+            } else {
+                callback(null, stats.isDirectory());
+            }
+        });
+    },
+
+    /**
+     * @private
      * @param {?function(Error, boolean)} callback
      */
     _isDirectoryEmpty: function(callback) {
@@ -2382,6 +2517,33 @@ var Path = Class.extend(Obj, {
     },
 
     /**
+     * @param {function(Error, boolean)} callback
+     */
+    _isFile: function(callback) {
+        fs.lstat(this.getAbsolutePath(), function(error, stats) {
+            if (error) {
+                callback(new Error(error.message), false);
+            } else {
+                callback(null, stats.isFile());
+            }
+        });
+    },
+
+    /**
+     * @private
+     * @param {function(Error, boolean)} callback
+     */
+    _isSymbolicLink: function(callback) {
+        fs.lstat(this.getAbsolutePath(), function(error, stats) {
+            if (error) {
+                callback(new Error(error.message), false);
+            } else {
+                callback(null, stats.isSymbolicLink());
+            }
+        });
+    },
+
+    /**
      * @param {Path} movePath
      * @param {Path.SyncMode} syncMode (defaults to Path.SyncMode.STOP)
      * @param {?function(Error)} callback
@@ -2389,7 +2551,7 @@ var Path = Class.extend(Obj, {
     _move: function(movePath, syncMode, callback) {
         var _this = this;
         $if (function(flow) {
-                _this.isDirectory(function(error, isDirectory) {
+                _this._isDirectory(function(error, isDirectory) {
                     if (!error) {
                         flow.assert(isDirectory);
                     } else {
@@ -2403,7 +2565,7 @@ var Path = Class.extend(Obj, {
                 });
             })
         ).$elseIf (function(flow) {
-                _this.isFile(function(error, isFile) {
+                _this._isFile(function(error, isFile) {
                     if (!error) {
                         flow.assert(isFile);
                     } else {
@@ -2446,17 +2608,9 @@ var Path = Class.extend(Obj, {
      * @param {?function(Error)} callback
      */
     _moveDirectory: function(movePath, syncMode, callback) {
-
-        //TODO BRN: Add support for limiting the number of open file handles. Checkout ncp module https://github.com/AvianFlu/ncp/blob/master/lib/ncp.js
-        /*if (running >= limit) {
-         return process.nextTick(function () {
-         getStats(source);
-         });
-         }*/
-
         var _this = this;
         $if (function(flow) {
-                movePath.exists(function(exists) {
+                movePath._exists(function(exists) {
                     flow.assert(exists);
                 });
             },
@@ -2525,7 +2679,7 @@ var Path = Class.extend(Obj, {
     _moveDirectoryMergeReplace: function(movePath, syncMode, callback) {
         var _this = this;
         $if (function(flow) {
-                movePath.isDirectory(function(error, isDirectory) {
+                movePath._isDirectory(function(error, isDirectory) {
                     if (!error) {
                         flow.assert(isDirectory);
                     } else {
@@ -2539,7 +2693,7 @@ var Path = Class.extend(Obj, {
                 });
             })
         ).$elseIf(function(flow) {
-                movePath.isFile(function(error, isFile) {
+                movePath._isFile(function(error, isFile) {
                     if (!error) {
                         flow.assert(isFile);
                     } else {
@@ -2587,7 +2741,7 @@ var Path = Class.extend(Obj, {
      */
     _moveDirectoryMergeStop: function(movePath, syncMode, callback) {
         var _this = this;
-        movePath.isDirectory(function(error, isDirectory) {
+        movePath._isDirectory(function(error, isDirectory) {
             if (!error) {
                 if (isDirectory) {
                     _this._moveDirectoryContents(movePath, syncMode, callback);
@@ -2622,7 +2776,7 @@ var Path = Class.extend(Obj, {
     _moveDirectoryReplace: function(movePath, callback) {
         var _this = this;
         $if (function(flow) {
-                movePath.isDirectory(function(error, isDirectory) {
+                movePath._isDirectory(function(error, isDirectory) {
                     if (!error) {
                         flow.assert(isDirectory);
                     } else {
@@ -2643,7 +2797,7 @@ var Path = Class.extend(Obj, {
                 })
             ])
         ).$elseIf(function(flow) {
-                movePath.isFile(function(error, isFile) {
+                movePath._isFile(function(error, isFile) {
                     if (!error) {
                         flow.assert(isFile);
                     } else {
@@ -2690,7 +2844,6 @@ var Path = Class.extend(Obj, {
      * @param {?function(Error)} callback
      */
     _moveDirectoryContents: function(intoPath, syncMode, callback) {
-        //TODO BRN: Add support for limiting the number of open file handles. Checkout ncp module https://github.com/AvianFlu/ncp/blob/master/lib/ncp.js
         var _this = this;
         var childPathArray = [];
         $series([
@@ -2737,12 +2890,9 @@ var Path = Class.extend(Obj, {
      * @param {?function(Error)} callback
      */
     _moveFile: function(movePath, syncMode, callback) {
-
-        //TODO BRN: Add support for limiting the number of open file handles. Checkout ncp module https://github.com/AvianFlu/ncp/blob/master/lib/ncp.js
-
         var _this = this;
         $if (function(flow) {
-                movePath.exists(function(exists) {
+                movePath._exists(function(exists) {
                     flow.assert(exists);
                 });
             },
@@ -2804,7 +2954,7 @@ var Path = Class.extend(Obj, {
     _moveFileMergeReplace: function(movePath, callback) {
         var _this = this;
         $if (function(flow) {
-                movePath.isDirectory(function(error, isDirectory) {
+                movePath._isDirectory(function(error, isDirectory) {
                     if (!error) {
                         flow.assert(isDirectory);
                     } else {
@@ -2825,7 +2975,7 @@ var Path = Class.extend(Obj, {
                 })
             ])
         ).$elseIf(function(flow) {
-                movePath.isFile(function(error, isFile) {
+                movePath._isFile(function(error, isFile) {
                     if (!error) {
                         flow.assert(isFile);
                     } else {
@@ -2873,7 +3023,7 @@ var Path = Class.extend(Obj, {
     _moveFileReplace: function(movePath, callback) {
         var _this = this;
         $if (function(flow) {
-                movePath.isDirectory(function(error, isDirectory) {
+                movePath._isDirectory(function(error, isDirectory) {
                     if (!error) {
                         flow.assert(isDirectory);
                     } else {
@@ -2894,7 +3044,7 @@ var Path = Class.extend(Obj, {
                 })
             ])
         ).$elseIf(function(flow) {
-                movePath.isFile(function(error, isFile) {
+                movePath._isFile(function(error, isFile) {
                     if (!error) {
                         flow.assert(isFile);
                     } else {
@@ -2975,7 +3125,13 @@ var Path = Class.extend(Obj, {
      * @param {function(Error, string)} callback
      */
     _readFile: function(encoding, callback) {
-        fs.readFile(this.getAbsolutePath(), encoding, callback);
+        var _this = this;
+        Path.fileHandleSemaphore.acquire(function() {
+            fs.readFile(_this.getAbsolutePath(), encoding, function(error, data) {
+                Path.fileHandleSemaphore.release();
+                callback(error, data);
+            });
+        });
     },
 
     /**
@@ -3010,15 +3166,19 @@ var Path = Class.extend(Obj, {
      * @param {?function(Error)} callback
      */
     _writeFile: function(data, encoding, callback) {
-        fs.writeFile(this.getAbsolutePath(), data, encoding, function(error) {
-            if (error) {
-                error = new Error(error.message);
-            }
-            if (callback) {
-                callback(error);
-            } else {
-                throw error;
-            }
+        var _this = this;
+        Path.fileHandleSemaphore.acquire(function() {
+            fs.writeFile(_this.getAbsolutePath(), data, encoding, function(error) {
+                Path.fileHandleSemaphore.release();
+                if (error) {
+                    error = new Error(error.message);
+                }
+                if (callback) {
+                    callback(error);
+                } else {
+                    throw error;
+                }
+            });
         });
     },
 
@@ -3040,11 +3200,15 @@ var Path = Class.extend(Obj, {
      * @param {function(error)} callback
      */
     ensureCopyIntoPath: function(intoPath, callback) {
+
+        //TEST
+        console.log("Ensure copy into path '" + intoPath.getAbsolutePath() + "'");
+
         $series([
             $task(function(flow) {
-                intoPath.exists(function(exists) {
+                intoPath._exists(function(exists) {
                     if (!exists) {
-                        intoPath.createDirectory(true, "0777", function(error) {
+                        intoPath._createDirectory(true, "0777", function(error) {
                             flow.complete(error);
                         });
                     } else {
@@ -3053,7 +3217,7 @@ var Path = Class.extend(Obj, {
                 })
             }),
             $task(function(flow) {
-                intoPath.isDirectory(function(error, isDirectory) {
+                intoPath._isDirectory(function(error, isDirectory) {
                     if (!error) {
                         if (!isDirectory) {
                             flow.error(new Error("Cannot copy into path '" + intoPath.getAbsolutePath() + "' because it is not a " +
@@ -3089,8 +3253,42 @@ var Path = Class.extend(Obj, {
      */
     ensureParentDirectories: function(mode, callback) {
         var parentPath = this.getParentPath();
-        parentPath.createDirectory(true, mode, function(error) {
-            callback(error);
+        $if (function(flow) {
+                parentPath._exists(function(exists) {
+                    flow.assert(!exists);
+                });
+            },
+            $task(function(flow) {
+                parentPath._createDirectory(true, mode, function(error) {
+                    flow.complete(error);
+                });
+            })
+        ).$else(
+            $task(function(flow) {
+
+                // NOTE BRN: We check this to make sure that the given path did not exist already as a file.
+
+                parentPath._isDirectory(function(error, isDirectory) {
+                    if (!error) {
+                        if (!isDirectory) {
+                            flow.error(new Error("Could not create parent directory '" + parentPath.getAbsolutePath() +
+                                "' because it already exists and is not a directory."));
+                        } else {
+                            flow.complete();
+                        }
+                    } else {
+                        flow.error(error);
+                    }
+                });
+            })
+        ).execute(function(error) {
+            if (callback) {
+                if (!error) {
+                    callback(null, this);
+                } else {
+                    callback(error);
+                }
+            }
         });
     },
 
@@ -3119,18 +3317,28 @@ Path.SyncMode = {
     STOP: "SyncMode:Stop"
 };
 
-//TODO BRN: See if there's a way we can retrieve this value from the OS.
-/**
- * @private
- * @type {number}
- */
-Path.fileHandleLimit = 512;
+// TODO BRN: This semaphore was a rather cheap way of achieving isolation within file system transactions. Would be more
+// performant if each transaction was isolated based upon the parts of the file system that it touches. This way
+// we could still have parallel operations that affect different parts of the file system.
 
 /**
  * @private
- * @type {number}
+ * @type {Semaphore}
  */
-Path.numberOpenFileHandles = 0;
+Path.transactionSemaphore = new Semaphore(1);
+
+//TODO BRN: See if there's a way we can retrieve the file handle limit from the OS.
+
+/**
+ * @const {number}
+ */
+Path.FILE_HANDLE_LIMIT = 512;
+
+/**
+ * @private
+ * @type {Semaphore}
+ */
+Path.fileHandleSemaphore = new Semaphore(Path.FILE_HANDLE_LIMIT);
 
 
 //-------------------------------------------------------------------------------

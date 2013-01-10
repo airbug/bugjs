@@ -8,7 +8,7 @@
 //@Require('List')
 //@Require('Obj')
 
-var bugpack = require('bugpack');
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------

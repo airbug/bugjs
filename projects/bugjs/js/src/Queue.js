@@ -2,7 +2,7 @@
 // Dependencies
 //-------------------------------------------------------------------------------
 
-//@Export('List')
+//@Export('Queue')
 
 //@Require('Class')
 //@Require('Collection')
@@ -24,7 +24,7 @@ var Obj = bugpack.require('Obj');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var List = Class.extend(Collection, {
+var Queue = Class.extend(Collection, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -53,7 +53,7 @@ var List = Class.extend(Collection, {
 
     /**
      * @override
-     * @return {Array} Array is in the same order as the list
+     * @return {Array} Array is in the same order as the queue
      */
     getValueArray: function() {
         var valueArray = [];
@@ -69,12 +69,12 @@ var List = Class.extend(Collection, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {List}
+     * @return {Queue}
      */
     clone: function() {
-        var cloneList = new List();
-        cloneList.addAll(this);
-        return cloneList;
+        var cloneQueue = new Queue();
+        cloneQueue.addAll(this);
+        return cloneQueue;
     },
 
 
@@ -101,7 +101,7 @@ var List = Class.extend(Collection, {
     },
 
     /**
-     * Removes the FIRST occurrence of value from the list
+     * Removes the FIRST occurrence of value from the queue
      * @param {*} value
      * @return {boolean}
      */
@@ -120,44 +120,31 @@ var List = Class.extend(Collection, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {number} index
+     * @return {*}
+     */
+    dequeue: function() {
+        if (this.getCount() > 0) {
+            var lastIndex = this.getCount() - 1;
+            return this.removeAt(lastIndex);
+        } else {
+            throw new Error("Queue is empty")
+        }
+    },
+
+    /**
      * @param {*} value
      */
-    addAt: function(index, value) {
-
-        // NOTE BRN: The index can be less than OR EQUAL TO the count. If equal to the count, we are adding values to
-        // the very end of the list.
-
-        if (index <= this.getCount()) {
-            this.hashStore.addValue(value);
-            this.count++;
-            this.valueArray.splice(index, 0, value);
-        } else {
-            throw new Error("Index out of bounds");
-        }
+    enqueue: function(value) {
+        this.add(value);
     },
 
-    /**
-     * @param {number} index
-     * @param {Collection} collection
-     */
-    addAllAt: function(index, collection) {
-        if (Class.doesExtend(collection, Collection)) {
-            var insertingIndex = index;
-            var _this = this;
-            collection.forEach(function(value) {
-                _this.addAt(insertingIndex, value);
 
-                // NOTE BRN: We increment the inserting index so that the collection is inserted in the correct order.
-
-                insertingIndex++;
-            });
-        } else {
-            throw new Error("collection must be an instance of Collection");
-        }
-    },
+    //-------------------------------------------------------------------------------
+    // Private Class Methods
+    //-------------------------------------------------------------------------------
 
     /**
+     * @private
      * @param {number} index
      * @return {*}
      */
@@ -170,6 +157,7 @@ var List = Class.extend(Collection, {
     },
 
     /**
+     * @private
      * @param {*} value
      * @return {number}
      */
@@ -183,19 +171,7 @@ var List = Class.extend(Collection, {
     },
 
     /**
-     * @param {*} value
-     * @return {number}
-     */
-    indexOfLast: function(value) {
-        for (var size = this.valueArray.length, i = size - 1; i >= 0; i--) {
-            if (Obj.equals(this.valueArray[i], value)) {
-                return i;
-            }
-        }
-        return -1;
-    },
-
-    /**
+     * @private
      * @param {number} index
      * @return {*} The removed value
      */
@@ -207,15 +183,6 @@ var List = Class.extend(Collection, {
             this.valueArray.splice(index, 1);
         }
         return value;
-    },
-
-    /**
-     * @param index
-     * @param value
-     */
-    set: function(index, value) {
-        this.removeAt(index);
-        this.addAt(index, value);
     }
 });
 
@@ -224,4 +191,4 @@ var List = Class.extend(Collection, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export(List);
+bugpack.export(Queue);

@@ -1,9 +1,10 @@
 //-------------------------------------------------------------------------------
-// Dependencies
+// Annotations
 //-------------------------------------------------------------------------------
 
+//@Package('tests')
+
 //@Export('ClassTests')
-//@Autoload('Test')
 
 //@Require('Annotate')
 //@Require('Class')
@@ -13,6 +14,12 @@
 //@Require('TestAnnotation')
 //@Require('TypeUtil')
 
+//@TestSuite
+
+
+//-------------------------------------------------------------------------------
+// Node Modules
+//-------------------------------------------------------------------------------
 
 var bugpack = require('bugpack');
 
@@ -21,13 +28,17 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Annotate = bugpack.require('Annotate');
-var Class = bugpack.require('Class');
-var IHashCode = bugpack.require('IHashCode');
-var Interface = bugpack.require('Interface');
-var Obj = bugpack.require('Obj');
-var TestAnnotation = bugpack.require('TestAnnotation');
+var bug = bugpack.package('bug');
+var Class = bug.require('Class');
+var IHashCode = bug.require('IHashCode');
+var Interface = bug.require('Interface');
+var Obj = bug.require('Obj');
 var TypeUtil = bugpack.require('TypeUtil');
+
+var annotate = bugpack.package('annotate');
+var Annotate = annotate.require('Annotate');
+var TestAnnotation = annotate.require('TestAnnotation');
+
 
 
 //-------------------------------------------------------------------------------
