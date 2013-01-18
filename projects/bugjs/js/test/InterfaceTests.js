@@ -1,11 +1,30 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
 
-var Annotate = require('../../lib/Annotate');
-var Interface = require('../../lib/Interface');
-var TestAnnotation = require('../../lib/unit/TestAnnotation');
-var TypeUtil = require('../../lib/TypeUtil');
+//@TestFile
+
+//@Require('Interface')
+//@Require('TypeUtil')
+//@Require('annotate.Annotate')
+//@Require('bugunit-annotate.TestAnnotation')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Interface =         bugpack.require('Interface');
+var TypeUtil =          bugpack.require('TypeUtil');
+var Annotate =          bugpack.require('annotate.Annotate');
+var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------

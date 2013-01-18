@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// Dependencies
+// Annotations
 //-------------------------------------------------------------------------------
 
 //@Export('HashStore')
@@ -8,16 +8,21 @@
 //@Require('HashStoreNode')
 //@Require('Obj')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
+var Class =         bugpack.require('Class');
 var HashStoreNode = bugpack.require('HashStoreNode');
-var Obj = bugpack.require('Obj');
+var Obj =           bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
@@ -122,4 +127,4 @@ var HashStore = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export(HashStore);
+bugpack.export('HashStore', HashStore);

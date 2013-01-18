@@ -1,11 +1,30 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
 
-var Annotate = require('../../lib/Annotate');
-var HashUtil = require('../../lib/HashUtil');
-var TestAnnotation = require('../../lib/unit/TestAnnotation');
-var TypeValueSetsHelper = require('../helper/TypeValueSetsHelper');
+//@TestFile
+
+//@Require('HashUtil')
+//@Require('TypeValueSetsHelper')
+//@Require('annotate.Annotate')
+//@Require('bugunit-annotate.TestAnnotation')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var HashUtil =              bugpack.require('HashUtil');
+var TypeValueSetsHelper =   bugpack.require('TypeValueSetsHelper');
+var Annotate =              bugpack.require('annotate.Annotate');
+var TestAnnotation =        bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------

@@ -1,24 +1,32 @@
 //-------------------------------------------------------------------------------
-// Dependencies
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('bugflow')
 
 //@Export('BugFlow')
 
-//@Require('Parallel')
-//@Require('Series')
-//@Require('Task')
+//@Require('bugflow.If')
+//@Require('bugflow.Parallel')
+//@Require('bugflow.Series')
+//@Require('bugflow.Task')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var If = bugpack.require('If');
-var Parallel = bugpack.require('Parallel');
-var Series = bugpack.require('Series');
-var Task = bugpack.require('Task');
+var If =        bugpack.require('bugflow.If');
+var Parallel =  bugpack.require('bugflow.Parallel');
+var Series =    bugpack.require('bugflow.Series');
+var Task =      bugpack.require('bugflow.Task');
 
 
 //-------------------------------------------------------------------------------
@@ -65,4 +73,4 @@ BugFlow.$task = function(taskMethod) {
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export(BugFlow);
+bugpack.export('bugflow.BugFlow', BugFlow);

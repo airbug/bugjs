@@ -1,21 +1,28 @@
 //-------------------------------------------------------------------------------
-// Dependencies
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('bugboil')
 
 //@Export('ForEachParallel')
 
 //@Require('Class')
-//@Require('Flow')
+//@Require('bugboil.Boil')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Boil = bugpack.require('Boil');
 var Class = bugpack.require('Class');
+var Boil = bugpack.require('bugboil.Boil');
 
 
 //-------------------------------------------------------------------------------
@@ -98,4 +105,4 @@ var ForEachParallel = Class.extend(Boil, {
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export(ForEachParallel);
+bugpack.export('bugboil.ForEachParallel', ForEachParallel);

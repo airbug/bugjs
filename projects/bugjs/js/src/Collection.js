@@ -4,7 +4,7 @@
  */
 
 //-------------------------------------------------------------------------------
-// Dependencies
+// Annotations
 //-------------------------------------------------------------------------------
 
 //@Export('Collection')
@@ -14,16 +14,20 @@
 //@Require('Obj')
 
 
-var bugpack = require('bugpack');
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
+var Class =     bugpack.require('Class');
 var HashStore = bugpack.require('HashStore');
-var Obj = bugpack.require('Obj');
+var Obj =       bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
@@ -224,4 +228,4 @@ var Collection = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export(Collection);
+bugpack.export('Collection', Collection);

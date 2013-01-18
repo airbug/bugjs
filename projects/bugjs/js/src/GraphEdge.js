@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// Dependencies
+// Annotations
 //-------------------------------------------------------------------------------
 
 //@Export('GraphEdge')
@@ -8,16 +8,21 @@
 //@Require('GraphNode')
 //@Require('Obj')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
+var Class =     bugpack.require('Class');
 var GraphNode = bugpack.require('GraphNode');
-var Obj = bugpack.require('Obj');
+var Obj =       bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
@@ -114,4 +119,4 @@ var GraphEdge = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export(GraphEdge);
+bugpack.export('GraphEdge', GraphEdge);

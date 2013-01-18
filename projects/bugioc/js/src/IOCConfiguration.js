@@ -1,6 +1,8 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('bugioc')
 
 //@Export('IOCConfiguration')
 
@@ -8,7 +10,12 @@
 //@Require('Obj')
 //@Require('Set')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -16,8 +23,8 @@ var bugpack = require('bugpack');
 //-------------------------------------------------------------------------------
 
 var Class = bugpack.require('Class');
-var Obj = bugpack.require('Obj');
-var Set = bugpack.require('Set');
+var Obj =   bugpack.require('Obj');
+var Set =   bugpack.require('Set');
 
 
 //-------------------------------------------------------------------------------
@@ -120,4 +127,4 @@ var IOCConfiguration = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export(IOCConfiguration);
+bugpack.export('bugioc.IOCConfiguration', IOCConfiguration);

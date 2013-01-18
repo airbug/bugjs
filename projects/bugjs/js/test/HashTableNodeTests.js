@@ -1,11 +1,30 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
 
-var Annotate = require('../../lib/Annotate');
-var HashTableNode = require('../../lib/HashTableNode');
-var TestAnnotation = require('../../lib/unit/TestAnnotation');
-var TypeUtil = require('../../lib/TypeUtil');
+//@TestFile
+
+//@Require('HashTableNode')
+//@Require('TypeUtil')
+//@Require('annotate.Annotate')
+//@Require('bugunit-annotate.TestAnnotation')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var TypeUtil =          bugpack.require('TypeUtil');
+var HashTableNode =     bugpack.require('HashTableNode');
+var Annotate =          bugpack.require('annotate.Annotate');
+var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------

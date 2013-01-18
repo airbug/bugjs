@@ -1,21 +1,28 @@
 //-------------------------------------------------------------------------------
-// Dependencies
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('bugboil')
 
 //@Export('ForEachSeries')
 
 //@Require('Class')
-//@Require('Flow')
+//@Require('bugboil.Boil')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Boil = bugpack.require('Boil');
 var Class = bugpack.require('Class');
+var Boil =  bugpack.require('bugboil.Boil');
 
 
 //-------------------------------------------------------------------------------
@@ -109,4 +116,4 @@ var ForEachSeries = Class.extend(Boil, {
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export(ForEachSeries);
+bugpack.export('bugboil.ForEachSeries', ForEachSeries);

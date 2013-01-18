@@ -1,6 +1,8 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('annotate')
 
 //@Export('Annotation')
 
@@ -8,7 +10,12 @@
 //@Require('List')
 //@Require('Obj')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -16,8 +23,8 @@ var bugpack = require('bugpack');
 //-------------------------------------------------------------------------------
 
 var Class = bugpack.require('Class');
-var List = bugpack.require('List');
-var Obj = bugpack.require('Obj');
+var List =  bugpack.require('List');
+var Obj =   bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
@@ -113,4 +120,4 @@ var Annotation = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export(Annotation);
+bugpack.export('annotate.Annotation', Annotation);

@@ -1,22 +1,28 @@
 //-------------------------------------------------------------------------------
-// Dependencies
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('bugboil')
 
 //@Export('BugBoil')
 
-//@Require('Parallel')
-//@Require('Series')
-//@Require('Task')
+//@Require('bugboil.ForEachParallel')
+//@Require('bugboil.ForEachSeries')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var ForEachParallel = bugpack.require('ForEachParallel');
-var ForEachSeries = bugpack.require('ForEachSeries');
+var ForEachParallel =   bugpack.require('bugboil.ForEachParallel');
+var ForEachSeries =     bugpack.require('bugboil.ForEachSeries');
 
 
 //-------------------------------------------------------------------------------
@@ -53,4 +59,4 @@ BugBoil.$foreachSeries = function(data, iteratorMethod) {
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export(BugBoil);
+bugpack.export('bugboil.BugBoil', BugBoil);

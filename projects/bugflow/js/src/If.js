@@ -1,13 +1,21 @@
 //-------------------------------------------------------------------------------
-// Dependencies
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('bugflow')
 
 //@Export('If')
 
 //@Require('Class')
 //@Require('Flow')
+//@Require('List')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -15,8 +23,8 @@ var bugpack = require('bugpack');
 //-------------------------------------------------------------------------------
 
 var Class = bugpack.require('Class');
-var Flow = bugpack.require('Flow');
-var List = bugpack.require('List');
+var Flow =  bugpack.require('Flow');
+var List =  bugpack.require('List');
 
 
 //-------------------------------------------------------------------------------
@@ -174,4 +182,4 @@ var If = Class.extend(Flow, {
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export(If);
+bugpack.export('bugflow.If', If);

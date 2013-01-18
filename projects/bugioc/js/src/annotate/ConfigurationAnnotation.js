@@ -1,21 +1,28 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('bugioc')
 
 //@Export('ConfigurationAnnotation')
 
-//@Require('Annotation')
 //@Require('Class')
+//@Require('annotate.Annotation')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Annotation = bugpack.require('Annotation');
-var Class = bugpack.require('Class');
+var Class =         bugpack.require('Class');
+var Annotation =    bugpack.require('annotate.Annotation');
 
 
 //-------------------------------------------------------------------------------
@@ -87,4 +94,4 @@ ConfigurationAnnotation.configuration = function() {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export(ConfigurationAnnotation);
+bugpack.export('bugioc.ConfigurationAnnotation', ConfigurationAnnotation);

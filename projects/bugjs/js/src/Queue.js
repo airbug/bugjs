@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// Dependencies
+// Annotations
 //-------------------------------------------------------------------------------
 
 //@Export('Queue')
@@ -8,16 +8,21 @@
 //@Require('Collection')
 //@Require('Obj')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var Collection = bugpack.require('Collection');
-var Obj = bugpack.require('Obj');
+var Class =         bugpack.require('Class');
+var Collection =    bugpack.require('Collection');
+var Obj =           bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
@@ -191,4 +196,4 @@ var Queue = Class.extend(Collection, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export(Queue);
+bugpack.export('Queue', Queue);

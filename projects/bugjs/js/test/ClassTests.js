@@ -2,43 +2,35 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('tests')
+//@TestFile
 
-//@Export('ClassTests')
-
-//@Require('Annotate')
 //@Require('Class')
 //@Require('IHashCode')
 //@Require('Interface')
 //@Require('Obj')
-//@Require('TestAnnotation')
 //@Require('TypeUtil')
-
-//@TestSuite
+//@Require('annotate.Annotate')
+//@Require('bugunit-annotate.TestAnnotation')
 
 
 //-------------------------------------------------------------------------------
-// Node Modules
+// Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack');
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var bug = bugpack.package('bug');
-var Class = bug.require('Class');
-var IHashCode = bug.require('IHashCode');
-var Interface = bug.require('Interface');
-var Obj = bug.require('Obj');
-var TypeUtil = bugpack.require('TypeUtil');
-
-var annotate = bugpack.package('annotate');
-var Annotate = annotate.require('Annotate');
-var TestAnnotation = annotate.require('TestAnnotation');
-
+var Class =             bugpack.require('Class');
+var IHashCode =         bugpack.require('IHashCode');
+var Interface =         bugpack.require('Interface');
+var Obj =               bugpack.require('Obj');
+var TypeUtil =          bugpack.require('TypeUtil');
+var Annotate =          bugpack.require('annotate.Annotate');
+var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------

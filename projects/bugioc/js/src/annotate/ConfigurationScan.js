@@ -1,35 +1,42 @@
 //-------------------------------------------------------------------------------
-// Dependencies
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('bugioc')
 
 //@Export('ConfigurationScan')
 
-//@Require('Annotate')
-//@Require('BugIOC')
 //@Require('Class')
-//@Require('IOCArg')
-//@Require('IOCConfiguration')
-//@Require('IOCModule')
-//@Require('IOCProperty')
 //@Require('Map')
 //@Require('Obj')
+//@Require('annotate.Annotate')
+//@Require('bugioc.BugIOC')
+//@Require('bugioc.IOCArg')
+//@Require('bugioc.IOCConfiguration')
+//@Require('bugioc.IOCModule')
+//@Require('bugioc.IOCProperty')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Annotate = bugpack.require('Annotate');
-var BugIOC = bugpack.require('BugIOC');
-var Class = bugpack.require('Class');
-var IOCArg = bugpack.require('IOCArg');
-var IOCConfiguration = bugpack.require('IOCConfiguration');
-var IOCModule = bugpack.require('IOCModule');
-var IOCProperty = bugpack.require('IOCProperty');
-var Map = bugpack.require('Map');
-var Obj = bugpack.require('Obj');
+var Class =             bugpack.require('Class');
+var Map =               bugpack.require('Map');
+var Obj =               bugpack.require('Obj');
+var Annotate =          bugpack.require('annotate.Annotate');
+var BugIOC =            bugpack.require('bugioc.BugIOC');
+var IOCArg =            bugpack.require('bugioc.IOCArg');
+var IOCConfiguration =  bugpack.require('bugioc.IOCConfiguration');
+var IOCModule =         bugpack.require('bugioc.IOCModule');
+var IOCProperty =       bugpack.require('bugioc.IOCProperty');
 
 
 //-------------------------------------------------------------------------------
@@ -147,4 +154,4 @@ var ConfigurationScan = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export(ConfigurationScan);
+bugpack.export('bugioc.ConfigurationScan', ConfigurationScan);

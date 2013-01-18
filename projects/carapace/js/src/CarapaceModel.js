@@ -2,30 +2,37 @@
 // Requires
 //-------------------------------------------------------------------------------
 
+//@Package('carapace')
+
 //@Export('CarapaceModel')
 
-//@Require('Backbone')
 //@Require('Class')
 //@Require('HashUtil')
 //@Require('IdGenerator')
 //@Require('IDisposable')
 //@Require('IEquals')
 //@Require('IHashCode')
+//@Require('backbone.Backbone')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Backbone = bugpack.require('Backbone');
 var Class = bugpack.require('Class');
 var HashUtil = bugpack.require('HashUtil');
 var IdGenerator = bugpack.require('IdGenerator');
 var IDisposable = bugpack.require('IDisposable');
 var IEquals = bugpack.require('IEquals');
 var IHashCode = bugpack.require('IHashCode');
+var Backbone = bugpack.require('backbone.Backbone');
 
 
 //-------------------------------------------------------------------------------
@@ -145,12 +152,7 @@ Class.implement(CarapaceModel, IHashCode);
 
 
 //-------------------------------------------------------------------------------
-// Static Variables
-//-------------------------------------------------------------------------------
-
-
-//-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export(CarapaceModel);
+bugpack.export('carapace.CarapaceModel', CarapaceModel);

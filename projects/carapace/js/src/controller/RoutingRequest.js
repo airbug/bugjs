@@ -2,20 +2,27 @@
 // Requires
 //-------------------------------------------------------------------------------
 
+//@Package('carapace')
+
 //@Export('RoutingRequest')
 
 //@Require('Class')
 //@Require('EventDispatcher')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var EventDispatcher = bugpack.require('EventDispatcher');
+var Class =             bugpack.require('Class');
+var EventDispatcher =   bugpack.require('EventDispatcher');
 
 
 //-------------------------------------------------------------------------------
@@ -220,4 +227,4 @@ RoutingRequest.RejectedReason = {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export(RoutingRequest);
+bugpack.export('carapace.RoutingRequest', RoutingRequest);

@@ -1,12 +1,32 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
 
-var Annotate = require('../../lib/Annotate');
-var Class = require('../../lib/Class');
-var GraphEdge = require('../../lib/GraphEdge');
-var GraphNode = require('../../lib/GraphNode');
-var TestAnnotation = require('../../lib/unit/TestAnnotation');
+//@TestFile
+
+//@Require('Class')
+//@Require('GraphEdge')
+//@Require('GraphNode')
+//@Require('annotate.Annotate')
+//@Require('bugunit-annotate.TestAnnotation')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class =             require('Class');
+var GraphEdge =         require('GraphEdge');
+var GraphNode =         require('GraphNode');
+var Annotate =          require('annotate.Annotate');
+var TestAnnotation =    require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------

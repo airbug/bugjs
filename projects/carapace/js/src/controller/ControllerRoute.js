@@ -2,20 +2,27 @@
 // Requires
 //-------------------------------------------------------------------------------
 
+//@Package('carapace')
+
 //@Export('ControllerRoute')
 
 //@Require('Class')
 //@Require('EventDispatcher')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var EventDispatcher = bugpack.require('EventDispatcher');
+var Class =             bugpack.require('Class');
+var EventDispatcher =   bugpack.require('EventDispatcher');
 
 
 //-------------------------------------------------------------------------------
@@ -126,4 +133,4 @@ ControllerRoute.EventType = {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export(ControllerRoute);
+bugpack.export('carapace.ControllerRoute', ControllerRoute);

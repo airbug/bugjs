@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// Dependencies
+// Annotations
 //-------------------------------------------------------------------------------
 
 //@Export('EventDispatcher')
@@ -11,19 +11,24 @@
 //@Require('Map')
 //@Require('Obj')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var EventListener = bugpack.require('EventListener');
-var IEventDispatcher = bugpack.require('IEventDispatcher');
-var List = bugpack.require('List');
-var Map = bugpack.require('Map');
-var Obj = bugpack.require('Obj');
+var Class =             bugpack.require('Class');
+var EventListener =     bugpack.require('EventListener');
+var IEventDispatcher =  bugpack.require('IEventDispatcher');
+var List =              bugpack.require('List');
+var Map =               bugpack.require('Map');
+var Obj =               bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
@@ -207,4 +212,4 @@ Class.implement(EventDispatcher, IEventDispatcher);
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export(EventDispatcher);
+bugpack.export('EventDispatcher', EventDispatcher);

@@ -1,14 +1,20 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('bugioc')
 
 //@Export('PrototypeScope')
 
 //@Require('Class')
 //@Require('List')
-//@Require('Scope')
+//@Require('bugioc.Scope')
 
-var bugpack = require('bugpack');
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -17,7 +23,7 @@ var bugpack = require('bugpack');
 
 var Class = bugpack.require('Class');
 var List = bugpack.require('List');
-var Scope = bugpack.require('Scope');
+var Scope = bugpack.require('bugioc.Scope');
 
 
 //-------------------------------------------------------------------------------
@@ -66,4 +72,4 @@ var PrototypeScope = Class.extend(Scope, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export(PrototypeScope);
+bugpack.export('bugioc.PrototypeScope', PrototypeScope);

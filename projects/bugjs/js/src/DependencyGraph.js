@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// Dependencies
+// Annotations
 //-------------------------------------------------------------------------------
 
 //@Export('DependencyGraph')
@@ -13,21 +13,26 @@
 //@Require('Obj')
 //@Require('Set')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var Graph = bugpack.require('Graph');
+var Class =     bugpack.require('Class');
+var Graph =     bugpack.require('Graph');
 var GraphEdge = bugpack.require('GraphEdge');
 var GraphNode = bugpack.require('GraphNode');
-var List = bugpack.require('List');
-var Map = bugpack.require('Map');
-var Obj = bugpack.require('Obj');
-var Set = bugpack.require('Set');
+var List =      bugpack.require('List');
+var Map =       bugpack.require('Map');
+var Obj =       bugpack.require('Obj');
+var Set =       bugpack.require('Set');
 
 
 //-------------------------------------------------------------------------------
@@ -131,4 +136,4 @@ var DependencyGraph = Class.extend(Graph, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export(DependencyGraph);
+bugpack.export('DependencyGraph', DependencyGraph);

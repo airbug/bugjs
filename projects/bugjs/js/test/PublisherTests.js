@@ -1,10 +1,28 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
 
-var Annotate = require('../../lib/Annotate');
-var Publisher = require('../../lib/Publisher');
-var TestAnnotation = require('../../lib/unit/TestAnnotation');
+//@TestFile
+
+//@Require('Publisher')
+//@Require('annotate.Annotate')
+//@Require('bugunit-annotate.TestAnnotation')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Publisher =         bugpack.require('Publisher');
+var Annotate =          bugpack.require('annotate.Annotate');
+var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------

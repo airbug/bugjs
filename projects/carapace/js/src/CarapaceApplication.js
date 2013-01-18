@@ -2,30 +2,37 @@
 // Requires
 //-------------------------------------------------------------------------------
 
+//@Package('carapace')
+
 //@Export('CarapaceApplication')
 
-//@Require('Backbone')
 //@Require('Class')
-//@Require('CarapaceController')
-//@Require('ControllerRoute')
 //@Require('Obj')
-//@Require('RoutingRequest')
 //@Require('Set')
+//@Require('backbone.Backbone')
+//@Require('carapace.CarapaceController')
+//@Require('carapace.ControllerRoute')
+//@Require('carapace.RoutingRequest')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Backbone = bugpack.require('Backbone');
-var Class = bugpack.require('Class');
-var CarapaceController = bugpack.require('CarapaceController');
-var ControllerRoute = bugpack.require('ControllerRoute');
-var Obj = bugpack.require('Obj');
-var RoutingRequest = bugpack.require('RoutingRequest');
-var Set = bugpack.require('Set');
+var Class =                 bugpack.require('Class');
+var Obj =                   bugpack.require('Obj');
+var Set =                   bugpack.require('Set');
+var Backbone =              bugpack.require('backbone.Backbone');
+var CarapaceController =    bugpack.require('carapace.CarapaceController');
+var ControllerRoute =       bugpack.require('carapace.ControllerRoute');
+var RoutingRequest =        bugpack.require('carapace.RoutingRequest');
 
 
 //-------------------------------------------------------------------------------
@@ -238,4 +245,4 @@ var CarapaceApplication = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export(CarapaceApplication);
+bugpack.export('carapace.CarapaceApplication', CarapaceApplication);

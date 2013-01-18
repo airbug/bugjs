@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// Dependencies
+// Annotations
 //-------------------------------------------------------------------------------
 
 //@Export('Obj')
@@ -11,19 +11,24 @@
 //@Require('IHashCode')
 //@Require('TypeUtil')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var HashUtil = bugpack.require('HashUtil');
-var IdGenerator = bugpack.require('IdGenerator');
-var IEquals = bugpack.require('IEquals');
-var IHashCode = bugpack.require('IHashCode');
-var TypeUtil = bugpack.require('TypeUtil');
+var Class =         bugpack.require('Class');
+var HashUtil =      bugpack.require('HashUtil');
+var IdGenerator =   bugpack.require('IdGenerator');
+var IEquals =       bugpack.require('IEquals');
+var IHashCode =     bugpack.require('IHashCode');
+var TypeUtil =      bugpack.require('TypeUtil');
 
 
 //-------------------------------------------------------------------------------
@@ -163,4 +168,4 @@ Obj.hashCode = function(value) {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export(Obj);
+bugpack.export('Obj', Obj);

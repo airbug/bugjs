@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// Dependencies
+// Annotations
 //-------------------------------------------------------------------------------
 
 //@Export('HashUtil')
@@ -7,15 +7,20 @@
 //@Require('IdGenerator')
 //@Require('TypeUtil')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var IdGenerator = bugpack.require('IdGenerator');
-var TypeUtil = bugpack.require('TypeUtil');
+var IdGenerator =   bugpack.require('IdGenerator');
+var TypeUtil =      bugpack.require('TypeUtil');
 
 
 //-------------------------------------------------------------------------------
@@ -80,4 +85,4 @@ HashUtil.hash = function(value) {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export(HashUtil);
+bugpack.export('HashUtil', HashUtil);

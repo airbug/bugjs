@@ -1,23 +1,30 @@
 //-------------------------------------------------------------------------------
-// Dependencies
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('bugfs')
 
 //@Export('BugFs')
 
 //@Require('Class')
-//@Require('Path')
 //@Require('TypeUtil')
+//@Require('bugfs.Path')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var Path = bugpack.require('Path');
-var TypeUtil = bugpack.require('TypeUtil');
+var Class =     bugpack.require('Class');
+var TypeUtil =  bugpack.require('TypeUtil');
+var Path =      bugpack.require('bugfs.Path');
 
 
 //-------------------------------------------------------------------------------
@@ -371,4 +378,4 @@ BugFs.writeFileSync = function(filePath, data, encoding) {
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export(BugFs);
+bugpack.export('bugfs.BugFs', BugFs);

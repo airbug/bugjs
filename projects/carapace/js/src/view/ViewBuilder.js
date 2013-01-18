@@ -2,12 +2,19 @@
 // Requires
 //-------------------------------------------------------------------------------
 
+//@Package('carapace')
+
 //@Export('ViewBuilder')
 
 //@Require('Class')
 //@Require('Obj')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -15,7 +22,7 @@ var bugpack = require('bugpack');
 //-------------------------------------------------------------------------------
 
 var Class = bugpack.require('Class');
-var Obj = bugpack.require('Obj');
+var Obj =   bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
@@ -197,4 +204,4 @@ ViewBuilder.view = function(viewClass) {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export(ViewBuilder);
+bugpack.export('carapace.ViewBuilder', ViewBuilder);

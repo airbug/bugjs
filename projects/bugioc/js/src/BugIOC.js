@@ -1,6 +1,8 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('bugioc')
 
 //@Export('BugIOC')
 
@@ -8,26 +10,31 @@
 //@Require('DependencyGraph')
 //@Require('Map')
 //@Require('Obj')
-//@Require('PrototypeScope')
 //@Require('Proxy')
 //@Require('Set')
-//@Require('SingletonScope')
+//@Require('bugioc.PrototypeScope')
+//@Require('bugioc.SingletonScope')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var DependencyGraph = bugpack.require('DependencyGraph');
-var Map = bugpack.require('Map');
-var Obj = bugpack.require('Obj');
-var PrototypeScope = bugpack.require('PrototypeScope');
-var Proxy = bugpack.require('Proxy');
-var Set = bugpack.require('Set');
-var SingletonScope = bugpack.require('SingletonScope');
+var Class =             bugpack.require('Class');
+var DependencyGraph =   bugpack.require('DependencyGraph');
+var Map =               bugpack.require('Map');
+var Obj =               bugpack.require('Obj');
+var Proxy =             bugpack.require('Proxy');
+var Set =               bugpack.require('Set');
+var PrototypeScope =    bugpack.require('bugioc.PrototypeScope');
+var SingletonScope =    bugpack.require('bugioc.SingletonScope');
 
 
 //-------------------------------------------------------------------------------
@@ -297,4 +304,4 @@ Proxy.proxy(BugIOC, BugIOC.instance, [
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export(BugIOC);
+bugpack.export('bugioc.BugIOC', BugIOC);

@@ -1,11 +1,30 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
 
-var Annotate = require('../../lib/Annotate');
-var TestAnnotation = require('../../lib/unit/TestAnnotation');
-var Tree = require('../../lib/Tree');
-var TreeNode = require('../../lib/TreeNode');
+//@TestFile
+
+//@Require('Tree')
+//@Require('TreeNode')
+//@Require('annotate.Annotate')
+//@Require('bugunit-annotate.TestAnnotation')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Annotate =          bugpack.require('annotate.Annotate');
+var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
+var Tree =              bugpack.require('Tree');
+var TreeNode =          bugpack.require('TreeNode');
 
 
 //-------------------------------------------------------------------------------

@@ -2,20 +2,27 @@
 // Requires
 //-------------------------------------------------------------------------------
 
+//@Package('carapace')
+
 //@Export('ControllerAnnotation')
 
-//@Require('Annotation')
 //@Require('Class')
+//@Require('annotate.Annotation')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Annotation = bugpack.require('Annotation');
-var Class = bugpack.require('Class');
+var Class =         bugpack.require('Class');
+var Annotation =    bugpack.require('annotate.Annotation');
 
 
 //-------------------------------------------------------------------------------
@@ -88,4 +95,4 @@ ControllerAnnotation.controller = function() {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export(ControllerAnnotation);
+bugpack.export('ControllerAnnotation', ControllerAnnotation);

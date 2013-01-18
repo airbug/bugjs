@@ -2,6 +2,8 @@
 // Requires
 //-------------------------------------------------------------------------------
 
+//@Package('carapace')
+
 //@Export('CarapaceContainer')
 
 //@Require('Class')
@@ -9,7 +11,12 @@
 //@Require('Map')
 //@Require('Obj')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -453,4 +460,4 @@ var CarapaceContainer = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export(CarapaceContainer);
+bugpack.export('carapace.CarapaceContainer', CarapaceContainer);

@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// Dependencies
+// Annotations
 //-------------------------------------------------------------------------------
 
 //@Export('TreeNode')
@@ -7,6 +7,11 @@
 //@Require('Class')
 //@Require('List')
 //@Require('Obj')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
 
 var bugpack = require('bugpack').context();
 
@@ -16,8 +21,8 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class = bugpack.require('Class');
-var List = bugpack.require('List');
-var Obj = bugpack.require('Obj');
+var List =  bugpack.require('List');
+var Obj =   bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
@@ -188,4 +193,4 @@ var TreeNode = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export(TreeNode);
+bugpack.export('TreeNode', TreeNode);

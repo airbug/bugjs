@@ -1,13 +1,20 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('bugioc')
 
 //@Export('SingletonScope')
 
 //@Require('Class')
-//@Require('Scope')
+//@Require('bugioc.Scope')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -15,7 +22,7 @@ var bugpack = require('bugpack');
 //-------------------------------------------------------------------------------
 
 var Class = bugpack.require('Class');
-var Scope = bugpack.require('Scope');
+var Scope = bugpack.require('bugioc.Scope');
 
 
 //-------------------------------------------------------------------------------
@@ -65,4 +72,4 @@ var SingletonScope = Class.extend(Scope, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export(SingletonScope);
+bugpack.export('bugioc.SingletonScope', SingletonScope);

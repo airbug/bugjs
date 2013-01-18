@@ -1,6 +1,8 @@
 //-------------------------------------------------------------------------------
-// Dependencies
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('bugflow')
 
 //@Export('Flow')
 
@@ -8,16 +10,21 @@
 //@Require('Obj')
 //@Require('TypeUtil')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var Obj = bugpack.require('Obj');
-var TypeUtil = bugpack.require('TypeUtil');
+var Class =     bugpack.require('Class');
+var Obj =       bugpack.require('Obj');
+var TypeUtil =  bugpack.require('TypeUtil');
 
 
 //-------------------------------------------------------------------------------
@@ -183,4 +190,4 @@ var Flow = Class.extend(Obj, {
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export(Flow);
+bugpack.export('bugflow.Flow', Flow);

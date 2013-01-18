@@ -1,29 +1,36 @@
 //-------------------------------------------------------------------------------
-// Dependencies
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('annotate')
 
 //@Export('Annotate')
 
-//@Require('Annotation')
-//@Require('AnnotationProcessor')
 //@Require('Class')
 //@Require('List')
 //@Require('Map')
 //@Require('Obj')
+//@Require('annotate.Annotation')
+//@Require('annotate.AnnotationProcessor')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Annotation = bugpack.require('Annotation');
-var AnnotationProcessor = bugpack.require('AnnotationProcessor');
-var Class = bugpack.require('Class');
-var List = bugpack.require('List');
-var Map = bugpack.require('Map');
-var Obj = bugpack.require('Obj');
+var Class =                 bugpack.require('Class');
+var List =                  bugpack.require('List');
+var Map =                   bugpack.require('Map');
+var Obj =                   bugpack.require('Obj');
+var Annotation =            bugpack.require('annotate.Annotation');
+var AnnotationProcessor =   bugpack.require('annotate.AnnotationProcessor');
 
 
 //-------------------------------------------------------------------------------
@@ -167,4 +174,4 @@ Annotate.registerAnnotationProcessor = function(annotationType, annotationProces
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export(Annotate);
+bugpack.export('annotate.Annotate', Annotate);

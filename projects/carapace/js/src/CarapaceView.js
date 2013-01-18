@@ -2,9 +2,10 @@
 // Requires
 //-------------------------------------------------------------------------------
 
+//@Package('carapace')
+
 //@Export('CarapaceView')
 
-//@Require('Backbone');
 //@Require('Class')
 //@Require('Event')
 //@Require('EventDispatcher')
@@ -15,15 +16,20 @@
 //@Require('IHashCode')
 //@Require('List')
 //@Require('Proxy')
+//@Require('backbone.Backbone');
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Backbone = bugpack.require('Backbone');
 var Class = bugpack.require('Class');
 var Event = bugpack.require('Event');
 var EventDispatcher = bugpack.require('EventDispatcher');
@@ -34,6 +40,7 @@ var IEquals = bugpack.require('IEquals');
 var IHashCode = bugpack.require('IHashCode');
 var List = bugpack.require('List');
 var Proxy = bugpack.require('Proxy');
+var Backbone = bugpack.require('backbone.Backbone');
 
 
 //-------------------------------------------------------------------------------
@@ -417,4 +424,4 @@ Class.implement(CarapaceView, IHashCode);
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export(CarapaceView);
+bugpack.export('carapace.CarapaceView', CarapaceView);

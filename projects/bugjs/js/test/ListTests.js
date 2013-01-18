@@ -1,12 +1,32 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
 
-var Annotate = require('../../lib/Annotate');
-var Class = require('../../lib/Class');
-var List = require('../../lib/List');
-var Obj = require('../../lib/Obj');
-var TestAnnotation = require('../../lib/unit/TestAnnotation');
+//@TestFile
+
+//@Require('Class')
+//@Require('List')
+//@Require('Obj')
+//@Require('annotate.Annotate')
+//@Require('bugunit-annotate.TestAnnotation')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// BugPack
+//-------------------------------------------------------------------------------
+
+var Class = require('Class');
+var List = require('List');
+var Obj = require('Obj');
+var Annotate = require('annotate.Annotate');
+var TestAnnotation = require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------

@@ -2,20 +2,27 @@
 // Requires
 //-------------------------------------------------------------------------------
 
+//@Package('carapace')
+
 //@Export('CarapaceCollection')
 
-//@Require('Backbone')
 //@Require('Class')
+//@Require('backbone.Backbone')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Backbone = bugpack.require('Backbone');
-var Class = bugpack.require('Class');
+var Class =     bugpack.require('Class');
+var Backbone =  bugpack.require('backbone.Backbone');
 
 
 //-------------------------------------------------------------------------------
@@ -88,4 +95,4 @@ var CarapaceCollection = Class.adapt(Backbone.Collection, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export(CarapaceCollection);
+bugpack.export('carapace.CarapaceCollection', CarapaceCollection);

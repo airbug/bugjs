@@ -1,5 +1,5 @@
 //-------------------------------------------------------------------------------
-// Dependencies
+// Annotations
 //-------------------------------------------------------------------------------
 
 //@Export('Semaphore')
@@ -8,7 +8,12 @@
 //@Require('Obj')
 //@Require('Queue')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -16,7 +21,7 @@ var bugpack = require('bugpack');
 //-------------------------------------------------------------------------------
 
 var Class = bugpack.require('Class');
-var Obj = bugpack.require('Obj');
+var Obj =   bugpack.require('Obj');
 var Queue = bugpack.require('Queue');
 
 
@@ -138,4 +143,4 @@ var Semaphore = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export(Semaphore);
+bugpack.export('Semaphore', Semaphore);

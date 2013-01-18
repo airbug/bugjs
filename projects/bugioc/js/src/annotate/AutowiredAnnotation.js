@@ -1,21 +1,28 @@
 //-------------------------------------------------------------------------------
-// Dependencies
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('bugioc')
 
 //@Export('AutowiredAnnotation')
 
-//@Require('Annotation')
 //@Require('Class')
+//@Require('annotate.Annotation')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Annotation = bugpack.require('Annotation');
-var Class = bugpack.require('Class');
+var Class =         bugpack.require('Class');
+var Annotation =    bugpack.require('annotate.Annotation');
 
 
 //-------------------------------------------------------------------------------
@@ -87,4 +94,4 @@ AutowiredAnnotation.autowired = function() {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export(AutowiredAnnotation);
+bugpack.export('bugioc.AutowiredAnnotation', AutowiredAnnotation);

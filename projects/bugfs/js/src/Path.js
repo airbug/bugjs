@@ -1,14 +1,24 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('bugfs')
 
 //@Export('Path')
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('Semaphore')
 //@Require('TypeUtil')
+//@Require('bugboil.BugBoil')
+//@Require('bugboil.BugBoil')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 var fs = require('fs');
 var path = require('path');
 
@@ -17,12 +27,12 @@ var path = require('path');
 // BugPack
 //-------------------------------------------------------------------------------
 
-var BugBoil = bugpack.require('BugBoil');
-var BugFlow = bugpack.require('BugFlow');
-var Class = bugpack.require('Class');
-var Obj = bugpack.require('Obj');
+var Class =     bugpack.require('Class');
+var Obj =       bugpack.require('Obj');
 var Semaphore = bugpack.require('Semaphore');
-var TypeUtil = bugpack.require('TypeUtil');
+var TypeUtil =  bugpack.require('TypeUtil');
+var BugBoil =   bugpack.require('bugboil.BugBoil');
+var BugFlow =   bugpack.require('bugboil.BugFlow');
 
 
 //-------------------------------------------------------------------------------
@@ -3200,10 +3210,6 @@ var Path = Class.extend(Obj, {
      * @param {function(error)} callback
      */
     ensureCopyIntoPath: function(intoPath, callback) {
-
-        //TEST
-        console.log("Ensure copy into path '" + intoPath.getAbsolutePath() + "'");
-
         $series([
             $task(function(flow) {
                 intoPath._exists(function(exists) {
@@ -3345,4 +3351,4 @@ Path.fileHandleSemaphore = new Semaphore(Path.FILE_HANDLE_LIMIT);
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export(Path);
+bugpack.export('bugfs.Path', Path);

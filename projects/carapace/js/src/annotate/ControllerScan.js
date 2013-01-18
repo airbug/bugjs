@@ -2,26 +2,31 @@
 // Requires
 //-------------------------------------------------------------------------------
 
+//@Package('carapace')
+
 //@Export('ControllerScan')
 
-//@Require('Annotate')
-//@require('Carapace')
 //@Require('Class')
-//@Require('ControllerRoute')
 //@Require('Obj')
+//@Require('annotate.Annotate')
+//@Require('carapace.ControllerRoute')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Annotate = bugpack.require('Annotate');
-var Carapace = bugpack.require('Carapace');
-var Class = bugpack.require('Class');
-var ControllerRoute = bugpack.require('ControllerRoute');
-var Obj = bugpack.require('Obj');
+var Class =             bugpack.require('Class');
+var Obj =               bugpack.require('Obj');
+var Annotate =          bugpack.require('annotate.Annotate');
+var ControllerRoute =   bugpack.require('carapace.ControllerRoute');
 
 
 //-------------------------------------------------------------------------------
@@ -102,4 +107,4 @@ var ControllerScan = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export(ControllerScan);
+bugpack.export('ControllerScan', ControllerScan);

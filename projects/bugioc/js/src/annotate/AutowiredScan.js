@@ -1,30 +1,32 @@
 //-------------------------------------------------------------------------------
-// Requires
+// Annotations
 //-------------------------------------------------------------------------------
+
+//@Package('bugioc')
 
 //@Export('AutowiredScan')
 
-//@Require('Annotate')
-//@Require('BugIOC')
-//@require('Carapace')
 //@Require('Class')
-//@Require('ControllerRoute')
 //@Require('Obj')
+//@Require('annotate.Annotate')
+//@Require('bugioc.BugIOC')
 
-var bugpack = require('bugpack');
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Annotation = bugpack.require('Annotation');
-var BugIOC = bugpack.require('BugIOC');
-var Carapace = bugpack.require('Carapace');
-var Class = bugpack.require('Class');
-var ControllerRoute = bugpack.require('ControllerRoute');
-var Map = bugpack.require('Map');
-var Obj = bugpack.require('Obj');
+var Class =     bugpack.require('Class');
+var Obj =       bugpack.require('Obj');
+var Annotate =  bugpack.require('annotate.Annotate');
+var BugIOC =    bugpack.require('bugioc.BugIOC');
 
 
 //-------------------------------------------------------------------------------
@@ -45,12 +47,6 @@ var AutowiredScan = Class.extend(Obj, {
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {Map<Class, CarapaceController>}
-         */
-        this.controllerClassToControllerMap = new Map();
     },
 
 
@@ -99,4 +95,4 @@ var AutowiredScan = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export(AutowiredScan);
+bugpack.export('bugioc.AutowiredScan', AutowiredScan);

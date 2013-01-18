@@ -2,13 +2,20 @@
 // Requires
 //-------------------------------------------------------------------------------
 
+//@Package('carapace')
+
 //@Export('CarapaceController')
 
-//@Require('Backbone')
 //@Require('Class')
-//@Require('ControllerRoute')
 //@Require('List')
 //@Require('Obj')
+//@Require('backbone.Backbone')
+//@Require('backbone.ControllerRoute')
+
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
 
 var bugpack = require('bugpack');
 
@@ -17,11 +24,11 @@ var bugpack = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Backbone = bugpack.require('Backbone');
 var Class = bugpack.require('Class');
-var ControllerRoute = bugpack.require('ControllerRoute');
 var List = bugpack.require('List');
 var Obj = bugpack.require('Obj');
+var Backbone = bugpack.require('backbone.Backbone');
+var ControllerRoute = bugpack.require('backbone.ControllerRoute');
 
 
 //-------------------------------------------------------------------------------
@@ -265,4 +272,4 @@ var CarapaceController = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export(CarapaceController);
+bugpack.export('backbone.CarapaceController', CarapaceController);
