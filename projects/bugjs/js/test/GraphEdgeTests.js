@@ -22,11 +22,11 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =             require('Class');
-var GraphEdge =         require('GraphEdge');
-var GraphNode =         require('GraphNode');
-var Annotate =          require('annotate.Annotate');
-var TestAnnotation =    require('bugunit-annotate.TestAnnotation');
+var Class =             bugpack.require('Class');
+var GraphEdge =         bugpack.require('GraphEdge');
+var GraphNode =         bugpack.require('GraphNode');
+var Annotate =          bugpack.require('annotate.Annotate');
+var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------

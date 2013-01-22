@@ -7,8 +7,8 @@
 //@Export('If')
 
 //@Require('Class')
-//@Require('Flow')
 //@Require('List')
+//@Require('bugflow.Flow')
 
 
 //-------------------------------------------------------------------------------
@@ -23,8 +23,8 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class = bugpack.require('Class');
-var Flow =  bugpack.require('Flow');
 var List =  bugpack.require('List');
+var Flow =  bugpack.require('bugflow.Flow');
 
 
 //-------------------------------------------------------------------------------

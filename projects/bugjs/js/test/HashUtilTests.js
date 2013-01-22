@@ -22,9 +22,9 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var HashUtil =              bugpack.require('HashUtil');
-var TypeValueSetsHelper =   bugpack.require('TypeValueSetsHelper');
 var Annotate =              bugpack.require('annotate.Annotate');
 var TestAnnotation =        bugpack.require('bugunit-annotate.TestAnnotation');
+var TypeValueSetsHelper =   bugpack.require('tests.TypeValueSetsHelper');
 
 
 //-------------------------------------------------------------------------------

@@ -181,17 +181,17 @@ var classImplementTest = {
             "Assert function added to class is function and is present in class prototype");
         test.assertTrue(TypeUtil.isFunction(this.TestClass.prototype.someInterfaceFunction),
             "Assert interface function added to class is function and is present in class prototype");
-        test.assertEqual(this.TestClass.getInterfaces().length, 2,
-            "Assert we have 2 interfaces listed on TestClass (IHashCode and TestInterface)");
-        test.assertEqual(this.TestClass.getInterfaces()[1], this.TestInterface,
+        test.assertEqual(this.TestClass.getInterfaces().length, 3,
+            "Assert we have 3 interfaces listed on TestClass (IHashCode, IEquals, and TestInterface)");
+        test.assertEqual(this.TestClass.getInterfaces()[2], this.TestInterface,
             "Assert test interface is listed in TestClass interfaces");
         test.assertTrue(TypeUtil.isFunction(this.instance.someFunction),
             "Assert function added to class is present in class instance");
         test.assertTrue(TypeUtil.isFunction(this.instance.someInterfaceFunction),
             "Assert interface function added to class is present in class instance");
-        test.assertEqual(this.instance.getClass().getInterfaces().length, 2,
+        test.assertEqual(this.instance.getClass().getInterfaces().length, 3,
             "Assert we have 2 interfaces listed in instance of TestClass through getClass()");
-        test.assertEqual(this.instance.getClass().getInterfaces()[1], this.TestInterface,
+        test.assertEqual(this.instance.getClass().getInterfaces()[2], this.TestInterface,
             "Assert TestInterface is listed in interfaces on instance of TestClass through getClass()");
         test.assertTrue(Class.doesImplement(this.instance, this.TestInterface),
             "Assert Class.doesImplement returns true for instance implementing TestInterface");

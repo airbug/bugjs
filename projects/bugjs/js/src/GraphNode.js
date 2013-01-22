@@ -72,8 +72,7 @@ var GraphNode = Class.extend(Obj, {
      */
     equals: function(value) {
         if (Class.doesExtend(value, GraphNode)) {
-            var value = value.getValue();
-            return Obj.equals(value, this.value);
+            return Obj.equals(value.getValue(), this.value);
         }
         return false;
     },

@@ -11,7 +11,7 @@
 //@Require('Semaphore')
 //@Require('TypeUtil')
 //@Require('bugboil.BugBoil')
-//@Require('bugboil.BugBoil')
+//@Require('bugflow.BugFlow')
 
 
 //-------------------------------------------------------------------------------
@@ -32,7 +32,7 @@ var Obj =       bugpack.require('Obj');
 var Semaphore = bugpack.require('Semaphore');
 var TypeUtil =  bugpack.require('TypeUtil');
 var BugBoil =   bugpack.require('bugboil.BugBoil');
-var BugFlow =   bugpack.require('bugboil.BugFlow');
+var BugFlow =   bugpack.require('bugflow.BugFlow');
 
 
 //-------------------------------------------------------------------------------

@@ -63,7 +63,7 @@ var objInstantiationTest = {
             "Assert object1's class is Obj");
         test.assertEqual(this.testObject2.getClass(), Obj,
             "Assert object2's class is Obj");
-        test.assertNotEqual(this.testObject1.getId(), this.testObject2.getId(),
+        test.assertNotEqual(this.testObject1.getInternalId(), this.testObject2.getInternalId(),
             "Assert id of both objects are different");
     }
 };

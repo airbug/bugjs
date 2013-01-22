@@ -11,6 +11,7 @@
 //@Export('Map')
 
 //@Require('Class')
+//@Require('Collection')
 //@Require('HashTable')
 //@Require('Obj')
 
@@ -26,9 +27,10 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =     bugpack.require('Class');
-var HashTable = bugpack.require('HashTable');
-var Obj =       bugpack.require('Obj');
+var Class =         bugpack.require('Class');
+var Collection =    bugpack.require('Collection');
+var HashTable =     bugpack.require('HashTable');
+var Obj =           bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------

@@ -22,11 +22,11 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = require('Class');
-var List = require('List');
-var Obj = require('Obj');
-var Annotate = require('annotate.Annotate');
-var TestAnnotation = require('bugunit-annotate.TestAnnotation');
+var Class =             bugpack.require('Class');
+var List =              bugpack.require('List');
+var Obj =               bugpack.require('Obj');
+var Annotate =          bugpack.require('annotate.Annotate');
+var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------

@@ -21,10 +21,10 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Annotate =          bugpack.require('Annotate');
 var HashTable =         bugpack.require('HashTable');
+var TypeUtil =          bugpack.require('TypeUtil');
+var Annotate =          bugpack.require('annotate.Annotate');
 var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
-var TypeUtil =          bugpack.require('annotate.TypeUtil');
 
 
 //-------------------------------------------------------------------------------
