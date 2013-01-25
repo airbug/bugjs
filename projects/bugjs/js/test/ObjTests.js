@@ -161,3 +161,60 @@ var objEqualsTest = {
 annotate(objEqualsTest).with(
     test().name("Obj equals test")
 );
+
+
+/**
+ * This tests
+ * 1) The static clone method of the Obj class
+ */
+var objCloneTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.testObj = new Obj();
+        this.testObj.someValue =  "testValue";
+        this.genericObject = {
+            aValue: "myValue"
+        };
+        this.valuesThatPassThrough = [
+            "",
+            "string",
+            0,
+            0.123,
+            123,
+            true,
+            false,
+            new String("another string")
+        ]
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        var cloneObj = Obj.clone(this.testObj);
+        test.assertNotEqual(cloneObj, this.testObj,
+            "Assert that the clone Obj does not equal the original Obj");
+        test.assertEqual(cloneObj.testValue, this.testObj.testValue,
+            "Assert that testValue was copied to the Obj clone");
+
+        var cloneGenericObject = Obj.clone(this.genericObject);
+        test.assertNotEqual(cloneGenericObject, this.genericObject,
+            "Assert the cloned generic object and the original generic object are not equal.");
+        test.assertEqual(cloneGenericObject.aValue, this.genericObject.aValue,
+            "Assert the values were coppied from the original generic object to the cloned generic object");
+
+        this.valuesThatPassThrough.forEach(function(passThroughValue) {
+            var valueClone = Obj.clone(passThroughValue);
+            test.assertEqual(valueClone, passThroughValue,
+                "Assert value " + passThroughValue + " passed through the clone function and simply returned the " +
+                    "original value");
+        })
+    }
+};
+annotate(objCloneTest).with(
+    test().name("Obj clone test")
+);

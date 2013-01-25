@@ -39,6 +39,7 @@ var IDisposable = bugpack.require('IDisposable');
 var IEquals = bugpack.require('IEquals');
 var IHashCode = bugpack.require('IHashCode');
 var List = bugpack.require('List');
+var Obj = bugpack.require('Obj');
 var Proxy = bugpack.require('Proxy');
 var Backbone = bugpack.require('backbone.Backbone');
 
@@ -79,7 +80,7 @@ var CarapaceView = Class.adapt(Backbone.View, {
          * @private
          * @type {Object}
          */
-        this.attributes = this.attributes ? JsonUtil.clone(this.attributes) : {};
+        this.attributes = this.attributes ? Obj.clone(this.attributes, true) : {};
 
         /**
          * @private
@@ -288,7 +289,7 @@ var CarapaceView = Class.adapt(Backbone.View, {
         options = options || {};
         this.cid = _.uniqueId('view');
         if (options.attributes) {
-            JsonUtil.munge(options.attributes, this.attributes);
+            Obj.merge(options.attributes, this.attributes);
             delete options.attributes;
         }
         this._configure(options);
