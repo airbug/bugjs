@@ -353,6 +353,94 @@ BugFs.readFileSync = function(filePath, encoding) {
 };
 
 /**
+ * @param {(string|Path)} aPath
+ * @param {(string|Path)} intoPath
+ * @param {?(Path.SymlinkMode|function(Error))=} symlinkMode (defaults to Path.SymlinkMode.STOP)
+ * @param {?function(Error, Path)} callback
+ */
+BugFs.symlinkInto = function(aPath, intoPath, symlinkMode, callback) {
+    aPath = TypeUtil.isString(aPath) ? new Path(aPath) : aPath;
+    aPath.symlinkInto(intoPath, callback);
+};
+
+/**
+ * @param {(string|Path)} aPath
+ * @param {(string|Path)} linkPath
+ * @param {?Path.SymlinkMode=} symlinkMode (defaults to Path.SymlinkMode.STOP)
+ * @return {Path}
+ */
+BugFs.symlinkIntoSync = function(aPath, linkPath, symlinkMode) {
+    aPath = TypeUtil.isString(aPath) ? new Path(aPath) : aPath;
+    return aPath.symlinkIntoSync(linkPath, symlinkMode);
+};
+
+/**
+ * @param {(string|Path)} directoryPath
+ * @param {(string|Path)} intoPath
+ * @param {?(Path.SymlinkMode|function(Error))=} symlinkMode (defaults to Path.SymlinkMode.STOP)
+ * @param {?function(Error, Path)} callback
+ */
+BugFs.symlinkDirectoryInto = function(directoryPath, intoPath, symlinkMode, callback) {
+    directoryPath = TypeUtil.isString(directoryPath) ? new Path(directoryPath) : directoryPath;
+    directoryPath.symlinkDirectoryInto(intoPath, symlinkMode, callback);
+};
+
+/**
+ * @param {(string|Path)} directoryPath
+ * @param {(string|Path)} intoPath
+ * @param {?Path.SymlinkMode=} symlinkMode (defaults to Path.SymlinkMode.STOP)
+ * @return {Path}
+ */
+BugFs.symlinkDirectoryIntoSync = function(directoryPath, intoPath, symlinkMode) {
+    directoryPath = TypeUtil.isString(directoryPath) ? new Path(directoryPath) : directoryPath;
+    return directoryPath.symlinkDirectoryIntoSync(intoPath, symlinkMode);
+};
+
+/**
+ * @param {(string|Path)} directoryPath
+ * @param {(string|Path)} intoPath
+ * @param {?(Path.SymlinkMode|function(Error))=} symlinkMode (defaults to Path.SymlinkMode.STOP)
+ * @param {?function(Error, Path)} callback
+ */
+BugFs.symlinkDirectoryContentsInto = function(directoryPath, intoPath, symlinkMode, callback) {
+    directoryPath = TypeUtil.isString(directoryPath) ? new Path(directoryPath) : directoryPath;
+    directoryPath.symlinkDirectoryContentsInto(intoPath, symlinkMode, callback);
+};
+
+/**
+ * @param {(string|Path)} directoryPath
+ * @param {(string|Path)} intoPath
+ * @param {?Path.SymlinkMode=} symlinkMode (defaults to Path.SymlinkMode.STOP)
+ * @return {Path}
+ */
+BugFs.symlinkDirectoryContentsIntoSync = function(directoryPath, intoPath, symlinkMode) {
+    directoryPath = TypeUtil.isString(directoryPath) ? new Path(directoryPath) : directoryPath;
+    return directoryPath.symlinkDirectoryContentsIntoSync(intoPath, symlinkMode);
+};
+
+/**
+ * @param {(string|Path)} filePath
+ * @param {(string|Path)} intoPath
+ * @param {?(Path.SymlinkMode|function(Error))=} symlinkMode (defaults to Path.SymlinkMode.STOP)
+ * @param {?function(Error, Path)} callback
+ */
+BugFs.symlinkFileInto = function(filePath, intoPath, symlinkMode, callback) {
+    filePath = TypeUtil.isString(filePath) ? new Path(filePath) : filePath;
+    filePath.symlinkFileInto(intoPath, symlinkMode, callback);
+};
+
+/**
+ * @param {(string|Path)} filePath
+ * @param {(string|Path)} intoPath
+ * @param {?Path.SymlinkMode=} symlinkMode (defaults to Path.SymlinkMode.STOP)
+ * @return {Path}
+ */
+BugFs.symlinkFileIntoSync = function(filePath, intoPath, symlinkMode) {
+    filePath = TypeUtil.isString(filePath) ? new Path(filePath) : filePath;
+    return filePath.symlinkFileIntoSync(intoPath, symlinkMode);
+};
+
+/**
  * @param {(string|Path)} filePath
  * @param {string} data
  * @param {?(string|function(Error))=} encoding
