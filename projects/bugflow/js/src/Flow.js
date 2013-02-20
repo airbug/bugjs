@@ -9,6 +9,7 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('TypeUtil')
+//@Require('bugtrace.BugTrace')
 
 
 //-------------------------------------------------------------------------------
@@ -25,6 +26,15 @@ var bugpack = require('bugpack').context();
 var Class =     bugpack.require('Class');
 var Obj =       bugpack.require('Obj');
 var TypeUtil =  bugpack.require('TypeUtil');
+var BugTrace =  bugpack.require('bugtrace.BugTrace');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var $error = BugTrace.$error;
+var $trace = BugTrace.$trace;
 
 
 //-------------------------------------------------------------------------------
@@ -112,9 +122,13 @@ var Flow = Class.extend(Obj, {
                 throw new Error("Can only complete a flow once.");
             }
             this.completed = true;
-            setTimeout(function() {
+
+            //TODO BRN: The error flow doesn't route through here, so we can't simply wrap this in our $trace function.
+            // Figure out what to do here.
+
+            setTimeout($trace(function() {
                 _this.completeFlow(args);
-            }, 0);
+            }), 0);
         }
     },
 
@@ -129,7 +143,7 @@ var Flow = Class.extend(Obj, {
             throw new Error("Cannot error flow. Flow has already completed.");
         }
         this.errored = true;
-        this.errorFlow(error);
+        this.errorFlow($error(error));
     },
 
     /**

@@ -12,6 +12,7 @@
 //@Require('TypeUtil')
 //@Require('bugboil.BugBoil')
 //@Require('bugflow.BugFlow')
+//@Require('bugtrace.BugTrace')
 
 
 //-------------------------------------------------------------------------------
@@ -33,6 +34,7 @@ var Semaphore = bugpack.require('Semaphore');
 var TypeUtil =  bugpack.require('TypeUtil');
 var BugBoil =   bugpack.require('bugboil.BugBoil');
 var BugFlow =   bugpack.require('bugflow.BugFlow');
+var BugTrace =  bugpack.require('bugtrace.BugTrace');
 
 
 //-------------------------------------------------------------------------------
@@ -43,6 +45,8 @@ var $foreachParallel = BugBoil.$foreachParallel;
 var $if = BugFlow.$if;
 var $series = BugFlow.$series;
 var $task = BugFlow.$task;
+var $trace = BugTrace.$trace;
+var $traceWithError = BugTrace.$traceWithError;
 
 
 //-------------------------------------------------------------------------------
@@ -80,7 +84,7 @@ var Path = Class.extend(Obj, {
      * @return {string}
      */
     getAbsolutePath: function() {
-        return path.normalize(this.givenPath);
+        return path.resolve(this.givenPath);
     },
 
     /**
@@ -1908,7 +1912,7 @@ var Path = Class.extend(Obj, {
         Path.transactionSemaphore.acquire(function() {
             $series([
                 $task(function(flow) {
-                    _this._exists(function(exists) {
+                    _this._exists(false, function(exists) {
                         if (!exists) {
                             flow.error(new Error("Cannot symlink path '" + _this.getAbsolutePath() + "' because it does " +
                                 "not exist."));
@@ -1950,7 +1954,7 @@ var Path = Class.extend(Obj, {
         syncMode = TypeUtil.isString(syncMode) ? syncMode : Path.SyncMode.STOP;
 
         var symlinkPath = new Path(intoPath.getAbsolutePath() + path.sep + this.getName());
-        if (!this._existsSync()) {
+        if (!this._existsSync(false)) {
             throw new Error("Cannot symlink path '" + this.getAbsolutePath() + "' because it does not exist.")
         }
         this.ensurePathSync(intoPath);
@@ -1976,7 +1980,7 @@ var Path = Class.extend(Obj, {
         Path.transactionSemaphore.acquire(function() {
             $series([
                 $task(function(flow) {
-                    _this._exists(function(exists) {
+                    _this._exists(false, function(exists) {
                         if (!exists) {
                             flow.error(new Error("Cannot symlink directory '" + _this.getAbsolutePath() + "' because it " +
                                 "does not exist."));
@@ -1986,7 +1990,7 @@ var Path = Class.extend(Obj, {
                     });
                 }),
                 $task(function(flow) {
-                    _this._isDirectory(function(error, isDirectory) {
+                    _this._isDirectory(false,function(error, isDirectory) {
                         if (!error) {
                             if (isDirectory) {
                                 flow.complete();
@@ -2032,10 +2036,10 @@ var Path = Class.extend(Obj, {
         syncMode = TypeUtil.isString(syncMode) ? syncMode : Path.SyncMode.STOP;
 
         var symlinkPath = new Path(intoPath.getAbsolutePath() + path.sep + this.getName());
-        if (!this.existsSync()) {
+        if (!this._existsSync(false)) {
             throw new Error("Cannot symlink directory '" + this.getAbsolutePath() + "' because it does not exist.");
         }
-        if (!this.isDirectorySync()) {
+        if (!this._isDirectorySync(false)) {
             throw new Error("Cannot perform a directory symlink on '" + this.getAbsolutePath() + "' because it is not a" +
                 " directory");
         }
@@ -2061,7 +2065,7 @@ var Path = Class.extend(Obj, {
         Path.transactionSemaphore.acquire(function() {
             $series([
                 $task(function(flow) {
-                    _this._exists(function(exists) {
+                    _this._exists(false, function(exists) {
                         if (!exists) {
                             flow.error(new Error("Cannot symlink contents of directory '" + _this.getAbsolutePath() + "' " +
                                 "because the directory does not exist."));
@@ -2071,7 +2075,7 @@ var Path = Class.extend(Obj, {
                     });
                 }),
                 $task(function(flow) {
-                    _this._isDirectory(function(error, isDirectory) {
+                    _this._isDirectory(false, function(error, isDirectory) {
                         if (!error) {
                             if (isDirectory) {
                                 flow.complete();
@@ -2110,11 +2114,11 @@ var Path = Class.extend(Obj, {
     symlinkDirectoryContentsIntoSync: function(directoryPath, intoPath, syncMode) {
         intoPath = TypeUtil.isString(intoPath) ? new Path(intoPath) : intoPath;
         syncMode = TypeUtil.isString(syncMode) ? syncMode : Path.SyncMode.STOP;
-        if (!this._existsSync()) {
+        if (!this._existsSync(false)) {
             throw new Error("Cannot symlink contents of directory '" + this.getAbsolutePath() + "' because the " +
                 "directory does not exist.");
         }
-        if (!this._isDirectorySync()) {
+        if (!this._isDirectorySync(false)) {
             throw new Error("Cannot symlink contents of directory '" + this.getAbsolutePath() +
                 "' because it is not a directory.")
         }
@@ -2139,7 +2143,7 @@ var Path = Class.extend(Obj, {
         Path.transactionSemaphore.acquire(function() {
             $series([
                 $task(function(flow) {
-                    _this._exists(function(exists) {
+                    _this._exists(false, function(exists) {
                         if (!exists) {
                             flow.error(new Error("Cannot symlink file '" + _this.getAbsolutePath() + "' because it " +
                                 "does not exist."));
@@ -2149,7 +2153,7 @@ var Path = Class.extend(Obj, {
                     });
                 }),
                 $task(function(flow) {
-                    _this._isFile(function(error, isFile) {
+                    _this._isFile(false, function(error, isFile) {
                         if (!error) {
                             if (isFile) {
                                 flow.complete();
@@ -2194,11 +2198,11 @@ var Path = Class.extend(Obj, {
         intoPath = TypeUtil.isString(intoPath) ? new Path(intoPath) : intoPath;
         syncMode = TypeUtil.isString(syncMode) ? syncMode : Path.SyncMode.STOP;
         var symlinkPath = new Path(intoPath.getAbsolutePath() + path.sep + this.getName());
-        if (!this._existsSync()) {
+        if (!this._existsSync(false)) {
             throw new Error("Cannot symlink file '" + this.getAbsolutePath() + "' because it does" +
                 "not exist.");
         }
-        if (!this._isFileSync()) {
+        if (!this._isFileSync(false)) {
             throw new Error("Cannot symlink file '" + this.getAbsolutePath() + "' because it " +
                 "is not a file.");
         }
@@ -2726,7 +2730,7 @@ var Path = Class.extend(Obj, {
                 $foreachParallel(childPathArray, function(boil, childPath) {
                     var copyPath = new Path(intoPath.getAbsolutePath() + path.sep + childPath.getName());
                     $if (function(flow) {
-                            copyPath._isDirectory(false, function(error, isDirectory) {
+                            childPath._isDirectory(false, function(error, isDirectory) {
                                 if (!error) {
                                     flow.assert(isDirectory);
                                 } else {
@@ -2744,7 +2748,7 @@ var Path = Class.extend(Obj, {
                             }
                         })
                     ).$elseIf(function(flow) {
-                            copyPath._isFile(false, function(error, isFile) {
+                            childPath._isFile(false, function(error, isFile) {
                                 if (!error) {
                                     flow.assert(isFile);
                                 } else {
@@ -2758,7 +2762,7 @@ var Path = Class.extend(Obj, {
                             });
                         })
                     ).$elseIf(function(flow) {
-                            copyPath._isSymlink(function(error, isSymlink) {
+                            childPath._isSymlink(function(error, isSymlink) {
                                 if (!error) {
                                     flow.assert(isSymlink);
                                 } else {
@@ -2853,12 +2857,7 @@ var Path = Class.extend(Obj, {
      * @param {Path.SyncMode} syncMode
      */
     _copyFileSync: function(copyPath, syncMode) {
-        var exists = copyPath._existsSync();
-        if (!exists) {
-            copyPath._createFileSync(false);
-            this._copyFileContentsSync(copyPath);
-        } else {
-
+        if (copyPath._existsSync(false)) {
             //NOTE BRN: Do nothing in the STOP case AND the MERGE_STOP
 
             switch (syncMode) {
@@ -2869,6 +2868,10 @@ var Path = Class.extend(Obj, {
                     this._copyFileReplaceSync(copyPath);
                     break;
             }
+
+        } else {
+            copyPath._createFileSync(false);
+            this._copyFileContentsSync(copyPath);
         }
     },
 
@@ -3449,13 +3452,13 @@ var Path = Class.extend(Obj, {
                 }
             }),
             $task(function(flow) {
-                fs.mkdir(_this.getAbsolutePath(), mode, function(error) {
+                fs.mkdir(_this.getAbsolutePath(), mode, $traceWithError(function(error) {
                     if (!error) {
                         flow.complete();
                     } else {
-                        flow.error(new Error(error.message));
+                        flow.error(new Error(error));
                     }
-                });
+                }));
             })
         ]).execute(callback);
     },
@@ -3492,14 +3495,14 @@ var Path = Class.extend(Obj, {
             }),
             $task(function(flow) {
                 Path.fileHandleSemaphore.acquire(function() {
-                    fs.writeFile(_this.getAbsolutePath(), "", function(error) {
+                    fs.writeFile(_this.getAbsolutePath(), "", $traceWithError(function(error) {
                         Path.fileHandleSemaphore.release();
                         if (!error) {
                             flow.complete();
                         } else {
                             flow.error(new Error(error.message));
                         }
-                    });
+                    }));
                 });
             })
         ]).execute(callback);
@@ -3680,12 +3683,12 @@ var Path = Class.extend(Obj, {
      * @param {?function(Error)} callback
      */
     _deleteSymlink: function(callback) {
-        fs.unlink(this.getAbsolutePath(), function(error) {
+        fs.unlink(this.getAbsolutePath(), $traceWithError(function(error) {
             if (error) {
                 error = new Error(error.message);
             }
             callback(error);
-        });
+        }));
     },
 
     _deleteSymlinkSync: function() {
@@ -3705,7 +3708,7 @@ var Path = Class.extend(Obj, {
         // there is a symlink but it points to a file/dir that no longer exists.
         // http://stackoverflow.com/questions/14193926/in-node-js-cannot-get-rid-of-a-bad-symlink
 
-        fs.lstat(this.getAbsolutePath(), function(error, stats) {
+        fs.lstat(this.getAbsolutePath(), $trace(function(error, stats) {
             if (error) {
                 callback(false);
             } else {
@@ -3721,7 +3724,7 @@ var Path = Class.extend(Obj, {
                     callback(true);
                 }
             }
-        });
+        }));
     },
 
     /**
@@ -3788,11 +3791,9 @@ var Path = Class.extend(Obj, {
      */
     _isDirectory: function(resolveSymlink, callback) {
         var _this = this;
-        fs.lstat(this.getAbsolutePath(), function(error, stats) {
-            if (error) {
-                callback(new Error(error.message));
-            } else {
-                if (stats.isSymlink() && resolveSymlink) {
+        fs.lstat(this.getAbsolutePath(), $traceWithError(function(error, stats) {
+            if (!error) {
+                if (stats.isSymbolicLink() && resolveSymlink) {
                     _this._readSymlink(function(error, symlinkedPath) {
                         if (!error) {
                             symlinkedPath._isDirectory(false, callback);
@@ -3803,8 +3804,10 @@ var Path = Class.extend(Obj, {
                 } else {
                     callback(undefined, stats.isDirectory());
                 }
+            } else {
+                callback(error);
             }
-        });
+        }));
     },
 
     /**
@@ -3814,7 +3817,7 @@ var Path = Class.extend(Obj, {
      */
     _isDirectorySync: function(resolveSymlink) {
         var stats = fs.lstatSync(this.getAbsolutePath());
-        if (stats.isSymlinkSync() && resolveSymlink) {
+        if (stats.isSymbolicLink() && resolveSymlink) {
             var symlinkedPath = this._readSymlinkSync();
             return symlinkedPath._isDirectorySync(false);
         } else {
@@ -3852,11 +3855,11 @@ var Path = Class.extend(Obj, {
      */
     _isFile: function(resolveSymlink, callback) {
         var _this = this;
-        fs.lstat(this.getAbsolutePath(), function(error, stats) {
+        fs.lstat(this.getAbsolutePath(), $traceWithError(function(error, stats) {
             if (error) {
                 callback(new Error(error.message));
             } else {
-                if (stats.isSymlink() && resolveSymlink) {
+                if (stats.isSymbolicLink() && resolveSymlink) {
                     _this._readSymlink(function(error, symlinkedPath) {
                         if (!error) {
                             symlinkedPath._isFile(false, callback);
@@ -3868,7 +3871,7 @@ var Path = Class.extend(Obj, {
                     callback(undefined, stats.isFile());
                 }
             }
-        });
+        }));
     },
 
     /**
@@ -3877,7 +3880,7 @@ var Path = Class.extend(Obj, {
      */
     _isFileSync: function(resolveSymlink) {
         var stats = fs.lstatSync(this.getAbsolutePath());
-        if (stats.isSymlinkSync() && resolveSymlink) {
+        if (stats.isSymbolicLink() && resolveSymlink) {
             var symlinkedPath = this._readSymlinkSync();
             return symlinkedPath._isFileSync(false);
         } else {
@@ -3890,13 +3893,13 @@ var Path = Class.extend(Obj, {
      * @param {function(Error, boolean)} callback
      */
     _isSymlink: function(callback) {
-        fs.lstat(this.getAbsolutePath(), function(error, stats) {
+        fs.lstat(this.getAbsolutePath(), $traceWithError(function(error, stats) {
             if (error) {
                 callback(new Error(error.message), false);
             } else {
                 callback(null, stats.isSymbolicLink());
             }
-        });
+        }));
     },
 
     /**
@@ -4824,7 +4827,7 @@ var Path = Class.extend(Obj, {
      */
     _readDirectory: function(callback) {
         var _this = this;
-        fs.readdir(this.getAbsolutePath(), function(error, files) {
+        fs.readdir(this.getAbsolutePath(), $traceWithError(function(error, files) {
             if (!error) {
                 var pathArray = [];
                 files.forEach(function(name) {
@@ -4835,7 +4838,7 @@ var Path = Class.extend(Obj, {
             } else {
                 callback(new Error(error.message));
             }
-        });
+        }));
     },
 
     /**
@@ -4861,10 +4864,10 @@ var Path = Class.extend(Obj, {
     _readFile: function(encoding, callback) {
         var _this = this;
         Path.fileHandleSemaphore.acquire(function() {
-            fs.readFile(_this.getAbsolutePath(), encoding, function(error, data) {
+            fs.readFile(_this.getAbsolutePath(), encoding, $traceWithError(function(error, data) {
                 Path.fileHandleSemaphore.release();
                 callback(error, data);
-            });
+            }));
         });
     },
 
@@ -4881,13 +4884,13 @@ var Path = Class.extend(Obj, {
      * @param {function(Error, Path)} callback
      */
     _readSymlink: function(callback) {
-        fs.readlink(this.getAbsolutePath(), function(error, symlinkedPathString) {
+        fs.readlink(this.getAbsolutePath(), $traceWithError(function(error, symlinkedPathString) {
             if (!error) {
                 callback(undefined, new Path(symlinkedPathString));
             } else {
                 callback(error);
             }
-        });
+        }));
     },
 
     /**
@@ -4933,13 +4936,13 @@ var Path = Class.extend(Obj, {
             ])
         ).$else(
             $task(function(flow) {
-                fs.rmdir(_this.getAbsolutePath(), function(error) {
+                fs.rmdir(_this.getAbsolutePath(), $traceWithError(function(error) {
                     if (!error) {
                         flow.complete();
                     } else {
                         flow.error(new Error(error.message));
                     }
-                });
+                }));
             })
         ).execute(callback);
     },
@@ -4963,7 +4966,9 @@ var Path = Class.extend(Obj, {
      * @param {function(Error)} callback
      */
     _rename: function(namePath, callback) {
-        fs.rename(this.getAbsolutePath(), namePath.getAbsolutePath(), callback);
+        fs.rename(this.getAbsolutePath(), namePath.getAbsolutePath(), $traceWithError(function(error) {
+            callback(error);
+        }));
     },
 
     /**
@@ -5139,7 +5144,9 @@ var Path = Class.extend(Obj, {
      * @param {function(Error)} callback
      */
     _symlink: function(symlinkPath, callback) {
-        fs.symlink(this.getAbsolutePath(), symlinkPath.getAbsolutePath(), callback);
+        fs.symlink(this.getAbsolutePath(), symlinkPath.getAbsolutePath(), 'junction', $traceWithError(function(error) {
+            callback(error);
+        }));
     },
 
     /**
@@ -5147,7 +5154,7 @@ var Path = Class.extend(Obj, {
      * @param {Path} symlinkPath
      */
     _symlinkSync: function(symlinkPath) {
-        fs.symlinkSync(this.getAbsolutePath(), symlinkPath.getAbsolutePath());
+        fs.symlinkSync(this.getAbsolutePath(), symlinkPath.getAbsolutePath(), 'junction');
     },
 
     /**
@@ -5159,7 +5166,7 @@ var Path = Class.extend(Obj, {
     _symlinkTo: function(symlinkPath, syncMode, callback) {
         var _this = this;
         $if (function(flow) {
-                _this._isDirectory(function(error, isDirectory) {
+                _this._isDirectory(false, function(error, isDirectory) {
                     if (!error) {
                         flow.assert(isDirectory);
                     } else {
@@ -5173,7 +5180,7 @@ var Path = Class.extend(Obj, {
                 });
             })
         ).$elseIf (function(flow) {
-                _this._isFile(function(error, isFile) {
+                _this._isFile(false, function(error, isFile) {
                     if (!error) {
                         flow.assert(isFile);
                     } else {
@@ -5200,9 +5207,9 @@ var Path = Class.extend(Obj, {
      * @param {Path.SyncMode} syncMode
      */
     _symlinkToSync: function(symlinkPath, syncMode) {
-        if (this.isDirectorySync()) {
+        if (this._isDirectorySync(false)) {
             this._symlinkDirectoryToSync(symlinkPath, syncMode);
-        } else if (this.isFileSync()) {
+        } else if (this._isFileSync(false)) {
             this._symlinkFileToSync(symlinkPath, syncMode);
         } else {
             throw new Error("Cannot symlink path '" + this.getAbsolutePath() + "' because it is an unknown type.");
@@ -5219,12 +5226,13 @@ var Path = Class.extend(Obj, {
     _symlinkDirectoryTo: function(symlinkPath, syncMode, callback) {
         var _this = this;
         $if (function(flow) {
-                symlinkPath._exists(function(exists) {
+                symlinkPath._exists(false, function(exists) {
                     flow.assert(exists);
                 });
             },
             $task(function(flow) {
                 switch (syncMode) {
+                    case Path.SyncMode.MERGE_REPLACE:
                     case Path.SyncMode.REPLACE:
                         _this._symlinkDirectoryReplace(symlinkPath, function(error) {
                             flow.complete(error);
@@ -5249,11 +5257,12 @@ var Path = Class.extend(Obj, {
      * @param {Path.SyncMode} syncMode
      */
     _symlinkDirectoryToSync: function(symlinkPath, recursive, syncMode) {
-        if (symlinkPath._existsSync()) {
+        if (symlinkPath._existsSync(false)) {
 
             //NOTE BRN: Do nothing in the STOP case
 
             switch (syncMode) {
+                case Path.SyncMode.MERGE_REPLACE:
                 case Path.SyncMode.REPLACE:
                     this._symlinkDirectoryReplaceSync(symlinkPath);
                     break;
@@ -5271,7 +5280,7 @@ var Path = Class.extend(Obj, {
     _symlinkDirectoryReplace: function(symlinkPath, callback) {
         var _this = this;
         $if (function(flow) {
-                symlinkPath._isDirectory(function(error, isDirectory) {
+                symlinkPath._isDirectory(false, function(error, isDirectory) {
                     if (!error) {
                         flow.assert(isDirectory);
                     } else {
@@ -5292,7 +5301,7 @@ var Path = Class.extend(Obj, {
                 })
             ])
         ).$elseIf(function(flow) {
-                symlinkPath._isFile(function(error, isFile) {
+                symlinkPath._isFile(false, function(error, isFile) {
                     if (!error) {
                         flow.assert(isFile);
                     } else {
@@ -5303,6 +5312,27 @@ var Path = Class.extend(Obj, {
             $series([
                 $task(function(flow) {
                     symlinkPath._deleteFile(function(error) {
+                        flow.complete(error);
+                    })
+                }),
+                $task(function(flow) {
+                    _this._symlink(symlinkPath, function(error) {
+                        flow.complete(error);
+                    });
+                })
+            ])
+        ).$elseIf(function(flow) {
+                symlinkPath._isSymlink(function(error, isSymlink) {
+                    if (!error) {
+                        flow.assert(isSymlink);
+                    } else {
+                        flow.error(error);
+                    }
+                });
+            },
+            $series([
+                $task(function(flow) {
+                    symlinkPath._deleteSymlink(function(error) {
                         flow.complete(error);
                     })
                 }),
@@ -5323,11 +5353,14 @@ var Path = Class.extend(Obj, {
 
         //NOTE BRN: Do nothing if we don't recognize the type (symlink)
 
-        if (symlinkPath.isDirectorySync()) {
+        if (symlinkPath._isDirectorySync(false)) {
             symlinkPath._deleteDirectorySync(true);
             this._symlinkSync(symlinkPath);
-        } else if (symlinkPath.isFileSync()) {
+        } else if (symlinkPath._isFileSync(false)) {
             symlinkPath._deleteFileSync();
+            this._symlinkSync(symlinkPath);
+        } else if (symlinkPath._isSymlinkSync()) {
+            symlinkPath._deleteSymlinkSync();
             this._symlinkSync(symlinkPath);
         }
     },
@@ -5387,12 +5420,13 @@ var Path = Class.extend(Obj, {
     _symlinkFileTo: function(symlinkPath, syncMode, callback) {
         var _this = this;
         $if (function(flow) {
-                symlinkPath._exists(function(exists) {
+                symlinkPath._exists(false, function(exists) {
                     flow.assert(exists);
                 });
             },
             $task(function(flow) {
                 switch (syncMode) {
+                    case Path.SyncMode.MERGE_REPLACE:
                     case Path.SyncMode.REPLACE:
                         _this._symlinkFileReplace(symlinkPath, function(error) {
                             flow.complete(error);
@@ -5419,11 +5453,12 @@ var Path = Class.extend(Obj, {
      * @param {Path.SyncMode} syncMode
      */
     _symlinkFileToSync: function(symlinkPath, syncMode) {
-        if (symlinkPath._existsSync()) {
+        if (symlinkPath._existsSync(false)) {
 
             //NOTE BRN: Do nothing in the STOP case AND the MERGE_STOP
 
             switch (syncMode) {
+                case Path.SyncMode.MERGE_REPLACE:
                 case Path.SyncMode.REPLACE:
                     this._symlinkFileReplaceSync(symlinkPath);
                     break;
@@ -5441,7 +5476,7 @@ var Path = Class.extend(Obj, {
     _symlinkFileReplace: function(symlinkPath, callback) {
         var _this = this;
         $if (function(flow) {
-                symlinkPath._isDirectory(function(error, isDirectory) {
+                symlinkPath._isDirectory(false, function(error, isDirectory) {
                     if (!error) {
                         flow.assert(isDirectory);
                     } else {
@@ -5462,7 +5497,7 @@ var Path = Class.extend(Obj, {
                 })
             ])
         ).$elseIf(function(flow) {
-                symlinkPath._isFile(function(error, isFile) {
+                symlinkPath._isFile(false, function(error, isFile) {
                     if (!error) {
                         flow.assert(isFile);
                     } else {
@@ -5473,6 +5508,27 @@ var Path = Class.extend(Obj, {
             $series([
                 $task(function(flow) {
                     symlinkPath._deleteFile(function(error) {
+                        flow.complete(error);
+                    });
+                }),
+                $task(function(flow) {
+                    _this._symlink(symlinkPath, function(error) {
+                        flow.complete(error);
+                    });
+                })
+            ])
+        ).$elseIf(function(flow) {
+                symlinkPath._isSymlink(function(error, isFile) {
+                    if (!error) {
+                        flow.assert(isFile);
+                    } else {
+                        flow.error(error);
+                    }
+                })
+            },
+            $series([
+                $task(function(flow) {
+                    symlinkPath._deleteSymlink(function(error) {
                         flow.complete(error);
                     });
                 }),
@@ -5493,11 +5549,14 @@ var Path = Class.extend(Obj, {
 
         //NOTE BRN: Do nothing if we don't recognize the type (symlink)
 
-        if (symlinkPath.isDirectorySync()) {
+        if (symlinkPath._isDirectorySync(false)) {
             symlinkPath._deleteDirectorySync(true);
             this._symlinkSync(symlinkPath);
-        } else if (symlinkPath.isFileSync()) {
+        } else if (symlinkPath._isFileSync(false)) {
             symlinkPath._deleteFileSync();
+            this._symlinkSync(symlinkPath);
+        } else if (symlinkPath._isSymlinkSync()) {
+            symlinkPath._deleteSymlinkSync();
             this._symlinkSync(symlinkPath);
         }
     },
@@ -5537,13 +5596,13 @@ var Path = Class.extend(Obj, {
             ])
         ).$else(
             $task(function(flow) {
-                fs.unlink(_this.getAbsolutePath(), function(error) {
+                fs.unlink(_this.getAbsolutePath(), $traceWithError(function(error) {
                     if (!error) {
                         flow.complete();
                     } else {
                         flow.error(new Error(error.message));
                     }
-                });
+                }));
             })
         ).execute(callback);
     },
@@ -5570,7 +5629,7 @@ var Path = Class.extend(Obj, {
     _writeFile: function(data, encoding, callback) {
         var _this = this;
         Path.fileHandleSemaphore.acquire(function() {
-            fs.writeFile(_this.getAbsolutePath(), data, encoding, function(error) {
+            fs.writeFile(_this.getAbsolutePath(), data, encoding, $traceWithError(function(error) {
                 Path.fileHandleSemaphore.release();
                 if (error) {
                     error = new Error(error.message);
@@ -5580,7 +5639,7 @@ var Path = Class.extend(Obj, {
                 } else {
                     throw error;
                 }
-            });
+            }));
         });
     },
 
@@ -5604,7 +5663,7 @@ var Path = Class.extend(Obj, {
     ensurePath: function(intoPath, callback) {
         $series([
             $task(function(flow) {
-                intoPath._exists(function(exists) {
+                intoPath._exists(true, function(exists) {
                     if (!exists) {
                         intoPath._createDirectory(true, "0777", function(error) {
                             flow.complete(error);
@@ -5615,7 +5674,7 @@ var Path = Class.extend(Obj, {
                 })
             }),
             $task(function(flow) {
-                intoPath._isDirectory(function(error, isDirectory) {
+                intoPath._isDirectory(true, function(error, isDirectory) {
                     if (!error) {
                         if (!isDirectory) {
                             flow.error(new Error("Path '" + intoPath.getAbsolutePath() + "' is not a directory."));
@@ -5635,9 +5694,9 @@ var Path = Class.extend(Obj, {
      * @param {Path} intoPath
      */
     ensurePathSync: function(intoPath) {
-        if (!intoPath._existsSync()) {
+        if (!intoPath._existsSync(true)) {
             intoPath._createDirectorySync(true, "0777");
-        } else if (!intoPath.isDirectorySync()) {
+        } else if (!intoPath._isDirectorySync(true)) {
             throw new Error("Path '" + intoPath.getAbsolutePath() + "' is not a directory.");
         }
     },
@@ -5650,7 +5709,7 @@ var Path = Class.extend(Obj, {
     ensureParentDirectories: function(mode, callback) {
         var parentPath = this.getParentPath();
         $if (function(flow) {
-                parentPath._exists(function(exists) {
+                parentPath._exists(false, function(exists) {
                     flow.assert(!exists);
                 });
             },
@@ -5664,7 +5723,7 @@ var Path = Class.extend(Obj, {
 
                 // NOTE BRN: We check this to make sure that the given path did not exist already as a file.
 
-                parentPath._isDirectory(function(error, isDirectory) {
+                parentPath._isDirectory(false, function(error, isDirectory) {
                     if (!error) {
                         if (!isDirectory) {
                             flow.error(new Error("Could not create parent directory '" + parentPath.getAbsolutePath() +
@@ -5694,7 +5753,14 @@ var Path = Class.extend(Obj, {
      */
     ensureParentDirectoriesSync: function(mode) {
         var parentPath = this.getParentPath();
-        parentPath.createDirectorySync(true, mode);
+        if (!parentPath._existsSync(false)) {
+            parentPath.createDirectorySync(true, mode);
+        } else {
+            if (!parentPath._isDirectorySync(false)) {
+                throw new Error("Could not create parent directory '" + parentPath.getAbsolutePath() +
+                    "' because it already exists and is not a directory.");
+            }
+        }
     }
 });
 
