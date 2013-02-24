@@ -23,6 +23,14 @@ var bugpack = require('bugpack').context();
 var Class = bugpack.require('Class');
 var Obj =   bugpack.require('Obj');
 var Queue = bugpack.require('Queue');
+var BugTrace =  bugpack.require('bugtrace.BugTrace');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var $trace = BugTrace.$trace;
 
 
 //-------------------------------------------------------------------------------
@@ -112,12 +120,12 @@ var Semaphore = Class.extend(Obj, {
         // NOTE BRN: We use a setTimeout here to help prevent stack overflows when it comes to the processing of the
         // queue.
 
-        setTimeout(function() {
+        setTimeout($trace(function() {
             while (_this.numberPermitsAcquired < _this.numberPermits && _this.acquisitionQueue.getCount() > 0) {
                 var nextMethod = _this.acquisitionQueue.dequeue();
                 _this.acquirePermit(nextMethod);
             }
-        }, 0);
+        }), 0);
     },
 
     /**
