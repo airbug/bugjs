@@ -6,6 +6,7 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('TypeUtil')
 
 
 //-------------------------------------------------------------------------------
@@ -19,8 +20,9 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var Obj = bugpack.require('Obj');
+var Class =     bugpack.require('Class');
+var Obj =       bugpack.require('Obj');
+var TypeUtil =  bugpack.require('TypeUtil');
 
 
 //-------------------------------------------------------------------------------
@@ -53,7 +55,15 @@ Proxy.proxy = function(proxyInstance, proxiedInstance, functionNameArray) {
  */
 Proxy.generateProxyFunction = function(proxiedInstance, functionName) {
     return function() {
-        return proxiedInstance[functionName].apply(proxiedInstance, arguments);
+        if (TypeUtil.isFunction(proxiedInstance)) {
+            proxiedInstance = proxiedInstance();
+        }
+
+        if (TypeUtil.isObject(proxiedInstance)) {
+            return proxiedInstance[functionName].apply(proxiedInstance, arguments);
+        } else {
+            throw new Error("Proxied entities must be objects or functions that return objects.");
+        }
     };
 };
 
