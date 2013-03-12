@@ -44,144 +44,114 @@ var S3Object = Class.extend(Obj, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        //settable
-        //gettable
         /**
          * @private
          * @type {string}
          */
         this.body = params.body;
 
-        //settable
-        //gettable
         /**
          * @private
          * @type {string}
          */
         this.cacheControl = params.cacheControl;
 
-        //gettable
-        //settable
         /**
          * @private
          * @type {string}
          */
         this.contentDisposition = params.contentDisposition;
 
-        //gettable
-        //settable
         /**
          * @private
          * @type {string}
          */
         this.contentEncoding = params.contentEncoding;
 
-        //gettable
-        //settable
         /**
          * @private
          * @type {string}
          */
         this.contentLanguage = params.contentLanguage;
 
-        //gettable
         /**
          * @private
          * @type {number}
          */
         this.contentLength = params.contentLength;
 
-        //gettable
-        //settable
         /**
          * @private
          * @type {string}
          */
         this.contentType = params.contentType;
 
-        //gettable
         /**
          * @private
          * @type {string}
          */
         this.deleteMarker = params.deleteMarker;
 
-        //gettable
         /**
          * @private
          * @type {string}
          */
         this.eTag = params.eTag;
 
-        //gettable
         /**
          * @private
          * @type {string}
          */
         this.expiration = params.expiration;
 
-        //gettable
-        //settable
         /**
          * @private
          * @type {string}
          */
         this.expires = params.expires;
 
-        //gettable
-        //settable
         /**
          * @private
          * @type {string}
          */
         this.key = params.key;
 
-        //gettable
         /**
          * @private
          * @type {Date}
          */
         this.lastModified = params.lastModified;
 
-        //gettable
-        //settable
         /**
          * @private
          * @type {Object.<string>}
          */
         this.metaData = params.metaData;
 
-        //gettable
         /**
          * @private
          * @type {number}
          */
         this.missingMeta = params.missingMeta;
 
-        //gettable
         /**
          * @private
          * @type {string}
          */
         this.restore = params.restore;
 
-        //gettable
-        //settable
         /**
          * @private
          * @type {string}
          */
         this.serverSideEncryption = params.serverSideEncryption;
 
-        //gettable
         /**
          * @private
          * @type {string}
          */
         this.versionId = params.versionId;
 
-        //gettable
-        //settable
         /**
          * @private
          * @type {string}
