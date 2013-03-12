@@ -72,7 +72,7 @@ var Path = Class.extend(Obj, {
          * @private
          * @type {string}
          */
-        this.givenPath = givenPath;
+        this.givenPath = Class.doesExtend(givenPath, Path) ? givenPath.getGivenPath() : givenPath;
     },
 
 
@@ -85,6 +85,13 @@ var Path = Class.extend(Obj, {
      */
     getAbsolutePath: function() {
         return path.resolve(this.givenPath);
+    },
+
+    /**
+     * @return {string}
+     */
+    getBaseName: function() {
+        return path.basename(this.getAbsolutePath(), this.getExtName());
     },
 
     /**
@@ -1084,8 +1091,8 @@ var Path = Class.extend(Obj, {
     },
 
     /**
-     * @param {?(boolean|function(boolean))=} resolveSymlink (defaults to false)
-     * @param {function(boolean)} callback
+     * @param {(boolean|function(boolean))} resolveSymlink (defaults to false)
+     * @param {?function(boolean)=} callback
      */
     exists: function(resolveSymlink, callback) {
         if (TypeUtil.isFunction(resolveSymlink)) {
@@ -1112,8 +1119,8 @@ var Path = Class.extend(Obj, {
 
     //TODO BRN: Should this return false if the path does not exist, or should it throw an error like it does now?
     /**
-     * @param {?(boolean|function(Error, boolean))=} resolveSymlink (defaults to false)
-     * @param {function(Error, boolean)} callback
+     * @param {(boolean|function(Error, boolean))} resolveSymlink (defaults to false)
+     * @param {?function(Error, boolean)=} callback
      */
     isDirectory: function(resolveSymlink, callback) {
         if (TypeUtil.isFunction(resolveSymlink)) {
@@ -1140,8 +1147,8 @@ var Path = Class.extend(Obj, {
     },
 
     /**
-     * @param {?(boolean|function(Error, boolean))=} resolveSymlink (defaults to false)
-     * @param {function(Error, boolean)} callback
+     * @param {(boolean|function(Error, boolean))} resolveSymlink (defaults to false)
+     * @param {?function(Error, boolean)=} callback
      */
     isDirectoryEmpty: function(resolveSymlink, callback) {
         if (TypeUtil.isFunction(resolveSymlink)) {
@@ -1211,8 +1218,8 @@ var Path = Class.extend(Obj, {
     },
 
     /**
-     * @param {?(boolean|function(Error, boolean))=} resolveSymlink (defaults to false)
-     * @param {function(Error, boolean)} callback
+     * @param {(boolean|function(Error, boolean))} resolveSymlink (defaults to false)
+     * @param {?function(Error, boolean)=} callback
      */
     isFile: function(resolveSymlink, callback) {
         if (TypeUtil.isFunction(resolveSymlink)) {
@@ -1893,6 +1900,24 @@ var Path = Class.extend(Obj, {
         } else {
             throw new Error("Cannot read file '" + this.getAbsolutePath() + "' because it does not exist.");
         }
+    },
+
+    /**
+     * If an argument is not a string or a Path it is ignored.
+     * @param {Array.<(string|Path)>} paths
+     * @return {Path}
+     */
+    resolvePaths: function(paths) {
+        var pathStrings = [this.getGivenPath()];
+        for (var i = 0, size = paths.length; i < size; i++) {
+            var _path = paths[i];
+            if (Class.doesExtend(_path, Path)) {
+                pathStrings.push(_path.getGivenPath());
+            } else if (TypeUtil.isString(_path)) {
+                pathStrings.push(_path);
+            }
+        }
+        return new Path(path.resolve.apply(path, pathStrings));
     },
 
     /**
