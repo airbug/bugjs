@@ -4,7 +4,7 @@
 
 //@Package('aws')
 
-//@Export('S3Bucket')
+//@Export('EC2CidrIpRange')
 
 //@Require('Class')
 //@Require('aws.AwsObject')
@@ -21,21 +21,21 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var AwsObject =   bugpack.require('aws.AwsObject');
+var Class =     bugpack.require('Class');
+var AwsObject = bugpack.require('aws.AwsObject');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var S3Bucket = Class.extend(AwsObject, {
+var EC2CidrIpRange = Class.extend(AwsObject, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(params) {
+    _constructor: function() {
 
         this._super();
 
@@ -46,9 +46,9 @@ var S3Bucket = Class.extend(AwsObject, {
 
         /**
          * @private
-         * @type {string}
+         * @type {?string}
          */
-        this.name = params.name;
+        this.cidrIp = null;
     },
 
 
@@ -57,10 +57,45 @@ var S3Bucket = Class.extend(AwsObject, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {string}
+     * @return {?string}
      */
-    getName: function() {
-        return this.name;
+    getCidrIp: function() {
+        return this.cidrIp;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Protected Class Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     * @param  {{
+     *  cidrIp: ?string
+     * }} jsonObject
+     */
+    jsonCreate: function(jsonObject) {
+        this.cidrIp = jsonObject.cidrIp;
+    },
+
+    /**
+     * @protected
+     * @param  {{
+     *  cidrIp: ?string
+     * }} jsonObject
+     */
+    jsonUpdate: function(jsonObject) {
+        //TODO BRN: Anything to do here?
+    },
+
+    /**
+     * @protected
+     * @param {{
+     *  CidrIp: ?string
+     * }} ipPermission
+     */
+    syncUpdate: function(awsObject) {
+        this.cidrIp = awsObject.CidrIp;
     }
 });
 
@@ -69,4 +104,4 @@ var S3Bucket = Class.extend(AwsObject, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('aws.S3Bucket', S3Bucket);
+bugpack.export('aws.EC2CidrIpRange', EC2CidrIpRange);

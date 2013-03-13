@@ -8,8 +8,8 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('aws.EC2SecurityGroup')
 //@Require('bugflow.BugFlow')
-//@Require('bugfs.BugFs')
 
 
 //-------------------------------------------------------------------------------
@@ -26,10 +26,9 @@ var bugpack = require('bugpack').context();
 
 var Class =             bugpack.require('Class');
 var Obj =               bugpack.require('Obj');
-var Map =               bugpack.require('Map');
 var TypeUtil =          bugpack.require('TypeUtil');
-var AwsConfig =         bugpack.require('aws.AwsConfig');
 var EC2SecurityGroup =  bugpack.require('aws.EC2SecurityGroup');
+var BugBoil =           bugpack.require('bugboil.BugBoil');
 var BugFlow =           bugpack.require('bugflow.BugFlow');
 
 
@@ -37,6 +36,7 @@ var BugFlow =           bugpack.require('bugflow.BugFlow');
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var $foreachParallel = BugBoil.$foreachParallel;
 var $if = BugFlow.$if;
 var $series = BugFlow.$series;
 var $task = BugFlow.$task;
@@ -56,6 +56,7 @@ var EC2Api = Class.extend(Obj, {
 
         this._super();
 
+        params = params || {};
 
         //-------------------------------------------------------------------------------
         // Declare Variables
@@ -92,19 +93,113 @@ var EC2Api = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @private
      * @param {EC2SecurityGroup} ec2SecurityGroup
-     * @param {function(Error, SecurityGroup} callback
+     * @param {function(Error} callback
+     */
+    authorizeSecurityGroup: function(ec2SecurityGroup, callback) {
+        var ec2IpPermissionsList = ec2SecurityGroup.getIpPermissions();
+        if (!ec2IpPermissionsList.isEmpty()) {
+            var ipPermissions = [];
+            ec2IpPermissionsList.forEach(function(ec2IpPermission) {
+                var ipPermission = {};
+                if (TypeUtil.isNumber(ec2IpPermission.getFromPort())) {
+                    ipPermission.FromPort = ec2IpPermission.getFromPort();
+                }
+                if (ec2IpPermission.getIpProtocol()) {
+                    ipPermission.IpProtocol = ec2IpPermission.getIpProtocol();
+                }
+                if (TypeUtil.isNumber(ec2IpPermission.getToPort())) {
+                    ipPermission.ToPort = ec2IpPermission.getToPort();
+                }
+                var ipRangeList = ec2IpPermission.getIpRanges();
+                if (!ipRangeList.isEmpty()) {
+                    var ipRanges = [];
+                    ipRangeList.forEach(function(ec2CidrIpRange) {
+                        ipRanges.push({
+                            CidrIp: ec2CidrIpRange.getCidrIp()
+                        });
+                    });
+                    ipPermission.IpRanges = ipRanges;
+                }
+                var userIdGroupPairList = ec2IpPermission.getUserIdGroupPairs();
+                if (!userIdGroupPairList.isEmpty()) {
+                    var userIdGroupPairs = [];
+                    userIdGroupPairList.forEach(function(ec2UserIdGroupPair) {
+                        var userIdGroupPair = {};
+                        if (ec2UserIdGroupPair.getGroupId()) {
+                            userIdGroupPair.GroupId = ec2UserIdGroupPair.getGroupId();
+                        }
+                        if (ec2UserIdGroupPair.getGroupName()) {
+                            userIdGroupPair.GroupName = ec2UserIdGroupPair.getGroupName();
+                        }
+                        if (ec2UserIdGroupPair.getUserId()) {
+                            userIdGroupPair.UserId = ec2UserIdGroupPair.getUserId();
+                        }
+                        userIdGroupPairs.push(userIdGroupPair);
+                    });
+                    ipPermission.UserIdGroupPairs = userIdGroupPairs;
+                }
+                ipPermissions.push(ipPermission);
+            });
+
+            var params = {
+                GroupName: ec2SecurityGroup.getGroupName(),
+                IpPermissions: ipPermissions
+            };
+
+            //TEST
+            console.log("About to try and authorize security group");
+            console.log(params);
+
+            this._authorizeSecurityGroupIngress(params, function(error, data) {
+                //TEST
+                console.log("_authorizeSecurityGroupIngress complete");
+                console.log(error);
+                console.log(data);
+
+                if (!error) {
+                    callback();
+                } else {
+                    callback(error);
+                }
+            });
+        } else {
+            callback();
+        }
+    },
+
+    /**
+     * @param {EC2SecurityGroup} ec2SecurityGroup
+     * @param {function(Error, EC2SecurityGroup} callback
      */
     createSecurityGroup: function(ec2SecurityGroup, callback) {
-        this.initialize();
-        var params = {
-            GroupName: ec2SecurityGroup.getGroupName(),
-            Description: ec2SecurityGroup.getDescription()
-        };
-        this.ec2.client.createSecurityGroup(params, function(error, data) {
+        var _this = this;
+        $series([
+            $task(function(flow) {
+                var params = {
+                    GroupName: ec2SecurityGroup.getGroupName(),
+                    Description: ec2SecurityGroup.getDescription()
+                };
+                _this._createSecurityGroup(params, function(error, data) {
+                    if (!error) {
+                        ec2SecurityGroup.groupId = data.GroupId;
+                        flow.complete();
+                    } else {
+                        flow.error(error);
+                    }
+                });
+            }),
+            $task(function(flow) {
+                _this.authorizeSecurityGroup(ec2SecurityGroup, function(error) {
+                    flow.complete(error);
+                });
+            }),
+            $task(function(flow) {
+                ec2SecurityGroup.clearChangedFlags();
+                flow.complete();
+            })
+        ]).execute(function(error) {
             if (!error) {
-                ec2SecurityGroup.groupId = data.GroupId;
                 callback(null, ec2SecurityGroup);
             } else {
                 callback(error);
@@ -113,24 +208,28 @@ var EC2Api = Class.extend(Obj, {
     },
 
     /**
-     * @private
      * @param {string} groupName
      * @param {function(Error, EC2SecurityGroup} callback
      */
     getSecurityGroupByName: function(groupName, callback) {
-        this.initialize();
         var params = {
             GroupNames: [
                 groupName
             ]
         };
-        this.ec2.client.describeSecurityGroups(params, function(error, data) {
+        this._describeSecurityGroups(params, function(error, data) {
+
+            //TEST
+            console.log("_describeSecurityGroups complete");
+            console.log(error);
+            console.log(data);
+
             if (!error) {
                 var ec2SecurityGroup = null;
                 for (var i = 0, size = data.SecurityGroups.length; i < size; i++) {
                     var _ec2SecurityGroup = data.SecurityGroups[i];
                     if (_ec2SecurityGroup.GroupName === groupName) {
-                        ec2SecurityGroup = new EC2SecurityGroup({});
+                        ec2SecurityGroup = new EC2SecurityGroup();
                         ec2SecurityGroup.syncUpdate(_ec2SecurityGroup);
                         break;
                     }
@@ -149,6 +248,14 @@ var EC2Api = Class.extend(Obj, {
         });
     },
 
+    /**
+     * @param {EC2SecurityGroup} ec2SecurityGroup
+     * @param {function(Error, SecurityGroup} callback
+     */
+    updateSecurityGroup: function(ec2SecurityGroup, callback) {
+        //TODO BRN:
+    },
+
 
     //-------------------------------------------------------------------------------
     // Private Class Methods
@@ -163,6 +270,64 @@ var EC2Api = Class.extend(Obj, {
             AWS.config.update(this.awsConfig.toAWSObject());
             this.ec2 = new AWS.EC2({region: this.region});
         }
+    },
+
+
+    // API Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {{
+     *  GroupName: ?string,
+     *  GroupId: ?string,
+     *  IpPermissions: Array.<{
+     *      IpProtocol: ?string,
+     *      FromPort: ?number,
+     *      ToPort: ?number,
+     *      UserIdGroupPairs: Array.<{
+     *          UserId: string,
+     *          GroupName: string,
+     *          GroupId: string
+     *      }>,
+     *      IpRanges: Array.<{
+     *          CidrIp: string
+     *      }>
+     *  }>
+     * }} params
+     * @param {function(Error, Object)} callback
+     */
+    _authorizeSecurityGroupIngress: function(params, callback) {
+        this.initialize();
+        this.ec2.client.authorizeSecurityGroupIngress(params, callback);
+    },
+
+    /**
+     * @private
+     * @param {{
+     *  GroupName: string,
+     *  Description: string,
+     *  VpcId: ?string
+     * }} params
+     * @param {function(Error, Object)} callback
+     */
+    _createSecurityGroup: function(params, callback) {
+        this.initialize();
+        this.ec2.client.createSecurityGroup(params, callback);
+    },
+
+    /**
+     * @private
+     * @param {{
+     *  GroupNames: ?Array.<string>,
+     *  GroupIds:   ?Array.<string>,
+     *  Filters:    ?Array.<{Name: string, Values: Array.<string>}>
+     * }} params
+     * @param {function(Error, Object)} callback
+     */
+    _describeSecurityGroups: function(params, callback) {
+        this.initialize();
+        this.ec2.client.describeSecurityGroups(params, callback);
     }
 });
 

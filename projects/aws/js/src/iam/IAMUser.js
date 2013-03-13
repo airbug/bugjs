@@ -4,7 +4,7 @@
 
 //@Package('aws')
 
-//@Export('S3Bucket')
+//@Export('IAMUser')
 
 //@Require('Class')
 //@Require('aws.AwsObject')
@@ -21,15 +21,15 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var AwsObject =   bugpack.require('aws.AwsObject');
+var Class =     bugpack.require('Class');
+var AwsObject = bugpack.require('aws.AwsObject');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var S3Bucket = Class.extend(AwsObject, {
+var IAMUser = Class.extend(AwsObject, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -48,7 +48,31 @@ var S3Bucket = Class.extend(AwsObject, {
          * @private
          * @type {string}
          */
-        this.name = params.name;
+        this.arn;
+
+        /**
+         * @private
+         * @type {Date}
+         */
+        this.createDate;
+
+        /**
+         * @private
+         * @type {string}
+         */
+        this.path;
+
+        /**
+         * @private
+         * @type {string}
+         */
+        this.userId;
+
+        /**
+         * @private
+         * @type {string}
+         */
+        this.userName;
     },
 
 
@@ -59,8 +83,59 @@ var S3Bucket = Class.extend(AwsObject, {
     /**
      * @return {string}
      */
-    getName: function() {
-        return this.name;
+    getArn: function() {
+        return this.arn;
+    },
+
+    /**
+     * @return {string}
+     */
+    getCreateDate: function() {
+        return this.createDate;
+    },
+
+    /**
+     * @return {string}
+     */
+    getPath: function() {
+        return this.path;
+    },
+
+    /**
+     * @return {string}
+     */
+    getUserId: function() {
+        return this.userId;
+    },
+
+    /**
+     * @return {string}
+     */
+    getUserName: function() {
+        return this.userName;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Protected Class Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     * @param {{
+     *    Arn: string,
+     *    CreateDate: Date,
+     *    Path: string,
+     *    UserId: string,
+     *    UserName: string
+     * }} awsObject
+     */
+    syncUpdate: function(awsObject) {
+        this.arn = awsObject.Arn;
+        this.createDate = awsObject.CreateDate;
+        this.path = awsObject.Path;
+        this.userId = awsObject.UserId;
+        this.userName = awsObject.UserName;
     }
 });
 
@@ -69,4 +144,4 @@ var S3Bucket = Class.extend(AwsObject, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('aws.S3Bucket', S3Bucket);
+bugpack.export('aws.IAMUser', IAMUser);

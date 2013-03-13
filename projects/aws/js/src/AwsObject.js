@@ -4,10 +4,11 @@
 
 //@Package('aws')
 
-//@Export('S3Bucket')
+//@Export('AwsObject')
 
 //@Require('Class')
-//@Require('aws.AwsObject')
+//@Require('Obj')
+//@Require('Set')
 
 
 //-------------------------------------------------------------------------------
@@ -21,21 +22,22 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var AwsObject =   bugpack.require('aws.AwsObject');
+var Class =             bugpack.require('Class');
+var Obj =               bugpack.require('Obj');
+var Set =              bugpack.require('Set');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var S3Bucket = Class.extend(AwsObject, {
+var AwsObject = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(params) {
+    _constructor: function() {
 
         this._super();
 
@@ -46,9 +48,9 @@ var S3Bucket = Class.extend(AwsObject, {
 
         /**
          * @private
-         * @type {string}
+         * @type {Set.<string>}
          */
-        this.name = params.name;
+        this.changedFlags = new Set();
     },
 
 
@@ -56,11 +58,58 @@ var S3Bucket = Class.extend(AwsObject, {
     // Getters and Setters
     //-------------------------------------------------------------------------------
 
+
+    //-------------------------------------------------------------------------------
+    // Public Class Methods
+    //-------------------------------------------------------------------------------
+
     /**
-     * @return {string}
+     * @param {string} property
+     * @return {boolean}
      */
-    getName: function() {
-        return this.name;
+    hasChanged: function(property) {
+        if (property) {
+            return this.changedFlags.contains(property);
+        } else {
+            return this.changedFlags.isEmpty();
+        }
+    },
+
+    /**
+     * @param {string} property
+     */
+    setChangedFlag: function(property) {
+        this.changedFlags.add(property);
+    },
+
+    /**
+     *
+     */
+    clearChangedFlags: function() {
+        this.changedFlags.clear();
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Protected Class Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @abstract
+     * @protected
+     * @param {Object} jsonObject
+     */
+    jsonUpdate: function(jsonObject) {
+
+    },
+
+    /**
+     * @abstract
+     * @protected
+     * @param {Object} awsObject
+     */
+    syncUpdate: function(awsObject) {
+
     }
 });
 
@@ -69,4 +118,4 @@ var S3Bucket = Class.extend(AwsObject, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('aws.S3Bucket', S3Bucket);
+bugpack.export('aws.AwsObject', AwsObject);
