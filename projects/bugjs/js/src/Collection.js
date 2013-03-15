@@ -51,12 +51,6 @@ var Collection = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {Number}
-         */
-        this.count = 0;
-
-        /**
-         * @private
          * @type {HashStore}
          */
         this.hashStore = new HashStore();
@@ -71,7 +65,7 @@ var Collection = Class.extend(Obj, {
      * @return {number}
      */
     getCount: function() {
-        return this.count;
+        return this.hashStore.getCount();
     },
 
     /**
@@ -80,6 +74,14 @@ var Collection = Class.extend(Obj, {
     getValueArray: function() {
         var valueArray = [];
         return valueArray.concat(this.hashStore.getValueArray());
+    },
+
+    /**
+     * @param {*} value
+     * @return {number}
+     */
+    getValueCount: function(value) {
+        return this.hashStore.getValueCount(value);
     },
 
 
@@ -96,26 +98,6 @@ var Collection = Class.extend(Obj, {
         return cloneCollection;
     },
 
-    /**
-     * @param {*} value
-     * @return {boolean}
-     */
-    equals: function(value) {
-        if (Class.doesExtend(value, Collection)) {
-            if (value.getCount() === this.getCount()) {
-                var collectionValueArray = this.getValueArray();
-                for (var i = 0, size = collectionValueArray.length; i < size; i++) {
-                    var collectionValue = collectionValueArray[i];
-                    if (!value.contains(collectionValue)) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-        }
-        return false;
-    },
-
 
     //-------------------------------------------------------------------------------
     // Class Methods
@@ -126,7 +108,6 @@ var Collection = Class.extend(Obj, {
      */
     add: function(value) {
         this.hashStore.addValue(value);
-        this.count++;
     },
 
     /**
@@ -147,10 +128,8 @@ var Collection = Class.extend(Obj, {
      *
      */
     clear: function() {
-        this.count = 0;
         this.hashStore = new HashStore();
     },
-
 
     /**
      * @param {*} value
@@ -171,12 +150,36 @@ var Collection = Class.extend(Obj, {
      */
     containsAll: function(collection) {
         if (Class.doesExtend(collection, Collection)) {
-            collection.forEach(function(value) {
-                if (!this.contains(value)) {
+            var collectionValueArray = collection.getValueArray();
+            for (var i = 0, size = collectionValueArray.length; i < size; i++) {
+                var collectionValue = collectionValueArray[i];
+                if (!this.contains(collectionValue)) {
                     return false;
                 }
-            });
+            }
             return true;
+        } else {
+            throw new Error("collection must be an instance of Collection");
+        }
+    },
+
+    /**
+     * @param {Collection} collection
+     * @return {boolean}
+     */
+    containsEqual: function(collection) {
+        if (Class.doesExtend(collection, Collection)) {
+            if (collection.getCount() === this.getCount()) {
+                var collectionValueArray = this.getValueArray();
+                for (var i = 0, size = collectionValueArray.length; i < size; i++) {
+                    var collectionValue = collectionValueArray[i];
+                    if (this.getValueCount(collectionValue) !== collection.getValueCount(collectionValue)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            return false;
         } else {
             throw new Error("collection must be an instance of Collection");
         }
@@ -193,7 +196,7 @@ var Collection = Class.extend(Obj, {
      * @return {boolean}
      */
     isEmpty: function() {
-        return this.count === 0;
+        return this.hashStore.isEmpty();
     },
 
     /**
@@ -201,11 +204,7 @@ var Collection = Class.extend(Obj, {
      * @return {boolean}
      */
     remove: function(value) {
-        var result = this.hashStore.removeValue(value);
-        if (result) {
-            this.count--;
-        }
-        return result;
+        return this.hashStore.removeValue(value);
     },
 
     /**

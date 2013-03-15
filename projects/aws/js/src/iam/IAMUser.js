@@ -7,6 +7,8 @@
 //@Export('IAMUser')
 
 //@Require('Class')
+//@Require('Obj')
+//@Require('TypeUtil')
 //@Require('aws.AwsObject')
 
 
@@ -22,6 +24,8 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class =     bugpack.require('Class');
+var Obj =       bugpack.require('Obj');
+var TypeUtil =  bugpack.require('TypeUtil');
 var AwsObject = bugpack.require('aws.AwsObject');
 
 
@@ -46,33 +50,33 @@ var IAMUser = Class.extend(AwsObject, {
 
         /**
          * @private
-         * @type {string}
+         * @type {?string}
          */
-        this.arn;
+        this.arn = undefined;
 
         /**
          * @private
-         * @type {Date}
+         * @type {?Date}
          */
-        this.createDate;
+        this.createDate = undefined;
 
         /**
          * @private
-         * @type {string}
+         * @type {?string}
          */
-        this.path;
+        this.path = undefined;
 
         /**
          * @private
-         * @type {string}
+         * @type {?string}
          */
-        this.userId;
+        this.userId = undefined;
 
         /**
          * @private
-         * @type {string}
+         * @type {?string}
          */
-        this.userName;
+        this.userName = undefined;
     },
 
 
@@ -81,38 +85,66 @@ var IAMUser = Class.extend(AwsObject, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {string}
+     * @return {?string}
      */
     getArn: function() {
         return this.arn;
     },
 
     /**
-     * @return {string}
+     * @return {?string}
      */
     getCreateDate: function() {
         return this.createDate;
     },
 
     /**
-     * @return {string}
+     * @return {?string}
      */
     getPath: function() {
         return this.path;
     },
 
     /**
-     * @return {string}
+     * @return {?string}
      */
     getUserId: function() {
         return this.userId;
     },
 
     /**
-     * @return {string}
+     * @return {?string}
      */
     getUserName: function() {
         return this.userName;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Object Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {*} value
+     * @return {boolean}
+     */
+    equals: function(value) {
+        if (Class.doesExtend(value, IAMUser)) {
+            return (
+                value.getUserName() === this.getUserName()
+            );
+        }
+        return false;
+    },
+
+    /**
+     * @return {number}
+     */
+    hashCode: function() {
+        if (!this._hashCode) {
+            this._hashCode = Obj.hashCode("[IAMUser]" + Obj.hashCode(this.getUserName()));
+        }
+        return this._hashCode;
     },
 
 
@@ -130,8 +162,12 @@ var IAMUser = Class.extend(AwsObject, {
      *    UserName: string
      * }} awsObject
      */
-    syncUpdate: function(awsObject) {
-        this.arn = awsObject.Arn;
+    syncCreate: function(awsObject) {
+        if (TypeUtil.isString(awsObject.Arn)) {
+            this.arn = awsObject.Arn;
+        } else {
+            this.arn = undefined;
+        }
         this.createDate = awsObject.CreateDate;
         this.path = awsObject.Path;
         this.userId = awsObject.UserId;

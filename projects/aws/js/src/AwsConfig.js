@@ -100,9 +100,11 @@ var AwsConfig = Class.extend(Obj, {
      */
     equals: function(value) {
         if (Class.doesExtend(value, AwsConfig)) {
-            return (Obj.equals(value.getAccessKeyId(), this.getAccessKeyId()) &&
-                Obj.equals(value.getRegion(), this.getRegion()) &&
-                Obj.equals(value.getSecretAccessKey(), this.getSecretAccessKey()));
+            return (
+                value.getAccessKeyId() === this.getAccessKeyId() &&
+                value.getRegion() === this.getRegion() &&
+                value.getSecretAccessKey() === this.getSecretAccessKey()
+            );
         }
         return false;
     },

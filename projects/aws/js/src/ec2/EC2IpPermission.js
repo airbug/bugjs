@@ -7,9 +7,11 @@
 //@Export('EC2IpPermission')
 
 //@Require('Class')
-//@Require('List')
+//@Require('Obj')
+//@Require('Set')
 //@Require('aws.AwsObject')
 //@Require('aws.EC2CidrIpRange')
+//@Require('aws.EC2UserIdGroupPair')
 
 
 //-------------------------------------------------------------------------------
@@ -24,7 +26,8 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class =                 bugpack.require('Class');
-var List =                  bugpack.require('List');
+var Obj =                   bugpack.require('Obj');
+var Set =                   bugpack.require('Set');
 var AwsObject =             bugpack.require('aws.AwsObject');
 var EC2CidrIpRange =        bugpack.require('aws.EC2CidrIpRange');
 var EC2UserIdGroupPair =    bugpack.require('aws.EC2UserIdGroupPair');
@@ -53,31 +56,31 @@ var EC2IpPermission = Class.extend(AwsObject, {
          * @private
          * @type {?number}
          */
-        this.fromPort = null;
+        this.fromPort = undefined;
 
         /**
          * @private
          * @type {?string}
          */
-        this.ipProtocol = null;
+        this.ipProtocol = undefined;
 
         /**
          * @private
-         * @type {List.<EC2CidrIpRange>}
+         * @type {Set.<EC2CidrIpRange>}
          */
-        this.ipRanges = new List();
+        this.ipRanges = new Set();
 
         /**
          * @private
          * @type {?number}
          */
-        this.toPort = null;
+        this.toPort = undefined;
 
         /**
          * @private
-         * @type {List.<EC2UserIdGroupPair>}
+         * @type {Set.<EC2UserIdGroupPair>}
          */
-        this.userIdGroupPairs = new List();
+        this.userIdGroupPairs = new Set();
     },
 
 
@@ -93,16 +96,6 @@ var EC2IpPermission = Class.extend(AwsObject, {
     },
 
     /**
-     * @param {number} fromPort
-     */
-    setFromPort: function(fromPort) {
-        if (this.fromPort !== fromPort) {
-            this.setChangedFlag('fromPort');
-            this.fromPort = fromPort;
-        }
-    },
-
-    /**
      * @return {?string}
      */
     getIpProtocol: function() {
@@ -110,17 +103,7 @@ var EC2IpPermission = Class.extend(AwsObject, {
     },
 
     /**
-     * @param {string} ipProtocol
-     */
-    setIpProtocol: function(ipProtocol) {
-        if (this.ipProtocol !== ipProtocol) {
-            this.setChangedFlag('ipProtocol');
-            this.ipProtocol = ipProtocol;
-        }
-    },
-
-    /**
-     * @return {List.<EC2CidrIpRange>}
+     * @return {Set.<EC2CidrIpRange>}
      */
     getIpRanges: function() {
         return this.ipRanges;
@@ -134,17 +117,7 @@ var EC2IpPermission = Class.extend(AwsObject, {
     },
 
     /**
-     * @param {number} toPort
-     */
-    setToPort: function(toPort) {
-        if (this.toPort !== toPort) {
-            this.setChangedFlag('toPort');
-            this.toPort = toPort;
-        }
-    },
-
-    /**
-     * @param {List.<EC2UserIdGroupPair>}
+     * @param {Set.<EC2UserIdGroupPair>}
      */
     getUserIdGroupPairs: function() {
         return this.userIdGroupPairs;
@@ -152,21 +125,37 @@ var EC2IpPermission = Class.extend(AwsObject, {
 
 
     //-------------------------------------------------------------------------------
-    // Public Class Methods
+    // Object Implementation
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {EC2CidrIpRange} ec2CidrIpRange
+     * @param {*} value
+     * @return {boolean}
      */
-    addCidrIpRange: function(ec2CidrIpRange) {
-        this.ipRanges.add(ec2CidrIpRange);
+    equals: function(value) {
+        if (Class.doesExtend(value, EC2IpPermission)) {
+            return (
+                value.getFromPort() === this.getFromPort() &&
+                value.getIpProtocol() === this.getIpProtocol() &&
+                value.getToPort() === this.getToPort() &&
+
+                //NOTE BRN: These lists are immutable in this Class, so it is safe to use these values in the equals method
+
+                value.getIpRanges().containsEqual(this.getIpRanges()) &&
+                value.getUserIdGroupPairs().containsEqual(this.getUserIdGroupPairs())
+            );
+        }
+        return false;
     },
 
     /**
-     * @param {EC2UserIdGroupPair} ec2UserIdGroupPair
+     * @return {number}
      */
-    addUserIdGroupPair: function(ec2UserIdGroupPair) {
-        this.userIdGroupPairs.add(ec2UserIdGroupPair);
+    hashCode: function() {
+        if (!this._hashCode) {
+            this._hashCode = Obj.hashCode("[EC2IpPermission]" + Obj.hashCode());
+        }
+        return this._hashCode;
     },
 
 
@@ -191,31 +180,16 @@ var EC2IpPermission = Class.extend(AwsObject, {
             jsonObject.ipRanges.forEach(function(cidrIpRange) {
                 var ec2CidrIpRange = new EC2CidrIpRange();
                 ec2CidrIpRange.jsonCreate(cidrIpRange);
-                _this.addCidrIpRange(ec2CidrIpRange);
+                _this.ipRanges.add(ec2CidrIpRange);
             });
         }
         if (jsonObject.userIdGroupPairs) {
             jsonObject.userIdGroupPairs.forEach(function(userIdGroupPair) {
                 var ec2UserIdGroupPair = new EC2UserIdGroupPair();
                 ec2UserIdGroupPair.jsonCreate(userIdGroupPair);
-                _this.addUserIdGroupPair(ec2UserIdGroupPair);
+                _this.userIdGroupPairs.add(ec2UserIdGroupPair);
             });
         }
-    },
-
-    /**
-     * @protected
-     * @param  {{
-     *  fromPort: ?number,
-     *  ipProtocol: ?string,
-     *  toPort: ?number
-     * }} jsonObject
-     */
-    jsonUpdate: function(jsonObject) {
-        this.setFromPort(jsonObject.fromPort);
-        this.setIpProtocol(jsonObject.ipProtocol);
-        this.setToPort(jsonObject.toPort);
-        //TODO BRN: Update the ipRanges
     },
 
     /**
@@ -226,20 +200,20 @@ var EC2IpPermission = Class.extend(AwsObject, {
      *  ToPort: ?number
      * }} awsObject
      */
-    syncUpdate: function(awsObject) {
+    syncCreate: function(awsObject) {
         var _this = this;
         this.fromPort = awsObject.FromPort;
         this.ipProtocol = awsObject.IpProtocol;
         this.toPort = awsObject.ToPort;
         awsObject.IpRanges.forEach(function(cidrIpRange) {
             var ec2CidrIpRange = new EC2CidrIpRange();
-            ec2CidrIpRange.syncUpdate(cidrIpRange);
-            _this.addCidrIpRange(ec2CidrIpRange);
+            ec2CidrIpRange.syncCreate(cidrIpRange);
+            _this.ipRanges.add(ec2CidrIpRange);
         });
         awsObject.UserIdGroupPairs.forEach(function(userIdGroupPair) {
             var ec2UserIdGroupPair = new EC2UserIdGroupPair();
-            ec2UserIdGroupPair.syncUpdate(userIdGroupPair);
-            _this.addUserIdGroupPair(ec2UserIdGroupPair);
+            ec2UserIdGroupPair.syncCreate(userIdGroupPair);
+            _this.userIdGroupPairs.add(ec2UserIdGroupPair);
         });
     }
 });

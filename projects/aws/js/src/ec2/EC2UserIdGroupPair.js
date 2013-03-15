@@ -7,6 +7,8 @@
 //@Export('EC2UserIdGroupPair')
 
 //@Require('Class')
+//@Require('Obj')
+//@Require('TypeUtil')
 //@Require('aws.AwsObject')
 
 
@@ -22,6 +24,8 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class =     bugpack.require('Class');
+var Obj =       bugpack.require('Obj');
+var TypeUtil =  bugpack.require('TypeUtil');
 var AwsObject = bugpack.require('aws.AwsObject');
 
 
@@ -48,19 +52,19 @@ var EC2UserIdGroupPair = Class.extend(AwsObject, {
          * @private
          * @type {?string}
          */
-        this.groupId = null;
+        this.groupId = undefined;
 
         /**
          * @private
          * @type {?string}
          */
-        this.groupName = null;
+        this.groupName = undefined;
 
         /**
          * @private
          * @type {?string}
          */
-        this.userId = null;
+        this.userId = undefined;
     },
 
 
@@ -91,6 +95,40 @@ var EC2UserIdGroupPair = Class.extend(AwsObject, {
 
 
     //-------------------------------------------------------------------------------
+    // Object Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {*} value
+     * @return {boolean}
+     */
+    equals: function(value) {
+        if (Class.doesExtend(value, EC2UserIdGroupPair)) {
+            return (
+                value.getGroupId() === this.getGroupId() &&
+                value.getGroupName() === this.getGroupName() &&
+                value.getUserId() === this.getUserId()
+            );
+        }
+        return false;
+    },
+
+    /**
+     * @return {number}
+     */
+    hashCode: function() {
+        if (!this._hashCode) {
+            this._hashCode = Obj.hashCode("[EC2UserIdGroupPair]" +
+                Obj.hashCode(this.getGroupId()) +
+                Obj.hashCode(this.getGroupName()) +
+                Obj.hashCode(this.getUserId())
+            );
+        }
+        return this._hashCode;
+    },
+
+
+    //-------------------------------------------------------------------------------
     // Protected Class Methods
     //-------------------------------------------------------------------------------
 
@@ -103,9 +141,21 @@ var EC2UserIdGroupPair = Class.extend(AwsObject, {
      * }} jsonObject
      */
     jsonCreate: function(jsonObject) {
-        this.groupId = jsonObject.groupId;
-        this.groupName = jsonObject.groupName;
-        this.userId = jsonObject.userId;
+        if (TypeUtil.isString(jsonObject.groupId)) {
+            this.groupId = jsonObject.groupId;
+        } else {
+            this.groupId = undefined;
+        }
+        if (TypeUtil.isString(jsonObject.groupName)) {
+            this.groupName = jsonObject.groupName;
+        } else {
+            this.groupName = undefined;
+        }
+        if (TypeUtil.isString(jsonObject.userId)) {
+            this.userId = jsonObject.userId;
+        } else {
+            this.userId = undefined;
+        }
     },
 
     /**
@@ -128,10 +178,22 @@ var EC2UserIdGroupPair = Class.extend(AwsObject, {
      *  UserId: ?string
      * }} ipPermission
      */
-    syncUpdate: function(awsObject) {
-        this.groupId = awsObject.GroupId;
-        this.groupName = awsObject.GroupName;
-        this.userId = awsObject.UserId;
+    syncCreate: function(awsObject) {
+        if (TypeUtil.isString(awsObject.GroupId)) {
+            this.groupId = awsObject.GroupId;
+        } else {
+            this.groupId = undefined;
+        }
+        if (TypeUtil.isString(awsObject.GroupName)) {
+            this.groupName = awsObject.GroupName;
+        } else {
+            this.groupName = undefined;
+        }
+        if (TypeUtil.isString(awsObject.UserId)) {
+            this.userId = awsObject.UserId;
+        } else {
+            this.userId = undefined;
+        }
     }
 });
 

@@ -230,7 +230,7 @@ var EC2Api = Class.extend(Obj, {
                     var _ec2SecurityGroup = data.SecurityGroups[i];
                     if (_ec2SecurityGroup.GroupName === groupName) {
                         ec2SecurityGroup = new EC2SecurityGroup();
-                        ec2SecurityGroup.syncUpdate(_ec2SecurityGroup);
+                        ec2SecurityGroup.syncCreate(_ec2SecurityGroup);
                         break;
                     }
                 }
@@ -253,7 +253,24 @@ var EC2Api = Class.extend(Obj, {
      * @param {function(Error, SecurityGroup} callback
      */
     updateSecurityGroup: function(ec2SecurityGroup, callback) {
-        //TODO BRN:
+        var _this = this;
+        $series([
+            $task(function(flow) {
+                _this.authorizeSecurityGroup(ec2SecurityGroup, function(error) {
+                    flow.complete(error);
+                });
+            }),
+            $task(function(flow) {
+                ec2SecurityGroup.clearChangedFlags();
+                flow.complete();
+            })
+        ]).execute(function(error) {
+            if (!error) {
+                callback(null, ec2SecurityGroup);
+            } else {
+                callback(error);
+            }
+        });
     },
 
 

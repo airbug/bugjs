@@ -42,8 +42,16 @@ var HashStoreNode = Class.extend(Obj, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
+        /**
+         * @private
+         * @type {number}
+         */
         this.count = 0;
 
+        /**
+         * @private
+         * @type {Array.<*>}
+         */
         this.valueArray = [];
     },
 
@@ -57,6 +65,21 @@ var HashStoreNode = Class.extend(Obj, {
      */
     getCount: function() {
         return this.count;
+    },
+
+    /**
+     * @param {*} value
+     * @return {number}
+     */
+    getValueCount: function(value) {
+        var count = 0;
+        for (var i = 0, size = this.valueArray.length; i < size; i++) {
+            var valueArrayValue = this.valueArray[i];
+            if (Obj.equals(value, valueArrayValue)) {
+                count++;
+            }
+        }
+        return count;
     },
 
 
@@ -123,6 +146,8 @@ var HashStoreNode = Class.extend(Obj, {
         }
         return false;
     },
+
+    //countValues: function(value)
 
     /**
      * @return {Array<*>}

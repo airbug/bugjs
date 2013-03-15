@@ -102,7 +102,7 @@ var IAMApi = Class.extend(Obj, {
                     var _ec2SecurityGroup = data.SecurityGroups[i];
                     if (_ec2SecurityGroup.GroupName === groupName) {
                         ec2SecurityGroup = new EC2SecurityGroup({});
-                        ec2SecurityGroup.syncUpdate(_ec2SecurityGroup);
+                        ec2SecurityGroup.syncCreate(_ec2SecurityGroup);
                         break;
                     }
                 }

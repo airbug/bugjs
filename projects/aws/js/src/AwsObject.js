@@ -99,7 +99,7 @@ var AwsObject = Class.extend(Obj, {
      * @protected
      * @param {Object} jsonObject
      */
-    jsonUpdate: function(jsonObject) {
+    jsonCreate: function(jsonObject) {
 
     },
 
@@ -108,7 +108,7 @@ var AwsObject = Class.extend(Obj, {
      * @protected
      * @param {Object} awsObject
      */
-    syncUpdate: function(awsObject) {
+    syncCreate: function(awsObject) {
 
     }
 });

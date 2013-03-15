@@ -7,7 +7,7 @@
 //@Export('EC2SecurityGroup')
 
 //@Require('Class')
-//@Require('List')
+//@Require('Set')
 //@Require('aws.AwsObject')
 //@Require('aws.EC2IpPermission')
 
@@ -24,7 +24,7 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class =             bugpack.require('Class');
-var List =              bugpack.require('List');
+var Set =              bugpack.require('Set');
 var AwsObject =         bugpack.require('aws.AwsObject');
 var EC2IpPermission =   bugpack.require('aws.EC2IpPermission');
 
@@ -50,27 +50,28 @@ var EC2SecurityGroup = Class.extend(AwsObject, {
 
         /**
          * @private
-         * @type {string}
+         * @type {?string}
          */
-        this.description = null;
+        this.description = undefined;
 
         /**
          * @private
-         * @type {string}
+         * @type {?string}
          */
-        this.groupId = null;
+        this.groupId = undefined;
 
         /**
          * @private
-         * @type {string}
+         * @type {?string}
          */
-        this.groupName = null;
+        this.groupName = undefined;
 
+        //TODO BRN:Replace this with a Set
         /**
          * @private
          * @type {List.<EC2IpPermission>}
          */
-        this.ipPermissions = new List();
+        this.ipPermissions = new Set();
     },
 
 
@@ -157,14 +158,14 @@ var EC2SecurityGroup = Class.extend(AwsObject, {
      *  }>
      * }} securityGroup
      */
-    syncUpdate: function(securityGroup) {
+    syncCreate: function(securityGroup) {
         var _this = this;
         this.description = securityGroup.Description;
         this.groupId = securityGroup.GroupId;
         this.groupName = securityGroup.GroupName;
         securityGroup.IpPermissions.forEach(function(ipPermission) {
             var ec2IpPermission = new EC2IpPermission();
-            ec2IpPermission.syncUpdate(ipPermission);
+            ec2IpPermission.syncCreate(ipPermission);
             _this.addIpPermission(ec2IpPermission);
         });
     }

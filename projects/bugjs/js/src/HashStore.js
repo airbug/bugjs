@@ -44,12 +44,48 @@ var HashStore = Class.extend(Obj, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
+
+        /**
+         * @private
+         * @type {Number}
+         */
+        this.count = 0;
+
+        /**
+         * @private
+         * @type {Object}
+         */
         this.hashStoreNodeObject = {};
     },
 
 
     //-------------------------------------------------------------------------------
-    // Public Methods
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {number}
+     */
+    getCount: function() {
+        return this.count;
+    },
+
+    /**
+     * @param {*} value
+     * @return {number}
+     */
+    getValueCount: function(value) {
+        var valueHashCode = Obj.hashCode(value);
+        var hashStoreNode = this.hashStoreNodeObject[valueHashCode];
+        if (hashStoreNode) {
+            return hashStoreNode.getValueCount(value);
+        }
+        return 0;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Public Class Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -63,6 +99,7 @@ var HashStore = Class.extend(Obj, {
             this.hashStoreNodeObject[valueHashCode] = hashStoreNode;
         }
         hashStoreNode.addValue(value);
+        this.count++;
     },
 
     /**
@@ -103,6 +140,13 @@ var HashStore = Class.extend(Obj, {
     },
 
     /**
+     * @return {boolean}
+     */
+    isEmpty: function() {
+        return this.count === 0;
+    },
+
+    /**
      * @param {*} value
      * @return {boolean}
      */
@@ -116,6 +160,7 @@ var HashStore = Class.extend(Obj, {
                 if (hashStoreNode.getCount() === 0) {
                     delete this.hashStoreNodeObject[valueHashCode];
                 }
+                this.count--;
             }
         }
         return result;

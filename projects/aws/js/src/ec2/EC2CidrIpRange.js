@@ -7,6 +7,8 @@
 //@Export('EC2CidrIpRange')
 
 //@Require('Class')
+//@Require('Obj')
+//@Require('TypeUtil')
 //@Require('aws.AwsObject')
 
 
@@ -22,6 +24,8 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class =     bugpack.require('Class');
+var Obj =       bugpack.require('Obj');
+var TypeUtil =  bugpack.require('TypeUtil');
 var AwsObject = bugpack.require('aws.AwsObject');
 
 
@@ -48,7 +52,7 @@ var EC2CidrIpRange = Class.extend(AwsObject, {
          * @private
          * @type {?string}
          */
-        this.cidrIp = null;
+        this.cidrIp = undefined;
     },
 
 
@@ -65,6 +69,32 @@ var EC2CidrIpRange = Class.extend(AwsObject, {
 
 
     //-------------------------------------------------------------------------------
+    // Object Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {*} value
+     * @return {boolean}
+     */
+    equals: function(value) {
+        if (Class.doesExtend(value, EC2CidrIpRange)) {
+            return (value.getCidrIp() === this.getCidrIp());
+        }
+        return false;
+    },
+
+    /**
+     * @return {number}
+     */
+    hashCode: function() {
+        if (!this._hashCode) {
+            this._hashCode = Obj.hashCode("[EC2CidrIpRange]" + Obj.hashCode(this.getCidrIp()));
+        }
+        return this._hashCode;
+    },
+
+
+    //-------------------------------------------------------------------------------
     // Protected Class Methods
     //-------------------------------------------------------------------------------
 
@@ -75,17 +105,11 @@ var EC2CidrIpRange = Class.extend(AwsObject, {
      * }} jsonObject
      */
     jsonCreate: function(jsonObject) {
-        this.cidrIp = jsonObject.cidrIp;
-    },
-
-    /**
-     * @protected
-     * @param  {{
-     *  cidrIp: ?string
-     * }} jsonObject
-     */
-    jsonUpdate: function(jsonObject) {
-        //TODO BRN: Anything to do here?
+        if (TypeUtil.isString(jsonObject.cidrIp)) {
+            this.cidrIp = jsonObject.cidrIp;
+        } else {
+            this.cidrIp = undefined;
+        }
     },
 
     /**
@@ -94,8 +118,12 @@ var EC2CidrIpRange = Class.extend(AwsObject, {
      *  CidrIp: ?string
      * }} ipPermission
      */
-    syncUpdate: function(awsObject) {
-        this.cidrIp = awsObject.CidrIp;
+    syncCreate: function(awsObject) {
+        if (TypeUtil.isString(awsObject.cidrIp)) {
+            this.cidrIp = awsObject.CidrIp;
+        } else {
+            this.cidrIp = undefined;
+        }
     }
 });
 
