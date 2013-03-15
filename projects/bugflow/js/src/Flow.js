@@ -123,9 +123,6 @@ var Flow = Class.extend(Obj, {
             }
             this.completed = true;
 
-            //TODO BRN: The error flow doesn't route through here, so we can't simply wrap this in our $trace function.
-            // Figure out what to do here.
-
             setTimeout($trace(function() {
                 _this.completeFlow(args);
             }), 0);
@@ -158,7 +155,11 @@ var Flow = Class.extend(Obj, {
         this.callback = callback;
         if (!this.executed) {
             this.executed = true;
-            this.executeFlow(args);
+            try {
+                this.executeFlow(args);
+            } catch(error) {
+                this.error(error);
+            }
         } else {
             throw new Error("A flow can only be executed once.");
         }

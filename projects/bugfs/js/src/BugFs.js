@@ -591,6 +591,29 @@ BugFs.readFileSync = function(filePath, encoding, resolveSymlink) {
 };
 
 /**
+ * @param {Array.<(string|Path)>} pathArray
+ * @return {Path}
+ */
+BugFs.resolvePaths = function(pathArray) {
+    var paths = [];
+    for (var i = 0, size = pathArray.length; i < size; i++) {
+        var path = BugFs.path(pathArray[i]);
+        if (path) {
+            paths.push(path);
+        }
+    }
+
+    if (paths.length > 1) {
+        var firstPath = paths.shift();
+        return firstPath.resolvePaths(paths);
+    } else if (paths.length === 1) {
+        return paths[0];
+    } else {
+        throw new Error("resolvePaths requires at least one path argument");
+    }
+};
+
+/**
  * @param {(string|Path)} aPath
  * @param {(string|Path)} intoPath
  * @param {?(Path.SyncMode|function(Error))=} syncMode (defaults to Path.SyncMode.STOP)
