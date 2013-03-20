@@ -165,8 +165,6 @@ var Graph = Class.extend(Obj, {
      * @param {GraphNode} node
      */
     addNode: function(node) {
-
-        //TODO BRN:
         if (!this.nodeSet.contains(node)) {
             this.nodeSet.add(node);
             this.valueToNodeMap.put(node.getValue(), node);
