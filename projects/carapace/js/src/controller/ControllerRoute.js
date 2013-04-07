@@ -7,7 +7,9 @@
 //@Export('ControllerRoute')
 
 //@Require('Class')
+//@Require('Event')
 //@Require('EventDispatcher')
+//@Require('carapace.RoutingRequest')
 
 
 //-------------------------------------------------------------------------------
@@ -22,7 +24,9 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class =             bugpack.require('Class');
+var Event =             bugpack.require('Event');
 var EventDispatcher =   bugpack.require('EventDispatcher');
+var RoutingRequest =    bugpack.require('carapace.RoutingRequest');
 
 
 //-------------------------------------------------------------------------------
