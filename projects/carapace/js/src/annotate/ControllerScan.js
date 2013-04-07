@@ -107,4 +107,4 @@ var ControllerScan = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('ControllerScan', ControllerScan);
+bugpack.export('carapace.ControllerScan', ControllerScan);

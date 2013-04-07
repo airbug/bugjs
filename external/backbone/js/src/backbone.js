@@ -15,7 +15,7 @@
 //@Export('Backbone')
 
 //@Require('underscore.Underscore')
-//@Require('jquery.jQuery')
+//@Require('jquery.JQuery')
 
 
 //-------------------------------------------------------------------------------
