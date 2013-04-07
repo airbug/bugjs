@@ -54,7 +54,11 @@ var TypeValueSetsHelper = {
                 {name: "Number object", value: new Number(123)},
                 {name: "negative Number object", value: new Number(-123)},
                 {name: "decimal Number object", value: new Number(123.456)},
-                {name: "negative decimal Number object", value: new Number(-123.456)}
+                {name: "negative decimal Number object", value: new Number(-123.456)},
+                {name: "positive infinity", value: Infinity},
+                {name: "negative infinity", value: -Infinity},
+                {name: "positive infinity property", value: Number.POSITIVE_INFINITY},
+                {name: "negative infinity property", value: Number.NEGATIVE_INFINITY}
             ],
             object:[
                 {name: "object literal", value: {}},

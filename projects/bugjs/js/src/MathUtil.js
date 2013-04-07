@@ -2,13 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugboil')
-
-//@Export('BugBoil')
-
-//@Require('bugboil.ForEachParallel')
-//@Require('bugboil.ForEachSeries')
-//@Require('bugboil.ForInParallel')
+//@Export('MathUtil')
 
 
 //-------------------------------------------------------------------------------
@@ -22,16 +16,14 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var ForEachParallel =   bugpack.require('bugboil.ForEachParallel');
-var ForEachSeries =     bugpack.require('bugboil.ForEachSeries');
-var ForInParallel =     bugpack.require('bugboil.ForInParallel');
-
-
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var BugBoil = {};
+// NOTE BRN: We don't use the base level Class system here because our low level Object class depends on this class
+// and Class depends on Object. Thus, if this class depends on Class it creates s circular dependency.
+
+var MathUtil = {};
 
 
 //-------------------------------------------------------------------------------
@@ -39,35 +31,19 @@ var BugBoil = {};
 //-------------------------------------------------------------------------------
 
 /**
- * @param {Array<*>} data
- * @param {function(Boil, *)} iteratorMethod
- * @return {ForEachParallel}
+ * @param {number} firstInteger
+ * @param {number} secondInteger
+ * @return {number}
  */
-BugBoil.$foreachParallel = function(data, iteratorMethod) {
-    return new ForEachParallel(data, iteratorMethod);
-};
-
-/**
- * @param {Array<*>} data
- * @param {function(Boil, *)} iteratorMethod
- * @return {ForEachSeries}
- */
-BugBoil.$foreachSeries = function(data, iteratorMethod) {
-    return new ForEachSeries(data, iteratorMethod);
-};
-
-/**
- * @param {Object} data
- * @param {function(Boil, *, *)} iteratorMethod
- * @return {ForInParallel}
- */
-BugBoil.$forInParallel = function(data, iteratorMethod) {
-    return new ForInParallel(data, iteratorMethod);
+MathUtil.randomBetween = function(firstInteger, secondInteger) {
+    var delta = secondInteger - firstInteger;
+    var randomNumber = Math.floor(Math.random() * (delta + 1));
+    return randomNumber + firstInteger;
 };
 
 
 //-------------------------------------------------------------------------------
-// Export
+// Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugboil.BugBoil', BugBoil);
+bugpack.export('MathUtil', MathUtil);

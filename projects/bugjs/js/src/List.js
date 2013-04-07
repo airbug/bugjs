@@ -96,6 +96,14 @@ var List = Class.extend(Collection, {
     },
 
     /**
+     *
+     */
+    clear: function() {
+        this._super();
+        this.valueArray = [];
+    },
+
+    /**
      * @override
      * @param {function(*)} func
      */
