@@ -2,12 +2,10 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugboil')
-
-//@Export('Boil')
+//@Export('WeightedListNode')
 
 //@Require('Class')
-//@Require('bugflow.Flow')
+//@Require('Obj')
 
 
 //-------------------------------------------------------------------------------
@@ -22,20 +20,20 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class = bugpack.require('Class');
-var Flow =  bugpack.require('bugflow.Flow');
+var Obj =   bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Boil = Class.extend(Flow, {
+var WeightedListNode = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(data) {
+    _constructor: function(value, weight) {
 
         this._super();
 
@@ -44,13 +42,17 @@ var Boil = Class.extend(Flow, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        // TODO BRN: Add support for BugJs data objects that implement the IIterate interface
-
         /**
          * @private
          * @type {*}
          */
-        this.data = data;
+        this.value = value;
+
+        /**
+         * @private
+         * @type {number}
+         */
+        this.weight = weight;
     },
 
 
@@ -61,24 +63,47 @@ var Boil = Class.extend(Flow, {
     /**
      * @return {*}
      */
-    getData: function(args) {
-        return this.data;
+    getValue: function() {
+       return this.value;
+    },
+
+    /**
+     * @return {number}
+     */
+    getWeight: function() {
+        return this.weight;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Object Implementation
     //-------------------------------------------------------------------------------
 
     /**
-     * @abstract
+     * @param {*} value
+     * @return {boolean}
      */
-    bubble: function() {}
+    equals: function(value) {
+        if (Class.doesExtend(value, WeightedListNode)) {
+            return Obj.equals(value.getValue(), this.value);
+        }
+        return false;
+    },
+
+    /**
+     * @return {number}
+     */
+    hashCode: function() {
+        if (!this._hashCode) {
+            this._hashCode = Obj.hashCode("[WeightedListNode]" + Obj.hashCode(this.value));
+        }
+        return this._hashCode;
+    }
 });
 
 
 //-------------------------------------------------------------------------------
-// Export
+// Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugboil.Boil', Boil);
+bugpack.export('WeightedListNode', WeightedListNode);

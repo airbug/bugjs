@@ -4,10 +4,10 @@
 
 //@Package('bugboil')
 
-//@Export('Boil')
+//@Export('ForInParallel')
 
 //@Require('Class')
-//@Require('bugflow.Flow')
+//@Require('bugboil.Boil')
 
 
 //-------------------------------------------------------------------------------
@@ -22,22 +22,22 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class = bugpack.require('Class');
-var Flow =  bugpack.require('bugflow.Flow');
+var Boil = bugpack.require('bugboil.Boil');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Boil = Class.extend(Flow, {
+var ForInParallel = Class.extend(Boil, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(data) {
+    _constructor: function(data, iteratorMethod) {
 
-        this._super();
+        this._super(data);
 
 
         //-------------------------------------------------------------------------------
@@ -48,32 +48,79 @@ var Boil = Class.extend(Flow, {
 
         /**
          * @private
-         * @type {*}
+         * @type {boolean}
          */
-        this.data = data;
+        this.iterationCompleted = false;
+
+        /**
+         * @private
+         * @type {function(Boil, *, *)}
+         */
+        this.iteratorMethod = iteratorMethod;
+
+        /**
+         * @private
+         * @type {number}
+         */
+        this.numberIterationsComplete = 0;
+
+        /**
+         * @private
+         * @type {number}
+         */
+        this.totalIterationCount = 0;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Boil Extensions
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {*}
+     * @param {Error} error
      */
-    getData: function(args) {
-        return this.data;
+    bubble: function(error) {
+        if (error) {
+            if (!this.hasErrored()) {
+                this.error(error);
+            }
+        } else {
+            this.numberIterationsComplete++;
+            this.checkIterationComplete();
+        }
     },
 
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Flow Extensions
     //-------------------------------------------------------------------------------
 
     /**
-     * @abstract
+     * @param {Array<*>} args
      */
-    bubble: function() {}
+    executeFlow: function(args) {
+        for (var key in this.data) {
+            this.totalIterationCount++;
+            var value = this.data[key];
+            this.iteratorMethod.call(null, this, key, value);
+        }
+        this.iterationCompleted = true;
+        this.checkIterationComplete();
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Private Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     */
+    checkIterationComplete: function() {
+        if (this.iterationCompleted && this.numberIterationsComplete >= this.totalIterationCount && !this.hasErrored()) {
+            this.complete();
+        }
+    }
 });
 
 
@@ -81,4 +128,4 @@ var Boil = Class.extend(Flow, {
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugboil.Boil', Boil);
+bugpack.export('bugboil.ForInParallel', ForInParallel);

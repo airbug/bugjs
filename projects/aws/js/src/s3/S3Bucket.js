@@ -7,7 +7,7 @@
 //@Export('S3Bucket')
 
 //@Require('Class')
-//@Require('Obj')
+//@Require('aws.AwsObject')
 
 
 //-------------------------------------------------------------------------------
@@ -21,15 +21,15 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =     bugpack.require('Class');
-var Obj =       bugpack.require('Obj');
+var Class = bugpack.require('Class');
+var AwsObject =   bugpack.require('aws.AwsObject');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var S3Bucket = Class.extend(Obj, {
+var S3Bucket = Class.extend(AwsObject, {
 
     //-------------------------------------------------------------------------------
     // Constructor

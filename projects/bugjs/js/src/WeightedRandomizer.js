@@ -2,12 +2,14 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugboil')
-
-//@Export('Boil')
+//@Export('WeightedRandomizer')
 
 //@Require('Class')
-//@Require('bugflow.Flow')
+//@Require('Collection')
+//@Require('HashTable')
+//@Require('MathUtil')
+//@Require('Obj')
+//@Require('WeightedList')
 
 
 //-------------------------------------------------------------------------------
@@ -21,21 +23,25 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var Flow =  bugpack.require('bugflow.Flow');
+var Class =         bugpack.require('Class');
+var Collection =    bugpack.require('Collection');
+var HashTable =     bugpack.require('HashTable');
+var MathUtil =      bugpack.require('MathUtil');
+var Obj =           bugpack.require('Obj');
+var WeightedList =  bugpack.require('WeightedList');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Boil = Class.extend(Flow, {
+var WeightedRandomizer = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(data) {
+    _constructor: function() {
 
         this._super();
 
@@ -44,13 +50,11 @@ var Boil = Class.extend(Flow, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        // TODO BRN: Add support for BugJs data objects that implement the IIterate interface
-
         /**
          * @private
-         * @type {*}
+         * @type {WeightedList}
          */
-        this.data = data;
+        this.weightedList = new WeightedList();
     },
 
 
@@ -59,26 +63,38 @@ var Boil = Class.extend(Flow, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {*}
+     * @return {number}
      */
-    getData: function(args) {
-        return this.data;
+    getCount: function() {
+        return this.weightedList.getCount();
     },
 
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Class methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @abstract
+     * @param {*} value
+     * @param {number} weight
      */
-    bubble: function() {}
+    addValue: function(value, weight) {
+        this.weightedList.add(value, weight);
+    },
+
+    /**
+     * @return {*}
+     */
+    getRandom: function() {
+        var totalWeight = this.weightedList.getTotalWeight();
+        var randomNumber = MathUtil.randomBetween(1, totalWeight);
+        return this.weightedList.getAtWeight(randomNumber);
+    }
 });
 
 
 //-------------------------------------------------------------------------------
-// Export
+// Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugboil.Boil', Boil);
+bugpack.export('WeightedRandomizer', WeightedRandomizer);

@@ -7,7 +7,9 @@
 //@Export('EC2SecurityGroup')
 
 //@Require('Class')
-//@Require('Obj')
+//@Require('Set')
+//@Require('aws.AwsObject')
+//@Require('aws.EC2IpPermission')
 
 
 //-------------------------------------------------------------------------------
@@ -21,21 +23,23 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =     bugpack.require('Class');
-var Obj =       bugpack.require('Obj');
+var Class =             bugpack.require('Class');
+var Set =              bugpack.require('Set');
+var AwsObject =         bugpack.require('aws.AwsObject');
+var EC2IpPermission =   bugpack.require('aws.EC2IpPermission');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var EC2SecurityGroup = Class.extend(Obj, {
+var EC2SecurityGroup = Class.extend(AwsObject, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(params) {
+    _constructor: function() {
 
         this._super();
 
@@ -46,27 +50,28 @@ var EC2SecurityGroup = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {boolean}
+         * @type {?string}
          */
-        this.changed = false;
+        this.description = undefined;
 
         /**
          * @private
-         * @type {string}
+         * @type {?string}
          */
-        this.description = params.description;
+        this.groupId = undefined;
 
         /**
          * @private
-         * @type {string}
+         * @type {?string}
          */
-        this.groupId = null;
+        this.groupName = undefined;
 
+        //TODO BRN:Replace this with a Set
         /**
          * @private
-         * @type {string}
+         * @type {List.<EC2IpPermission>}
          */
-        this.groupName = params.groupName;
+        this.ipPermissions = new Set();
     },
 
 
@@ -79,16 +84,6 @@ var EC2SecurityGroup = Class.extend(Obj, {
      */
     getDescription: function() {
         return this.description;
-    },
-
-    /**
-     * @param {string} description
-     */
-    setDescription: function(description) {
-        if (description !== description) {
-            this.changed = true;
-            this.description = description;
-        }
     },
 
     /**
@@ -105,16 +100,23 @@ var EC2SecurityGroup = Class.extend(Obj, {
         return this.groupName;
     },
 
+    /**
+     * @return {List.<EC2IpPermission>}
+     */
+    getIpPermissions: function() {
+        return this.ipPermissions;
+    },
+
 
     //-------------------------------------------------------------------------------
     // Public Class Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {boolean}
+     * @param {EC2IpPermission} ec2IpPermission
      */
-    isChanged: function() {
-        return this.changed;
+    addIpPermission: function(ec2IpPermission) {
+        this.ipPermissions.add(ec2IpPermission);
     },
 
 
@@ -122,18 +124,50 @@ var EC2SecurityGroup = Class.extend(Obj, {
     // Protected Class Methods
     //-------------------------------------------------------------------------------
 
+    jsonCreate: function(jsonSecurityGroup) {
+        var _this = this;
+        this.description = jsonSecurityGroup.description;
+        this.groupName = jsonSecurityGroup.groupName;
+        if (jsonSecurityGroup.ipPermissions) {
+            jsonSecurityGroup.ipPermissions.forEach(function(ipPermission) {
+                var ec2IpPermission = new EC2IpPermission();
+                ec2IpPermission.jsonCreate(ipPermission);
+                _this.addIpPermission(ec2IpPermission);
+            });
+        }
+    },
+
+    /**
+     * @protected
+     * @param jsonSecurityGroup
+     */
+    jsonUpdate: function(jsonSecurityGroup) {
+        //TODO BRN: update ip permissions
+    },
+
     /**
      * @protected
      * @param {{
-     *    Description: string,
-     *    GroupId: string,
-     *    GroupName: string
+     *  Description: string,
+     *  GroupId: string,
+     *  GroupName: string,
+     *  IpPermissions: Array.<{
+     *      FromPort: number,
+     *      IpProtocol: string,
+     *      ToPort: number
+     *  }>
      * }} securityGroup
      */
-    syncUpdate: function(securityGroup) {
+    syncCreate: function(securityGroup) {
+        var _this = this;
         this.description = securityGroup.Description;
         this.groupId = securityGroup.GroupId;
         this.groupName = securityGroup.GroupName;
+        securityGroup.IpPermissions.forEach(function(ipPermission) {
+            var ec2IpPermission = new EC2IpPermission();
+            ec2IpPermission.syncCreate(ipPermission);
+            _this.addIpPermission(ec2IpPermission);
+        });
     }
 });
 

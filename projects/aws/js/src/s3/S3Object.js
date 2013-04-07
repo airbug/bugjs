@@ -7,7 +7,7 @@
 //@Export('S3Object')
 
 //@Require('Class')
-//@Require('Obj')
+//@Require('aws.AwsObject')
 
 
 //-------------------------------------------------------------------------------
@@ -22,14 +22,14 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class =     bugpack.require('Class');
-var Obj =       bugpack.require('Obj');
+var AwsObject = bugpack.require('aws.AwsObject');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var S3Object = Class.extend(Obj, {
+var S3Object = Class.extend(AwsObject, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -189,7 +189,10 @@ var S3Object = Class.extend(Obj, {
      * @param {string} cacheControl
      */
     setCacheControl: function(cacheControl) {
-        this.cacheControl = cacheControl;
+        if (this.cacheControl !== cacheControl) {
+            this.setChangedFlag('cacheControl');
+            this.cacheControl = cacheControl;
+        }
     },
 
     /**
@@ -203,7 +206,10 @@ var S3Object = Class.extend(Obj, {
      * @param {string} contentDisposition
      */
     setContentDisposition: function(contentDisposition) {
-        this.contentDisposition = contentDisposition;
+        if (this.contentDisposition !== contentDisposition) {
+            this.setChangedFlag('contentDisposition');
+            this.contentDisposition = contentDisposition;
+        }
     },
 
     /**
@@ -217,7 +223,10 @@ var S3Object = Class.extend(Obj, {
      * @param {string} contentEncoding
      */
     setContentEncoding: function(contentEncoding) {
-        this.contentEncoding = contentEncoding;
+        if (this.contentEncoding !== contentEncoding) {
+            this.setChangedFlag('contentEncoding');
+            this.contentEncoding = contentEncoding;
+        }
     },
 
     /**
@@ -231,7 +240,10 @@ var S3Object = Class.extend(Obj, {
      * @param {string} contentLanguage
      */
     setContentLanguage: function(contentLanguage) {
-        this.contentLanguage = contentLanguage;
+        if (this.contentLanguage !== contentLanguage) {
+            this.setChangedFlag('contentLanguage');
+            this.contentLanguage = contentLanguage;
+        }
     },
 
     /**
@@ -252,7 +264,10 @@ var S3Object = Class.extend(Obj, {
      * @param {string} contentType
      */
     setContentType: function(contentType) {
-        this.contentType = contentType;
+        if (this.contentType !== contentType) {
+            this.setChangedFlag('contentType');
+            this.contentType = contentType;
+        }
     },
 
     /**
@@ -287,7 +302,10 @@ var S3Object = Class.extend(Obj, {
      * @param {string} expires
      */
     setExpires: function(expires) {
-        this.expires = expires;
+        if (this.expires !== expires) {
+            this.setChangedFlag('expires');
+            this.expires = expires;
+        }
     },
 
     /**
@@ -315,7 +333,12 @@ var S3Object = Class.extend(Obj, {
      * @param {Object} metaData
      */
     setMetaData: function(metaData) {
-        this.metaData = metaDate;
+        //TODO BRN: don't think this will work
+        this.setChangedFlag('metaData');
+        this.metaData = metaData;
+        /*if (this.metaData !== metaData) {
+            this.metaData = metaData;
+        }*/
     },
 
     /**
@@ -343,7 +366,10 @@ var S3Object = Class.extend(Obj, {
      * @param {string} serverSideEncryption
      */
     setServerSideEncryption: function(serverSideEncryption) {
-        this.serverSideEncryption = serverSideEncryption;
+        if (this.serverSideEncryption !== serverSideEncryption) {
+            this.setChangedFlag('serverSideEncryption');
+            this.serverSideEncryption = serverSideEncryption;
+        }
     },
 
     /**
@@ -364,7 +390,10 @@ var S3Object = Class.extend(Obj, {
      * @param {string} websiteRedirectLocation
      */
     setWebsiteRedirectLocation: function(websiteRedirectLocation) {
-        this.websiteRedirectLocation = websiteRedirectLocation;
+        if (this.websiteRedirectLocation !== websiteRedirectLocation) {
+            this.setChangedFlag('websiteRedirectLocation');
+            this.websiteRedirectLocation = websiteRedirectLocation;
+        }
     }
 
     //-------------------------------------------------------------------------------

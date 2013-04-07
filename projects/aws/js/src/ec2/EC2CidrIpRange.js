@@ -4,10 +4,12 @@
 
 //@Package('aws')
 
-//@Export('AwsConfig')
+//@Export('EC2CidrIpRange')
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('TypeUtil')
+//@Require('aws.AwsObject')
 
 
 //-------------------------------------------------------------------------------
@@ -21,21 +23,23 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var Obj = bugpack.require('Obj');
+var Class =     bugpack.require('Class');
+var Obj =       bugpack.require('Obj');
+var TypeUtil =  bugpack.require('TypeUtil');
+var AwsObject = bugpack.require('aws.AwsObject');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var AwsConfig = Class.extend(Obj, {
+var EC2CidrIpRange = Class.extend(AwsObject, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(params) {
+    _constructor: function() {
 
         this._super();
 
@@ -46,21 +50,9 @@ var AwsConfig = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {string}
+         * @type {?string}
          */
-        this.accessKeyId = params.accessKeyId;
-
-        /**
-         * @private
-         * @type {string}
-         */
-        this.region = params.region;
-
-        /**
-         * @private
-         * @type {string}
-         */
-        this.secretAccessKey = params.secretAccessKey;
+        this.cidrIp = undefined;
     },
 
 
@@ -69,24 +61,10 @@ var AwsConfig = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {string}
+     * @return {?string}
      */
-    getAccessKeyId: function() {
-        return this.accessKeyId;
-    },
-
-    /**
-     * @return {string}
-     */
-    getRegion: function() {
-        return this.region;
-    },
-
-    /**
-     * @return {string}
-     */
-    getSecretAccessKey: function() {
-        return this.secretAccessKey;
+    getCidrIp: function() {
+        return this.cidrIp;
     },
 
 
@@ -99,12 +77,8 @@ var AwsConfig = Class.extend(Obj, {
      * @return {boolean}
      */
     equals: function(value) {
-        if (Class.doesExtend(value, AwsConfig)) {
-            return (
-                value.getAccessKeyId() === this.getAccessKeyId() &&
-                value.getRegion() === this.getRegion() &&
-                value.getSecretAccessKey() === this.getSecretAccessKey()
-            );
+        if (Class.doesExtend(value, EC2CidrIpRange)) {
+            return (value.getCidrIp() === this.getCidrIp());
         }
         return false;
     },
@@ -114,36 +88,42 @@ var AwsConfig = Class.extend(Obj, {
      */
     hashCode: function() {
         if (!this._hashCode) {
-            this._hashCode = Obj.hashCode("[AwsConfig]" + Obj.hashCode(this.getAccessKeyId()) + "_" +
-                Obj.hashCode(this.getRegion()) + Obj.hashCode(this.getSecretAccessKey()));
+            this._hashCode = Obj.hashCode("[EC2CidrIpRange]" + Obj.hashCode(this.getCidrIp()));
         }
         return this._hashCode;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Public Class Methods
+    // Protected Class Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {{
-     *      accessKeyId: string,
-     *      region: string,
-     *      secretAccessKey: string
-     * }}
+     * @protected
+     * @param  {{
+     *  cidrIp: ?string
+     * }} jsonObject
      */
-    toAWSObject: function() {
-        var awsObject = {};
-        if (this.accessKeyId) {
-            awsObject.accessKeyId = this.accessKeyId;
+    jsonCreate: function(jsonObject) {
+        if (TypeUtil.isString(jsonObject.cidrIp)) {
+            this.cidrIp = jsonObject.cidrIp;
+        } else {
+            this.cidrIp = undefined;
         }
-        if (this.region) {
-            awsObject.region = this.region;
+    },
+
+    /**
+     * @protected
+     * @param {{
+     *  CidrIp: ?string
+     * }} ipPermission
+     */
+    syncCreate: function(awsObject) {
+        if (TypeUtil.isString(awsObject.cidrIp)) {
+            this.cidrIp = awsObject.CidrIp;
+        } else {
+            this.cidrIp = undefined;
         }
-        if (this.secretAccessKey) {
-            awsObject.secretAccessKey = this.secretAccessKey;
-        }
-        return awsObject;
     }
 });
 
@@ -152,4 +132,4 @@ var AwsConfig = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('aws.AwsConfig', AwsConfig);
+bugpack.export('aws.EC2CidrIpRange', EC2CidrIpRange);

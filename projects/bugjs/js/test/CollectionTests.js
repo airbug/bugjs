@@ -372,3 +372,109 @@ var collectionAddAndRemoveSameValuesTest = {
 annotate(collectionAddAndRemoveSameValuesTest).with(
     test().name("Collection add and remove same values test")
 );
+
+
+/**
+ *
+ */
+var collectionContainsAllTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.collection1 = new Collection();
+        this.collection2 = new Collection();
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        test.assertEqual(this.collection1.containsAll(this.collection2), true,
+            "Assert an empty collection contains all elements of another an empty collection");
+
+        this.collection1.add("value1");
+        this.collection1.add("value1");
+        this.collection1.add("value2");
+        this.collection1.add(3);
+
+        test.assertEqual(this.collection1.containsAll(this.collection2), true,
+            "Assert a collection with elements in it contains all elements of an empty collection");
+        test.assertEqual(this.collection2.containsAll(this.collection1), false,
+            "Assert an empty collection does not contain all the elements of a collection with elements in it");
+
+        this.collection2.add("value1");
+        this.collection2.add("value2");
+        this.collection2.add(3);
+
+        test.assertEqual(this.collection1.containsAll(this.collection2), true,
+            "Assert a collection with duplicate values contains all the elements in another collection with one of each of the same values");
+        test.assertEqual(this.collection2.containsAll(this.collection1), true,
+            "Assert a collection with one of each value contains all the elements in another collection with the same values but contains some duplicates");
+
+        this.collection1.add("anotherValue");
+
+        test.assertEqual(this.collection1.containsAll(this.collection2), true,
+            "Assert a collection with all of the values of another collection plus a few additional values is considered to contain all the values of the second collection");
+        test.assertEqual(this.collection2.containsAll(this.collection1), false,
+            "Assert a collection that only contains some of the values of another collection is not considered to contain all the values of the other collection");
+    }
+};
+annotate(collectionContainsAllTest).with(
+    test().name("Collection contains all test")
+);
+
+
+/**
+ *
+ */
+var collectionContainsEqualTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.collection1 = new Collection();
+        this.collection2 = new Collection();
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        test.assertEqual(this.collection1.containsEqual(this.collection2), true,
+            "Assert an empty collection contains equal elements of another an empty collection");
+
+        this.collection1.add("value1");
+        this.collection1.add("value1");
+        this.collection1.add("value2");
+        this.collection1.add(3);
+
+        test.assertEqual(this.collection1.containsEqual(this.collection2), false,
+            "Assert a collection with elements is not containsEqual to an empty collection");
+        test.assertEqual(this.collection2.containsEqual(this.collection1), false,
+            "Assert an empty collection is not containsEqual to a collection with elements in it");
+
+        this.collection2.add("value1");
+        this.collection2.add("value2");
+        this.collection2.add(3);
+
+        test.assertEqual(this.collection1.containsEqual(this.collection2), false,
+            "Assert a collection with duplicate values is not containsEqual with one of each of the same values");
+        test.assertEqual(this.collection2.containsEqual(this.collection1), false,
+            "Assert a collection with one of each value is not containsEqual to another collection with the same values but contains some duplicates");
+
+        this.collection2.add("value1");
+
+        test.assertEqual(this.collection1.containsEqual(this.collection2), true,
+            "Assert a collection with all of the values of another collection is containsEqual with that collection");
+        test.assertEqual(this.collection2.containsEqual(this.collection1), true,
+            "Inverse assertion: Assert a collection with all of the values of another collection is containsEqual with that collection");
+    }
+};
+annotate(collectionContainsEqualTest).with(
+    test().name("Collection contains equal test")
+);

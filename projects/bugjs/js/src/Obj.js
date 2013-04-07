@@ -54,7 +54,7 @@ var Obj = Class.declare({
 
         /**
          * @private
-         * @type {number}
+         * @type {?number}
          */
         this._hashCode = undefined;
 
@@ -62,7 +62,7 @@ var Obj = Class.declare({
 
         /**
          * @private
-         * @type {number}
+         * @type {?number}
          */
         this._internalId = undefined;
 

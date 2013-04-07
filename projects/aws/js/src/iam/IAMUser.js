@@ -4,10 +4,12 @@
 
 //@Package('aws')
 
-//@Export('AwsConfig')
+//@Export('IAMUser')
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('TypeUtil')
+//@Require('aws.AwsObject')
 
 
 //-------------------------------------------------------------------------------
@@ -21,15 +23,17 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var Obj = bugpack.require('Obj');
+var Class =     bugpack.require('Class');
+var Obj =       bugpack.require('Obj');
+var TypeUtil =  bugpack.require('TypeUtil');
+var AwsObject = bugpack.require('aws.AwsObject');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var AwsConfig = Class.extend(Obj, {
+var IAMUser = Class.extend(AwsObject, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -46,21 +50,33 @@ var AwsConfig = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {string}
+         * @type {?string}
          */
-        this.accessKeyId = params.accessKeyId;
+        this.arn = undefined;
 
         /**
          * @private
-         * @type {string}
+         * @type {?Date}
          */
-        this.region = params.region;
+        this.createDate = undefined;
 
         /**
          * @private
-         * @type {string}
+         * @type {?string}
          */
-        this.secretAccessKey = params.secretAccessKey;
+        this.path = undefined;
+
+        /**
+         * @private
+         * @type {?string}
+         */
+        this.userId = undefined;
+
+        /**
+         * @private
+         * @type {?string}
+         */
+        this.userName = undefined;
     },
 
 
@@ -69,24 +85,38 @@ var AwsConfig = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {string}
+     * @return {?string}
      */
-    getAccessKeyId: function() {
-        return this.accessKeyId;
+    getArn: function() {
+        return this.arn;
     },
 
     /**
-     * @return {string}
+     * @return {?string}
      */
-    getRegion: function() {
-        return this.region;
+    getCreateDate: function() {
+        return this.createDate;
     },
 
     /**
-     * @return {string}
+     * @return {?string}
      */
-    getSecretAccessKey: function() {
-        return this.secretAccessKey;
+    getPath: function() {
+        return this.path;
+    },
+
+    /**
+     * @return {?string}
+     */
+    getUserId: function() {
+        return this.userId;
+    },
+
+    /**
+     * @return {?string}
+     */
+    getUserName: function() {
+        return this.userName;
     },
 
 
@@ -99,11 +129,9 @@ var AwsConfig = Class.extend(Obj, {
      * @return {boolean}
      */
     equals: function(value) {
-        if (Class.doesExtend(value, AwsConfig)) {
+        if (Class.doesExtend(value, IAMUser)) {
             return (
-                value.getAccessKeyId() === this.getAccessKeyId() &&
-                value.getRegion() === this.getRegion() &&
-                value.getSecretAccessKey() === this.getSecretAccessKey()
+                value.getUserName() === this.getUserName()
             );
         }
         return false;
@@ -114,36 +142,36 @@ var AwsConfig = Class.extend(Obj, {
      */
     hashCode: function() {
         if (!this._hashCode) {
-            this._hashCode = Obj.hashCode("[AwsConfig]" + Obj.hashCode(this.getAccessKeyId()) + "_" +
-                Obj.hashCode(this.getRegion()) + Obj.hashCode(this.getSecretAccessKey()));
+            this._hashCode = Obj.hashCode("[IAMUser]" + Obj.hashCode(this.getUserName()));
         }
         return this._hashCode;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Public Class Methods
+    // Protected Class Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {{
-     *      accessKeyId: string,
-     *      region: string,
-     *      secretAccessKey: string
-     * }}
+     * @protected
+     * @param {{
+     *    Arn: string,
+     *    CreateDate: Date,
+     *    Path: string,
+     *    UserId: string,
+     *    UserName: string
+     * }} awsObject
      */
-    toAWSObject: function() {
-        var awsObject = {};
-        if (this.accessKeyId) {
-            awsObject.accessKeyId = this.accessKeyId;
+    syncCreate: function(awsObject) {
+        if (TypeUtil.isString(awsObject.Arn)) {
+            this.arn = awsObject.Arn;
+        } else {
+            this.arn = undefined;
         }
-        if (this.region) {
-            awsObject.region = this.region;
-        }
-        if (this.secretAccessKey) {
-            awsObject.secretAccessKey = this.secretAccessKey;
-        }
-        return awsObject;
+        this.createDate = awsObject.CreateDate;
+        this.path = awsObject.Path;
+        this.userId = awsObject.UserId;
+        this.userName = awsObject.UserName;
     }
 });
 
@@ -152,4 +180,4 @@ var AwsConfig = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('aws.AwsConfig', AwsConfig);
+bugpack.export('aws.IAMUser', IAMUser);

@@ -2,12 +2,13 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugboil')
+//@Package('aws')
 
-//@Export('Boil')
+//@Export('AwsObject')
 
 //@Require('Class')
-//@Require('bugflow.Flow')
+//@Require('Obj')
+//@Require('Set')
 
 
 //-------------------------------------------------------------------------------
@@ -21,21 +22,22 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var Flow =  bugpack.require('bugflow.Flow');
+var Class =             bugpack.require('Class');
+var Obj =               bugpack.require('Obj');
+var Set =              bugpack.require('Set');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Boil = Class.extend(Flow, {
+var AwsObject = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(data) {
+    _constructor: function() {
 
         this._super();
 
@@ -44,13 +46,11 @@ var Boil = Class.extend(Flow, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        // TODO BRN: Add support for BugJs data objects that implement the IIterate interface
-
         /**
          * @private
-         * @type {*}
+         * @type {Set.<string>}
          */
-        this.data = data;
+        this.changedFlags = new Set();
     },
 
 
@@ -58,27 +58,64 @@ var Boil = Class.extend(Flow, {
     // Getters and Setters
     //-------------------------------------------------------------------------------
 
+
+    //-------------------------------------------------------------------------------
+    // Public Class Methods
+    //-------------------------------------------------------------------------------
+
     /**
-     * @return {*}
+     * @param {string} property
+     * @return {boolean}
      */
-    getData: function(args) {
-        return this.data;
+    hasChanged: function(property) {
+        if (property) {
+            return this.changedFlags.contains(property);
+        } else {
+            return this.changedFlags.isEmpty();
+        }
+    },
+
+    /**
+     * @param {string} property
+     */
+    setChangedFlag: function(property) {
+        this.changedFlags.add(property);
+    },
+
+    /**
+     *
+     */
+    clearChangedFlags: function() {
+        this.changedFlags.clear();
     },
 
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Protected Class Methods
     //-------------------------------------------------------------------------------
 
     /**
      * @abstract
+     * @protected
+     * @param {Object} jsonObject
      */
-    bubble: function() {}
+    jsonCreate: function(jsonObject) {
+
+    },
+
+    /**
+     * @abstract
+     * @protected
+     * @param {Object} awsObject
+     */
+    syncCreate: function(awsObject) {
+
+    }
 });
 
 
 //-------------------------------------------------------------------------------
-// Export
+// Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugboil.Boil', Boil);
+bugpack.export('aws.AwsObject', AwsObject);
