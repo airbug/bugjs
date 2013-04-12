@@ -96,6 +96,14 @@ var Queue = Class.extend(Collection, {
     },
 
     /**
+     *
+     */
+    clear: function() {
+        this._super();
+        this.valueArray = [];
+    },
+
+    /**
      * @override
      * @param {function(*)} func
      */
@@ -107,6 +115,7 @@ var Queue = Class.extend(Collection, {
 
     /**
      * Removes the FIRST occurrence of value from the queue
+     * @override
      * @param {*} value
      * @return {boolean}
      */
@@ -129,8 +138,7 @@ var Queue = Class.extend(Collection, {
      */
     dequeue: function() {
         if (this.getCount() > 0) {
-            var lastIndex = this.getCount() - 1;
-            return this.removeAt(lastIndex);
+            return this.removeAt(0);
         } else {
             throw new Error("Queue is empty")
         }
