@@ -5,9 +5,8 @@
 //@TestFile
 
 //@Require('Class')
-//@Require('Collection')
-//@Require('Obj')
 //@Require('annotate.Annotate')
+//@Require('bigcli.BugCli')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -55,7 +54,7 @@ var registerActionOptionAndRunTest = {
             "dummy",
             "testAction",
             "--testOption",
-            "optionparam",
+            "optionParam",
             "actionParam"
         ];
     },
@@ -82,6 +81,11 @@ var registerActionOptionAndRunTest = {
                 executeCalled = true;
                 test.assertEqual(cliAction.getName(), "testAction",
                     "Assert that the cliAction is 'testAction'");
+                test.assertEqual(cliAction.getParameter("testActionParam"), "actionParam",
+                    "Assert that the parameter 'testActionParam' is 'actionParam'");
+                var testOption = cliBuild.getOption("testOption");
+                test.assertEqual(testOption.getParameter("testOptionParam"), "optionParam",
+                    "Assert that the parameter 'testOptionParam' is 'optionParam'");
                 callback();
             },
             validateMethod: function(cliBuild, cliAction, callback) {

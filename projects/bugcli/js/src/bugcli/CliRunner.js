@@ -130,7 +130,6 @@ var CliRunner = Class.extend(Obj, {
      * @param {function(Error)} callback
      */
     validate: function(callback) {
-        var error = null;
         var cliActionInstance = this.cliBuild.getCliActionInstance();
         if (cliActionInstance) {
             var cliAction = cliActionInstance.getCliAction();
@@ -139,9 +138,8 @@ var CliRunner = Class.extend(Obj, {
                 callback(error);
             });
         } else {
-            error = new Error("An action must be specified");
+            callback(new Error("An action must be specified"));
         }
-        callback(error);
     },
 
 

@@ -9,6 +9,7 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('Proxy')
+//@Require('StringUtil')
 //@Require('Tree')
 //@Require('TreeNode')
 
@@ -24,11 +25,12 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =     bugpack.require('Class');
-var Obj =       bugpack.require('Obj');
-var Proxy =     bugpack.require('Proxy');
-var Tree =      bugpack.require('Tree');
-var TreeNode =  bugpack.require('TreeNode');
+var Class =         bugpack.require('Class');
+var Obj =           bugpack.require('Obj');
+var Proxy =         bugpack.require('Proxy');
+var StringUtil =    bugpack.require('StringUtil');
+var Tree =          bugpack.require('Tree');
+var TreeNode =      bugpack.require('TreeNode');
 
 
 //-------------------------------------------------------------------------------
@@ -107,10 +109,10 @@ var BugTrace = Class.extend(Obj, {
         if (!error.bugTraced) {
             error.bugTraced = true;
             if (!error.stack) {
-                error = new Error(error);
+                error.stack = this.generateStackTrace();
             }
     
-            var currentStack = error.stack;
+            var currentStack = error.stack.split("\n");
             var totalStack = [];
             totalStack.push(this.header);
             totalStack = totalStack.concat(currentStack.slice(1));
@@ -138,7 +140,7 @@ var BugTrace = Class.extend(Obj, {
      */
     $trace: function(callback) {
         var _this = this;
-        var stack = new Error().stack;
+        var stack = this.generateStackTrace();
         var newNode = this.addTraceNode(stack);
 
         if (callback.aCallback) {
@@ -167,7 +169,7 @@ var BugTrace = Class.extend(Obj, {
     $traceWithError: function(callback) {
     
         var _this = this;
-        var stack = new Error().stack;
+        var stack = this.generateStackTrace();
         var newNode = this.addTraceNode(stack);
 
         if (callback.aCallback) {
@@ -230,6 +232,58 @@ var BugTrace = Class.extend(Obj, {
 
             this.checkTraceNodeForRemoval(parentNode);
         }
+    },
+
+    /**
+     * Open source code taken from http://www.eriwen.com/javascript/js-stack-trace/
+     * @return {Array.<string>}
+     */
+    generateStackTrace: function() {
+        var callstack = [];
+        var isCallstackPopulated = false;
+        var error = new Error();
+        if (error.stack) { //Firefox & nodejs
+            callstack = error.stack.split('\n');
+            callstack.shift();
+            isCallstackPopulated = true;
+        } else if (window.opera && error.message) { //Opera
+            var lines = error.message.split('\n');
+            for (var i = 0, len = lines.length; i < len; i++) {
+                if (lines[i].match(/^\s*[A-Za-z0-9\-_\$]+\(/)) {
+                    var entry = lines[i];
+                    //Append next line also since it has the file info
+                    if (lines[i+1]) {
+                        entry += ' at ' + lines[i+1];
+                        i++;
+                    }
+                    callstack.push(entry);
+                }
+            }
+            //Remove call to printStackTrace()
+            callstack.shift();
+            isCallstackPopulated = true;
+        }
+        if (!isCallstackPopulated) { //IE and Safari
+            callstack = this.generateStackFromCaller();
+        }
+        return callstack.join("\n");
+    },
+
+    /**
+     * @private
+     * @return {Array.<string>}
+     */
+    generateStackFromCaller: function() {
+        var callstack = [];
+        var currentFunction = arguments.callee.caller;
+        while (currentFunction) {
+            var fn = currentFunction.toString();
+            var fname = fn.substring(0, fn.indexOf("{")) || 'anonymous';
+            fname = StringUtil.trim(fname);
+            callstack.push(fname);
+            currentFunction = currentFunction.caller;
+        }
+        return callstack;
     }
 });
 
