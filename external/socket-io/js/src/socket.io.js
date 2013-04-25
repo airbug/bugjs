@@ -4,7 +4,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('socketio')
+//@Package('socket-io')
 
 //@Export('SocketIo')
 
@@ -3330,4 +3330,4 @@ var io = ('undefined' === typeof module ? {} : module.exports);
 
 })();
 
-bugpack.export('socketio.SocketIo', io);
+bugpack.export('socket-io.SocketIo', io);
