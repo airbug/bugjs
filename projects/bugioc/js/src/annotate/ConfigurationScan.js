@@ -10,6 +10,7 @@
 //@Require('Map')
 //@Require('Obj')
 //@Require('annotate.Annotate')
+//@Require('bugioc.AutowiredScan')
 //@Require('bugioc.BugIOC')
 //@Require('bugioc.IOCArg')
 //@Require('bugioc.IOCConfiguration')
@@ -32,6 +33,7 @@ var Class =             bugpack.require('Class');
 var Map =               bugpack.require('Map');
 var Obj =               bugpack.require('Obj');
 var Annotate =          bugpack.require('annotate.Annotate');
+var AutowiredScan =     bugpack.require('bugioc.AutowiredScan');
 var BugIOC =            bugpack.require('bugioc.BugIOC');
 var IOCArg =            bugpack.require('bugioc.IOCArg');
 var IOCConfiguration =  bugpack.require('bugioc.IOCConfiguration');
@@ -58,6 +60,13 @@ var ConfigurationScan = Class.extend(Obj, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
+
+        /**
+         * @private
+         * @type {AutowiredScan}
+         */
+        this.autowiredScan = new AutowiredScan();
+
         /**
          * @private
          * @type {Map<Class, IOCConfiguration>}
@@ -75,6 +84,7 @@ var ConfigurationScan = Class.extend(Obj, {
      */
     scan: function() {
         var _this = this;
+        this.autowiredScan.scan();
         var configurationAnnotations = Annotate.getAnnotationsByType("Configuration");
         if (configurationAnnotations) {
             configurationAnnotations.forEach(function(annotation) {
