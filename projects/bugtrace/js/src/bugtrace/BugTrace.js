@@ -235,7 +235,20 @@ var BugTrace = Class.extend(Obj, {
     },
 
     /**
+     * @private
+     * @return {*}
+     */
+    createException: function() {
+        try {
+            this.undef();
+        } catch (e) {
+            return e;
+        }
+    },
+
+    /**
      * Open source code taken from http://www.eriwen.com/javascript/js-stack-trace/
+     * @private
      * @return {Array.<string>}
      */
     generateStackTrace: function() {
@@ -262,8 +275,16 @@ var BugTrace = Class.extend(Obj, {
             //Remove call to printStackTrace()
             callstack.shift();
             isCallstackPopulated = true;
+        } else {
+            var exception = this.createException();
+            if (exception.stack) {
+                callstack = exception.stack.split('\n');
+                callstack.shift();
+                callstack.shift();
+                isCallstackPopulated = true;
+            }
         }
-        if (!isCallstackPopulated) { //IE and Safari
+        if (!isCallstackPopulated) { //IE
             callstack = this.generateStackFromCaller();
         }
         return callstack.join("\n");
@@ -275,13 +296,18 @@ var BugTrace = Class.extend(Obj, {
      */
     generateStackFromCaller: function() {
         var callstack = [];
-        var currentFunction = arguments.callee.caller;
-        while (currentFunction) {
-            var fn = currentFunction.toString();
-            var fname = fn.substring(0, fn.indexOf("{")) || 'anonymous';
-            fname = StringUtil.trim(fname);
-            callstack.push(fname);
-            currentFunction = currentFunction.caller;
+        try {
+            var currentFunction = arguments.callee.caller;
+            while (currentFunction) {
+                var fn = currentFunction.toString();
+                var fname = fn.substring(0, fn.indexOf("{")) || 'anonymous';
+                fname = StringUtil.trim(fname);
+                callstack.push(fname);
+                currentFunction = currentFunction.caller;
+            }
+        } catch(error) {
+            //TODO BRN: Verify this error is from strict mode
+            console.log("Cannot create strack trace in strict mode");
         }
         return callstack;
     }
