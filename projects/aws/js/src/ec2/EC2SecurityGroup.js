@@ -66,10 +66,9 @@ var EC2SecurityGroup = Class.extend(AwsObject, {
          */
         this.groupName = undefined;
 
-        //TODO BRN:Replace this with a Set
         /**
          * @private
-         * @type {List.<EC2IpPermission>}
+         * @type {Set.<EC2IpPermission>}
          */
         this.ipPermissions = new Set();
     },
@@ -101,7 +100,7 @@ var EC2SecurityGroup = Class.extend(AwsObject, {
     },
 
     /**
-     * @return {List.<EC2IpPermission>}
+     * @return {Set.<EC2IpPermission>}
      */
     getIpPermissions: function() {
         return this.ipPermissions;

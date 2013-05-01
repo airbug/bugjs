@@ -15,6 +15,7 @@
 //@Require('IEquals')
 //@Require('IHashCode')
 //@Require('List')
+//@Require('Obj')
 //@Require('Proxy')
 //@Require('backbone.Backbone');
 

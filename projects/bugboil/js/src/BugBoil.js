@@ -8,6 +8,7 @@
 
 //@Require('bugboil.ForEachParallel')
 //@Require('bugboil.ForEachSeries')
+//@Require('bugboil.ForInParallel')
 
 
 //-------------------------------------------------------------------------------
@@ -23,6 +24,7 @@ var bugpack = require('bugpack').context();
 
 var ForEachParallel =   bugpack.require('bugboil.ForEachParallel');
 var ForEachSeries =     bugpack.require('bugboil.ForEachSeries');
+var ForInParallel =     bugpack.require('bugboil.ForInParallel');
 
 
 //-------------------------------------------------------------------------------
@@ -52,6 +54,15 @@ BugBoil.$foreachParallel = function(data, iteratorMethod) {
  */
 BugBoil.$foreachSeries = function(data, iteratorMethod) {
     return new ForEachSeries(data, iteratorMethod);
+};
+
+/**
+ * @param {Object} data
+ * @param {function(Boil, *, *)} iteratorMethod
+ * @return {ForInParallel}
+ */
+BugBoil.$forInParallel = function(data, iteratorMethod) {
+    return new ForInParallel(data, iteratorMethod);
 };
 
 

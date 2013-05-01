@@ -158,15 +158,6 @@ Annotate.registerAnnotationProcessor = function(annotationType, annotationProces
     }
     var annotationProcessor = new AnnotationProcessor(annotationProcessorFunction);
     annotationProcessorTypeList.add(annotationProcessor);
-
-    // Process any annotations that have already been registered for this type.
-
-    var annotationTypeList =  Annotate.annotationMap.get(annotationType);
-    if (annotationTypeList) {
-        annotationTypeList.forEach(function(annotation) {
-            Annotate.processAnnotation(annotation);
-        });
-    }
 };
 
 

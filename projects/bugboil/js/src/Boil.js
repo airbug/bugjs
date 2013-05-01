@@ -48,7 +48,7 @@ var Boil = Class.extend(Flow, {
 
         /**
          * @private
-         * @type {Array<*>}
+         * @type {*}
          */
         this.data = data;
     },
@@ -59,7 +59,7 @@ var Boil = Class.extend(Flow, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {Array<*>}
+     * @return {*}
      */
     getData: function(args) {
         return this.data;

@@ -95,4 +95,4 @@ ControllerAnnotation.controller = function() {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('ControllerAnnotation', ControllerAnnotation);
+bugpack.export('carapace.ControllerAnnotation', ControllerAnnotation);

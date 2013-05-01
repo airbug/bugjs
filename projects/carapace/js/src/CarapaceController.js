@@ -10,14 +10,14 @@
 //@Require('List')
 //@Require('Obj')
 //@Require('backbone.Backbone')
-//@Require('backbone.ControllerRoute')
+//@Require('carapace.ControllerRoute')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack');
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -28,7 +28,7 @@ var Class = bugpack.require('Class');
 var List = bugpack.require('List');
 var Obj = bugpack.require('Obj');
 var Backbone = bugpack.require('backbone.Backbone');
-var ControllerRoute = bugpack.require('backbone.ControllerRoute');
+var ControllerRoute = bugpack.require('carapace.ControllerRoute');
 
 
 //-------------------------------------------------------------------------------
@@ -272,4 +272,4 @@ var CarapaceController = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('backbone.CarapaceController', CarapaceController);
+bugpack.export('carapace.CarapaceController', CarapaceController);

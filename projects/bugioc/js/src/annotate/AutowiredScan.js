@@ -47,6 +47,12 @@ var AutowiredScan = Class.extend(Obj, {
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {boolean}
+         */
+        this.scanning = false;
     },
 
 
@@ -59,9 +65,15 @@ var AutowiredScan = Class.extend(Obj, {
      */
     scan: function() {
         var _this = this;
-        var autowiredAnnotations = Annotate.getAnnotationsByType("Autowired");
-        if (autowiredAnnotations) {
-            autowiredAnnotations.forEach(function(annotation) {
+        if (!this.scanning) {
+            this.scanning = true;
+            var autowiredAnnotations = Annotate.getAnnotationsByType("Autowired");
+            if (autowiredAnnotations) {
+                autowiredAnnotations.forEach(function(annotation) {
+                    _this.processAutowiredAnnotation(annotation);
+                });
+            }
+            Annotate.registerAnnotationProcessor("Autowired", function(annotation) {
                 _this.processAutowiredAnnotation(annotation);
             });
         }
