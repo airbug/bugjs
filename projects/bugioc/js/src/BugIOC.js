@@ -12,6 +12,7 @@
 //@Require('Obj')
 //@Require('Proxy')
 //@Require('Set')
+//@Require('bugioc.IOCModule')
 //@Require('bugioc.PrototypeScope')
 //@Require('bugioc.SingletonScope')
 
@@ -33,6 +34,7 @@ var Map =               bugpack.require('Map');
 var Obj =               bugpack.require('Obj');
 var Proxy =             bugpack.require('Proxy');
 var Set =               bugpack.require('Set');
+var IOCModule =         bugpack.require('bugioc.IOCModule');
 var PrototypeScope =    bugpack.require('bugioc.PrototypeScope');
 var SingletonScope =    bugpack.require('bugioc.SingletonScope');
 

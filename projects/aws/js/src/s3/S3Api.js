@@ -7,7 +7,11 @@
 //@Export('S3Api')
 
 //@Require('Class')
+//@Require('Map')
 //@Require('Obj')
+//@Require('TypeUtil')
+//@Require('aws.AwsConfig')
+//@Require('aws.S3Object')
 //@Require('bugflow.BugFlow')
 //@Require('bugfs.BugFs')
 
@@ -25,8 +29,8 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class =                 bugpack.require('Class');
-var Obj =                   bugpack.require('Obj');
 var Map =                   bugpack.require('Map');
+var Obj =                   bugpack.require('Obj');
 var TypeUtil =              bugpack.require('TypeUtil');
 var AwsConfig =             bugpack.require('aws.AwsConfig');
 var S3Object =              bugpack.require('aws.S3Object');
@@ -215,6 +219,13 @@ var S3Api = Class.extend(Obj, {
         var _this = this;
         var fileData = null;
         var s3Object = null;
+        if (TypeUtil.isFunction(options)) {
+            callback = options;
+            options = null;
+        }
+        if (!TypeUtil.isObject(options)) {
+            options = {};
+        }
         this.initialize();
         $if (function(flow) {
                 _this.canAccessBucket(s3Bucket, function(error, canAccess) {
@@ -280,7 +291,13 @@ var S3Api = Class.extend(Obj, {
             Bucket: s3Bucket.getName(),
             Key: s3Object.getKey()
         };
-
+        if (TypeUtil.isFunction(options)) {
+            callback = options;
+            options = null;
+        }
+        if (!TypeUtil.isObject(options)) {
+            options = {};
+        }
         if (options.acl) {
             params.ACL = options.acl;
         }

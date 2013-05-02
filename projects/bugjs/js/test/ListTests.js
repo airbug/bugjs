@@ -84,6 +84,41 @@ annotate(listAddTest).with(
     test().name("List add test")
 );
 
+/**
+ *
+ */
+var listClearTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.list = new List();
+        this.value1 = "value1";
+        this.value2 = "value2";
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+
+        //NOTE BRN: This tests a particular case where the valueArray of List was not being cleared but the hashStore was
+
+        this.list.add(this.value1);
+        this.list.add(this.value2);
+        this.list.clear();
+        test.assertEqual(this.list.getCount(), 0, "Assert count is 0 after clear");
+
+        this.list.add(this.value2);
+        test.assertEqual(this.list.getAt(0), this.value2,
+            "Assert first item in the list is now value2.");
+    }
+};
+annotate(listClearTest).with(
+    test().name("List clear test")
+);
 
 /**
  *
