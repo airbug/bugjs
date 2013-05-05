@@ -2,12 +2,12 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugboil')
+//@Package('bugflow')
 
-//@Export('ForEachSeries')
+//@Export('IteratorFlow')
 
 //@Require('Class')
-//@Require('bugboil.Boil')
+//@Require('bugflow.Flow')
 
 
 //-------------------------------------------------------------------------------
@@ -22,14 +22,14 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class = bugpack.require('Class');
-var Boil =  bugpack.require('bugboil.Boil');
+var Flow =  bugpack.require('bugflow.Flow');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ForEachSeries = Class.extend(Boil, {
+var IteratorFlow = Class.extend(Flow, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -37,7 +37,7 @@ var ForEachSeries = Class.extend(Boil, {
 
     _constructor: function(data, iteratorMethod) {
 
-        this._super(data);
+        this._super();
 
 
         //-------------------------------------------------------------------------------
@@ -48,66 +48,42 @@ var ForEachSeries = Class.extend(Boil, {
 
         /**
          * @private
-         * @type {function(Boil, *)}
+         * @type {*}
          */
-        this.iteratorMethod = iteratorMethod;
+        this.data = data;
 
         /**
          * @private
-         * @type {number}
+         * @type {function(Flow, *)}
          */
-        this.iteratorIndex = -1;
+        this.iteratorMethod = iteratorMethod;
+    },
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {*}
+     */
+    getData: function(args) {
+        return this.data;
+    },
+
+    /**
+     * @return {function(Flow, *)}
+     */
+    getIteratorMethod: function() {
+        return this.iteratorMethod;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Boil Extensions
+    // Class Methods
     //-------------------------------------------------------------------------------
 
-    /**
-     * @param {Error} error
-     */
-    bubble: function(error) {
-        if (error) {
-            if (!this.hasErrored()) {
-                this.error(error);
-            }
-        } else {
-            this.next();
-        }
-    },
+    executeIteration: function() {
 
-
-    //-------------------------------------------------------------------------------
-    // Flow Extensions
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {Array<*>} args
-     */
-    executeFlow: function(args) {
-        this.next();
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Private Class Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     */
-    next: function() {
-        this.iteratorIndex++;
-        if (!this.data) {
-            this.error("data value must be iterable");
-        }
-        if (this.iteratorIndex >= this.data.length) {
-            this.complete();
-        } else {
-            var nextValue = this.data[this.iteratorIndex];
-            this.iteratorMethod.call(null, this, nextValue);
-        }
     }
 });
 
@@ -116,4 +92,4 @@ var ForEachSeries = Class.extend(Boil, {
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugboil.ForEachSeries', ForEachSeries);
+bugpack.export('bugflow.IteratorFlow', IteratorFlow);

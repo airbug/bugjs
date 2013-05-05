@@ -2,9 +2,9 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugboil')
+//@Package('bugflow')
 
-//@Export('Boil')
+//@Export('Iteration')
 
 //@Require('Class')
 //@Require('bugflow.Flow')
@@ -29,13 +29,15 @@ var Flow =  bugpack.require('bugflow.Flow');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Boil = Class.extend(Flow, {
+//NOTE BRN: An instance of this class is designed to be used only once.
+
+var Iteration = Class.extend(Flow, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(data) {
+    _constructor: function(iteratorMethod) {
 
         this._super();
 
@@ -44,36 +46,25 @@ var Boil = Class.extend(Flow, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        // TODO BRN: Add support for BugJs data objects that implement the IIterate interface
-
         /**
          * @private
-         * @type {*}
+         * @type {function(Flow, *)}
          */
-        this.data = data;
+        this.iteratorMethod = iteratorMethod;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Flow Extensions
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {*}
+     * @param {Array<*>} args
      */
-    getData: function(args) {
-        return this.data;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @abstract
-     */
-    bubble: function() {}
+    executeFlow: function(args) {
+        this._super(args);
+        this.iteratorMethod.apply(null, ([this]).concat(args));
+    }
 });
 
 
@@ -81,4 +72,4 @@ var Boil = Class.extend(Flow, {
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugboil.Boil', Boil);
+bugpack.export('bugflow.Iteration', Iteration);

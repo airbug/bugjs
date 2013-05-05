@@ -75,6 +75,12 @@ var BugCli = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {CliAction}
+         */
+        this.defaultCliAction = null;
+
+        /**
+         * @private
          * @type {Map.<string, CliFlag>}
          */
         this.flagToCliFlagMap = new Map();
@@ -84,6 +90,20 @@ var BugCli = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
     // Getters and Setters
     //-------------------------------------------------------------------------------
+
+    /**
+     * @return {CliAction}
+     */
+    getDefaultCliAction: function() {
+        return this.defaultCliAction;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    hasDefaultCliAction: function() {
+        return !!(this.defaultCliAction);
+    },
 
 
     //-------------------------------------------------------------------------------
@@ -153,6 +173,13 @@ var BugCli = Class.extend(Obj, {
         cliAction.getFlagSet().forEach(function(flag) {
             _this.flagToCliFlagMap.put(flag, cliAction);
         });
+        if (cliAction.getDefault()) {
+            if (!this.hasDefaultCliAction()) {
+                this.defaultCliAction = cliAction;
+            } else {
+                throw new Error("Can only specify one cliAction default. Found a second '" + cliAction.getName() + "'")
+            }
+        }
     },
 
     /**

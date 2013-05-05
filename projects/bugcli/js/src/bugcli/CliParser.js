@@ -83,6 +83,7 @@ var CliParser = Class.extend(Obj, {
     parse: function(argv, cliBuild, callback) {
         this.index = 1;
         var error = null;
+        var unknownParameters = [];
         while (this.hasNextArg(argv)) {
             var flag = this.nextArg(argv);
             if (this.cli.containsCliFlag(flag)) {
@@ -99,7 +100,16 @@ var CliParser = Class.extend(Obj, {
                     error = new Error("cli flag is an unknown type. This should not happen.");
                 }
             } else {
-                error = new Error("unknown parameter '" + flag + "'");
+                unknownParameters.push(flag);
+            }
+        }
+        if (!error) {
+            if (!cliBuild.hasCliActionInstance() && this.cli.hasDefaultCliAction()) {
+                this.parseDefaultCliActionInstance(unknownParameters, cliBuild);
+            }
+
+            if (unknownParameters.length > 0) {
+                error = new Error("unknown parameter '" + unknownParameters[0] + "'");
             }
         }
         callback(error);
@@ -135,9 +145,6 @@ var CliParser = Class.extend(Obj, {
      */
     nextArg: function(argv) {
         this.index++;
-        //TEST
-        console.log("next arg called - this.index:", this.index, " argv[this.index]:", argv[this.index]);
-
         return argv[this.index];
     },
 
@@ -215,6 +222,25 @@ var CliParser = Class.extend(Obj, {
                     }
                 }
                 cliOptionInstance.addCliParameterInstance(cliParameter.getName(), nextArg);
+            }
+        }
+    },
+
+    /**
+     * @private
+     * @param {Array.<string>} unknownParameters
+     * @param {CliBuild} cliBuild
+     */
+    parseDefaultCliActionInstance: function(unknownParameters, cliBuild) {
+        var defaultCliAction = this.cli.getDefaultCliAction();
+        var cliActionInstance = new CliActionInstance(defaultCliAction);
+        cliBuild.setCliActionInstance(cliActionInstance);
+        if (defaultCliAction.hasParameters()) {
+            var cliParameterList = defaultCliAction.getCliParameterList();
+            for (var i = 0, size = cliParameterList.getCount(); i < size; i++) {
+                var cliParameter = cliParameterList.getAt(i);
+                var unknownArg = unknownParameters.shift();
+                cliActionInstance.addCliParameterInstance(cliParameter.getName(), unknownArg);
             }
         }
     }

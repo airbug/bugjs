@@ -37,7 +37,7 @@ var Task = Class.extend(Flow, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(taskMethod) {
+    _constructor: function(taskMethod, taskContext) {
 
         this._super();
 
@@ -45,6 +45,12 @@ var Task = Class.extend(Flow, {
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {Object}
+         */
+        this.taskContext = taskContext;
 
         /**
          * @private
@@ -62,7 +68,8 @@ var Task = Class.extend(Flow, {
      * @param {Array<*>} args
      */
     executeFlow: function(args) {
-        this.taskMethod.apply(null, ([this]).concat(args));
+        this._super(args);
+        this.taskMethod.apply(this.taskContext, ([this]).concat(args));
     }
 });
 
