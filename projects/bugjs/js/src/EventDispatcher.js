@@ -124,6 +124,10 @@ var EventDispatcher = Class.extend(Obj, {
         }
     },
 
+    on: function() {
+        this.addEventListener.apply(this, arguments);
+    },
+
     /**
      * @param {Event} event
      * @param {?boolean=} bubbles
@@ -165,6 +169,10 @@ var EventDispatcher = Class.extend(Obj, {
             var eventListener = new EventListener(listenerFunction, listenerContext);
             eventTypeListenerList.remove(eventListener);
         }
+    },
+
+    off: function() {
+        this.removeEventListener.apply(this, arguments);
     },
 
     /**
