@@ -112,20 +112,20 @@ var EventDispatcher = Class.extend(Obj, {
      * @param {string} eventType
      * @param {function(Event)} listenerFunction
      * @param {?Object=} listenerContext (optional)
-     * @param {?boolean=} isOnce (optional)
+     * @param {?boolean=} once (optional)
      */
-    addEventListener: function(eventType, listenerFunction, listenerContext, isOnce) {
+    addEventListener: function(eventType, listenerFunction, listenerContext, once) {
         var eventTypeListenerList = this.eventTypeListenerMap.get(eventType);
         if (!eventTypeListenerList) {
             eventTypeListenerList = new List();
             this.eventTypeListenerMap.put(eventType, eventTypeListenerList);
         }
-        if(!TypeUtil.isBoolean(isOnce)){
-            isOnce = false;
+        if(!TypeUtil.isBoolean(once)){
+            once = false;
         } else if (TypeUtil.isBoolean(listenerContext)) {
-            isOnce = listenerContext;
+            once = listenerContext;
         }
-        var eventListener = new EventListener(listenerFunction, listenerContext, isOnce);
+        var eventListener = new EventListener(listenerFunction, listenerContext, once);
         if (!eventTypeListenerList.contains(eventListener)) {
             eventTypeListenerList.add(eventListener);
         }
