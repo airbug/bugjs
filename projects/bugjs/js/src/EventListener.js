@@ -6,7 +6,6 @@
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('TypeUtil')
 
 
 //-------------------------------------------------------------------------------
@@ -34,7 +33,7 @@ var EventListener = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(listenerFunction, listenerContext) {
+    _constructor: function(listenerFunction, listenerContext, once) {
 
         this._super();
 
@@ -56,9 +55,10 @@ var EventListener = Class.extend(Obj, {
         this.listenerContext = listenerContext;
 
         /**
+         * @private
          * @type {boolean}
          */
-        this.once = false;
+        this.once = once;
     },
 
 
@@ -72,7 +72,7 @@ var EventListener = Class.extend(Obj, {
      */
     equals: function(value) {
         if (Class.doesExtend(value, EventListener)) {
-            return (value.listenerFunction === this.listenerFunction && value.listenerContext === this.listenerContext);
+            return (value.getListenerFunction() === this.listenerFunction && value.getListenerContext() === this.listenerContext);
         }
         return false;
     },
@@ -88,6 +88,32 @@ var EventListener = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {Object}
+     */
+    getListenerContext: function() {
+        return this.listenerContext;
+    },
+
+    /**
+     * @return {function(Event)}
+     */
+    getListenerFunction: function() {
+        return this.listenerFunction;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    isOnce: function(){
+        return this.once;
+    },
+
+
+    //-------------------------------------------------------------------------------
     // Class Methods
     //-------------------------------------------------------------------------------
 
@@ -96,18 +122,6 @@ var EventListener = Class.extend(Obj, {
      */
     hearEvent: function(event) {
         this.listenerFunction.call(this.listenerContext, event);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @return {boolean}
-     */
-    isOnce: function(){
-        return this.once;
     }
 });
 

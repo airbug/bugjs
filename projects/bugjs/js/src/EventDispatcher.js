@@ -111,7 +111,7 @@ var EventDispatcher = Class.extend(Obj, {
     /**
      * @param {string} eventType
      * @param {function(Event)} listenerFunction
-     * @param {?Object} listenerContext (optional)
+     * @param {?Object=} listenerContext (optional)
      * @param {?boolean=} isOnce (optional)
      */
     addEventListener: function(eventType, listenerFunction, listenerContext, isOnce) {
@@ -154,7 +154,7 @@ var EventDispatcher = Class.extend(Obj, {
     /**
      * @param {string} eventType
      * @param {function(Event)} listenerFunction
-     * @param {?Object} listenerContext (optional)
+     * @param {?Object=} listenerContext (optional)
      */
     hasEventListener: function(eventType, listenerFunction, listenerContext) {
         var eventTypeListenerList = this.eventTypeListenerMap.get(eventType);
@@ -177,7 +177,7 @@ var EventDispatcher = Class.extend(Obj, {
     /**
      * @param {string} eventType
      * @param {function(Event)} listenerFunction
-     * @param {Object} listenerContext
+     * @param {?Object=} listenerContext
      */
     removeEventListener: function(eventType, listenerFunction, listenerContext) {
         var eventTypeListenerList = this.eventTypeListenerMap.get(eventType);
@@ -219,8 +219,8 @@ var EventDispatcher = Class.extend(Obj, {
                 var cloneEventTypeListenerList = eventTypeListenerList.clone();
                 cloneEventTypeListenerList.forEach(function(eventListener) {
                     eventListener.hearEvent(event);
-                    if(eventListener.isOnce()) {
-                        _this.removeEventListener(event, eventListener.listenerFunction, eventListener.listenerContext )
+                    if (eventListener.isOnce()) {
+                        _this.removeEventListener(event.getType(), eventListener.getListenerFunction(), eventListener.getListenerContext());
                     }
                 });
             }

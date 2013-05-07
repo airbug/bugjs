@@ -359,20 +359,16 @@ var eventDispatcherOnceOnTest = {
     //-------------------------------------------------------------------------------
 
     setup: function() {
+        var _this = this;
+        this.callCount = 0;
         this.eventDispatcher = new EventDispatcher();
         this.testEventType = "testEventType";
         this.testEventData = "testEventData";
         this.testEvent = new Event(this.testEventType, this.testEventData);
         this.testListenerContext = {};
         this.testListenerFunction = function(event) {
-            if(!eventDispatcherOnceOnTest.testListenerFunction.calledOnce){
-                eventDispatcherOnceOnTest.testListenerFunction.calledOnce = true;
-            } else if (eventDispatcherOnceOnTest.testListenerFunction.calledOnce === true) {
-                eventDispatcherOnceOnTest.testListenerFunction.calledAgain = true;
-            }
+            _this.callCount++;
         };
-        this.testListenerFunction.calledOnce = false;
-        this.testListenerFunction.calledAgain = false;
     },
 
 
@@ -385,16 +381,20 @@ var eventDispatcherOnceOnTest = {
             this.testListenerContext);
         test.assertTrue(hasListenerAfterAdd,
             "Assert the eventDispatcher has the eventListener after it is added via the onceOn method.");
-        test.assertFalse(this.testListenerFunction.calledOnce,
+        test.assertEqual(this.callCount, 0,
             "Assert onceOn listener function has not been called before the event has been dispatched");
 
         this.eventDispatcher.dispatchEvent(this.testEvent);
-        test.assertTrue(this.testListenerFunction.calledOnce,
+        test.assertEqual(this.callCount, 1,
             "Assert onceOn listener function has been called once");
 
         this.eventDispatcher.dispatchEvent(this.testEvent);
-        test.assertFalse(this.testListenerFunction.calledTwice,
+        test.assertEqual(this.callCount, 1,
             "Assert onceOn listener function has only been called once");
+
+        var hasEventListener = this.eventDispatcher.hasEventListener(this.testEventType, this.testListenerFunction, this.testListenerContext);
+        test.assertFalse(hasEventListener,
+            "Assert that the event dispatcher no longer has the event listener registered");
     }
 };
 annotate(eventDispatcherOnceOnTest).with(

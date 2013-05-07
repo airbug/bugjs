@@ -144,30 +144,6 @@ annotate(eventListenerHashCodeEqualityTest).with(
     test().name("EventListener hash code equality test")
 );
 
-var eventListenerOnceTest = {
-
-    // Setup Test
-    //-------------------------------------------------------------------------------
-
-    setup: function() {
-        this.testListenerFunction = function(event) {};
-        this.testListenerContext = {};
-        this.eventListener = new EventListener(this.testListenerFunction, this.testListenerContext);
-    },
-
-
-    // Run Test
-    //-------------------------------------------------------------------------------
-
-    test: function(test) {
-        test.assertEqual(this.eventListener.once, false,
-            "Assert EventListeners have a once property that defaults to false");
-    }
-};
-annotate(eventListenerOnceTest).with(
-    test().name("EventListener once test")
-);
-
 var eventListenerIsOnceTest = {
 
     // Setup Test
@@ -177,8 +153,7 @@ var eventListenerIsOnceTest = {
         this.testListenerFunction = function(event) {};
         this.testListenerContext = {};
         this.eventListener1 = new EventListener(this.testListenerFunction, this.testListenerContext);
-        this.eventListener2 = new EventListener(this.testListenerFunction, this.testListenerContext);
-        this.eventListener2.once = true;
+        this.eventListener2 = new EventListener(this.testListenerFunction, this.testListenerContext, true);
     },
 
 
