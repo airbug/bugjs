@@ -144,5 +144,57 @@ annotate(eventListenerHashCodeEqualityTest).with(
     test().name("EventListener hash code equality test")
 );
 
+var eventListenerOnceTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.testListenerFunction = function(event) {};
+        this.testListenerContext = {};
+        this.eventListener = new EventListener(this.testListenerFunction, this.testListenerContext);
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        test.assertEqual(this.eventListener.once, false,
+            "Assert EventListeners have a once property that defaults to false");
+    }
+};
+annotate(eventListenerOnceTest).with(
+    test().name("EventListener once test")
+);
+
+var eventListenerIsOnceTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.testListenerFunction = function(event) {};
+        this.testListenerContext = {};
+        this.eventListener1 = new EventListener(this.testListenerFunction, this.testListenerContext);
+        this.eventListener2 = new EventListener(this.testListenerFunction, this.testListenerContext);
+        this.eventListener2.once = true;
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        test.assertFalse(this.eventListener1.isOnce(),
+            "Assert EventListeners #isOnce returns the default value of false");
+        test.assertTrue(this.eventListener2.isOnce(),
+            "Assert EventListeners' #isOnce function returns the proper value when the once property is set to true");
+
+    }
+};
+annotate(eventListenerIsOnceTest).with(
+    test().name("EventListener isOnce test")
+);
 
 //TODO BRN: Add a hearEvent test
