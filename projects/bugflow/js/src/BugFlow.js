@@ -50,9 +50,10 @@ var BugFlow = {};
 /**
  * @static
  * @param {Array<*>} data
- * @param {function(Boil, *)} iteratorMethod
+ * @param {function(Flow, *)} iteratorMethod
  * @return {ForEachParallel}
  */
+ // NOTE: SUNG I believe this should be deprecated
 BugFlow.$foreachParallel = function(data, iteratorMethod) {
     return new ForEachParallel(data, iteratorMethod);
 };
@@ -60,17 +61,38 @@ BugFlow.$foreachParallel = function(data, iteratorMethod) {
 /**
  * @static
  * @param {Array<*>} data
- * @param {function(Boil, *)} iteratorMethod
+ * @param {function(Flow, *)} iteratorMethod
  * @return {ForEachSeries}
  */
+ // NOTE: SUNG I believe this should be deprecated
 BugFlow.$foreachSeries = function(data, iteratorMethod) {
     return new ForEachSeries(data, iteratorMethod);
 };
 
 /**
  * @static
+ * @param {Array<*>} data
+ * @param {function(Flow, *)} iteratorMethod
+ * @return {ForEachParallel}
+ */
+BugFlow.$forEachParallel = function(data, iteratorMethod) {
+    return new ForEachParallel(data, iteratorMethod);
+};
+
+/**
+ * @static
+ * @param {Array<*>} data
+ * @param {function(Flow, *)} iteratorMethod
+ * @return {ForEachSeries}
+ */
+BugFlow.$forEachSeries = function(data, iteratorMethod) {
+    return new ForEachSeries(data, iteratorMethod);
+};
+
+/**
+ * @static
  * @param {Object} data
- * @param {function(Boil, *, *)} iteratorMethod
+ * @param {function(Flow, *, *)} iteratorMethod
  * @return {ForInParallel}
  */
 BugFlow.$forInParallel = function(data, iteratorMethod) {
