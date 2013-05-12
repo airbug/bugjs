@@ -86,6 +86,7 @@ var If = Class.extend(Flow, {
      * @param {Array<*>} args
      */
     executeFlow: function(args) {
+        this._super(args);
         this.execArgs = args;
         this.ifMethod.apply(null, ([this]).concat(args));
     },

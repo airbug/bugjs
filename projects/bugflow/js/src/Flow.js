@@ -96,6 +96,13 @@ var Flow = Class.extend(Obj, {
     /**
      * @return {boolean}
      */
+    hasExecuted: function() {
+        return this.executed;
+    },
+
+    /**
+     * @return {boolean}
+     */
     hasErrored: function() {
         return this.errored;
     },
@@ -121,11 +128,7 @@ var Flow = Class.extend(Obj, {
             if (this.hasCompleted()) {
                 throw new Error("Can only complete a flow once.");
             }
-            this.completed = true;
-
-            setTimeout($trace(function() {
-                _this.completeFlow(args);
-            }), 0);
+            _this.completeFlow(args);
         }
     },
 
@@ -139,7 +142,6 @@ var Flow = Class.extend(Obj, {
         if (this.hasCompleted()) {
             throw new Error("Cannot error flow. Flow has already completed.");
         }
-        this.errored = true;
         this.errorFlow($error(error));
     },
 
@@ -154,7 +156,6 @@ var Flow = Class.extend(Obj, {
         }
         this.callback = callback;
         if (!this.executed) {
-            this.executed = true;
             try {
                 this.executeFlow(args);
             } catch(error) {
@@ -174,8 +175,12 @@ var Flow = Class.extend(Obj, {
      * @protected
      */
     completeFlow: function(args) {
+        var _this = this;
+        this.completed = true;
         if (this.callback) {
-            this.callback.apply(this, args);
+            setTimeout($trace(function() {
+                _this.callback.apply(this, args);
+            }), 0);
         }
     },
 
@@ -184,20 +189,20 @@ var Flow = Class.extend(Obj, {
      * @param {Error} error
      */
     errorFlow: function(error) {
+        this.errored = true;
         if (this.callback) {
             this.callback(error);
         } else {
             throw error;
         }
-    }
+    },
 
     /**
-     * @abstract
      * @param {Array<*>} args
      */
-    /*executeFlow: function(args) {
-        // abstract
-    }*/
+    executeFlow: function(args) {
+        this.executed = true;
+    }
 });
 
 

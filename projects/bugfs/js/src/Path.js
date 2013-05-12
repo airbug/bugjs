@@ -10,7 +10,6 @@
 //@Require('Obj')
 //@Require('Semaphore')
 //@Require('TypeUtil')
-//@Require('bugboil.BugBoil')
 //@Require('bugflow.BugFlow')
 //@Require('bugtrace.BugTrace')
 
@@ -32,7 +31,6 @@ var Class =     bugpack.require('Class');
 var Obj =       bugpack.require('Obj');
 var Semaphore = bugpack.require('Semaphore');
 var TypeUtil =  bugpack.require('TypeUtil');
-var BugBoil =   bugpack.require('bugboil.BugBoil');
 var BugFlow =   bugpack.require('bugflow.BugFlow');
 var BugTrace =  bugpack.require('bugtrace.BugTrace');
 
@@ -41,7 +39,7 @@ var BugTrace =  bugpack.require('bugtrace.BugTrace');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var $foreachParallel = BugBoil.$foreachParallel;
+var $foreachParallel = BugFlow.$foreachParallel;
 var $if = BugFlow.$if;
 var $series = BugFlow.$series;
 var $task = BugFlow.$task;
@@ -2752,7 +2750,7 @@ var Path = Class.extend(Obj, {
                 });
             }),
             $task(function(flow) {
-                $foreachParallel(childPathArray, function(boil, childPath) {
+                $foreachParallel(childPathArray, function(flow, childPath) {
                     var copyPath = new Path(intoPath.getAbsolutePath() + path.sep + childPath.getName());
                     $if (function(flow) {
                             childPath._isDirectory(false, function(error, isDirectory) {
@@ -2801,7 +2799,7 @@ var Path = Class.extend(Obj, {
                             });
                         })
                     ).execute(function(error) {
-                        boil.bubble(error);
+                        flow.complete(error);
                     });
                 }).execute(function(error) {
                     flow.complete(error);
@@ -3640,7 +3638,7 @@ var Path = Class.extend(Obj, {
             $task(function(flow) {
                 if (childPathArray.length > 0) {
                     if (recursive) {
-                        $foreachParallel(childPathArray, function(boil, childPath) {
+                        $foreachParallel(childPathArray, function(flow, childPath) {
 
                             // TODO BRN: If "resolveSymlink" is true, do we want to continue to follow ALL symlinks, or
                             // should we only follow the first one?
@@ -3648,7 +3646,7 @@ var Path = Class.extend(Obj, {
                             // symlink.
 
                             childPath._delete(recursive, false, function(error) {
-                                boil.bubble(error);
+                                flow.complete(error);
                             });
                         }).execute([], function(error) {
                             flow.complete(error);
@@ -4319,10 +4317,10 @@ var Path = Class.extend(Obj, {
                 });
             }),
             $task(function(flow) {
-                $foreachParallel(childPathArray, function(boil, childPath) {
+                $foreachParallel(childPathArray, function(flow, childPath) {
                     var movePath = new Path(intoPath.getAbsolutePath() + path.sep + childPath.getName());
                     childPath._move(movePath, syncMode, false, function(error) {
-                        boil.bubble(error);
+                        flow.complete(error);
                     });
                 }).execute(function(error) {
                     flow.complete(error);
@@ -5411,10 +5409,10 @@ var Path = Class.extend(Obj, {
                 });
             }),
             $task(function(flow) {
-                $foreachParallel(childPathArray, function(boil, childPath) {
+                $foreachParallel(childPathArray, function(flow, childPath) {
                     var symlinkPath = new Path(intoPath.getAbsolutePath() + path.sep + childPath.getName());
                     childPath._symlinkTo(symlinkPath, syncMode, function(error) {
-                        boil.bubble(error);
+                        flow.complete(error);
                     });
                 }).execute(function(error) {
                     flow.complete(error);
@@ -5808,18 +5806,23 @@ Path.SyncMode = {
 // performant if each transaction was isolated based upon the parts of the file system that it touches. This way
 // we could still have parallel operations that affect different parts of the file system.
 
+//TODO BRN: Replace this with a WriteReadLock that blocks the system when a write operation is taking place and only
+// allows one write operation to take place at a time. Read operations should be free to execute in parallel as long
+// as a write lock is not in place. A write lock should halt all further reads and wait until the current reads are
+// complete until it performs it's write
+
 /**
  * @private
  * @type {Semaphore}
  */
 Path.transactionSemaphore = new Semaphore(1);
 
-//TODO BRN: See if there's a way we can retrieve the file handle limit from the OS.
+//TODO BRN: See if there's a way we can retrieve the file handle limit from the OS. This is well below the Mac OS X default of 256
 
 /**
  * @const {number}
  */
-Path.FILE_HANDLE_LIMIT = 512;
+Path.FILE_HANDLE_LIMIT = 128;
 
 /**
  * @private

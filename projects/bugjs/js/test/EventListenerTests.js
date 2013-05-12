@@ -144,5 +144,32 @@ annotate(eventListenerHashCodeEqualityTest).with(
     test().name("EventListener hash code equality test")
 );
 
+var eventListenerIsOnceTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.testListenerFunction = function(event) {};
+        this.testListenerContext = {};
+        this.eventListener1 = new EventListener(this.testListenerFunction, this.testListenerContext);
+        this.eventListener2 = new EventListener(this.testListenerFunction, this.testListenerContext, true);
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        test.assertFalse(this.eventListener1.isOnce(),
+            "Assert EventListeners #isOnce returns the default value of false");
+        test.assertTrue(this.eventListener2.isOnce(),
+            "Assert EventListeners' #isOnce function returns the proper value when the once property is set to true");
+
+    }
+};
+annotate(eventListenerIsOnceTest).with(
+    test().name("EventListener isOnce test")
+);
 
 //TODO BRN: Add a hearEvent test

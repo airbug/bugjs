@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('TypeUtil')
 //@Require('aws.EC2SecurityGroup')
 //@Require('bugflow.BugFlow')
 
@@ -28,7 +29,6 @@ var Class =             bugpack.require('Class');
 var Obj =               bugpack.require('Obj');
 var TypeUtil =          bugpack.require('TypeUtil');
 var EC2SecurityGroup =  bugpack.require('aws.EC2SecurityGroup');
-var BugBoil =           bugpack.require('bugboil.BugBoil');
 var BugFlow =           bugpack.require('bugflow.BugFlow');
 
 
@@ -36,8 +36,6 @@ var BugFlow =           bugpack.require('bugflow.BugFlow');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var $foreachParallel = BugBoil.$foreachParallel;
-var $if = BugFlow.$if;
 var $series = BugFlow.$series;
 var $task = BugFlow.$task;
 

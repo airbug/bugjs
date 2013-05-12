@@ -10,6 +10,7 @@
 //@Require('List')
 //@Require('Map')
 //@Require('Obj')
+//@Require('TypeUtil')
 
 
 //-------------------------------------------------------------------------------
@@ -23,12 +24,13 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =             bugpack.require('Class');
-var EventListener =     bugpack.require('EventListener');
-var IEventDispatcher =  bugpack.require('IEventDispatcher');
-var List =              bugpack.require('List');
-var Map =               bugpack.require('Map');
-var Obj =               bugpack.require('Obj');
+var Class               = bugpack.require('Class');
+var EventListener       = bugpack.require('EventListener');
+var IEventDispatcher    = bugpack.require('IEventDispatcher');
+var List                = bugpack.require('List');
+var Map                 = bugpack.require('Map');
+var Obj                 = bugpack.require('Obj');
+var TypeUtil            = bugpack.require('TypeUtil');
 
 
 //-------------------------------------------------------------------------------
@@ -109,19 +111,28 @@ var EventDispatcher = Class.extend(Obj, {
     /**
      * @param {string} eventType
      * @param {function(Event)} listenerFunction
-     * @param {?Object} listenerContext (optional)
+     * @param {?Object=} listenerContext (optional)
+     * @param {?boolean=} once (optional)
      */
-    addEventListener: function(eventType, listenerFunction, listenerContext) {
+    addEventListener: function(eventType, listenerFunction, listenerContext, once) {
         var eventTypeListenerList = this.eventTypeListenerMap.get(eventType);
         if (!eventTypeListenerList) {
             eventTypeListenerList = new List();
             this.eventTypeListenerMap.put(eventType, eventTypeListenerList);
         }
-
-        var eventListener = new EventListener(listenerFunction, listenerContext);
+        if(!TypeUtil.isBoolean(once)){
+            once = false;
+        } else if (TypeUtil.isBoolean(listenerContext)) {
+            once = listenerContext;
+        }
+        var eventListener = new EventListener(listenerFunction, listenerContext, once);
         if (!eventTypeListenerList.contains(eventListener)) {
             eventTypeListenerList.add(eventListener);
         }
+    },
+
+    on: function() {
+        this.addEventListener.apply(this, arguments);
     },
 
     /**
@@ -143,7 +154,7 @@ var EventDispatcher = Class.extend(Obj, {
     /**
      * @param {string} eventType
      * @param {function(Event)} listenerFunction
-     * @param {?Object} listenerContext (optional)
+     * @param {?Object=} listenerContext (optional)
      */
     hasEventListener: function(eventType, listenerFunction, listenerContext) {
         var eventTypeListenerList = this.eventTypeListenerMap.get(eventType);
@@ -157,7 +168,16 @@ var EventDispatcher = Class.extend(Obj, {
     /**
      * @param {string} eventType
      * @param {function(Event)} listenerFunction
-     * @param {Object} listenerContext
+     * @param {} listenerContext
+     */
+    onceOn: function(eventType, listenerFunction, listenerContext){
+        this.addEventListener(eventType, listenerFunction, listenerContext, true);
+    },
+
+    /**
+     * @param {string} eventType
+     * @param {function(Event)} listenerFunction
+     * @param {?Object=} listenerContext
      */
     removeEventListener: function(eventType, listenerFunction, listenerContext) {
         var eventTypeListenerList = this.eventTypeListenerMap.get(eventType);
@@ -165,6 +185,10 @@ var EventDispatcher = Class.extend(Obj, {
             var eventListener = new EventListener(listenerFunction, listenerContext);
             eventTypeListenerList.remove(eventListener);
         }
+    },
+
+    off: function() {
+        this.removeEventListener.apply(this, arguments);
     },
 
     /**
@@ -184,6 +208,7 @@ var EventDispatcher = Class.extend(Obj, {
      * @param {Event} event
      */
     propagateEvent: function(event) {
+        var _this = this;
         if (!event.isPropagationStopped()) {
             var eventTypeListenerList = this.eventTypeListenerMap.get(event.getType());
             if (eventTypeListenerList) {
@@ -194,6 +219,9 @@ var EventDispatcher = Class.extend(Obj, {
                 var cloneEventTypeListenerList = eventTypeListenerList.clone();
                 cloneEventTypeListenerList.forEach(function(eventListener) {
                     eventListener.hearEvent(event);
+                    if (eventListener.isOnce()) {
+                        _this.removeEventListener(event.getType(), eventListener.getListenerFunction(), eventListener.getListenerContext());
+                    }
                 });
             }
             if (event.getBubbles()) {

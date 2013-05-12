@@ -50,6 +50,12 @@ var CliAction = Class.extend(CliFlag, {
 
         /**
          * @private
+         * @type {boolean}
+         */
+        this.default = false;
+
+        /**
+         * @private
          * @type {function(Map.<string, *>, function(Error))}
          */
         this.executeMethod = null;
@@ -63,6 +69,9 @@ var CliAction = Class.extend(CliFlag, {
         //TODO BRN: We should replace this with the BugMarshaller
 
         if (TypeUtil.isObject(cliActionObject)) {
+            if (TypeUtil.isBoolean(cliActionObject.default)) {
+                this.default = cliActionObject.default;
+            }
             if (TypeUtil.isFunction(cliActionObject.executeMethod)) {
                 this.executeMethod = cliActionObject.executeMethod;
             }
@@ -76,6 +85,13 @@ var CliAction = Class.extend(CliFlag, {
     //-------------------------------------------------------------------------------
     // Getters and Setters
     //-------------------------------------------------------------------------------
+
+    /**
+     * @return {boolean}
+     */
+    getDefault: function() {
+        return this.default;
+    },
 
     /**
      * @return {function(Map.<string, *>, function(Error))}

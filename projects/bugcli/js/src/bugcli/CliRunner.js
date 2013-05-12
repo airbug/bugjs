@@ -133,10 +133,7 @@ var CliRunner = Class.extend(Obj, {
         var cliActionInstance = this.cliBuild.getCliActionInstance();
         if (cliActionInstance) {
             var cliAction = cliActionInstance.getCliAction();
-            var validateMethod = cliAction.getValidateMethod();
-            validateMethod(this.cliBuild, cliActionInstance, function(error) {
-                callback(error);
-            });
+            this.validateCliAction(cliAction, callback);
         } else {
             callback(new Error("An action must be specified"));
         }
@@ -158,6 +155,22 @@ var CliRunner = Class.extend(Obj, {
         executeMethod(this.cliBuild, cliActionInstance, function(error) {
             callback(error);
         });
+    },
+
+    /**
+     * @private
+     * @param {CliAction} cliAction
+     * @param {function(Error)} callback
+     */
+    validateCliAction: function(cliAction, callback) {
+        var validateMethod = cliAction.getValidateMethod();
+        if (validateMethod) {
+            validateMethod(this.cliBuild, cliActionInstance, function(error) {
+                callback(error);
+            });
+        } else {
+            callback();
+        }
     }
 });
 

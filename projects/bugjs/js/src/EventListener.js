@@ -33,7 +33,7 @@ var EventListener = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(listenerFunction, listenerContext) {
+    _constructor: function(listenerFunction, listenerContext, once) {
 
         this._super();
 
@@ -53,6 +53,12 @@ var EventListener = Class.extend(Obj, {
          * @type {Object}
          */
         this.listenerContext = listenerContext;
+
+        /**
+         * @private
+         * @type {boolean}
+         */
+        this.once = once;
     },
 
 
@@ -66,7 +72,7 @@ var EventListener = Class.extend(Obj, {
      */
     equals: function(value) {
         if (Class.doesExtend(value, EventListener)) {
-            return (value.listenerFunction === this.listenerFunction && value.listenerContext === this.listenerContext);
+            return (value.getListenerFunction() === this.listenerFunction && value.getListenerContext() === this.listenerContext);
         }
         return false;
     },
@@ -78,6 +84,32 @@ var EventListener = Class.extend(Obj, {
                 Obj.hashCode(this.listenerContext));
         }
         return this._hashCode;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {Object}
+     */
+    getListenerContext: function() {
+        return this.listenerContext;
+    },
+
+    /**
+     * @return {function(Event)}
+     */
+    getListenerFunction: function() {
+        return this.listenerFunction;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    isOnce: function(){
+        return this.once;
     },
 
 

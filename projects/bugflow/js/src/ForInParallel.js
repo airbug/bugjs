@@ -2,12 +2,13 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugboil')
+//@Package('bugflow')
 
 //@Export('ForInParallel')
 
 //@Require('Class')
-//@Require('bugboil.Boil')
+//@Require('bugflow.Iteration')
+//@Require('bugflow.IteratorFlow')
 
 
 //-------------------------------------------------------------------------------
@@ -21,15 +22,16 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var Boil = bugpack.require('bugboil.Boil');
+var Class =         bugpack.require('Class');
+var Iteration =     bugpack.require('bugflow.Iteration');
+var IteratorFlow =  bugpack.require('bugflow.IteratorFlow');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ForInParallel = Class.extend(Boil, {
+var ForInParallel = Class.extend(IteratorFlow, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -37,7 +39,7 @@ var ForInParallel = Class.extend(Boil, {
 
     _constructor: function(data, iteratorMethod) {
 
-        this._super(data);
+        this._super(data, iteratorMethod);
 
 
         //-------------------------------------------------------------------------------
@@ -54,12 +56,6 @@ var ForInParallel = Class.extend(Boil, {
 
         /**
          * @private
-         * @type {function(Boil, *, *)}
-         */
-        this.iteratorMethod = iteratorMethod;
-
-        /**
-         * @private
          * @type {number}
          */
         this.numberIterationsComplete = 0;
@@ -73,22 +69,8 @@ var ForInParallel = Class.extend(Boil, {
 
 
     //-------------------------------------------------------------------------------
-    // Boil Extensions
+    // IteratorFlow Extensions
     //-------------------------------------------------------------------------------
-
-    /**
-     * @param {Error} error
-     */
-    bubble: function(error) {
-        if (error) {
-            if (!this.hasErrored()) {
-                this.error(error);
-            }
-        } else {
-            this.numberIterationsComplete++;
-            this.checkIterationComplete();
-        }
-    },
 
 
     //-------------------------------------------------------------------------------
@@ -99,13 +81,31 @@ var ForInParallel = Class.extend(Boil, {
      * @param {Array<*>} args
      */
     executeFlow: function(args) {
+        this._super(args);
         for (var key in this.data) {
             this.totalIterationCount++;
             var value = this.data[key];
-            this.iteratorMethod.call(null, this, key, value);
+            this.executeIteration([key, value]);
         }
         this.iterationCompleted = true;
         this.checkIterationComplete();
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // IteratorFlow Extensions
+    //-------------------------------------------------------------------------------
+
+    /**
+     *
+     * @param args
+     */
+    executeIteration: function(args) {
+        var _this = this;
+        var iteration = new Iteration(this.getIteratorMethod());
+        iteration.execute(args, function(error) {
+            _this.iterationCallback(error);
+        })
     },
 
 
@@ -118,7 +118,30 @@ var ForInParallel = Class.extend(Boil, {
      */
     checkIterationComplete: function() {
         if (this.iterationCompleted && this.numberIterationsComplete >= this.totalIterationCount && !this.hasErrored()) {
-            this.complete();
+            this.completeFlow();
+        }
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Event Listeners
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {Error} error
+     */
+    iterationCallback: function(error) {
+
+        //TODO BRN: Figure out what to do if there is more than one error
+
+        if (error) {
+            if (!this.hasErrored()) {
+                this.error(error);
+            }
+        } else {
+            this.numberIterationsComplete++;
+            this.checkIterationComplete();
         }
     }
 });
@@ -128,4 +151,4 @@ var ForInParallel = Class.extend(Boil, {
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugboil.ForInParallel', ForInParallel);
+bugpack.export('bugflow.ForInParallel', ForInParallel);

@@ -4,10 +4,12 @@
 
 //@Package('bugflow')
 
-//@Export('Series')
+//@Export('ForEachSeries')
 
 //@Require('Class')
-//@Require('bugflow.Flow')
+//@Require('bugflow.Iteration')
+//@Require('bugflow.IteratorFlow')
+//@Require('bugtrace.BugTrace')
 
 
 //-------------------------------------------------------------------------------
@@ -21,46 +23,46 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var Flow =  bugpack.require('bugflow.Flow');
+var Class =         bugpack.require('Class');
+var Iteration =     bugpack.require('bugflow.Iteration');
+var IteratorFlow =  bugpack.require('bugflow.IteratorFlow');
+var BugTrace =      bugpack.require('bugtrace.BugTrace');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var $error = BugTrace.$error;
+var $trace = BugTrace.$trace;
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Series = Class.extend(Flow, {
+var ForEachSeries = Class.extend(IteratorFlow, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(flowArray) {
+    _constructor: function(data, iteratorMethod) {
 
-        this._super();
+        this._super(data, iteratorMethod);
 
 
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        /**
-         * @private
-         * @type {Array<*>}
-         */
-        this.execArgs = null;
-
-        /**
-         * @private
-         * @type {*}
-         */
-        this.flowArray = flowArray;
+        // TODO BRN: Add support for BugJs data objects that implement the IIterate interface
 
         /**
          * @private
          * @type {number}
          */
-        this.index = -1;
+        this.iteratorIndex = -1;
     },
 
 
@@ -69,34 +71,47 @@ var Series = Class.extend(Flow, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @protected
      * @param {Array<*>} args
      */
     executeFlow: function(args) {
-        this._super(args);
-        this.execArgs = args;
-        this.startNextFlow();
+        if (!this.data) {
+            this.error("data value must be iterable");
+        }
+        if (this.data.length > 0) {
+            this.next();
+        } else {
+            this.complete();
+        }
     },
 
 
     //-------------------------------------------------------------------------------
-    // Private Methods
+    // IteratorFlow Extensions
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param args
+     */
+    executeIteration: function(args) {
+        var _this = this;
+        var iteration = new Iteration(this.getIteratorMethod());
+        iteration.execute(args, function(error) {
+            _this.iterationCallback(error);
+        })
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Private Class Methods
     //-------------------------------------------------------------------------------
 
     /**
      * @private
      */
-    startNextFlow: function() {
-        var _this = this;
-        this.index++;
-        if (this.index < this.flowArray.length) {
-            var nextFlow = this.flowArray[this.index];
-            nextFlow.execute(this.execArgs, function(error) {
-                _this.flowCallback(error);
-            });
-        } else {
-            this.complete();
-        }
+    next: function() {
+        this.iteratorIndex++;
+        var nextValue = this.data[this.iteratorIndex];
+        this.executeIteration([nextValue, this.iteratorIndex]);
     },
 
 
@@ -108,11 +123,17 @@ var Series = Class.extend(Flow, {
      * @private
      * @param {Error} error
      */
-    flowCallback: function(error) {
+    iterationCallback: function(error) {
         if (error) {
-            this.error(error);
-        } else  {
-            this.startNextFlow();
+            if (!this.hasErrored()) {
+                this.error(error);
+            }
+        } else {
+            if (this.iteratorIndex >= (this.data.length - 1)) {
+                this.complete();
+            } else {
+                this.next();
+            }
         }
     }
 });
@@ -122,4 +143,4 @@ var Series = Class.extend(Flow, {
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugflow.Series', Series);
+bugpack.export('bugflow.ForEachSeries', ForEachSeries);

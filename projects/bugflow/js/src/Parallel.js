@@ -67,6 +67,7 @@ var Parallel = Class.extend(Flow, {
      * @param {Array<*>} args
      */
     executeFlow: function(args) {
+        this._super(args);
         var _this = this;
         if (this.flowArray.length > 0) {
             this.flowArray.forEach(function(flow) {

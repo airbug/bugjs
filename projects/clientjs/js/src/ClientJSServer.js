@@ -10,7 +10,6 @@
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('bugboil.BugBoil')
 //@Require('bugflow.BugFlow')
 //@Require('bugfs.BugFs')
 //@Require('clientjs.ClientPackageRegistry')
@@ -30,20 +29,19 @@ var express = require('express');
 
 var Class =                     bugpack.require('Class');
 var Obj =                       bugpack.require('Obj');
-var BugBoil =                   bugpack.require('bugboil.BugBoil');
 var BugFlow =                   bugpack.require('bugflow.BugFlow');
 var BugFs =                     bugpack.require('bugfs.BugFs');
-var ClientPackageRegistry =    bugpack.require('clientjs.ClientPackageRegistry');
+var ClientPackageRegistry =     bugpack.require('clientjs.ClientPackageRegistry');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var $foreachParallel = BugBoil.$foreachParallel;
-var $parallel = BugFlow.$parallel;
-var $series = BugFlow.$series;
-var $task = BugFlow.$task;
+var $foreachParallel =  BugFlow.$foreachParallel;
+var $parallel =         BugFlow.$parallel;
+var $series =           BugFlow.$series;
+var $task =             BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
