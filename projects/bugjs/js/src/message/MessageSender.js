@@ -2,9 +2,11 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('Message')
+//@Export('MessageSender')
 
 //@Require('Class')
+//@Require('IMessageSender')
+//@Require('MessageDefines')
 //@Require('Obj')
 
 
@@ -19,57 +21,83 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var Obj =   bugpack.require('Obj');
+var Class           = bugpack.require('Class');
+var IMessageSender  = bugpack.require('IMessageSender');
+var MessageDefines  = bugpack.require('MessageDefines');
+var Obj             = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Message = Class.extend(Obj, {
+var MessageSender = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(topic, data) {
+    _constructor: function() {
 
         this._super();
-
 
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        this.data = data;
-
-        this.topic = topic;
+        /**
+         * @private
+         * @type {MessageReceiver}
+         */
+        this.messageReceiver = null;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Getters ans Setters
     //-------------------------------------------------------------------------------
 
-    getData: function() {
-        return this.data;
+    /**
+     * @return {*}
+     */
+    getMessageReceiver: function() {
+        return this.messageReceiver;
     },
 
-    getTopic: function() {
-        return this.topic;
+    /**
+     * @param {MessageReceiver} messageReceiver
+     */
+    setMessageReceiver: function(messageReceiver) {
+        this.messageReceiver = messageReceiver;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // IMessageSender Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {Message} message
+     * @param {string=} channel
+     */
+    sendMessage: function(message, channel) {
+        if (!channel) {
+            channel = MessageDefines.MessageChannels.MESSAGE;
+        }
+        this.messageReceiver.receiveMessage(message, channel);
     }
-
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
-
 });
 
 
 //-------------------------------------------------------------------------------
-// Exports
+// Interfaces
 //-------------------------------------------------------------------------------
 
-bugpack.export('Message', Message);
+Class.implement(MessageSender, IMessageSender);
+
+
+//-------------------------------------------------------------------------------
+// Export
+//-------------------------------------------------------------------------------
+
+bugpack.export('MessageSender', MessageSender);

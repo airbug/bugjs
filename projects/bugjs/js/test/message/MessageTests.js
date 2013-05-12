@@ -20,9 +20,9 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Message =           bugpack.require('Message');
-var Annotate =          bugpack.require('annotate.Annotate');
-var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
+var Message         = bugpack.require('Message');
+var Annotate        = bugpack.require('annotate.Annotate');
+var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------
@@ -40,7 +40,7 @@ var test = TestAnnotation.test;
 /**
  * This tests
  * 1) Instantiation of a Message
- * 2) That the topic and data values were set correctly during instantiation
+ * 2) That the type and data values were set correctly during instantiation
  */
 var instantiateMessageTest = {
 
@@ -49,8 +49,8 @@ var instantiateMessageTest = {
 
     setup: function() {
         this.testTopic = "testTopic";
-        this.testData = "testData";
-        this.message = new Message(this.testTopic, this.testData);
+        this.testData = {};
+        this.testMessage = new Message(this.testTopic, this.testData);
     },
 
 
@@ -58,10 +58,15 @@ var instantiateMessageTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
-        test.assertEqual(this.message.getTopic(), this.testTopic,
-            "Assert message topic was set correctly during instantiation");
-        test.assertEqual(this.message.getData(), this.testData,
-            "Assert message data was set correctly during instantiation");
+        test.assertEqual(this.testMessage.getTopic(), this.testTopic,
+            "Assert 'topic' was set correctly during instantiation");
+        test.assertEqual(this.testMessage.getData(), this.testData,
+            "Assert 'data' was set correctly during instantiation");
+
+        test.assertNotEqual(this.testMessage.getTopic(), "sdfdsf",
+            "Assert 'topic' does not equal any old string");
+        test.assertNotEqual(this.testMessage.getData(), {},
+            "Assert 'data' does not equal any old object");
     }
 };
 annotate(instantiateMessageTest).with(

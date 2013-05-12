@@ -13,8 +13,8 @@
 //@Require('Class')
 //@Require('List')
 //@Require('Map')
-//@Require('Message')
 //@Require('Obj')
+//@Require('PublisherMessage')
 //@Require('PublisherSubscription')
 
 
@@ -29,12 +29,12 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var List = bugpack.require('List');
-var Map = bugpack.require('Map');
-var Message = bugpack.require('Message');
-var Obj = bugpack.require('Obj');
-var PublisherSubscription = bugpack.require('PublisherSubscription');
+var Class                   = bugpack.require('Class');
+var List                    = bugpack.require('List');
+var Map                     = bugpack.require('Map');
+var Obj                     = bugpack.require('Obj');
+var PublisherMessage        = bugpack.require('PublisherMessage');
+var PublisherSubscription   = bugpack.require('PublisherSubscription');
 
 
 //-------------------------------------------------------------------------------
@@ -119,7 +119,7 @@ var Publisher = Class.extend(Obj, {
      */
     publish: function(topic, data) {
         if (this.topicToPublisherSubscriptionListMap.containsKey(topic)) {
-            var message = new Message(topic, data);
+            var message = new PublisherMessage(topic, data);
             var oneTimeDeliveryPublisherSubscriptionList = new List();
             var publisherSubscriptionList = this.topicToPublisherSubscriptionListMap.get(topic);
             publisherSubscriptionList.forEach(function(publisherSubscription) {

@@ -122,7 +122,7 @@ var PublisherSubscription = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Message} message
+     * @param {PublisherMessage} message
      */
     deliverMessage: function(message) {
         this.subscriberFunction.call(this.subscriberContext, message);
