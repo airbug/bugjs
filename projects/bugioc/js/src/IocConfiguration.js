@@ -4,7 +4,7 @@
 
 //@Package('bugioc')
 
-//@Export('IOCConfiguration')
+//@Export('IocConfiguration')
 
 //@Require('Class')
 //@Require('Obj')
@@ -31,7 +31,7 @@ var Set =   bugpack.require('Set');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var IOCConfiguration = Class.extend(Obj, {
+var IocConfiguration = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -54,7 +54,7 @@ var IOCConfiguration = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {Set<IOCModule>}
+         * @type {Set<IocModule>}
          */
         this.iocModuleSet = new Set();
     },
@@ -72,9 +72,9 @@ var IOCConfiguration = Class.extend(Obj, {
     },
 
     /**
-     * @return {Set<IOCModule>}
+     * @return {Set<IocModule>}
      */
-    getIOCModuleSet: function() {
+    getIocModuleSet: function() {
         return this.iocModuleSet;
     },
 
@@ -88,7 +88,7 @@ var IOCConfiguration = Class.extend(Obj, {
      * @return {boolean}
      */
     equals: function(value) {
-        if (Class.doesExtend(value, IOCConfiguration)) {
+        if (Class.doesExtend(value, IocConfiguration)) {
             return Obj.equals(value.getConfigurationClass(), this.getConfigurationClass());
         }
         return false;
@@ -99,7 +99,7 @@ var IOCConfiguration = Class.extend(Obj, {
      */
     hashCode: function() {
         if (!this._hashCode) {
-            this._hashCode = Obj.hashCode("[IOCConfiguration]" + Obj.hashCode(this.configurationClass));
+            this._hashCode = Obj.hashCode("[IocConfiguration]" + Obj.hashCode(this.configurationClass));
         }
         return this._hashCode;
     },
@@ -110,14 +110,14 @@ var IOCConfiguration = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {IOCModule} iocModule
+     * @param {IocModule} iocModule
      */
-    addIOCModule: function(iocModule) {
+    addIocModule: function(iocModule) {
         if (!this.iocModuleSet.contains(iocModule)) {
             this.iocModuleSet.add(iocModule);
-            iocModule.setIOCConfiguration(this);
+            iocModule.setIocConfiguration(this);
         } else {
-            throw new Error("Configuration already contains an IOCModule by this name");
+            throw new Error("Configuration already contains an IocModule by this name");
         }
     }
 });
@@ -127,4 +127,4 @@ var IOCConfiguration = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugioc.IOCConfiguration', IOCConfiguration);
+bugpack.export('bugioc.IocConfiguration', IocConfiguration);

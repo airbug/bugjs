@@ -139,13 +139,58 @@ var Obj = Class.declare({
         return this._hashCode;
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Interfaces
+//-------------------------------------------------------------------------------
+
 Class.implement(Obj, IClone);
 Class.implement(Obj, IEquals);
 Class.implement(Obj, IHashCode);
 
 
 //-------------------------------------------------------------------------------
-// Static Methods
+// Static Private Variables
+//-------------------------------------------------------------------------------
+
+/**
+ * @static
+ * @private
+ * @type {boolean}
+ */
+Obj.isDontEnumSkipped = true;
+
+// test if properties that shadow DontEnum ones are enumerated
+for (var prop in { toString: true }) {
+    Obj.isDontEnumSkipped = false;
+}
+
+/**
+ * @static
+ * @private
+ * @type {Array}
+ */
+Obj.dontEnumProperties = [
+    'toString',
+    'toLocaleString',
+    'valueOf',
+    'hasOwnProperty',
+    'isPrototypeOf',
+    'propertyIsEnumerable',
+    'constructor'
+];
+
+/**
+ * @static
+ * @private
+ * @type {function()}
+ */
+Obj.hasOwnProperty = Object.prototype.hasOwnProperty;
+
+
+//-------------------------------------------------------------------------------
+// Static Public Methods
 //-------------------------------------------------------------------------------
 
 /**
@@ -158,14 +203,13 @@ Obj.clone = function(value, deep) {
     if (TypeUtil.isObject(value)) {
         if (TypeUtil.toType(value) === "Object") {
             clone = {};
-            for (var propName in value) {
-                var propValue = value[propName];
+            Obj.forIn(value, function(propertyName, propertyValue) {
                 if (deep) {
-                    clone[propName] = Obj.clone(propValue, deep);
+                    clone[propertyName] = Obj.clone(propertyValue, deep);
                 } else {
-                    clone[propName] = propValue;
+                    clone[propertyName] = propertyValue;
                 }
-            }
+            });
         } else if (Class.doesImplement(value, IClone)) {
             clone = value.clone(deep);
         } else {
@@ -204,6 +248,57 @@ Obj.equals = function(value1, value2) {
 };
 
 /**
+ * @license MIT License
+ * This work is based on the code found here
+ * https://github.com/kangax/protolicious/blob/master/experimental/object.for_in.js#L18
+ *
+ * NOTE BRN: If a property is modified in one iteration and then visited at a later time, its value in the loop is
+ * its value at that later time. A property that is deleted before it has been visited will not be visited later.
+ * Properties added to the object over which iteration is occurring may either be visited or omitted from iteration.
+ * In general it is best not to add, modify or remove properties from the object during iteration, other than the
+ * property currently being visited. There is no guarantee whether or not an added property will be visited, whether
+ * a modified property (other than the current one) will be visited before or after it is modified, or whether a
+ * deleted property will be visited before it is deleted.
+ *
+ * @static
+ * @param {Object} object
+ * @param {function(*)} func
+ * @param {Object} context
+ */
+Obj.forIn = function(object, func, context) {
+    if (!func || (func && !func.call)) {
+        throw new TypeError('Iterator function is required');
+    }
+
+    for (var propertyName in object) {
+        if (Obj.hasProperty(object, propertyName)) {
+            func.call(context || func, propertyName, object[propertyName]);
+        }
+    }
+
+    if (Obj.isDontEnumSkipped) {
+        for (var i = 0, size = Obj.dontEnumProperties.length; i < size; i++) {
+            var dontEnumPropertyName = Obj.dontEnumProperties[i];
+            if (Obj.hasProperty(object, dontEnumPropertyName)) {
+                func.call(context || func, dontEnumPropertyName, object[dontEnumPropertyName]);
+            }
+        }
+    }
+};
+
+/**
+ * @static
+ * @param {Object} object
+ * @param {string} propertyName
+ */
+Obj.getProperty = function(object, propertyName) {
+    if (Obj.hasProperty(object, propertyName)) {
+        return object[propertyName];
+    }
+    return undefined;
+};
+
+/**
  * @static
  * @param {*} value
  * @return {number}
@@ -216,6 +311,28 @@ Obj.hashCode = function(value) {
     }
 };
 
+/**
+ * @static
+ * @param {Object} object
+ * @param {string} propertyName
+ */
+Obj.hasProperty = function(object, propertyName) {
+    return Obj.hasOwnProperty.call(object, propertyName)
+};
+
+Obj.getProperties = function() {
+    //TODO BRN: Test for Object.prototype.keys. If it exists, then use it, otherwise, use our own function
+
+};
+
+/**
+ * @param {*} value
+ * @return {Iterator}
+ */
+Obj.iterator = function(value) {
+    //TODO BRN: return the correct iterator for the given value. If not an iterable type, then throw an error
+};
+
 //TODO BRN: Think through this function a bit. Should the from object be cloned?
 /**
  * @param {*} from
@@ -223,9 +340,9 @@ Obj.hashCode = function(value) {
  */
 Obj.merge = function(from, into) {
     if (TypeUtil.isObject(from) && TypeUtil.isObject(into)) {
-        for (var fromName in from) {
-            into[fromName] = from[fromName];
-        }
+        Obj.forIn(from, function(prop, value) {
+            into[prop] = from[prop];
+        });
     } else {
         throw new Error("both from and into parameters must be objects");
     }

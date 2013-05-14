@@ -2,12 +2,9 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugioc')
+//@Export('IIterable')
 
-//@Export('IOCArg')
-
-//@Require('Class')
-//@Require('Obj')
+//@Require('Interface')
 
 
 //-------------------------------------------------------------------------------
@@ -21,47 +18,23 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var Obj =   bugpack.require('Obj');
+var Interface = bugpack.require('Interface');
 
 
 //-------------------------------------------------------------------------------
-// Declare Class
+// Declare Interface
 //-------------------------------------------------------------------------------
 
-var IOCArg = Class.extend(Obj, {
+var IIterable = Interface.declare({
 
     //-------------------------------------------------------------------------------
-    // Constructor
-    //-------------------------------------------------------------------------------
-
-    _constructor: function(ref) {
-
-        this._super();
-
-
-        //-------------------------------------------------------------------------------
-        // Declare Variables
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {string}
-         */
-        this.ref = ref;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Interface Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {string}
+     * @return {IIterator}
      */
-    getRef: function() {
-        return this.ref;
-    }
+    iterator: function() {}
 });
 
 
@@ -69,4 +42,4 @@ var IOCArg = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugioc.IOCArg', IOCArg);
+bugpack.export('IIterable', IIterable);

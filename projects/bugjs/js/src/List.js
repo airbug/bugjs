@@ -109,7 +109,7 @@ var List = Class.extend(Collection, {
      */
     forEach: function(func) {
         for (var i = 0, size = this.valueArray.length; i < size; i++) {
-            func(this.valueArray[i]);
+            func(this.valueArray[i], i);
         }
     },
 
@@ -143,7 +143,6 @@ var List = Class.extend(Collection, {
 
         if (index <= this.getCount()) {
             this.hashStore.addValue(value);
-            this.count++;
             this.valueArray.splice(index, 0, value);
         } else {
             throw new Error("Index out of bounds");
@@ -216,7 +215,6 @@ var List = Class.extend(Collection, {
         var value = this.getAt(index);
         var result = this.hashStore.removeValue(value);
         if (result) {
-            this.count--;
             this.valueArray.splice(index, 1);
         }
         return value;

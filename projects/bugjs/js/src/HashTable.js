@@ -80,6 +80,11 @@ var HashTable = Class.extend(Obj, {
      */
     containsKey: function(key) {
         var keyHashCode = Obj.hashCode(key);
+
+        // NOTE BRN: We don't need to use Obj.getProperty here because we only use numbers (hashcodes) as properties on the
+        // hashTableNodeObject object. Those will never conflict with our native properties. We also do not extend the prototype of
+        // the hashTableNodeObject object. So we shouldn't run in to conflicts with prototype values.
+
         var hashTableNode = this.hashTableNodeObject[keyHashCode];
         if (hashTableNode) {
             return hashTableNode.containsKey(key);
@@ -93,8 +98,9 @@ var HashTable = Class.extend(Obj, {
      */
     containsValue: function(value) {
 
-        // NOTE BRN: The for in operator will only enumerate over our own properties, not the object's built in
-        // properties. So it should be safe to access this.valueObject[key]
+        // NOTE BRN: We don't need to use Obj.forIn here because we only use numbers (hashcodes) as properties on the
+        // hashTableNodeObject object. Those will never conflict with our native properties. We also do not extend the prototype of
+        // the hashTableNodeObject object. So we shouldn't run in to conflicts with prototype values.
 
         for (var keyHashCode in this.hashTableNodeObject) {
             var hashTableNode = this.hashTableNodeObject[keyHashCode];
@@ -106,9 +112,15 @@ var HashTable = Class.extend(Obj, {
     },
 
     /**
+     * NOTE BRN:
      * @param {function(*)} func
      */
     forEach: function(func) {
+
+        // NOTE BRN: We don't need to use Obj.forIn here because we only use numbers (hashcodes) as properties on the
+        // hashTableNodeObject object. Those will never conflict with our native properties. We also do not extend the prototype of
+        // the hashTableNodeObject object. So we shouldn't run in to conflicts with prototype values.
+
         for (var keyHashCode in this.hashTableNodeObject) {
             var hashTableNode = this.hashTableNodeObject[keyHashCode];
             hashTableNode.getValueArray().forEach(function(value) {
@@ -123,6 +135,11 @@ var HashTable = Class.extend(Obj, {
      */
     get: function(key) {
         var keyHashCode = Obj.hashCode(key);
+
+        // NOTE BRN: We don't need to use Obj.getProperty here because we only use numbers (hashcodes) as properties on the
+        // hashTableNodeObject object. Those will never conflict with our native properties. We also do not extend the prototype of
+        // the hashTableNodeObject object. So we shouldn't run in to conflicts with prototype values.
+
         var hashTableNode = this.hashTableNodeObject[keyHashCode];
         if (hashTableNode) {
             return hashTableNode.get(key);
@@ -135,6 +152,11 @@ var HashTable = Class.extend(Obj, {
      */
     getKeyArray: function() {
         var keysArray = [];
+
+        // NOTE BRN: We don't need to use Obj.forIn here because we only use numbers (hashcodes) as properties on the
+        // hashTableNodeObject object. Those will never conflict with our native properties. We also do not extend the prototype of
+        // the hashTableNodeObject object. So we shouldn't run in to conflicts with prototype values.
+
         for (var keyHashCode in this.hashTableNodeObject) {
             var hashTableNode = this.hashTableNodeObject[keyHashCode];
             keysArray = keysArray.concat(hashTableNode.getKeyArray());
@@ -147,6 +169,11 @@ var HashTable = Class.extend(Obj, {
      */
     getValueArray: function() {
         var valuesArray = [];
+
+        // NOTE BRN: We don't need to use Obj.forIn here because we only use numbers (hashcodes) as properties on the
+        // hashTableNodeObject object. Those will never conflict with our native properties. We also do not extend the prototype of
+        // the hashTableNodeObject object. So we shouldn't run in to conflicts with prototype values.
+
         for (var keyHashCode in this.hashTableNodeObject) {
             var hashTableNode = this.hashTableNodeObject[keyHashCode];
             valuesArray = valuesArray.concat(hashTableNode.getValueArray());
@@ -168,6 +195,11 @@ var HashTable = Class.extend(Obj, {
      */
     put: function(key, value) {
         var keyHashCode = Obj.hashCode(key);
+
+        // NOTE BRN: We don't need to use Obj.getProperty here because we only use numbers (hashcodes) as properties on the
+        // hashTableNodeObject object. Those will never conflict with our native properties. We also do not extend the prototype of
+        // the hashTableNodeObject object. So we shouldn't run in to conflicts with prototype values.
+
         var hashTableNode = this.hashTableNodeObject[keyHashCode];
         if (!hashTableNode) {
             hashTableNode = new HashTableNode();
@@ -186,6 +218,11 @@ var HashTable = Class.extend(Obj, {
      */
     remove: function(key) {
         var keyHashCode = Obj.hashCode(key);
+
+        // NOTE BRN: We don't need to use Obj.getProperty here because we only use numbers (hashcodes) as properties on the
+        // hashTableNodeObject object. Those will never conflict with our native properties. We also do not extend the prototype of
+        // the hashTableNodeObject object. So we shouldn't run in to conflicts with prototype values.
+
         var hashTableNode = this.hashTableNodeObject[keyHashCode];
         var returnValue = undefined;
         if (hashTableNode) {

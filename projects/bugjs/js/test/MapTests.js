@@ -239,6 +239,93 @@ annotate(mapDataTypeKeyTest).with(
     test().name("Map - data type key test")
 );
 
-//TODO BRN: Add a test for native javascript object names such as "constructor" and "hasOwnProperty"
+
+/**
+ * This tests..
+ * 1) That keys that are the names of native js functions are not present in the map when the map is empty
+ */
+var mapGetNativeJavascriptObjectNamesOfEmptyMapTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.map = new Map();
+        this.keys = [
+            'toString',
+            'toLocaleString',
+            'valueOf',
+            'hasOwnProperty',
+            'isPrototypeOf',
+            'propertyIsEnumerable',
+            'constructor'
+        ];
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        var _this = this;
+        this.keys.forEach(function(key) {
+            test.assertEqual(_this.map.get(key), undefined,
+                "Assert value mapped to native key '" + key + "' is undefined.");
+        })
+    }
+};
+annotate(mapGetNativeJavascriptObjectNamesOfEmptyMapTest).with(
+    test().name("Map - get() native javascript object names on empty map test")
+);
+
+
+/**
+ *
+ */
+var mapNativeJavascriptObjectNamesPutGetTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.map = new Map();
+        this.keys = [
+            'toString',
+            'toLocaleString',
+            'valueOf',
+            'hasOwnProperty',
+            'isPrototypeOf',
+            'propertyIsEnumerable',
+            'constructor'
+        ];
+        this.values = [
+            "value1",
+            "value2",
+            "value3",
+            "value4",
+            "value5",
+            "value6",
+            "value7"
+        ];
+        for (var i = 0, size = this.keys.length; i < size; i++) {
+            this.map.put(this.keys[i], this.values[i]);
+        }
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        for (var i = 0, size = this.keys.length; i < size; i++) {
+            test.assertEqual(this.map.get(this.keys[i]), this.values[i],
+                "Assert that key '" + this.keys[i] + "' correctly mapped to value '" + this.values[i] + "'");
+        }
+    }
+};
+annotate(mapNativeJavascriptObjectNamesPutGetTest).with(
+    test().name("Map - native javascript object names put/get test")
+);
+
 //TODO BRN: Add a remove test
 

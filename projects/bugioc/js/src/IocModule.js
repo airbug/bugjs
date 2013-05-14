@@ -4,7 +4,7 @@
 
 //@Package('bugioc')
 
-//@Export('IOCModule')
+//@Export('IocModule')
 
 //@Require('Class')
 //@Require('Obj')
@@ -31,7 +31,7 @@ var Set =   bugpack.require('Set');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var IOCModule = Class.extend(Obj, {
+var IocModule = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -48,19 +48,19 @@ var IOCModule = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {Set<IOCArg>}
+         * @type {Set<IocArg>}
          */
         this.iocArgSet = new Set();
 
         /**
          * @private
-         * @type {IOCConfiguration}
+         * @type {IocConfiguration}
          */
         this.iocConfiguration = null;
 
         /**
          * @private
-         * @type {Set<IOCProperty>}
+         * @type {Set<IocProperty>}
          */
         this.iocPropertySet = new Set();
 
@@ -78,9 +78,9 @@ var IOCModule = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {IOCModule.Scope}
+         * @type {IocModule.Scope}
          */
-        this.scope = scope ? scope : IOCModule.Scope.SINGLETON;
+        this.scope = scope ? scope : IocModule.Scope.SINGLETON;
     },
 
 
@@ -92,21 +92,21 @@ var IOCModule = Class.extend(Obj, {
      *
      * @return {Set}
      */
-    getIOCArgSet: function() {
+    getIocArgSet: function() {
         return this.iocArgSet;
     },
 
     /**
-     * @retrurn {IOCConfiguration}
+     * @retrurn {IocConfiguration}
      */
-    getIOCConfiguration: function() {
+    getIocConfiguration: function() {
         return this.iocConfiguration;
     },
 
     /**
-     * @param {IOCConfiguration} iocConfiguration
+     * @param {IocConfiguration} iocConfiguration
      */
-    setIOCConfiguration: function(iocConfiguration) {
+    setIocConfiguration: function(iocConfiguration) {
         this.iocConfiguration = iocConfiguration;
     },
 
@@ -114,7 +114,7 @@ var IOCModule = Class.extend(Obj, {
      *
      * @return {Set}
      */
-    getIOCPropertySet: function() {
+    getIocPropertySet: function() {
         return this.iocPropertySet;
     },
 
@@ -133,7 +133,7 @@ var IOCModule = Class.extend(Obj, {
     },
 
     /**
-     * @return {IOCModule.Scope}
+     * @return {IocModule.Scope}
      */
     getScope: function() {
         return this.scope;
@@ -149,7 +149,7 @@ var IOCModule = Class.extend(Obj, {
      * @return {boolean}
      */
     equals: function(value) {
-        if (Class.doesExtend(value, IOCModule)) {
+        if (Class.doesExtend(value, IocModule)) {
             return Obj.equals(value.getName(), this.getName());
         }
         return false;
@@ -160,7 +160,7 @@ var IOCModule = Class.extend(Obj, {
      */
     hashCode: function() {
         if (!this._hashCode) {
-            this._hashCode = Obj.hashCode("[IOCModule]" + Obj.hashCode(this.name));
+            this._hashCode = Obj.hashCode("[IocModule]" + Obj.hashCode(this.name));
         }
         return this._hashCode;
     },
@@ -171,24 +171,24 @@ var IOCModule = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {IOCArg} iocArg
+     * @param {IocArg} iocArg
      */
-    addIOCArg: function(iocArg) {
+    addIocArg: function(iocArg) {
         if (!this.iocArgSet.contains(iocArg)) {
             this.iocArgSet.add(iocArg);
         } else {
-            throw new Error("Module already contains this IOCArg");
+            throw new Error("Module already contains this IocArg");
         }
     },
 
     /**
-     * @param {IOCProperty} iocProperty
+     * @param {IocProperty} iocProperty
      */
-    addIOCProperty: function(iocProperty) {
+    addIocProperty: function(iocProperty) {
         if (!this.iocPropertySet.contains(iocProperty)) {
             this.iocPropertySet.add(iocProperty);
         } else {
-            throw new Error("Module already contains this IOCProperty");
+            throw new Error("Module already contains this IocProperty");
         }
     }
 });
@@ -201,7 +201,7 @@ var IOCModule = Class.extend(Obj, {
 /**
  * @enum {string}
  */
-IOCModule.Scope = {
+IocModule.Scope = {
     PROTOTYPE: "prototype",
     SINGLETON: "singleton"
 };
@@ -211,4 +211,4 @@ IOCModule.Scope = {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugioc.IOCModule', IOCModule);
+bugpack.export('bugioc.IocModule', IocModule);

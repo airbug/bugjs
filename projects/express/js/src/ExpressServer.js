@@ -2,11 +2,13 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugioc')
+//@Package('express')
 
-//@Export('IConfiguration')
+//@Export('Expressserver')
 
-//@Require('Interface')
+//@Require('Class')
+//@Require('Obj')
+//@Require('Proxy')
 
 
 //-------------------------------------------------------------------------------
@@ -14,29 +16,55 @@
 //-------------------------------------------------------------------------------
 
 var bugpack = require('bugpack').context();
+var http    = require('http');
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Interface = bugpack.require('Interface');
+var Class   = bugpack.require('Class');
+var Obj     = bugpack.require('Obj');
+var Proxy   = bugpack.require('Proxy');
 
 
 //-------------------------------------------------------------------------------
-// Declare Interface
+// Declare Class
 //-------------------------------------------------------------------------------
 
-var IConfiguration = Interface.declare({
+var ExpressServer = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
-    // Interface Methods
+    // Constructor
     //-------------------------------------------------------------------------------
 
-    /**
-     * @param {function(Error)}
-     */
-    initializeConfiguration: function(callback) {}
+    _constructor: function(expressApp) {
+
+        this._super();
+
+
+        //-------------------------------------------------------------------------------
+        // Declare Variables
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {ExpressApp}
+         */
+        this.expressApp = expressApp;
+
+        /**
+         * @private
+         * @type {http.Server}
+         */
+        this.httpServer = http.createServer(this.expressApp);
+
+        Proxy.proxy(this, this.app, [
+            "configure",
+            "set",
+            "use"
+        ]);
+    }
 });
 
 
@@ -44,4 +72,4 @@ var IConfiguration = Interface.declare({
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugioc.IConfiguration', IConfiguration);
+bugpack.export('express.ExpressServer', ExpressServer);

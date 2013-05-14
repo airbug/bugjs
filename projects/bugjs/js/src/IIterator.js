@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugioc')
-
-//@Export('IConfiguration')
+//@Export('IIterator')
 
 //@Require('Interface')
 
@@ -27,16 +25,21 @@ var Interface = bugpack.require('Interface');
 // Declare Interface
 //-------------------------------------------------------------------------------
 
-var IConfiguration = Interface.declare({
+var IIterator = Interface.declare({
 
     //-------------------------------------------------------------------------------
     // Interface Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {function(Error)}
+     * @return {boolean}
      */
-    initializeConfiguration: function(callback) {}
+    hasNext: function() {},
+
+    /**
+     * @return {*}
+     */
+    next: function() {}
 });
 
 
@@ -44,4 +47,4 @@ var IConfiguration = Interface.declare({
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugioc.IConfiguration', IConfiguration);
+bugpack.export('IIterator', IIterator);

@@ -4,7 +4,7 @@
 
 //@Package('bugioc')
 
-//@Export('Scope')
+//@Export('IocProperty')
 
 //@Require('Class')
 //@Require('Obj')
@@ -22,20 +22,20 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class = bugpack.require('Class');
-var Obj = bugpack.require('Obj');
+var Obj =   bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Scope = Class.extend(Obj, {
+var IocProperty = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(bugIOC, iocModule) {
+    _constructor: function(name, ref) {
 
         this._super();
 
@@ -46,15 +46,15 @@ var Scope = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {*}
+         * @type {string}
          */
-        this.bugIOC = bugIOC;
+        this.name = name;
 
         /**
          * @private
-         * @type {IocModule}
+         * @type {string}
          */
-        this.iocModule = iocModule;
+        this.ref = ref;
     },
 
 
@@ -63,50 +63,43 @@ var Scope = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {IocModule}
+     * @return {string}
      */
-    getIocModule: function() {
-        return this.iocModule;
+    getName: function() {
+        return this.name;
+    },
+
+    /**
+     * @return {string}
+     */
+    getRef: function() {
+        return this.ref;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Object Implementation
     //-------------------------------------------------------------------------------
 
     /**
-     * @abstract
-     * @return {*}
+     * @param {*} value
+     * @return {boolean}
      */
-    generateModule: function() {
-
+    equals: function(value) {
+        if (Class.doesExtend(value, IocProperty)) {
+            return Obj.equals(value.getName(), this.getName());
+        }
+        return false;
     },
 
-    //-------------------------------------------------------------------------------
-    // Protected Class Methods
-    //-------------------------------------------------------------------------------
-
     /**
-     * @protected
-     * @return {*}
+     * @return {number}
      */
-    createModule: function() {
-        var _this = this;
-        var configuration = this.bugIOC.findConfigurationByIocModule(this.iocModule);
-        var args = [];
-        var iocArgSet = this.iocModule.getIocArgSet();
-        iocArgSet.forEach(function(iocArg) {
-            var refModule = _this.bugIOC.generateModuleByName(iocArg.getRef());
-            args.push(refModule);
-        });
-
-        var module = configuration[this.iocModule.getMethodName()].apply(configuration, args);
-
-        var iocPropertySet = this.iocModule.getIocPropertySet();
-        iocPropertySet.forEach(function(iocProperty) {
-            module[iocProperty.getName()] = _this.bugIOC.generateModuleByName(iocProperty.getRef());
-        });
-        return module;
+    hashCode: function() {
+        if (!this._hashCode) {
+            this._hashCode = Obj.hashCode("[IocProperty]" + Obj.hashCode(this.name));
+        }
+        return this._hashCode;
     }
 });
 
@@ -115,4 +108,4 @@ var Scope = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugioc.Scope', Scope);
+bugpack.export('bugioc.IocProperty', IocProperty);

@@ -9,7 +9,7 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('annotate.Annotate')
-//@Require('bugioc.BugIOC')
+//@Require('bugioc.BugIoc')
 
 
 //-------------------------------------------------------------------------------
@@ -26,7 +26,7 @@ var bugpack = require('bugpack').context();
 var Class =     bugpack.require('Class');
 var Obj =       bugpack.require('Obj');
 var Annotate =  bugpack.require('annotate.Annotate');
-var BugIOC =    bugpack.require('bugioc.BugIOC');
+var BugIoc =    bugpack.require('bugioc.BugIoc');
 
 
 //-------------------------------------------------------------------------------
@@ -96,7 +96,7 @@ var AutowiredScan = Class.extend(Obj, {
             var _this = this;
             currentConstructor.apply(this, arguments);
             propertyAnnotationArray.forEach(function(propertyAnnotation) {
-                _this[propertyAnnotation.getName()] = BugIOC.generateModuleByName(propertyAnnotation.getRef());
+                _this[propertyAnnotation.getName()] = BugIoc.generateModuleByName(propertyAnnotation.getRef());
             });
         };
     }

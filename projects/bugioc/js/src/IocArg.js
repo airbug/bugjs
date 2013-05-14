@@ -4,7 +4,7 @@
 
 //@Package('bugioc')
 
-//@Export('IOCProperty')
+//@Export('IocArg')
 
 //@Require('Class')
 //@Require('Obj')
@@ -29,13 +29,13 @@ var Obj =   bugpack.require('Obj');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var IOCProperty = Class.extend(Obj, {
+var IocArg = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(name, ref) {
+    _constructor: function(ref) {
 
         this._super();
 
@@ -43,12 +43,6 @@ var IOCProperty = Class.extend(Obj, {
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {string}
-         */
-        this.name = name;
 
         /**
          * @private
@@ -65,41 +59,8 @@ var IOCProperty = Class.extend(Obj, {
     /**
      * @return {string}
      */
-    getName: function() {
-        return this.name;
-    },
-
-    /**
-     * @return {string}
-     */
     getRef: function() {
         return this.ref;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Object Implementation
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {*} value
-     * @return {boolean}
-     */
-    equals: function(value) {
-        if (Class.doesExtend(value, IOCProperty)) {
-            return Obj.equals(value.getName(), this.getName());
-        }
-        return false;
-    },
-
-    /**
-     * @return {number}
-     */
-    hashCode: function() {
-        if (!this._hashCode) {
-            this._hashCode = Obj.hashCode("[IOCProperty]" + Obj.hashCode(this.name));
-        }
-        return this._hashCode;
     }
 });
 
@@ -108,4 +69,4 @@ var IOCProperty = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugioc.IOCProperty', IOCProperty);
+bugpack.export('bugioc.IocArg', IocArg);

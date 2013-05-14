@@ -11,11 +11,11 @@
 //@Require('Obj')
 //@Require('annotate.Annotate')
 //@Require('bugioc.AutowiredScan')
-//@Require('bugioc.BugIOC')
-//@Require('bugioc.IOCArg')
-//@Require('bugioc.IOCConfiguration')
-//@Require('bugioc.IOCModule')
-//@Require('bugioc.IOCProperty')
+//@Require('bugioc.BugIoc')
+//@Require('bugioc.IocArg')
+//@Require('bugioc.IocConfiguration')
+//@Require('bugioc.IocModule')
+//@Require('bugioc.IocProperty')
 
 
 //-------------------------------------------------------------------------------
@@ -34,11 +34,11 @@ var Map =               bugpack.require('Map');
 var Obj =               bugpack.require('Obj');
 var Annotate =          bugpack.require('annotate.Annotate');
 var AutowiredScan =     bugpack.require('bugioc.AutowiredScan');
-var BugIOC =            bugpack.require('bugioc.BugIOC');
-var IOCArg =            bugpack.require('bugioc.IOCArg');
-var IOCConfiguration =  bugpack.require('bugioc.IOCConfiguration');
-var IOCModule =         bugpack.require('bugioc.IOCModule');
-var IOCProperty =       bugpack.require('bugioc.IOCProperty');
+var BugIoc =            bugpack.require('bugioc.BugIoc');
+var IocArg =            bugpack.require('bugioc.IocArg');
+var IocConfiguration =  bugpack.require('bugioc.IocConfiguration');
+var IocModule =         bugpack.require('bugioc.IocModule');
+var IocProperty =       bugpack.require('bugioc.IocProperty');
 
 
 //-------------------------------------------------------------------------------
@@ -69,9 +69,9 @@ var ConfigurationScan = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {Map<Class, IOCConfiguration>}
+         * @type {Map<Class, IocConfiguration>}
          */
-        this.configurationClassToIOCConfigurationMap = new Map();
+        this.configurationClassToIocConfigurationMap = new Map();
     },
 
 
@@ -80,9 +80,9 @@ var ConfigurationScan = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @param {function(Error)} callback
      */
-    scan: function() {
+    scan: function(callback) {
         var _this = this;
         this.autowiredScan.scan();
         var configurationAnnotations = Annotate.getAnnotationsByType("Configuration");
@@ -90,9 +90,9 @@ var ConfigurationScan = Class.extend(Obj, {
             configurationAnnotations.forEach(function(annotation) {
                 var configurationClass = annotation.getReference();
                 var moduleAnnotationArray = annotation.getModules();
-                _this.createIOCConfiguration(configurationClass, moduleAnnotationArray);
+                _this.createIocConfiguration(configurationClass, moduleAnnotationArray);
             });
-            BugIOC.process();
+            BugIoc.process(callback);
         }
     },
 
@@ -104,10 +104,10 @@ var ConfigurationScan = Class.extend(Obj, {
     /**
      * @private
      * @param {ArgAnnotation} argAnnotation
-     * @return {IOCArg}
+     * @return {IocArg}
      */
-    createIOCArg: function(argAnnotation) {
-        return new IOCArg(argAnnotation.getRef());
+    createIocArg: function(argAnnotation) {
+        return new IocArg(argAnnotation.getRef());
     },
 
     /**
@@ -115,36 +115,36 @@ var ConfigurationScan = Class.extend(Obj, {
      * @param {Class} configurationClass
      * @param {Array<ModuleAnnotation>} moduleAnnotationArray
      */
-    createIOCConfiguration: function(configurationClass, moduleAnnotationArray) {
+    createIocConfiguration: function(configurationClass, moduleAnnotationArray) {
         var _this = this;
-        if (!this.configurationClassToIOCConfigurationMap.containsKey(configurationClass)) {
-            var iocConfiguration = new IOCConfiguration(configurationClass);
+        if (!this.configurationClassToIocConfigurationMap.containsKey(configurationClass)) {
+            var iocConfiguration = new IocConfiguration(configurationClass);
             moduleAnnotationArray.forEach(function(moduleAnnotation) {
-                var iocModule = _this.createIOCModule(moduleAnnotation);
-                iocConfiguration.addIOCModule(iocModule)
+                var iocModule = _this.createIocModule(moduleAnnotation);
+                iocConfiguration.addIocModule(iocModule)
             });
-            this.configurationClassToIOCConfigurationMap.put(configurationClass, iocConfiguration);
-            BugIOC.registerIOCConfiguration(iocConfiguration);
+            this.configurationClassToIocConfigurationMap.put(configurationClass, iocConfiguration);
+            BugIoc.registerIocConfiguration(iocConfiguration);
         }
     },
 
     /**
      * @private
      * @param {ModuleAnnotation} moduleAnnotation
-     * @return {IOCModule}
+     * @return {IocModule}
      */
-    createIOCModule: function(moduleAnnotation) {
+    createIocModule: function(moduleAnnotation) {
         var _this = this;
-        var iocModule = new IOCModule(moduleAnnotation.getMethodName(), moduleAnnotation.getName(), moduleAnnotation.getScope());
+        var iocModule = new IocModule(moduleAnnotation.getMethodName(), moduleAnnotation.getName(), moduleAnnotation.getScope());
         var argAnnotationArray = moduleAnnotation.getArgs();
         argAnnotationArray.forEach(function(argAnnotation) {
-            var iocArg = _this.createIOCArg(argAnnotation);
-            iocModule.addIOCArg(iocArg);
+            var iocArg = _this.createIocArg(argAnnotation);
+            iocModule.addIocArg(iocArg);
         });
         var propertyAnnotationArray = moduleAnnotation.getProperties();
         propertyAnnotationArray.forEach(function(propertyAnnotation) {
-            var iocProperty = _this.createIOCProperty(propertyAnnotation);
-            iocModule.addIOCProperty(iocProperty);
+            var iocProperty = _this.createIocProperty(propertyAnnotation);
+            iocModule.addIocProperty(iocProperty);
         });
         return iocModule;
     },
@@ -152,10 +152,10 @@ var ConfigurationScan = Class.extend(Obj, {
     /**
      * @private
      * @param {PropertyAnnotation} propertyAnnotation
-     * @return {IOCProperty}
+     * @return {IocProperty}
      */
-    createIOCProperty: function(propertyAnnotation) {
-        return new IOCProperty(propertyAnnotation.getName(), propertyAnnotation.getRef());
+    createIocProperty: function(propertyAnnotation) {
+        return new IocProperty(propertyAnnotation.getName(), propertyAnnotation.getRef());
     }
 });
 

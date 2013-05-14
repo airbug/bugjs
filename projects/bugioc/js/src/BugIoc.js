@@ -4,7 +4,7 @@
 
 //@Package('bugioc')
 
-//@Export('BugIOC')
+//@Export('BugIoc')
 
 //@Require('Class')
 //@Require('DependencyGraph')
@@ -12,7 +12,9 @@
 //@Require('Obj')
 //@Require('Proxy')
 //@Require('Set')
-//@Require('bugioc.IOCModule')
+//@Require('bugflow.BugFlow')
+//@Require('bugioc.IConfiguration')
+//@Require('bugioc.IocModule')
 //@Require('bugioc.PrototypeScope')
 //@Require('bugioc.SingletonScope')
 
@@ -28,22 +30,31 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =             bugpack.require('Class');
-var DependencyGraph =   bugpack.require('DependencyGraph');
-var Map =               bugpack.require('Map');
-var Obj =               bugpack.require('Obj');
-var Proxy =             bugpack.require('Proxy');
-var Set =               bugpack.require('Set');
-var IOCModule =         bugpack.require('bugioc.IOCModule');
-var PrototypeScope =    bugpack.require('bugioc.PrototypeScope');
-var SingletonScope =    bugpack.require('bugioc.SingletonScope');
+var Class           = bugpack.require('Class');
+var DependencyGraph = bugpack.require('DependencyGraph');
+var Map             = bugpack.require('Map');
+var Obj             = bugpack.require('Obj');
+var Proxy           = bugpack.require('Proxy');
+var Set             = bugpack.require('Set');
+var BugFlow         = bugpack.require('bugflow.BugFlow');
+var IConfiguration  = bugpack.require('bugioc.IConfiguration');
+var IocModule       = bugpack.require('bugioc.IocModule');
+var PrototypeScope  = bugpack.require('bugioc.PrototypeScope');
+var SingletonScope  = bugpack.require('bugioc.SingletonScope');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var $forEachParallel      = BugFlow.$forEachParallel;
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var BugIOC = Class.extend(Obj, {
+var BugIoc = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -66,27 +77,27 @@ var BugIOC = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {Map<IOCConfiguration, *>}
+         * @type {Map<IocConfiguration, *>}
          */
         this.iocConfigurationToConfigurationMap = new Map();
 
         /**
          * @private
-         * @type {Map<IOCModule, Scope>}
+         * @type {Map<IocModule, Scope>}
          */
         this.iocModuleToScopeMap = new Map();
 
         /**
          * @private
-         * @type {Map<string, IOCModule>}
+         * @type {Map<string, IocModule>}
          */
-        this.moduleNameToIOCModuleMap = new Map();
+        this.moduleNameToIocModuleMap = new Map();
 
         /**
          * @private
          * @type {List<Object>}
          */
-        this.registeredIOCConfigurationSet = new Set();
+        this.registeredIocConfigurationSet = new Set();
     },
 
 
@@ -95,27 +106,27 @@ var BugIOC = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {IOCModule} iocModule
+     * @param {IocModule} iocModule
      * @return {*}
      */
-    findConfigurationByIOCModule: function(iocModule) {
-        var iocConfiguration = iocModule.getIOCConfiguration();
+    findConfigurationByIocModule: function(iocModule) {
+        var iocConfiguration = iocModule.getIocConfiguration();
         return this.iocConfigurationToConfigurationMap.get(iocConfiguration);
     },
 
     /**
      * @param {string} name
-     * @return {IOCModule}
+     * @return {IocModule}
      */
-    findIOCModuleByName: function(name) {
-        return this.moduleNameToIOCModuleMap.get(name);
+    findIocModuleByName: function(name) {
+        return this.moduleNameToIocModuleMap.get(name);
     },
 
     /**
-     * @param {IOCModule} iocModule
+     * @param {IocModule} iocModule
      * @return {Scope}
      */
-    findScopeByIOCModule: function(iocModule) {
+    findScopeByIocModule: function(iocModule) {
         return this.iocModuleToScopeMap.get(iocModule);
     },
 
@@ -124,27 +135,27 @@ var BugIOC = Class.extend(Obj, {
      * @return {*}
      */
     generateModuleByName: function(moduleName) {
-        var iocModule = this.findIOCModuleByName(moduleName);
+        var iocModule = this.findIocModuleByName(moduleName);
         return this.generateModule(iocModule);
     },
 
     /**
-     *
+     * @param {function(Error)} callback
      */
-    process: function() {
-        this.buildModuleNameToIOCModuleMap();
+    process: function(callback) {
+        this.buildModuleNameToIocModuleMap();
         this.buildDependencyGraph();
-        this.processIOCConfigurations();
-        this.processIOCModules();
-        this.initializeConfigurations();
+        this.processIocConfigurations();
+        this.processIocModules();
+        this.initializeConfigurations(callback);
     },
 
     /**
-     * @param {IOCConfiguration} iocConfiguration
+     * @param {IocConfiguration} iocConfiguration
      */
-    registerIOCConfiguration: function(iocConfiguration) {
-        if (!this.registeredIOCConfigurationSet.contains(iocConfiguration)) {
-            this.registeredIOCConfigurationSet.add(iocConfiguration);
+    registerIocConfiguration: function(iocConfiguration) {
+        if (!this.registeredIocConfigurationSet.contains(iocConfiguration)) {
+            this.registeredIocConfigurationSet.add(iocConfiguration);
         }
     },
 
@@ -161,25 +172,25 @@ var BugIOC = Class.extend(Obj, {
 
         // NOTE BRN: Need to loop twice. First pass adds all the nodes to the graph. Second pass creates the edges.
 
-        this.moduleNameToIOCModuleMap.forEach(function(iocModule) {
+        this.moduleNameToIocModuleMap.forEach(function(iocModule) {
             _this.dependencyGraph.addNodeForValue(iocModule);
         });
-        this.moduleNameToIOCModuleMap.forEach(function(iocModule) {
-            var iocArgSet = iocModule.getIOCArgSet();
+        this.moduleNameToIocModuleMap.forEach(function(iocModule) {
+            var iocArgSet = iocModule.getIocArgSet();
             iocArgSet.forEach(function(iocArg) {
-                var refIOCModule = _this.findIOCModuleByName(iocArg.getRef());
-                if (!refIOCModule) {
-                    throw new Error("Could not find IOCModule by the name '" + iocArg.getRef() + "'");
+                var refIocModule = _this.findIocModuleByName(iocArg.getRef());
+                if (!refIocModule) {
+                    throw new Error("Could not find IocModule by the name '" + iocArg.getRef() + "'");
                 }
-                _this.dependencyGraph.addDependency(iocModule, refIOCModule);
+                _this.dependencyGraph.addDependency(iocModule, refIocModule);
             });
-            var iocPropertySet = iocModule.getIOCPropertySet();
+            var iocPropertySet = iocModule.getIocPropertySet();
             iocPropertySet.forEach(function(iocProperty) {
-                var refIOCModule = _this.findIOCModuleByName(iocProperty.getRef());
-                if (!refIOCModule) {
-                    throw new Error("Could not find IOCModule by the name '" + iocProperty.getRef() + "'");
+                var refIocModule = _this.findIocModuleByName(iocProperty.getRef());
+                if (!refIocModule) {
+                    throw new Error("Could not find IocModule by the name '" + iocProperty.getRef() + "'");
                 }
-                _this.dependencyGraph.addDependency(iocModule, refIOCModule);
+                _this.dependencyGraph.addDependency(iocModule, refIocModule);
             });
         });
     },
@@ -187,22 +198,22 @@ var BugIOC = Class.extend(Obj, {
     /**
      * @private
      */
-    buildModuleNameToIOCModuleMap: function() {
+    buildModuleNameToIocModuleMap: function() {
         var _this = this;
-        this.registeredIOCConfigurationSet.forEach(function(configuration) {
-            var iocModuleSet = configuration.getIOCModuleSet();
+        this.registeredIocConfigurationSet.forEach(function(configuration) {
+            var iocModuleSet = configuration.getIocModuleSet();
             iocModuleSet.forEach(function(iocModule) {
-                if (_this.moduleNameToIOCModuleMap.containsKey(iocModule.getName())) {
-                    throw new Error("An IOCModule already exists with the name '" + iocModule.getName() +"'");
+                if (_this.moduleNameToIocModuleMap.containsKey(iocModule.getName())) {
+                    throw new Error("An IocModule already exists with the name '" + iocModule.getName() +"'");
                 }
-                _this.moduleNameToIOCModuleMap.put(iocModule.getName(), iocModule);
+                _this.moduleNameToIocModuleMap.put(iocModule.getName(), iocModule);
             });
         });
     },
 
     /**
      * @private
-     * @param {IOCConfiguration} iocConfiguration
+     * @param {IocConfiguration} iocConfiguration
      */
     generateConfiguration: function(iocConfiguration) {
         if (!this.iocConfigurationToConfigurationMap.containsKey(iocConfiguration)) {
@@ -210,31 +221,31 @@ var BugIOC = Class.extend(Obj, {
             var configuration = new configurationClass();
             this.iocConfigurationToConfigurationMap.put(iocConfiguration, configuration);
         } else {
-            throw new Error("A configuration has already been created for this IOCConfiguration");
+            throw new Error("A configuration has already been created for this IocConfiguration");
         }
     },
 
     /**
      * @private
-     * @param {IOCModule} iocModule
+     * @param {IocModule} iocModule
      * @return {*}
      */
     generateModule: function(iocModule) {
-        var scope = this.findScopeByIOCModule(iocModule);
+        var scope = this.findScopeByIocModule(iocModule);
         return scope.generateModule();
     },
 
     /**
      * @private
-     * @param {IOCModule} iocModule
+     * @param {IocModule} iocModule
      */
     generateScope: function(iocModule) {
         var scope = null;
         switch(iocModule.getScope()) {
-            case IOCModule.Scope.PROTOTYPE:
+            case IocModule.Scope.PROTOTYPE:
                 scope = new PrototypeScope(this, iocModule);
                 break;
-            case IOCModule.Scope.SINGLETON:
+            case IocModule.Scope.SINGLETON:
                 scope = new SingletonScope(this, iocModule);
                 break;
         }
@@ -243,21 +254,26 @@ var BugIOC = Class.extend(Obj, {
 
     /**
      * @private
+     * @param {function(Error)} callback
      */
-    initializeConfigurations: function() {
-        this.iocConfigurationToConfigurationMap.forEach(function(configuration) {
+    initializeConfigurations: function(callback) {
+        $forEachParallel(this.iocConfigurationToConfigurationMap.getValueArray(), function(flow, configuration) {
             if (Class.doesImplement(configuration, IConfiguration)) {
-                configuration.initializeConfiguration();
+                configuration.initializeConfiguration(function(error) {
+                    flow.complete(error);
+                });
+            } else {
+                flow.complete();
             }
-        });
+        }).execute(callback);
     },
 
     /**
      * @private
      */
-    processIOCConfigurations: function() {
+    processIocConfigurations: function() {
         var _this = this;
-        this.registeredIOCConfigurationSet.forEach(function(iocConfiguration) {
+        this.registeredIocConfigurationSet.forEach(function(iocConfiguration) {
             _this.generateConfiguration(iocConfiguration);
         });
     },
@@ -265,9 +281,9 @@ var BugIOC = Class.extend(Obj, {
     /**
      * @private
      */
-    processIOCModules: function() {
+    processIocModules: function() {
         var _this = this;
-        /** @type {List<IOCModule>} */
+        /** @type {List<IocModule>} */
         var iocModulesInDependentOrder = this.dependencyGraph.getValuesInDependentOrder();
         iocModulesInDependentOrder.forEach(function(iocModule) {
             _this.generateScope(iocModule);
@@ -285,20 +301,20 @@ var BugIOC = Class.extend(Obj, {
 
 /**
  * @private
- * @type {BugIOC}
+ * @type {BugIoc}
  */
-BugIOC.instance = null;
+BugIoc.instance = null;
 
 
 //-------------------------------------------------------------------------------
 // Bootstrap
 //-------------------------------------------------------------------------------
 
-BugIOC.instance = new BugIOC();
-Proxy.proxy(BugIOC, BugIOC.instance, [
+BugIoc.instance = new BugIoc();
+Proxy.proxy(BugIoc, BugIoc.instance, [
     "generateModuleByName",
     "process",
-    "registerIOCConfiguration"
+    "registerIocConfiguration"
 ]);
 
 
@@ -306,4 +322,4 @@ Proxy.proxy(BugIOC, BugIOC.instance, [
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugioc.BugIOC', BugIOC);
+bugpack.export('bugioc.BugIoc', BugIoc);

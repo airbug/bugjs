@@ -218,3 +218,138 @@ var objCloneTest = {
 annotate(objCloneTest).with(
     test().name("Obj clone test")
 );
+
+
+/**
+ * This tests..
+ * 1) That the forIn function correctly iterates over an object and sets the context correctly
+ */
+var objForInIterationTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.testObject = {
+            prop1: "value1",
+            prop2: "value2",
+            prop3: "value3"
+        };
+        this.testContext = {
+            contextTrue: true
+        };
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        var iteratedProps = [];
+        var iteratedValues = [];
+        Obj.forIn(this.testObject, function(prop, value) {
+            iteratedProps.push(prop);
+            iteratedValues.push(value);
+            test.assertTrue(this.contextTrue,
+                "Assert that we are executing within the correct context");
+        }, this.testContext);
+
+        test.assertTrue((iteratedProps.length === 3),
+            "Assert we iterated over 3 properties");
+        test.assertTrue((iteratedValues.length === 3),
+            "Assert we iterated over 3 values");
+
+        var expectedProps = [
+            "prop1",
+            "prop2",
+            "prop3"
+        ];
+        for (var i = 0, size = iteratedProps.length; i < size; i++) {
+            var iteratedProp = iteratedProps[i];
+            var expectedPropIndex = expectedProps.indexOf(iteratedProp);
+            test.assertTrue((expectedPropIndex > -1),
+                "Assert prop was in the expectedProps");
+            expectedProps.splice(expectedPropIndex, 1);
+            test.assertEqual(iteratedValues[i], this.testObject[iteratedProp],
+                "Assert the value that was iterated is the one that corresponds to the property");
+        }
+    }
+};
+annotate(objForInIterationTest).with(
+    test().name("Obj forIn iteration test")
+);
+
+
+/**
+ * This tests..
+ * 1) That the forIn function correctly iterates over an object in IE8
+ * 2) dont enum properties are not correctly iterated when they are overridden in IE8
+ */
+var objForInIterationDontEnumPropertiesTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.testObject = {
+            prop1: "value1",
+            prop2: "value2",
+            prop3: "value3"
+        };
+        Obj.hasOwnProperty = function(prop) {
+            if (prop === 'toString') {
+                return true;
+            } else {
+                return this.hasOwnProperty(prop);
+            }
+        };
+        this.originalIsDontEnumSkipped = Obj.isDontEnumSkipped;
+        Obj.isDontEnumSkipped = true;
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        var iteratedProps = [];
+        var iteratedValues = [];
+        Obj.forIn(this.testObject, function(prop, value) {
+            iteratedProps.push(prop);
+            iteratedValues.push(value);
+        });
+
+        test.assertTrue((iteratedProps.length === 4),
+            "Assert we iterated over 4 properties");
+        test.assertTrue((iteratedValues.length === 4),
+            "Assert we iterated over 4 values");
+
+        var expectedProps = [
+            "prop1",
+            "prop2",
+            "prop3",
+            "toString"
+        ];
+        for (var i = 0, size = iteratedProps.length; i < size; i++) {
+            var iteratedProp = iteratedProps[i];
+            var expectedPropIndex = expectedProps.indexOf(iteratedProp);
+            test.assertTrue((expectedPropIndex > -1),
+                "Assert prop was in the expectedProps");
+            expectedProps.splice(expectedPropIndex, 1);
+            test.assertEqual(iteratedValues[i], this.testObject[iteratedProp],
+                "Assert the value that was iterated is the one that corresponds to the property");
+        }
+    },
+
+
+    // Tear Down Test
+    //-------------------------------------------------------------------------------
+
+    tearDown: function() {
+        Obj.hasOwnProperty = Object.prototype.hasOwnProperty;
+        Obj.isDontEnumSkipped = this.originalIsDontEnumSkipped;
+    }
+};
+annotate(objForInIterationDontEnumPropertiesTest).with(
+    test().name("Obj forIn iteration of don't enum properties test")
+);

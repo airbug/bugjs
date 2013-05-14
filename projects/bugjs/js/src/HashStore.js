@@ -76,6 +76,11 @@ var HashStore = Class.extend(Obj, {
      */
     getValueCount: function(value) {
         var valueHashCode = Obj.hashCode(value);
+
+        // NOTE BRN: We don't need to use Obj.getProperty here because we only use numbers (hashcodes) as properties on the
+        // hashStoreNodeObject object. Those will never conflict with our native properties. We also do not extend the prototype of
+        // the hashStoreNodeObject object. So we shouldn't run in to conflicts with prototype values.
+
         var hashStoreNode = this.hashStoreNodeObject[valueHashCode];
         if (hashStoreNode) {
             return hashStoreNode.getValueCount(value);
@@ -93,6 +98,11 @@ var HashStore = Class.extend(Obj, {
      */
     addValue: function(value) {
         var valueHashCode = Obj.hashCode(value);
+
+        // NOTE BRN: We don't need to use Obj.getProperty here because we only use numbers (hashcodes) as properties on the
+        // hashStoreNodeObject object. Those will never conflict with our native properties. We also do not extend the prototype of
+        // the hashStoreNodeObject object. So we shouldn't run in to conflicts with prototype values.
+
         var hashStoreNode = this.hashStoreNodeObject[valueHashCode];
         if (!hashStoreNode) {
             hashStoreNode = new HashStoreNode();
@@ -103,9 +113,22 @@ var HashStore = Class.extend(Obj, {
     },
 
     /**
+     * NOTE BRN: If a value in the HashStore is modified in one iteration and then visited at a later time, its value in the loop is
+     * its value at that later time. A value that is deleted before it has been visited will not be visited later.
+     * Values added to the HashStore over which iteration is occurring may either be visited or omitted from iteration.
+     * In general it is best not to add, modify or remove values from the object during iteration, other than the
+     * value currently being visited. There is no guarantee whether or not an added value will be visited, whether
+     * a modified value (other than the current one) will be visited before or after it is modified, or whether a
+     * deleted value will be visited before it is deleted.
+     *
      * @param {function(*)} func
      */
     forEach: function(func) {
+
+        // NOTE BRN: We don't need to use Obj.forIn here because we only use numbers (hashcodes) as properties on the
+        // hashStoreNodeObject object. Those will never conflict with our native properties. We also do not extend the prototype of
+        // the hashStoreNodeObject object. So we shouldn't run in to conflicts with prototype values.
+
         for (var valueHashCode in this.hashStoreNodeObject) {
             var hashStoreNode = this.hashStoreNodeObject[valueHashCode];
             hashStoreNode.getValueArray().forEach(function(value) {
@@ -119,6 +142,11 @@ var HashStore = Class.extend(Obj, {
      */
     getValueArray: function() {
         var valueArray = [];
+
+        // NOTE BRN: We don't need to use Obj.forIn here because we only use numbers (hashcodes) as properties on the
+        // hashStoreNodeObject object. Those will never conflict with our native properties. We also do not extend the prototype of
+        // the hashStoreNodeObject object. So we shouldn't run in to conflicts with prototype values.
+
         for (var valueHashCode in this.hashStoreNodeObject) {
             var hashStoreNode = this.hashStoreNodeObject[valueHashCode];
             valueArray = valueArray.concat(hashStoreNode.getValueArray());
@@ -132,6 +160,11 @@ var HashStore = Class.extend(Obj, {
      */
     hasValue: function(value) {
         var valueHashCode = Obj.hashCode(value);
+
+        // NOTE BRN: We don't need to use Obj.getProperty here because we only use numbers (hashcodes) as properties on the
+        // hashStoreNodeObject object. Those will never conflict with our native properties. We also do not extend the prototype of
+        // the hashStoreNodeObject object. So we shouldn't run in to conflicts with prototype values.
+
         var hashStoreNode = this.hashStoreNodeObject[valueHashCode];
         if (hashStoreNode) {
             return hashStoreNode.containsValue(value);
@@ -152,6 +185,11 @@ var HashStore = Class.extend(Obj, {
      */
     removeValue: function(value) {
         var valueHashCode = Obj.hashCode(value);
+
+        // NOTE BRN: We don't need to use Obj.getProperty here because we only use numbers (hashcodes) as properties on the
+        // hashStoreNodeObject object. Those will never conflict with our native properties. We also do not extend the prototype of
+        // the hashStoreNodeObject object. So we shouldn't run in to conflicts with prototype values.
+
         var hashStoreNode = this.hashStoreNodeObject[valueHashCode];
         var result = false;
         if (hashStoreNode) {

@@ -1,20 +1,14 @@
-/**
- * Based on the google closure library.
- * http://closure-library.googlecode.com/svn/docs/class_goog_structs_Set.html
- *
- * A Set
- * 1) Cannot contain duplicate elements.
- * 2) A 'duplicate' is considered any object where o1.equals(o2) or any primitive value where v1 === v2
- */
-
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('Set')
+//@Package('express')
+
+//@Export('ExpressApp')
 
 //@Require('Class')
-//@Require('Collection')
+//@Require('Obj')
+//@Require('Proxy')
 
 
 //-------------------------------------------------------------------------------
@@ -22,21 +16,23 @@
 //-------------------------------------------------------------------------------
 
 var bugpack = require('bugpack').context();
+var express = require('express');
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =         bugpack.require('Class');
-var Collection =    bugpack.require('Collection');
+var Class   = bugpack.require('Class');
+var Obj     = bugpack.require('Obj');
+var Proxy   = bugpack.require('Proxy');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Set = Class.extend(Collection, {
+var ExpressApp = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -50,39 +46,14 @@ var Set = Class.extend(Collection, {
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
-    },
 
+        this.app = express();
 
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
-
-
-    //-------------------------------------------------------------------------------
-    // Object Implementation
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @return {Set}
-     */
-    clone: function() {
-        var cloneSet = new Set();
-        cloneSet.addAll(this);
-        return cloneSet;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {*} value
-     */
-    add: function(value) {
-        if (!this.hashStore.hasValue(value)) {
-            this.hashStore.addValue(value);
-        }
+        Proxy.proxy(this, this.app, [
+            "configure",
+            "set",
+            "use"
+        ]);
     }
 });
 
@@ -91,4 +62,4 @@ var Set = Class.extend(Collection, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('Set', Set);
+bugpack.export('express.ExpressApp', ExpressApp);

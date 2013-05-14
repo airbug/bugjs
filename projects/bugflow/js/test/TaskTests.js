@@ -85,3 +85,38 @@ var bugflowTaskExecuteTaskTest = {
 annotate(bugflowTaskExecuteTaskTest).with(
     test().name("BugFlow task execute test")
 );
+
+
+/**
+ * This tests..
+ * 1) That the taskMethod is executed
+ * 2) That a Task can be executed without error when a callback is not supplied
+ */
+var bugflowTaskExecuteTaskWithoutCallbackTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function(test) {
+        var _this = this;
+        this.taskMethodExecuted = false;
+        this.taskMethod = function(flow) {
+            _this.taskMethodExecuted = true;
+            flow.complete();
+        };
+        this.task = new Task(this.taskMethod);
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        this.task.execute();
+        test.assertTrue(this.taskMethodExecuted,
+            "Assert task method was executed");
+    }
+};
+annotate(bugflowTaskExecuteTaskWithoutCallbackTest).with(
+    test().name("BugFlow task execute without callback test")
+);
