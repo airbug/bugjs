@@ -73,7 +73,7 @@ var Routes = Class.extend(Obj, {
     },
 
     /*
-     * @param {Array.<Route>} routesArray
+     * @param {Route | Array.<Route>} routesArray
      **/
     addAll: function(routesArray){
         var _this = this;
@@ -81,9 +81,7 @@ var Routes = Class.extend(Obj, {
             this.routes.concat(routesArray);
         } else {
             var routes = Array.prototype.slice.call(arguments);
-            routes.forEach(function(route){
-
-            })
+            _this.addAll(routes);
         }
     }
 });
