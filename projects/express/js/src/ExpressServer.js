@@ -82,13 +82,6 @@ var ExpressServer = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {function(Error)} callback
-     */
-    initialize: function(callback){
-        this.start(callback)
-    },
-
-    /**
      * @param callback
      */
     start: function(callback) {

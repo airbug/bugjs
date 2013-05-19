@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('Config')
+//@Require('TypeUtil')
 
 
 //-------------------------------------------------------------------------------
@@ -21,8 +22,9 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var Config          = bugpack.require('Config');
+var Class       = bugpack.require('Class');
+var Config      = bugpack.require('Config');
+var TypeUtil    = bugpack.require('TypeUtil');
 
 
 //-------------------------------------------------------------------------------
@@ -36,10 +38,38 @@ var SocketIoServerConfig = Class.extend(Config, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @return {boolean}
+     */
+    getMatchOriginProtocol: function() {
+        return this.properties.getProperty("matchOriginProtocol");
+    },
+
+    /**
+     * @return {string}
+     */
+    getResource: function() {
+        var resource = this.properties.getProperty("resource");
+        if (!TypeUtil.isString(resource)) {
+            resource = "/socket.io"
+        }
+        return resource;
+    },
+
+    /**
      * @return {Array.<string>}
      */
     getTransports: function() {
-        return this.properties.getProperty("transports");
+        var transports = this.properties.getProperty("transports");
+        if (!TypeUtil.isArray(transports)) {
+            transports = [
+                'websocket',
+                'flashsocket',
+                'htmlfile',
+                'xhr-polling',
+                'jsonp-polling'
+            ];
+        }
+        return transports;
     }
 });
 
