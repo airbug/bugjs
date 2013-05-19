@@ -2,11 +2,12 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('Message')
+//@Package('socketio:client')
+
+//@Export('SocketIoEmit')
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('TypeUtil')
 
 
 //-------------------------------------------------------------------------------
@@ -20,24 +21,24 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =     bugpack.require('Class');
-var Obj =       bugpack.require('Obj');
-var TypeUtil =  bugpack.require('TypeUtil');
+var Class   = bugpack.require('Class');
+var Obj     = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Message = Class.extend(Obj, {
+var SocketIoEmit = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(topic, data) {
+    _constructor: function(name, data) {
 
         this._super();
+
 
         //-------------------------------------------------------------------------------
         // Declare Variables
@@ -53,19 +54,7 @@ var Message = Class.extend(Obj, {
          * @private
          * @type {string}
          */
-        this.destinationAddress = null;
-
-        /**
-         * @private
-         * @type {string}
-         */
-        this.returnAddress = null;
-
-        /**
-         * @private
-         * @type {string}
-         */
-        this.topic = TypeUtil.isString(topic) ? topic : "";
+        this.name = name;
     },
 
 
@@ -83,59 +72,14 @@ var Message = Class.extend(Obj, {
     /**
      * @return {string}
      */
-    getDestinationAddress: function() {
-        return this.destinationAddress;
-    },
-
-    /**
-     * @param {string} destinationAddress
-     */
-    setDestinationAddress: function(destinationAddress) {
-        this.destinationAddress = destinationAddress;
-    },
-
-    /**
-     * @return {string}
-     */
-    getReturnAddress: function() {
-        return this.returnAddress;
-    },
-
-    /**
-     * @param {string} returnAddress
-     */
-    setReturnAddress: function(returnAddress) {
-        this.returnAddress = returnAddress;
-    },
-
-    /**
-     * @return {string}
-     */
-    getTopic: function() {
-        return this.topic;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @return {Object}
-     */
-    toObject: function() {
-        return {
-            topic: this.topic,
-            data: this.data,
-            destinationAddress: this.destinationAddress,
-            returnAddress: this.returnAddress
-        };
+    getName: function() {
+        return this.name;
     }
 });
 
 
 //-------------------------------------------------------------------------------
-// Export
+// Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('Message', Message);
+bugpack.export("socketio:client.SocketIoEmit", SocketIoEmit);

@@ -1,44 +1,46 @@
 //-------------------------------------------------------------------------------
-// Annotations
+// Requires
 //-------------------------------------------------------------------------------
 
-//@Package('express')
+//@Package('session')
 
-//@Export('ExpressServer')
+//@Export('Session')
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('Proxy')
+//@Require('TypeUtil')
+//@Require('UuidGenerator')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-var http    = require('http');
+var bugpack     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
-// BugPack
+// Common Modules
 //-------------------------------------------------------------------------------
 
-var Class   = bugpack.require('Class');
-var Obj     = bugpack.require('Obj');
-var Proxy   = bugpack.require('Proxy');
+var Class           = bugpack.require('Class');
+var Obj             = bugpack.require('Obj');
+var TypeUtil        = bugpack.require('TypeUtil');
+var UuidGenerator   = bugpack.require('UuidGenerator');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ExpressServer = Class.extend(Obj, {
+var Session = Class.extend(Obj, {
+
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(expressApp) {
+    _constructor: function(sessionObject) {
 
         this._super();
 
@@ -49,19 +51,17 @@ var ExpressServer = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {ExpressApp}
+         * @type {string}
          */
-        this.expressApp = expressApp;
+        this.sessionUuid = null;
 
-        /**
-         * @private
-         * @type {http.Server}
-         */
-        this.httpServer = http.createServer(this.expressApp.getApp());
-
-        Proxy.proxy(this, this.httpServer, [
-            "listen"
-        ]);
+        if (sessionObject) {
+            if (TypeUtil.isString(sessionObject.sessionUuid)) {
+                this.sessionUuid = sessionObject.sessionUuid;
+            }
+        } else {
+            this.sessionUuid = UuidGenerator.generateUuid();
+        }
     },
 
 
@@ -70,35 +70,17 @@ var ExpressServer = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {http.Server}
+     * @private
+     * @return {Session}
      */
-    getHttpServer: function() {
-        return this.httpServer;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {function(Error)} callback
-     */
-    initialize: function(callback){
-        this.start(callback)
-    },
-
-    /**
-     * @param callback
-     */
-    start: function(callback) {
-        this.httpServer.listen(this.expressApp.get('port'), callback);
+    getSessionUuid: function() {
+        return this.sessionUuid;
     }
 });
 
 
 //-------------------------------------------------------------------------------
-// Exports
+// Export
 //-------------------------------------------------------------------------------
 
-bugpack.export('express.ExpressServer', ExpressServer);
+bugpack.export('session.Session', Session);

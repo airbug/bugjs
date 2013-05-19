@@ -11,7 +11,6 @@
 //@Require('IMessageSender')
 //@Require('List')
 //@Require('Map')
-//@Require('Message')
 //@Require('MessageReceiver')
 //@Require('UuidGenerator')
 
@@ -34,7 +33,6 @@ var IMessageReceiver    = bugpack.require('IMessageReceiver');
 var IMessageSender      = bugpack.require('IMessageSender');
 var List                = bugpack.require('List');
 var Map                 = bugpack.require('Map');
-var Message             = bugpack.require('Message');
 var MessageSender       = bugpack.require('MessageReceiver');
 var UuidGenerator       = bugpack.require('UuidGenerator');
 
@@ -72,7 +70,7 @@ var Call = Class.extend(EventDispatcher, {
          * @private
          * @type {boolean}
          */
-        this.completed = false;
+        this.cleanedUp = false;
 
         /**
          * @private
@@ -138,10 +136,11 @@ var Call = Class.extend(EventDispatcher, {
 
     /**
      * @param {Message} message
+     * @param {string} channel
      */
-    sendMessage: function(message) {
+    sendMessage: function(message, channel) {
         message.setReturnAddress(this.address);
-        this.messageReceiver.receiveMessage(message);
+        this.messageReceiver.receiveMessage(message, channel);
     },
 
 
@@ -152,20 +151,20 @@ var Call = Class.extend(EventDispatcher, {
     /**
      *
      */
-    complete: function() {
-        if (!this.completed) {
-            this.completed = true;
-            this.dispatchEvent(new Event(Call.EventTypes.COMPLETE));
+    cleanup: function() {
+        if (!this.cleanedUp) {
+            this.cleanedUp = true;
+            this.dispatchEvent(new Event(Call.EventTypes.CLEANUP));
+            this.removeAllListeners();
         }
     },
 
     /**
-     * @param {string} messageTopic
-     * @param {Object} messageData
+     * @param {function(Event)} listenerFunction
+     * @param {Object} listenerContext
      */
-    send: function(messageTopic, messageData) {
-        var message = new Message(messageTopic, messageData);
-        this.sendMessage(message);
+    onMessage: function(listenerFunction, listenerContext) {
+        this.addEventListener(Call.EventTypes.MESSAGE, listenerFunction, listenerContext);
     }
 });
 
@@ -187,7 +186,7 @@ Class.implement(Call, IMessageSender);
  * @enum {string}
  */
 Call.EventTypes = {
-    COMPLETE: 'Call:Complete',
+    CLEANUP: 'Call:Cleanup',
     ERROR: 'Call:Error',
     MESSAGE: 'Call:Message'
 };

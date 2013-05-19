@@ -127,7 +127,7 @@ var CallManager = Class.extend(Obj, {
             this.registerdCallSet.add(call);
             this.incomingMessageRouter.addMessageReceiver(call);
             call.setMessageReceiver(this.outgoingMessageProxy);
-            call.addEventListener(Call.EventTypes.COMPLETE, this.hearCallComplete, this);
+            call.addEventListener(Call.EventTypes.CLEANUP, this.hearCallCleanup, this);
         }
     },
 
@@ -140,7 +140,7 @@ var CallManager = Class.extend(Obj, {
      * @private
      * @param {Event} event
      */
-    hearCallComplete: function(event) {
+    hearCallCleanup: function(event) {
         var call = event.getTarget();
         this.deregisterCall(call);
     }

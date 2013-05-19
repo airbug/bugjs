@@ -51,9 +51,41 @@ var ExpressApp = Class.extend(Obj, {
 
         Proxy.proxy(this, this.app, [
             "configure",
+            "on",
             "set",
             "use"
         ]);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {express}
+     */
+    getApp: function() {
+        return this.app;
+    },
+
+
+    configure: function() {
+        var _this = this;
+
+        // Shut Down
+        //-------------------------------------------------------------------------------
+
+        // Graceful Shutdown
+        process.on('SIGTERM', function () {
+            console.log("Server Closing");
+            _this.expressApp.close();
+        });
+
+        this.on('close', function () {
+            console.log("Server Closed");
+        });
+
     }
 });
 
