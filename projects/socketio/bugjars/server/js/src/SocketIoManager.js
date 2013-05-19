@@ -4,9 +4,10 @@
 
 //@Package('socketio:server')
 
-//@Export('SocketIoServer')
+//@Export('SocketIoManager')
 
 //@Require('Class')
+//@Require('Event')
 //@Require('EventDispatcher')
 //@Require('bugflow.BugFlow')
 
@@ -24,6 +25,7 @@ var io              = require('socket.io');
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
+var Event           = bugpack.require('Event');
 var EventDispatcher = bugpack.require('EventDispatcher');
 var BugFlow         = bugpack.require('bugflow.BugFlow');
 
@@ -33,7 +35,6 @@ var BugFlow         = bugpack.require('bugflow.BugFlow');
 //-------------------------------------------------------------------------------
 
 var $series             = BugFlow.$series;
-var $parallel           = BugFlow.$parallel;
 var $task               = BugFlow.$task;
 
 
@@ -50,6 +51,11 @@ var SocketIoManager = Class.extend(EventDispatcher, {
     _constructor: function(socketIoServer, namespace) {
 
         this._super();
+
+
+        //-------------------------------------------------------------------------------
+        // Declare Variables
+        //-------------------------------------------------------------------------------
 
         /**
          * @private
@@ -69,12 +75,26 @@ var SocketIoManager = Class.extend(EventDispatcher, {
     // Public Class Methods
     //-------------------------------------------------------------------------------
 
-    initialize: function() {
+    initialize: function(callback) {
+        var _this = this;
         this.ioManager.on("connection", function(socket) {
-
+            _this.dispatchEvent(new Event(SocketIoManager.EventTypes.CONNECTION, {
+                socket: socket
+            }));
         });
+
+        callback();
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Static Variables
+//-------------------------------------------------------------------------------
+
+SocketIoManager.EventTypes = {
+    CONNECTION: "SocketIoManager:Connection"
+};
 
 
 //-------------------------------------------------------------------------------
