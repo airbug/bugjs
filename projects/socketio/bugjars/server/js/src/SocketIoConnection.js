@@ -2,13 +2,14 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('express')
+//@Package('socketio:server')
 
-//@Export('ExpressApp')
+//@Export('SocketIoConnection')
 
 //@Require('Class')
-//@Require('Obj')
-//@Require('Proxy')
+//@Require('Event')
+//@Require('EventDispatcher')
+//@Require('UuidGenerator')
 
 
 //-------------------------------------------------------------------------------
@@ -16,29 +17,29 @@
 //-------------------------------------------------------------------------------
 
 var bugpack = require('bugpack').context();
-var express = require('express');
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class   = bugpack.require('Class');
-var Obj     = bugpack.require('Obj');
-var Proxy   = bugpack.require('Proxy');
+var Class           = bugpack.require('Class');
+var Event           = bugpack.require('Event');
+var EventDispatcher = bugpack.require('EventDispatcher');
+var UuidGenerator   = bugpack.require('UuidGenerator');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ExpressApp = Class.extend(Obj, {
+var SocketIoConnection = Class.extend(EventDispatcher, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(socket) {
 
         this._super();
 
@@ -47,14 +48,25 @@ var ExpressApp = Class.extend(Obj, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        this.app = express();
+        /**
+         * @private
+         * @type {*}
+         */
+        this.socket = socket;
 
-        Proxy.proxy(this, this.app, [
-            "configure",
-            "on",
-            "set",
-            "use"
-        ]);
+        /**
+         * @private
+         * @type {string}
+         */
+        this.uuid = UuidGenerator.generateUuid();
+
+        var _this = this;
+        this.socket.on("disconnect", function(data) {
+            _this.dispatchEvent(new Event(SocketIoConnection.EventTypes.DISCONNECT));
+        });
+        this.socket.on("message", function(data) {
+            _this.dispatchEvent(new Event(SocketIoConnection.EventTypes.MESSAGE, {data: data}));
+        });
     },
 
 
@@ -63,39 +75,30 @@ var ExpressApp = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {express}
+     * @private
+     * @return {string}
      */
-    getApp: function() {
-        return this.app;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Public Class Methods
-    //-------------------------------------------------------------------------------
-
-    configure: function() {
-        var _this = this;
-
-        // Shut Down
-        //-------------------------------------------------------------------------------
-
-        // Graceful Shutdown
-        process.on('SIGTERM', function () {
-            console.log("Server Closing");
-            _this.expressApp.close();
-        });
-
-        this.on('close', function () {
-            console.log("Server Closed");
-        });
-
+    getUuid: function() {
+        return this.uuid;
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Static Variables
+//-------------------------------------------------------------------------------
+
+/**
+ * @enum {string}
+ */
+SocketIoConnection.EventTypes = {
+    DISCONNECT: "SocketIoConnection:Disconnect",
+    MESSAGE:    "SocketIoConnection:Message"
+};
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('express.ExpressApp', ExpressApp);
+bugpack.export('socketio:server.SocketIoConnection', SocketIoConnection);

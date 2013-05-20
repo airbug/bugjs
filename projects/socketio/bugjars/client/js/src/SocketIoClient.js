@@ -1,15 +1,16 @@
 //-------------------------------------------------------------------------------
-// Annotations
+// Requires
 //-------------------------------------------------------------------------------
 
-//@Export('SocketIoMessageTransport')
+//@Package('socketio:client')
+
+//@Export('SocketIoClient')
 
 //@Require('Class')
-//@Require('IMessageReceiver')
-//@Require('Message')
-//@Require('Obj')
+//@Require('EventDispatcher')
+//@Require('Proxy')
 //@Require('Queue')
-//@Require('UuidGenerator')
+//@Require('socketio:client.SocketIoEmit')
 
 
 //-------------------------------------------------------------------------------
@@ -17,34 +18,31 @@
 //-------------------------------------------------------------------------------
 
 var bugpack = require('bugpack').context();
-var io =        require('socket.io-client');
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var IMessageReceiver    = bugpack.require('IMessageReceiver');
-var Message             = bugpack.require('Message');
-var Obj                 = bugpack.require('Obj');
+var Class           = bugpack.require('Class');
+var EventDispatcher = bugpack.require('EventDispatcher');
+var Proxy           = bugpack.require('Proxy');
 var Queue           = bugpack.require('Queue');
-var UuidGenerator       = bugpack.require('UuidGenerator');
+var SocketIoEmit    = bugpack.require('socketio:client.SocketIoEmit');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SocketIoMessageTransport = Class.extend(Obj, {
+var SocketIoClient = Class.extend(EventDispatcher, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(transport) {
+    _constructor: function(socketFactory, config) {
 
-        var _this = this;
         this._super();
 
 
@@ -54,22 +52,27 @@ var SocketIoMessageTransport = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {string}
+         * @type {SocketIoConfig}
          */
-        this.address = UuidGenerator.generateUuid();
+        this.config = config;
 
         /**
          * @private
-         * @type {MessageReceiver}
+         * @type {function()}
          */
-        this.incomingMessageReceiver = null;
-
+        this.initializeCallback = null;
 
         /**
          * @private
-         * @type {?string}
+         * @type {boolean}
          */
-        this.hostname = null;
+        this.initializeCallbackFired = false;
+
+        /**
+         * @private
+         * @type {boolean}
+         */
+        this.initialized = false;
 
         /**
          * @private
@@ -85,21 +88,9 @@ var SocketIoMessageTransport = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {Set}
-         */
-        this.messageChannels = new Set();
-
-        /**
-         * @private
          * @type {Queue}
          */
-        this.messageQueue = new Queue();
-
-        /**
-         * @private
-         * @type {?number}
-         */
-        this.port = null;
+        this.queue = new Queue();
 
         /**
          * @private
@@ -119,109 +110,111 @@ var SocketIoMessageTransport = Class.extend(Obj, {
          */
         this.socket = null;
 
+        /**
+         * @private
+         * @type {ISocketFactory}
+         */
+        this.socketFactory = socketFactory;
 
+
+        //-------------------------------------------------------------------------------
+        // Native Listeners
+        //-------------------------------------------------------------------------------
+
+        var _this = this;
         this.handleSocketConnect = function() {
             _this.isConnected = true;
             _this.isConnecting = false;
-            console.log('SocketIoTransport is connected');
-            _this.processMessageQueue();
+            console.log('SocketIoClient is connected');
+            _this.processEmitQueue();
         };
 
         this.handleSocketConnectError = function(error) {
             _this.isConnecting = false;
-            console.log('SocketIoTransport connect_error:', error);
+            console.log('SocketIoClient connect_error:', error);
         };
 
         this.handleSocketConnecting = function() {
-            console.log("SocketIoTransport connecting");
+            console.log("SocketIoClient connecting");
         };
 
         //TODO BRN: Not sure if this fires
         this.handleSocketDisconnect = function() {
             _this.isConnecting = false;
             _this.isConnected = false;
-            console.log('SocketIoTransport disconnected');
+            console.log('SocketIoClient disconnected');
         };
 
         //TODO BRN: Not sure if this fires
         this.handleSocketError = function(error) {
             _this.isConnecting = false;
             _this.processSocketError(error);
+            _this.retryConnect();
         };
 
         this.handleSocketMessage = function(message) {
             //TEST
-            console.log("SocketIoTransport message:", message);
-            _this.processSocketMessage(message, "message");
+            console.log("SocketIoClient message:", message);
+            _this.processSocketMessage(message);
         };
 
         this.handleSocketReconnect = function(reconnectCount) {
             _this.isConnected = true;
-            _this.processTrackingQueue();
-            console.log('SocketIoTransport reconnected - reconnectCount:' + reconnectCount);
+            _this.processEmitQueue();
+            console.log('SocketIoClient reconnected - reconnectCount:' + reconnectCount);
         };
 
         this.handleSocketReconnecting = function() {
-            console.log('SocketIoTransport reconnecting:');
+            console.log('SocketIoClient reconnecting:');
         };
 
         this.handleSocketReconnectFailed = function() {
-            console.log('SocketIoTransport reconnect_failed');
+            console.log('SocketIoClient reconnect_failed');
         };
     },
-
-
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @return {MessageReceiver}
-     */
-    getIncomingMessageReceiver: function() {
-        return this.incomingMessageReceiver;
-    },
-
-    /**
-     * @param {MessageReceiver} incomingMessageReceiver
-     */
-    setIncomingMessageReceiver: function(incomingMessageReceiver) {
-        this.incomingMessageReceiver = incomingMessageReceiver;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // IMessageReceiver Implementation
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @return {string}
-     */
-    getAddress: function() {
-        return this.address;
-    },
-
-    /**
-     * @param {Message} message
-     */
-    receiveMessage: function(message) {
-        this.queueMessage(message);
-        if (this.isConnected){
-            this.processMessageQueue();
-        }
-    },
-
 
     //-------------------------------------------------------------------------------
     // Class Methods
     //-------------------------------------------------------------------------------
 
-    configure: function(config) {
-        if (config) {
-            this.hostname = config.hostname ? config.hostname : this.hostname;
-            this.port = config.port ? config.port : this.port;
+    /**
+     * @param {string} emitName
+     * @param {Object} emitData
+     */
+    emit: function(emitName, emitData) {
+        if (this.initialized) {
+            var emit = new SocketIoEmit(emitName, emitData);
+            this.queueEmit(emit);
+            if (this.isConnected) {
+                this.processEmitQueue();
+            } else {
+                this.connect();
+            }
+        } else {
+            throw new Error("Must initialize SocketIoClient before calling send()");
         }
     },
+    
+    /**
+     * @param {function} callback
+     */
+    initialize: function(callback) {
+        if (!this.initialized) {
+            this.initialized = true;
+            this.initializeCallback = callback;
+            this.connect();
+        } else {
+            throw new Error("SonarbugClient has already been initialized.");
+        }
+    },
+
+    /**
+     * @param {Object} messageData
+     */
+    send: function(messageData) {
+        this.emit("message", messageData);
+    },
+
 
 
     //-------------------------------------------------------------------------------
@@ -230,12 +223,28 @@ var SocketIoMessageTransport = Class.extend(Obj, {
 
     /**
      * @private
+     * @param {Error=} error
+     */
+    completeInitialization: function(error) {
+        if (!this.initializeCallbackFired){
+            this.initializeCallbackFired = true;
+            if (this.initializeCallback) {
+                this.initializeCallback(error);
+            }
+        }
+    },
+
+    /**
+     * @private
      */
     connect: function() {
         if (!this.isConnected && !this.isConnecting) {
             this.isConnecting = true;
-            console.log('CallManager is attempting to connect...');
-            this.createSocket();
+            console.log('SocketIoClient is attempting to connect...');
+            if (this.socket) {
+                this.destroySocket();
+            }
+            this.socket = this.createSocket();
         }
     },
 
@@ -244,10 +253,10 @@ var SocketIoMessageTransport = Class.extend(Obj, {
      */
     createSocket: function() {
         var options = {
-            port: this.port
+            port: this.config.getPort(),
+            resource: this.config.getResource()
             //   , secure: false
             //   , document: 'document' in global ? document : false,
-            //resource: 'socket-api' // defaults to 'socket.io'
             //   , transports: io.transports
             //   , 'connect timeout': 10000
             //   , 'try multiple transports': true
@@ -261,7 +270,7 @@ var SocketIoMessageTransport = Class.extend(Obj, {
             //   , 'flash policy port': 10843
             //   , 'manualFlush': false
         };
-        this.socket = io.connect(this.hostname, options);
+        this.socket = this.socketFactory.createSocket(this.config.getHost(), options);
         this.socket.on('connect', this.handleSocketConnect);
         this.socket.on('connect_error', this.handleSocketConnectError);
         this.socket.on('connecting', this.handleSocketConnecting);
@@ -283,66 +292,87 @@ var SocketIoMessageTransport = Class.extend(Obj, {
 
     /**
      * @private
-     * @param {Message} message
      */
-    emitMessageOnSocket: function(message) {
-        this.socket.send(message.toObject());
-    },
-
-    /**
-     * @private
-     */
-    processMessageQueue: function() {
-        while (!this.messageQueue.isEmpty() && this.isConnected){
-            var message = this.queue.dequeue();
-            this.emitMessageOnSocket(message);
-        }
-    },
-
-    /**
-     * @private
-     * @param {Object} messageObject
-     * @param {string} channel
-     */
-    processSocketMessage: function(messageObject, channel) {
-        //TODO BRN: Should use BugMarshaller here to perform the conversion
-        if (messageObject) {
-            var message = new Message(messageObject.topic, messageObject.data);
-            if (messageObject.destinationAddress) {
-                message.setDestinationAddress(messageObject.destinationAddress);
-            }
-            if (messageObject.returnAddress) {
-                message.setReturnAddress(messageObject.returnAddress);
-            }
-            if (this.incomingMessageReceiver) {
-                this.incomingMessageReceiver.receiveMessage(message);
+    processEmitQueue: function() {
+        while (!this.queue.isEmpty() && this.isConnected){
+            var socketIoEmit = this.queue.dequeue();
+            if (socketIoEmit.getName() === "message") {
+                this.socketSend(socketIoEmit);
             } else {
-                throw new Error("Must set incomingMessageReceiver before it starts hearing events from the transport");
+                this.socketEmit(socketIoEmit);
             }
-        } else {
-            throw new Error("Message Transport received an incompatible message. message:" + message);
         }
     },
 
     /**
      * @private
-     * @param {Message} message
+     * @param {Error} error
      */
-    queueMessage: function(message) {
-        this.queue.enqueue(message);
+    processSocketError: function(error) {
+        this.dispatchEvent(new Event(SocketIoClient.EventTypes.ERROR, {error: error}));
+    },
+
+    /**
+     * @private
+     * @param {Object} message
+     */
+    processSocketMessage: function(message) {
+        this.dispatchEvent(new Event(SocketIoClient.EventTypes.MESSAGE, {message: message}));
+    },
+
+    /**
+     * @private
+     * @param {SocketIoEmit} socketIoEmit
+     */
+    queueEmit: function(socketIoEmit) {
+        this.queue.enqueue(socketIoEmit);
+    },
+
+    /**
+     * @private
+     */
+    retryConnect: function() {
+        if (this.retryAttempts < this.retryLimit) {
+            this.retryAttempts++;
+            this.connect();
+        } else {
+            this.completeInitialization(new Error("Maximum retries reached. Could not connect to sonarbug server."));
+        }
+    },
+
+    /**
+     * @private
+     * @param {SocketIoEmit} socketIoEmit
+     */
+    socketEmit: function(socketIoEmit) {
+        this.socket.emit(socketIoEmit.getName(), socketIoEmit.getData());
+    },
+    
+    /**
+     * @private
+     * @param {SocketIoEmit} socketIoEmit
+     */
+    socketSend: function(socketIoEmit) {
+        this.socket.send(socketIoEmit.getData());
     }
 });
 
 
 //-------------------------------------------------------------------------------
-// Interfaces
+// Static Variables
 //-------------------------------------------------------------------------------
 
-Class.implement(SocketIoMessageTransport, IMessageReceiver);
+/**
+ * @enum {string}
+ */
+SocketIoClient.EventTypes = {
+    ERROR: "SocketIoClient:Error",
+    MESSAGE: "SocketIoClient:Message"
+};
 
 
 //-------------------------------------------------------------------------------
-// Export
+// BugPack
 //-------------------------------------------------------------------------------
 
-bugpack.export('SocketIoMessageTransport', SocketIoMessageTransport);
+bugpack.export('socketio:client.SocketIoClient', SocketIoClient);

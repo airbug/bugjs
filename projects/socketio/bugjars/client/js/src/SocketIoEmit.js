@@ -2,13 +2,12 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('express')
+//@Package('socketio:client')
 
-//@Export('ExpressApp')
+//@Export('SocketIoEmit')
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('Proxy')
 
 
 //-------------------------------------------------------------------------------
@@ -16,7 +15,6 @@
 //-------------------------------------------------------------------------------
 
 var bugpack = require('bugpack').context();
-var express = require('express');
 
 
 //-------------------------------------------------------------------------------
@@ -25,20 +23,19 @@ var express = require('express');
 
 var Class   = bugpack.require('Class');
 var Obj     = bugpack.require('Obj');
-var Proxy   = bugpack.require('Proxy');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ExpressApp = Class.extend(Obj, {
+var SocketIoEmit = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(name, data) {
 
         this._super();
 
@@ -47,14 +44,17 @@ var ExpressApp = Class.extend(Obj, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        this.app = express();
+        /**
+         * @private
+         * @type {Object}
+         */
+        this.data = data;
 
-        Proxy.proxy(this, this.app, [
-            "configure",
-            "on",
-            "set",
-            "use"
-        ]);
+        /**
+         * @private
+         * @type {string}
+         */
+        this.name = name;
     },
 
 
@@ -63,33 +63,17 @@ var ExpressApp = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {express}
+     * @return {Object}
      */
-    getApp: function() {
-        return this.app;
+    getData: function() {
+        return this.data;
     },
 
-
-    //-------------------------------------------------------------------------------
-    // Public Class Methods
-    //-------------------------------------------------------------------------------
-
-    configure: function() {
-        var _this = this;
-
-        // Shut Down
-        //-------------------------------------------------------------------------------
-
-        // Graceful Shutdown
-        process.on('SIGTERM', function () {
-            console.log("Server Closing");
-            _this.expressApp.close();
-        });
-
-        this.on('close', function () {
-            console.log("Server Closed");
-        });
-
+    /**
+     * @return {string}
+     */
+    getName: function() {
+        return this.name;
     }
 });
 
@@ -98,4 +82,4 @@ var ExpressApp = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('express.ExpressApp', ExpressApp);
+bugpack.export("socketio:client.SocketIoEmit", SocketIoEmit);

@@ -2,13 +2,11 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('express')
-
-//@Export('ExpressServer')
+//@Export('Config')
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('Proxy')
+//@Require('Properties')
 
 
 //-------------------------------------------------------------------------------
@@ -16,29 +14,28 @@
 //-------------------------------------------------------------------------------
 
 var bugpack = require('bugpack').context();
-var http    = require('http');
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class   = bugpack.require('Class');
-var Obj     = bugpack.require('Obj');
-var Proxy   = bugpack.require('Proxy');
+var Class       = bugpack.require('Class');
+var Obj         = bugpack.require('Obj');
+var Properties  = bugpack.require('Properties');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ExpressServer = Class.extend(Obj, {
+var Config = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(expressApp) {
+    _constructor: function(config) {
 
         this._super();
 
@@ -49,43 +46,9 @@ var ExpressServer = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {ExpressApp}
+         * @type {Properties}
          */
-        this.expressApp = expressApp;
-
-        /**
-         * @private
-         * @type {http.Server}
-         */
-        this.httpServer = http.createServer(this.expressApp.getApp());
-
-        Proxy.proxy(this, this.httpServer, [
-            "listen"
-        ]);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @return {http.Server}
-     */
-    getHttpServer: function() {
-        return this.httpServer;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param callback
-     */
-    start: function(callback) {
-        this.httpServer.listen(this.expressApp.get('port'), callback);
+        this.properties = new Properties(config);
     }
 });
 
@@ -94,4 +57,4 @@ var ExpressServer = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('express.ExpressServer', ExpressServer);
+bugpack.export("Config", Config);

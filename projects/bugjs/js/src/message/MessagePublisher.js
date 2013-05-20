@@ -80,12 +80,12 @@ var MessagePublisher = Class.extend(Obj, {
 
     /**
      * @param {Message} message
-     * @param {
+     * @param {string} channel
      */
-    receiveMessage: function(message) {
+    receiveMessage: function(message, channel) {
         var messageBroadcaster = this.messageTopicToMessageBroadcasterMap.get(message.getTopic());
         if (messageBroadcaster) {
-            messageBroadcaster.receiveMessage(message);
+            messageBroadcaster.receiveMessage(message, channel);
         }
     },
 

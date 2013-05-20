@@ -126,7 +126,9 @@ var Message = Class.extend(Obj, {
     toObject: function() {
         return {
             topic: this.topic,
-            data: this.data
+            data: this.data,
+            destinationAddress: this.destinationAddress,
+            returnAddress: this.returnAddress
         };
     }
 });
