@@ -50,17 +50,15 @@ var Routes = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /*
-     * @param {?Array.<Route|Array.<Route>>=} routes
-     * NOTE: This is both a class and instance method. If no routes are passed it, it will automatically use this.routes.
+     * @param {express.app | socketIo.socket} app
      **/
-    enableAll: function(routes){
-        var _this = this;
-        var routes = routes || this.routes;
+    enableAll: function(app){
+        var routes = this.routes;
         routes.forEach(function(route){
             if(TypeUtil.isArray(route)){
-                _this.enableAll(route);
+                Routes.enableAll(route, app);
             } else {
-                route.enable();
+                route.enable(app);
             }
         });
     },
@@ -85,6 +83,24 @@ var Routes = Class.extend(Obj, {
         }
     }
 });
+
+//-------------------------------------------------------------------------------
+// Public Class Methods
+//-------------------------------------------------------------------------------
+
+/*
+ * @param {Array.<Route> | Route} routes
+ * @param {express.app | socketIo.socket} app
+ **/
+Routes.enableAll = function(routes, app){
+    routes.forEach(function(route){
+        if(TypeUtil.isArray(route)){
+            Routes.enableAll(route, app);
+        } else {
+            route.enable(app);
+        }
+    });
+},
 
 
 //-------------------------------------------------------------------------------
