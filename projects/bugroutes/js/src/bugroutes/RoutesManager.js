@@ -4,7 +4,7 @@
 
 //@Package('bugroutes')
 
-//@Export('Routes')
+//@Export('RoutesManager')
 
 //@Require('Class')
 //@Require('Obj')
@@ -30,14 +30,20 @@ var TypeUtil    = bugpack.require('TypeUtil');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Routes = Class.extend(Obj, {
+var RoutesManager = Class.extend(Obj, {
 
     /*
-     * @param {} routes
+     * @param {express.app | socketIo.socket} app
+     * @param {Array.<Route>} routes
      **/
-    _constructor: function(routes){
+    _constructor: function(app, routes){
 
         this._super();
+
+        /*
+         * @type {express.app | socketIo.socket} app
+         **/
+        this.app = app;
 
         /*
          * @type {Array.<Route>}
@@ -89,10 +95,10 @@ var Routes = Class.extend(Obj, {
 //-------------------------------------------------------------------------------
 
 /*
- * @param {Array.<Route> | Route} routes
  * @param {express.app | socketIo.socket} app
+ * @param {Array.<Route> | Route} routes
  **/
-Routes.enableAll = function(routes, app){
+Routes.enableAll = function(app, routes){
     routes.forEach(function(route){
         if(TypeUtil.isArray(route)){
             Routes.enableAll(route, app);
@@ -107,4 +113,4 @@ Routes.enableAll = function(routes, app){
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugroutes.Routes', Routes);
+bugpack.export('bugroutes.RoutesManager', RoutesManager);
