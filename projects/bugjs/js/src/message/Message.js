@@ -7,6 +7,7 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('TypeUtil')
+//@Require('UuidGenerator')
 
 
 //-------------------------------------------------------------------------------
@@ -20,9 +21,10 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =     bugpack.require('Class');
-var Obj =       bugpack.require('Obj');
-var TypeUtil =  bugpack.require('TypeUtil');
+var Class           = bugpack.require('Class');
+var Obj             = bugpack.require('Obj');
+var TypeUtil        = bugpack.require('TypeUtil');
+var UuidGenerator   = bugpack.require('UuidGenerator');
 
 
 //-------------------------------------------------------------------------------
@@ -53,13 +55,13 @@ var Message = Class.extend(Obj, {
          * @private
          * @type {string}
          */
-        this.destinationAddress = null;
+        this.uuid = UuidGenerator.generateUuid();
 
         /**
          * @private
          * @type {string}
          */
-        this.returnAddress = null;
+        this.receiverAddress = null;
 
         /**
          * @private
@@ -83,29 +85,22 @@ var Message = Class.extend(Obj, {
     /**
      * @return {string}
      */
-    getDestinationAddress: function() {
-        return this.destinationAddress;
-    },
-
-    /**
-     * @param {string} destinationAddress
-     */
-    setDestinationAddress: function(destinationAddress) {
-        this.destinationAddress = destinationAddress;
+    getUuid: function() {
+        return this.uuid;
     },
 
     /**
      * @return {string}
      */
-    getReturnAddress: function() {
-        return this.returnAddress;
+    getReceiverAddress: function() {
+        return this.receiverAddress;
     },
 
     /**
-     * @param {string} returnAddress
+     * @param {string} receiverAddress
      */
-    setReturnAddress: function(returnAddress) {
-        this.returnAddress = returnAddress;
+    setReceiverAddress: function(receiverAddress) {
+        this.receiverAddress = receiverAddress;
     },
 
     /**
@@ -127,8 +122,7 @@ var Message = Class.extend(Obj, {
         return {
             topic: this.topic,
             data: this.data,
-            destinationAddress: this.destinationAddress,
-            returnAddress: this.returnAddress
+            receiverAddress: this.receiverAddress
         };
     }
 });

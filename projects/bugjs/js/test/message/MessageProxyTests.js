@@ -9,6 +9,7 @@
 //@Require('MessageProxy')
 //@Require('TypeUtil')
 //@Require('annotate.Annotate')
+//@Require('bugdouble.BugDouble')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -28,6 +29,7 @@ var MessageDefines  = bugpack.require('MessageDefines');
 var MessageProxy    = bugpack.require('MessageProxy');
 var TypeUtil        = bugpack.require('TypeUtil');
 var Annotate        = bugpack.require('annotate.Annotate');
+var BugDouble       = bugpack.require('bugdouble.BugDouble');
 var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
@@ -35,8 +37,9 @@ var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var test = TestAnnotation.test;
+var annotate    = Annotate.annotate;
+var spyOnObject = BugDouble.spyOnObject;
+var test        = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
@@ -46,7 +49,7 @@ var test = TestAnnotation.test;
 /**
  * This tests
  * 1) Instantiation of a MessageProxy
- * 2) That the address and messageREceiver values are set correctly during instantiation
+ * 2) That the messagePropagator value is set correctly during instantiation
  */
 var instantiateMessageProxyTest = {
 
@@ -62,10 +65,8 @@ var instantiateMessageProxyTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
-        test.assertEqual(this.testMessageProxy.getMessageReceiver(), null,
-            "Assert messageReceiver was set to null during instantiation");
-        test.assertTrue(TypeUtil.isString(this.testMessageProxy.getAddress()),
-            "Assert address was set to a string during instantiation");
+        test.assertEqual(this.testMessageProxy.getMessagePropagator(), null,
+            "Assert messagePropagator was set to null during instantiation");
     }
 };
 annotate(instantiateMessageProxyTest).with(
@@ -75,27 +76,29 @@ annotate(instantiateMessageProxyTest).with(
 
 /**
  * This tests
- * 1) That the receiveMessage function correctly sends a message to the proxied MessageReceiver
+ * 1) That the propagateMessage function correctly sends a message to the proxied MessageReceiver
  */
-var messageProxySendMessageTest = {
+var messageProxyPropagateMessageTest = {
 
     // Setup Test
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
         var _this = this;
-        this.receiveMessageCalled = false;
         this.testChannel = MessageDefines.MessageChannels.MESSAGE;
         this.testMessage = new Message();
-        this.dummyProxiedMessageReceiver = {
-            receiveMessage: function(message, channel) {
-                _this.receiveMessageCalled = true;
+        this.dummyMessagePropagator = {
+            propagateMessage: function(message, channel) {
                 test.assertEqual(message, _this.testMessage,
-                    "Assert message received by dummy was testMessage");
+                    "Assert message propagated by dummy was testMessage");
                 test.assertEqual(channel, _this.testChannel,
                     "Assert default message channel is MESSAGE");
+            },
+            addEventPropagator: function(eventPropagator) {
+                test.assertEqual(eventPropagator, _this.testMessageProxy);
             }
         };
+        this.spyMessagePropagator = spyOnObject(this.dummyMessagePropagator);
         this.testMessageProxy = new MessageProxy();
     },
 
@@ -104,12 +107,14 @@ var messageProxySendMessageTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
-        this.testMessageProxy.setMessageReceiver(this.dummyProxiedMessageReceiver);
-        this.testMessageProxy.receiveMessage(this.testMessage, this.testChannel);
-        test.assertEqual(this.receiveMessageCalled, true,
-            "Assert that the receiveMessage function of the dummy was called");
+        this.testMessageProxy.setMessagePropagator(this.dummyMessagePropagator);
+        test.assertEqual(this.spyMessagePropagator.getSpy("addEventPropagator").wasCalled(), true,
+            "Assert that addEventPropagator of dummyMessagePropagator was called");
+        this.testMessageProxy.propagateMessage(this.testMessage, this.testChannel);
+        test.assertEqual(this.spyMessagePropagator.getSpy("propagateMessage").wasCalled(), true,
+            "Assert that the propagateMessage of dummyMessagePropagator was called");
     }
 };
-annotate(messageProxySendMessageTest).with(
-    test().name("MessageProxy sendMessage test")
+annotate(messageProxyPropagateMessageTest).with(
+    test().name("MessageProxy propagateMessage test")
 );

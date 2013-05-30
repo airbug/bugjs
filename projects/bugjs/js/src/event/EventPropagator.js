@@ -2,11 +2,11 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('MessageSender')
+//@Export('EventPropagator')
 
 //@Require('Class')
-//@Require('IMessageSender')
-//@Require('MessageDefines')
+//@Require('IEventPropagator')
+//@Require('List')
 //@Require('Obj')
 
 
@@ -21,25 +21,26 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var IMessageSender  = bugpack.require('IMessageSender');
-var MessageDefines  = bugpack.require('MessageDefines');
-var Obj             = bugpack.require('Obj');
+var Class               = bugpack.require('Class');
+var IEventPropagator    = bugpack.require('IEventPropagator');
+var List                = bugpack.require('List');
+var Obj                 = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var MessageSender = Class.extend(Obj, {
+var EventPropagator = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(target) {
 
         this._super();
+
 
         //-------------------------------------------------------------------------------
         // Declare Variables
@@ -47,44 +48,62 @@ var MessageSender = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {MessageReceiver}
+         * @type {List.<IEventPropagator>}
          */
-        this.messageReceiver = null;
+        this.eventPropagatorList = new List();
+
+        /**
+         * @private
+         * @type {*}
+         */
+        this.target = target ? target : this;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Getters ans Setters
+    // Getters and Setters
     //-------------------------------------------------------------------------------
 
     /**
      * @return {*}
      */
-    getMessageReceiver: function() {
-        return this.messageReceiver;
-    },
-
-    /**
-     * @param {MessageReceiver} messageReceiver
-     */
-    setMessageReceiver: function(messageReceiver) {
-        this.messageReceiver = messageReceiver;
+    getTarget: function() {
+        return this.target;
     },
 
 
     //-------------------------------------------------------------------------------
-    // IMessageSender Implementation
+    // IEventPropagator Implementation
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Message} message
-     * @param {string=} channel
+     * @param {IEventPropagator} eventPropagator
      */
-    sendMessage: function(message, channel) {
-        if (!channel) {
-            channel = MessageDefines.MessageChannels.MESSAGE;
+    addEventPropagator: function(eventPropagator) {
+        if (!this.eventPropagatorList.contains(eventPropagator)) {
+            this.eventPropagatorList.add(eventPropagator);
         }
-        this.messageReceiver.receiveMessage(message, channel);
+    },
+
+    /**
+     * @param {Event} event
+     */
+    propagateEvent: function(event) {
+        if (!event.isPropagationStopped()) {
+            event.setCurrentTarget(this.getTarget());
+            this.eventPropagatorList.forEach(function(eventPropagator) {
+                eventPropagator.propagateEvent(event);
+            });
+        }
+    },
+
+    /**
+     * @param {IEventPropagator} eventPropagator
+     */
+    removeEventPropagator: function(eventPropagator) {
+        if (this.eventPropagatorList.contains(eventPropagator)) {
+            this.eventPropagatorList.remove(eventPropagator);
+        }
     }
 });
 
@@ -93,11 +112,11 @@ var MessageSender = Class.extend(Obj, {
 // Interfaces
 //-------------------------------------------------------------------------------
 
-Class.implement(MessageSender, IMessageSender);
+Class.implement(EventPropagator, IEventPropagator);
 
 
 //-------------------------------------------------------------------------------
-// Export
+// Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('MessageSender', MessageSender);
+bugpack.export('EventPropagator', EventPropagator);

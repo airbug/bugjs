@@ -2,16 +2,19 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('SocketIoMessageTransport')
+//@Package('socketio:server')
+
+//@Export('SocketIoConnectionMessagePropagator')
 
 //@Require('Class')
-//@Require('IMessageReceiver')
+//@Require('IEventPropagator')
+//@Require('IMessagePropagator')
 //@Require('Message')
 //@Require('MessageDefines')
 //@Require('Obj')
 //@Require('Queue')
 //@Require('UuidGenerator')
-//@Require('socketio:client.SocketIoClient')
+//@Require('socketio:server.SocketIoConnection')
 
 
 //-------------------------------------------------------------------------------
@@ -26,28 +29,28 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
-var IMessageReceiver    = bugpack.require('IMessageReceiver');
+var IEventPropagator    = bugpack.require('IEventPropagator');
+var IMessagePropagator  = bugpack.require('IMessagePropagator');
 var Message             = bugpack.require('Message');
 var MessageDefines      = bugpack.require('MessageDefines');
 var Obj                 = bugpack.require('Obj');
 var Queue               = bugpack.require('Queue');
 var UuidGenerator       = bugpack.require('UuidGenerator');
-var SocketIoClient      = bugpack.require('socketio:client.SocketIoClient');
+var SocketIoConnection  = bugpack.require('socketio:client.SocketIoConnection');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SocketIoMessageTransport = Class.extend(Obj, {
+var SocketIoConnectionMessagePropagator = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(socketIoClient) {
+    _constructor: function(socketIoConnection) {
 
-        var _this = this;
         this._super();
 
 
@@ -57,21 +60,15 @@ var SocketIoMessageTransport = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {string}
+         * @type {IMessagePropagator}
          */
-        this.address = UuidGenerator.generateUuid();
+        this.incomingMessagePropagator = null;
 
         /**
          * @private
-         * @type {MessageReceiver}
+         * @type {SocketIoConnection}
          */
-        this.incomingMessageReceiver = null;
-
-        /**
-         * @private
-         * @type {SocketIoClient}
-         */
-        this.socketIoClient = socketIoClient;
+        this.socketIoConnection = socketIoConnection;
     },
 
 
@@ -80,43 +77,51 @@ var SocketIoMessageTransport = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {MessageReceiver}
+     * @return {IMessagePropagator}
      */
-    getIncomingMessageReceiver: function() {
-        return this.incomingMessageReceiver;
+    getIncomingMessagePropagator: function() {
+        return this.incomingMessagePropagator;
     },
 
     /**
-     * @param {MessageReceiver} incomingMessageReceiver
+     * @param {IMessagePropagator} incomingMessagePropagator
      */
-    setIncomingMessageReceiver: function(incomingMessageReceiver) {
-        this.incomingMessageReceiver = incomingMessageReceiver;
+    setIncomingMessagePropagator: function(incomingMessagePropagator) {
+        if (incomingMessagePropagator) {
+            this.incomingMessagePropagator.removeEventPropagator(this);
+        }
+        this.incomingMessagePropagator = incomingMessagePropagator;
+        this.incomingMessagePropagator.addEventPropagator(this);
     },
 
 
     //-------------------------------------------------------------------------------
-    // IMessageReceiver Implementation
+    // IEventPropagator Implementation
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {string}
+     * @param {Event} event
      */
-    getAddress: function() {
-        return this.address;
+    propagateEvent: function(event) {
+        if (!event.isPropagationStopped()) {
+            this.socketIoConnection.emit("event", {
+                eventData: event.getData(),
+                eventType: event.getType()
+            });
+        }
     },
+
+
+    //-------------------------------------------------------------------------------
+    // IMessagePropagator Implementation
+    //-------------------------------------------------------------------------------
 
     /**
      * @param {Message} message
      * @param {string} channel
      */
-    receiveMessage: function(message, channel) {
-        if (channel === MessageDefines.MessageChannels.MESSAGE) {
-            this.socketIoClient.send(message.toObject());
-        } else if (channel == MessageDefines.MessageChannels.ERROR) {
-            this.socketIoClient.emit('error', message.toObject());
-        } else {
-            this.socketIoClient.emit(channel, message.toObject());
-        }
+    propagateMessage: function(message, channel) {
+        this.socketIoConnection.send({message: message.toObject(), channel: channel});
     },
 
 
@@ -128,9 +133,18 @@ var SocketIoMessageTransport = Class.extend(Obj, {
      * @param {function(Error)} callback
      */
     initialize: function(callback) {
-        this.socketIoClient.addEventListener(SocketIoClient.EventTypes.ERROR, this.hearSocketErrorEvent, this);
-        this.socketIoClient.addEventListener(SocketIoClient.EventTypes.MESSAGE, this.hearSocketMessageEvent, this);
-        this.socketIoClient.initialize(callback);
+        this.socketIoConnection.addEventListener(SocketIoConnection.EventTypes.ERROR, this.hearSocketErrorEvent, this);
+        this.socketIoConnection.addEventListener(SocketIoConnection.EventTypes.EVENT, this.hearSocketEventEvent, this);
+        this.socketIoConnection.addEventListener(SocketIoConnection.EventTypes.MESSAGE, this.hearSocketMessageEvent, this);
+        this.socketIoConnection.initialize(callback);
+    },
+
+    /**
+     * @private
+     */
+    deintialize: function() {
+        this.socketIoConnection.removeAllListeners();
+        this.socketIoConnection.deinitialize();
     },
 
 
@@ -145,15 +159,28 @@ var SocketIoMessageTransport = Class.extend(Obj, {
     processSocketError: function(error) {
         //TODO BRN: Should use BugMarshaller here to perform the conversion
         if (error) {
-            var message = new Message("error", error);
-            if (this.incomingMessageReceiver) {
-                this.incomingMessageReceiver.receiveMessage(message, MessageDefines.MessageChannels.ERROR);
-            } else {
-                throw new Error("Must set incomingMessageReceiver before it starts hearing events from the client");
-            }
+
+            //TODO BRN: Figure out what to do with the error here..
+            console.error(error);
+
+            /*var message = new Message("error", error);
+             if (this.incomingMessagePropagator) {
+             this.incomingMessagePropagator.propagateMessage(message, MessageDefines.MessageChannels.ERROR);
+             } else {
+             throw new Error("Must set incomingMessageReceiver before it starts hearing events from the client");
+             }*/
         } else {
             throw new Error("Message Transport received an incompatible error. error:" + error);
         }
+    },
+
+    /**
+     * @private
+     * @param {string} eventType
+     * @param {Object} eventData
+     */
+    processSocketEvent: function(eventType, eventData) {
+        this.dispatchEvent(new Event(eventType, eventData));
     },
 
     /**
@@ -163,15 +190,14 @@ var SocketIoMessageTransport = Class.extend(Obj, {
     processSocketMessage: function(messageObject) {
         //TODO BRN: Should use BugMarshaller here to perform the conversion
         if (messageObject) {
-            var message = new Message(messageObject.topic, messageObject.data);
-            if (messageObject.destinationAddress) {
-                message.setDestinationAddress(messageObject.destinationAddress);
+            var messageData = messageObject.message;
+            var channel = messageObject.channel;
+            var message = new Message(messageData.topic, messageData.data);
+            if (messageData.receiverAddress) {
+                message.setReceiverAddress(messageData.receiverAddress);
             }
-            if (messageObject.returnAddress) {
-                message.setReturnAddress(messageObject.returnAddress);
-            }
-            if (this.incomingMessageReceiver) {
-                this.incomingMessageReceiver.receiveMessage(message, MessageDefines.MessageChannels.MESSAGE);
+            if (this.incomingMessagePropagator) {
+                this.incomingMessagePropagator.propagateMessage(message, channel);
             } else {
                 throw new Error("Must set incomingMessageReceiver before it starts hearing events from the client");
             }
@@ -197,6 +223,14 @@ var SocketIoMessageTransport = Class.extend(Obj, {
      * @private
      * @param {Event} event
      */
+    hearSocketEventEvent: function(event) {
+        this.processSocketEvent(event.getData().eventType, event.getData().eventData);
+    },
+
+    /**
+     * @private
+     * @param {Event} event
+     */
     hearSocketMessageEvent: function(event) {
         this.processSocketMessage(event.getData().message);
     }
@@ -207,11 +241,12 @@ var SocketIoMessageTransport = Class.extend(Obj, {
 // Interfaces
 //-------------------------------------------------------------------------------
 
-Class.implement(SocketIoMessageTransport, IMessageReceiver);
+Class.implement(SocketIoConnectionMessagePropagator, IEventPropagator);
+Class.implement(SocketIoConnectionMessagePropagator, IMessagePropagator);
 
 
 //-------------------------------------------------------------------------------
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export('SocketIoMessageTransport', SocketIoMessageTransport);
+bugpack.export('socketio:server.SocketIoConnectionMessagePropagator', SocketIoConnectionMessagePropagator);

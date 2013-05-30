@@ -60,19 +60,23 @@ var setAddTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
-        this.set.add("value1");
+        var result1 = this.set.add("value1");
         test.assertTrue(this.set.contains("value1"),
             "Assert first item added to the set is contained within the set.");
         test.assertEqual(this.set.getCount(), 1,
             "Assert count is 1 after adding 1 item.");
+        test.assertTrue(result1,
+            "Assert that true was returned when adding value1");
 
-        this.set.add("value2");
+        var result2 = this.set.add("value2");
         test.assertTrue(this.set.contains("value1"),
             "Assert first item added to the list is still contained within the set after adding a second item.");
         test.assertTrue(this.set.contains("value2"),
             "Assert second item added to the set is contained within the set.");
         test.assertEqual(this.set.getCount(), 2,
             "Assert count is 2 after adding 2 items.");
+        test.assertTrue(result2,
+            "Assert that true was returned when adding value2");
     }
 };
 annotate(setAddTest).with(
@@ -97,17 +101,21 @@ var setAddRepeatTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
-        this.set.add("value1");
+        var result1 = this.set.add("value1");
         test.assertTrue(this.set.contains('value1'),
             "Assert first item added to the set is contained within the set.");
         test.assertEqual(this.set.getCount(), 1,
             "Assert count is 1 after adding 1 item.");
+        test.assertTrue(result1,
+            "Assert that true was returned when adding value1");
 
-        this.set.add("value1");
+        var result2 = this.set.add("value1");
         test.assertEqual(this.set.getCount(), 1,
             "Assert count is still 1 after adding the same item a second time.");
         test.assertTrue(this.set.contains("value1"),
             "Assert set still contains the item after adding it twice.");
+        test.assertFalse(result2,
+            "Assert that false was returned when adding value1 again");
     }
 };
 annotate(setAddRepeatTest).with(

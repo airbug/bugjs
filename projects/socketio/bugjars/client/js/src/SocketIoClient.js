@@ -152,6 +152,10 @@ var SocketIoClient = Class.extend(EventDispatcher, {
             _this.retryConnect();
         };
 
+        this.handleSocketEvent = function(data) {
+            _this.processSocketEvent(data.eventType, data.eventData);
+        };
+
         this.handleSocketMessage = function(message) {
             //TEST
             console.log("SocketIoClient message:", message);
@@ -216,7 +220,6 @@ var SocketIoClient = Class.extend(EventDispatcher, {
     },
 
 
-
     //-------------------------------------------------------------------------------
     // Private Class Methods
     //-------------------------------------------------------------------------------
@@ -276,6 +279,7 @@ var SocketIoClient = Class.extend(EventDispatcher, {
         this.socket.on('connecting', this.handleSocketConnecting);
         this.socket.on('disconnect', this.handleSocketDisconnect);
         this.socket.on('error', this.handleSocketError);
+        this.socket.on('event', this.handleSocketEvent);
         this.socket.on('message', this.handleSocketMessage);
         this.socket.on('reconnect', this.handleSocketReconnect);
         this.socket.on('reconnecting', this.handleSocketReconnecting);
@@ -310,6 +314,18 @@ var SocketIoClient = Class.extend(EventDispatcher, {
      */
     processSocketError: function(error) {
         this.dispatchEvent(new Event(SocketIoClient.EventTypes.ERROR, {error: error}));
+    },
+
+    /**
+     * @private
+     * @param {string} eventType
+     * @param {Object} eventData
+     */
+    processSocketEvent: function(eventType, eventData) {
+        this.dispatchEvent(new Event(SocketIoClient.EventTypes.EVENT, {
+            eventType: eventType,
+            eventData: eventData
+        }));
     },
 
     /**
@@ -367,6 +383,7 @@ var SocketIoClient = Class.extend(EventDispatcher, {
  */
 SocketIoClient.EventTypes = {
     ERROR: "SocketIoClient:Error",
+    EVENT: "SocketIoClient:Event",
     MESSAGE: "SocketIoClient:Message"
 };
 

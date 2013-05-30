@@ -9,6 +9,7 @@
 //@Require('MessageReceiver')
 //@Require('TypeUtil')
 //@Require('annotate.Annotate')
+//@Require('bugdouble.BugDouble')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -28,6 +29,7 @@ var MessageDefines  = bugpack.require('MessageDefines');
 var MessageReceiver = bugpack.require('MessageReceiver');
 var TypeUtil        = bugpack.require('TypeUtil');
 var Annotate        = bugpack.require('annotate.Annotate');
+var BugDouble       = bugpack.require('bugdouble.BugDouble');
 var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
@@ -35,8 +37,10 @@ var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var test = TestAnnotation.test;
+var annotate        = Annotate.annotate;
+var spyOnFunction   = BugDouble.spyOnFunction;
+var spyOnObject     = BugDouble.spyOnObject;
+var test            = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
@@ -70,6 +74,10 @@ var instantiateMessageReceiverTest = {
             "Assert receiverContext was set correctly during instantiation");
         test.assertTrue(TypeUtil.isString(this.testMessageReceiver.getAddress()),
             "Assert address was set to a string during instantiation");
+        test.assertTrue(TypeUtil.isBoolean(this.testMessageReceiver.isReceiverOn()),
+            "Assert that messageOn was set to to a boolean during instantiation");
+        test.assertFalse(this.testMessageReceiver.isReceiverOn(),
+            "Assert that messageOn was set correctly during instantiation");
 
         test.assertNotEqual(this.testMessageReceiver.getReceiverFunction(), function() {},
             "Assert receiverFunction does not equal any old function");
@@ -81,12 +89,49 @@ annotate(instantiateMessageReceiverTest).with(
     test().name("MessageReceiver instantiation test")
 );
 
+/**
+ * This tests
+ * 1) Turning on the MessageReceiver
+ */
+var messageReceiverTurnOnTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function(test) {
+        var _this = this;
+        this.listenerFunction = spyOnFunction(function(event) {
+            test.assertEqual(event.getData().address, _this.testMessageReceiver.getAddress(),
+                "Assert that the address received in the ADDRESS_REGISTERED event matches the address of the receiver");
+        });
+        this.testMessageReceiver = new MessageReceiver(function() {});
+        this.testMessageReceiver.addEventListener(MessageReceiver.EventTypes.ADDRESS_REGISTERED, this.listenerFunction);
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        test.assertEqual(this.testMessageReceiver.isReceiverOn(), false,
+            "Assert that messageReceiver is not on");
+        this.testMessageReceiver.turnOn();
+        test.assertEqual(this.testMessageReceiver.isReceiverOn(), true,
+            "Assert that the messageReceiver is on after calling turnOn()");
+        test.assertEqual(this.listenerFunction.wasCalled(), true,
+            "Assert that the listenerFunction was called");
+    }
+};
+annotate(messageReceiverTurnOnTest).with(
+    test().name("MessageReceiver turnOn() test")
+);
+
 
 /**
  * This tests
- * 1) That the receiverFunction is executed within the receiverContext when receiveMessage is called
+ * 1) That the receiverFunction is executed within the receiverContext when propagateMessage is called
  */
-var messageReceiverReceiveMessageTest = {
+var messageReceiverPropagateMessageTest = {
 
     // Setup Test
     //-------------------------------------------------------------------------------
@@ -95,10 +140,8 @@ var messageReceiverReceiveMessageTest = {
         var _this = this;
         this.testChannel = MessageDefines.MessageChannels.MESSAGE;
         this.testMessage = new Message();
-        this.receiverFunctionCalled = false;
         this.testReceiverContext = {
             receiverFunction: function(message, channel) {
-                _this.receiverFunctionCalled = true;
                 test.assertEqual(message, _this.testMessage,
                     "Assert that the message received by the receiver function was the test Message");
                 test.assertEqual(channel, _this.testChannel,
@@ -107,6 +150,7 @@ var messageReceiverReceiveMessageTest = {
                     "Assert that the context of the receiverFunction is the testReceiverContext");
             }
         };
+        this.spyReceiverContext = spyOnObject(this.testReceiverContext);
         this.testMessageReceiver = new MessageReceiver(this.testReceiverContext.receiverFunction, this.testReceiverContext);
     },
 
@@ -115,11 +159,49 @@ var messageReceiverReceiveMessageTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
-        this.testMessageReceiver.receiveMessage(this.testMessage, this.testChannel);
-        test.assertEqual(this.receiverFunctionCalled, true,
+        this.testMessageReceiver.turnOn();
+        this.testMessageReceiver.propagateMessage(this.testMessage, this.testChannel);
+        test.assertEqual(this.spyReceiverContext.getSpy("receiverFunction").wasCalled(), true,
             "Assert that the receiverFunction was called");
     }
 };
-annotate(messageReceiverReceiveMessageTest).with(
-    test().name("MessageReceiver receiveMessage test")
+annotate(messageReceiverPropagateMessageTest).with(
+    test().name("MessageReceiver propagateMessage test")
+);
+
+
+/**
+ * This tests
+ * 1) That the receiverFunction is NOT executed within the receiverContext when propagateMessage is called and the receiver is off
+ */
+var messageReceiverPropagateMessageReceiverOffTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function(test) {
+        var _this = this;
+        this.testChannel = MessageDefines.MessageChannels.MESSAGE;
+        this.testMessage = new Message();
+        this.testReceiverContext = {
+            receiverFunction: function(message, channel) {
+                _this.receiverFunctionCalled = true;
+            }
+        };
+        this.spyReceiverContext = spyOnObject(this.testReceiverContext);
+        this.testMessageReceiver = new MessageReceiver(this.testReceiverContext.receiverFunction, this.testReceiverContext);
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        this.testMessageReceiver.propagateMessage(this.testMessage, this.testChannel);
+        test.assertEqual(this.spyReceiverContext.getSpy("receiverFunction").wasNotCalled(), true,
+            "Assert that the receiverFunction was NOT called");
+    }
+};
+annotate(messageReceiverPropagateMessageReceiverOffTest).with(
+    test().name("MessageReceiver propagateMessage with receiver off test")
 );

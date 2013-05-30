@@ -61,8 +61,8 @@ var eventDispatcherInstantiationTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
-        test.assertEqual(this.eventDispatcherWithoutTarget.getParentDispatcher(), undefined,
-            "Assert parent dispatcher defaults to undefined");
+        test.assertEqual(this.eventDispatcherWithoutTarget.getParentPropagator(), undefined,
+            "Assert parentPropagator defaults to undefined");
         test.assertEqual(this.eventDispatcherWithoutTarget.getTarget(), this.eventDispatcherWithoutTarget,
             "Assert dispatcher target is set to itself if no target is passed in during instantiation");
         test.assertEqual(this.eventDispatcherWithTarget.getTarget(), this.testTarget,
@@ -199,7 +199,7 @@ var eventDispatcherDispatchEventBubblesFalseTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
-        this.testChildEventDispatcher.setParentDispatcher(this.testParentEventDispatcher);
+        this.testChildEventDispatcher.setParentPropagator(this.testParentEventDispatcher);
         this.testChildEventDispatcher.addEventListener(this.testEventType, this.testChildListenerFunction);
         this.testParentEventDispatcher.addEventListener(this.testEventType, this.testParentListenerFunction);
         this.testChildEventDispatcher.dispatchEvent(this.testEvent, this.testBubbles);
@@ -246,7 +246,7 @@ var eventDispatcherDispatchEventBubblesTrueTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
-        this.testChildEventDispatcher.setParentDispatcher(this.testParentEventDispatcher);
+        this.testChildEventDispatcher.setParentPropagator(this.testParentEventDispatcher);
         this.testChildEventDispatcher.addEventListener(this.testEventType, this.testChildListenerFunction);
         this.testParentEventDispatcher.addEventListener(this.testEventType, this.testParentListenerFunction);
         this.testChildEventDispatcher.dispatchEvent(this.testEvent, this.testBubbles);
@@ -294,7 +294,7 @@ var eventDispatcherDispatchEventStopPropagationTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
-        this.testChildEventDispatcher.setParentDispatcher(this.testParentEventDispatcher);
+        this.testChildEventDispatcher.setParentPropagator(this.testParentEventDispatcher);
         this.testChildEventDispatcher.addEventListener(this.testEventType, this.testChildListenerFunction);
         this.testParentEventDispatcher.addEventListener(this.testEventType, this.testParentListenerFunction);
         this.testChildEventDispatcher.dispatchEvent(this.testEvent, this.testBubbles);
@@ -352,7 +352,10 @@ annotate(eventDispatcherSimpleAddAndRemoveEventListenerTest).with(
     test().name("EventDispatcher simple add and remove event listener test")
 );
 
-
+/**
+ * This tests...
+ * 1) That a listener add with onceOn is only fired once
+ */
 var eventDispatcherOnceOnTest = {
 
     // Setup Test

@@ -6,10 +6,10 @@
 
 //@Require('Class')
 //@Require('EventListener')
+//@Require('EventPropagator')
 //@Require('IEventDispatcher')
 //@Require('List')
 //@Require('Map')
-//@Require('Obj')
 //@Require('TypeUtil')
 
 
@@ -26,10 +26,10 @@ var bugpack = require('bugpack').context();
 
 var Class               = bugpack.require('Class');
 var EventListener       = bugpack.require('EventListener');
+var EventPropagator     = bugpack.require('EventPropagator');
 var IEventDispatcher    = bugpack.require('IEventDispatcher');
 var List                = bugpack.require('List');
 var Map                 = bugpack.require('Map');
-var Obj                 = bugpack.require('Obj');
 var TypeUtil            = bugpack.require('TypeUtil');
 
 
@@ -43,7 +43,7 @@ var TypeUtil            = bugpack.require('TypeUtil');
 // from. So it is much more anonymous. This model is better for cases where any number of objects can send a message
 // and you have fewer number of receivers of that message.
 
-var EventDispatcher = Class.extend(Obj, {
+var EventDispatcher = Class.extend(EventPropagator, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -51,7 +51,7 @@ var EventDispatcher = Class.extend(Obj, {
 
     _constructor: function(target) {
 
-        this._super();
+        this._super(target);
 
 
         //-------------------------------------------------------------------------------
@@ -66,47 +66,29 @@ var EventDispatcher = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {EventDispatcher}
+         * @type {IEventPropagator}
          */
-        this.parentDispatcher = undefined;
-
-        /**
-         * @private
-         * @type {*}
-         */
-        this.target = target ? target : this;
+        this.parentPropagator = undefined;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // IEventDispatcher Implementation
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {EventDispatcher}
+     * @return {IEventPropagator}
      */
-    getParentDispatcher: function() {
-        return this.parentDispatcher;
+    getParentPropagator: function() {
+        return this.parentPropagator;
     },
 
     /**
-     * @param {EventDispatcher} parentDispatcher
+     * @param {IEventPropagator} parentPropagator
      */
-    setParentDispatcher: function(parentDispatcher) {
-        this.parentDispatcher = parentDispatcher;
+    setParentPropagator: function(parentPropagator) {
+        this.parentPropagator = parentPropagator;
     },
-
-    /**
-     * @return {*}
-     */
-    getTarget: function() {
-        return this.target;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
 
     /**
      * @param {string} eventType
@@ -131,10 +113,6 @@ var EventDispatcher = Class.extend(Obj, {
         }
     },
 
-    on: function() {
-        this.addEventListener.apply(this, arguments);
-    },
-
     /**
      * @param {Event} event
      * @param {?boolean=} bubbles
@@ -143,11 +121,8 @@ var EventDispatcher = Class.extend(Obj, {
         if (bubbles === undefined) {
             bubbles = true;
         }
-
-        //NOTE BRN: These values are read only, but we sneakily set the value here.
-
-        event.bubbles = bubbles;
-        event.target = this.target;
+        event.setBubbles(bubbles);
+        event.setTarget(this.getTarget());
         this.propagateEvent(event);
     },
 
@@ -187,10 +162,6 @@ var EventDispatcher = Class.extend(Obj, {
         }
     },
 
-    off: function() {
-        this.removeEventListener.apply(this, arguments);
-    },
-
     /**
      *
      */
@@ -200,37 +171,90 @@ var EventDispatcher = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
+    // EventPropagator Overrides/Extensions
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @override
+     * @param {Event} event
+     */
+    propagateEvent: function(event) {
+        if (!event.isPropagationStopped()) {
+            event.setCurrentTarget(this.getTarget());
+            this.propagateEventToListeners(event);
+            this.propagateEventToPropagators(event);
+            if (event.getBubbles()) {
+                this.bubbleEvent(event);
+            }
+        }
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Public Class Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     *
+     */
+    off: function() {
+        this.removeEventListener.apply(this, arguments);
+    },
+
+    /**
+     *
+     */
+    on: function() {
+        this.addEventListener.apply(this, arguments);
+    },
+
+
+    //-------------------------------------------------------------------------------
     // Private Class Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @protected
+     * @private
      * @param {Event} event
      */
-    propagateEvent: function(event) {
-        var _this = this;
-        if (!event.isPropagationStopped()) {
-            var eventTypeListenerList = this.eventTypeListenerMap.get(event.getType());
-            if (eventTypeListenerList) {
-
-                // NOTE BRN: Clone the event listener list so that if the list is changed during execution of the listeners
-                // we still execute all of the listeners.
-
-                var cloneEventTypeListenerList = eventTypeListenerList.clone();
-                cloneEventTypeListenerList.forEach(function(eventListener) {
-                    eventListener.hearEvent(event);
-                    if (eventListener.isOnce()) {
-                        _this.removeEventListener(event.getType(), eventListener.getListenerFunction(), eventListener.getListenerContext());
-                    }
-                });
-            }
-            if (event.getBubbles()) {
-                var parentDispatcher = this.getParentDispatcher();
-                if (parentDispatcher) {
-                    parentDispatcher.propagateEvent(event);
-                }
-            }
+    bubbleEvent: function(event) {
+        var parentPropagator = this.getParentPropagator();
+        if (parentPropagator) {
+            parentPropagator.propagateEvent(event);
         }
+    },
+
+    /**
+     * @private
+     * @param {Event} event
+     */
+    propagateEventToListeners: function(event) {
+        var _this = this;
+        var eventTypeListenerList = this.eventTypeListenerMap.get(event.getType());
+        if (eventTypeListenerList) {
+
+            // NOTE BRN: Clone the event listener list so that if the list is changed during execution of the listeners
+            // we still execute all of the listeners.
+
+            var cloneEventTypeListenerList = eventTypeListenerList.clone();
+            cloneEventTypeListenerList.forEach(function(eventListener) {
+                eventListener.hearEvent(event);
+                if (eventListener.isOnce()) {
+                    _this.removeEventListener(event.getType(), eventListener.getListenerFunction(), eventListener.getListenerContext());
+                }
+            });
+        }
+    },
+
+    /**
+     * @private
+     * @param {Event} event
+     */
+    propagateEventToPropagators: function(event) {
+        var cloneEventPropagatorList = this.eventPropagatorList.clone();
+        cloneEventPropagatorList.forEach(function(eventPropagator) {
+            eventPropagator.propagateEvent(event);
+        });
     }
 });
 

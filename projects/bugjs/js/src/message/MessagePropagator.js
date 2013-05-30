@@ -2,10 +2,10 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('IMessageReceiver')
+//@Export('MessagePropagator')
 
-//@Require('IMessagePropagator')
-//@Require('Interface')
+//@Require('Class')
+//@Require('EventPropagator')
 
 
 //-------------------------------------------------------------------------------
@@ -19,28 +19,19 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var IMessagePropagator  = bugpack.require('IMessagePropagator');
-var Interface           = bugpack.require('Interface');
+var Class               = bugpack.require('Class');
+var EventPropagator     = bugpack.require('EventPropagator');
 
 
 //-------------------------------------------------------------------------------
-// Declare Interface
+// Declare Class
 //-------------------------------------------------------------------------------
 
-/**
- * @interface
- */
-var IMessageReceiver = Interface.extend(IMessagePropagator, {
-
-    //-------------------------------------------------------------------------------
-    // Interface Methods
-    //-------------------------------------------------------------------------------
-
-});
+var MessagePropagator = Class.extend(EventPropagator, {});
 
 
 //-------------------------------------------------------------------------------
-// Exports
+// Export
 //-------------------------------------------------------------------------------
 
-bugpack.export('IMessageReceiver', IMessageReceiver);
+bugpack.export('MessagePropagator', MessagePropagator);

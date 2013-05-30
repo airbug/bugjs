@@ -126,8 +126,8 @@ var CarapaceView = Class.adapt(Backbone.View, {
         this.cid = "";
 
         Proxy.proxy(this, this.eventDispatcher, [
-            "getParentDispatcher",
-            "setParentDispatcher",
+            "getParentPropagator",
+            "setParentPropagator",
             "addEventListener",
             "dispatchEvent",
             "removeEventListener"
@@ -226,7 +226,7 @@ var CarapaceView = Class.adapt(Backbone.View, {
         if (!viewChild.isCreated()) {
             viewChild.create();
         }
-        viewChild.setParentDispatcher(this.eventDispatcher);
+        viewChild.setParentPropagator(this.eventDispatcher);
         viewChild.viewParent = this;
         this.viewChildList.add(viewChild);
         var targetEl = domQuery ? this.findElement(domQuery) : this.$el;

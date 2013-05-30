@@ -52,6 +52,12 @@ var Event = Class.extend(Obj, {
          * @private
          * @type {*}
          */
+        this.currentTarget = null;
+
+        /**
+         * @private
+         * @type {*}
+         */
         this.data = data;
 
         /**
@@ -87,6 +93,27 @@ var Event = Class.extend(Obj, {
     },
 
     /**
+     * @param {boolean} bubbles
+     */
+    setBubbles: function(bubbles) {
+        this.bubbles = bubbles;
+    },
+
+    /**
+     * @return {*}
+     */
+    getCurrentTarget: function() {
+        return this.currentTarget;
+    },
+
+    /**
+     * @param {*} currentTarget
+     */
+    setCurrentTarget: function(currentTarget) {
+        this.currentTarget = currentTarget;
+    },
+
+    /**
      * @return {*}
      */
     getData: function() {
@@ -98,6 +125,13 @@ var Event = Class.extend(Obj, {
      */
     getTarget: function() {
         return this.target;
+    },
+
+    /**
+     * @param {*} target
+     */
+    setTarget: function(target) {
+        this.target = target;
     },
 
     /**

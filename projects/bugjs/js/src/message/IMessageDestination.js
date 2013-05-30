@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('IMessageSender')
+//@Export('IMessageDestination')
 
 //@Require('Interface')
 
@@ -25,17 +25,29 @@ var Interface   = bugpack.require('Interface');
 // Declare Interface
 //-------------------------------------------------------------------------------
 
-var IMessageSender = Interface.declare({
+/**
+ * @interface
+ */
+var IMessageDestination = Interface.declare({
 
     //-------------------------------------------------------------------------------
     // Interface Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Message} message
-     * @param {string=} channel
+     *
      */
-    sendMessage: function(message, channel) {}
+    deregisterAddress: function() {},
+
+    /**
+     * @return {string}
+     */
+    getAddress: function() {},
+
+    /**
+     *
+     */
+    registerAddress: function() {}
 });
 
 
@@ -43,4 +55,4 @@ var IMessageSender = Interface.declare({
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('IMessageSender', IMessageSender);
+bugpack.export('IMessageDestination', IMessageDestination);

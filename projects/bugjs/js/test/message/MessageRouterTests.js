@@ -5,10 +5,11 @@
 //@TestFile
 
 //@Require('Message')
-//@RequirE('MessageDefines')
+//@Require('MessageDefines')
 //@Require('MessageReceiver')
 //@Require('MessageRouter')
 //@Require('annotate.Annotate')
+//@Require('bugdouble.BugDouble')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -28,6 +29,7 @@ var MessageDefines  = bugpack.require('MessageDefines');
 var MessageRouter   = bugpack.require('MessageRouter');
 var MessageReceiver = bugpack.require('MessageReceiver');
 var Annotate        = bugpack.require('annotate.Annotate');
+var BugDouble       = bugpack.require('bugdouble.BugDouble');
 var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
@@ -35,8 +37,10 @@ var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var test = TestAnnotation.test;
+var annotate        = Annotate.annotate;
+var spyOnFunction   = BugDouble.spyOnFunction;
+var spyOnObject     = BugDouble.spyOnObject;
+var test            = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
@@ -45,30 +49,20 @@ var test = TestAnnotation.test;
 
 /**
  * This tests
- * 1) Adding a MessageReceiver to MessageRouter
- * 2) Receiving a simple Message and routing that message
+ * 1) Adding a MessagePropagator to MessageRouter
  */
-var messageRouterSimpleAddMessageReceiverReceiveMessageTest = {
+var messageRouterSimpleAddMessagePropagatorTest = {
 
     // Setup Test
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
         var _this = this;
-        this.testReceiverFunctionCalled = false;
-        this.testChannel = MessageDefines.MessageChannels.MESSAGE;
-        this.testReceiverFunction = function(message, channel) {
-            _this.testReceiverFunctionCalled = true;
-            test.assertEqual(message, _this.testMessage,
-                "Assert received message is equal to testMessage");
-            test.assertEqual(channel, _this.testChannel,
-                "Assert that the channel received by the receiver function was the test channel");
+        this.dummyMessagePropagator = {
+            addEventPropagator: function(eventPropagator) {
+            }
         };
-        this.testMessageReceiver = new MessageReceiver(this.testReceiverFunction);
-
-        this.testMessageTopic = "testMessageTopic";
-        this.testMessage = new Message(this.testMessageTopic);
-
+        this.spyDummyMessagePropagator = spyOnObject(this.dummyMessagePropagator);
         this.testMessageRouter = new MessageRouter();
     },
 
@@ -77,14 +71,15 @@ var messageRouterSimpleAddMessageReceiverReceiveMessageTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
-        this.testMessageRouter.addMessageReceiver(this.testMessageReceiver);
-        this.testMessageReceiver.receiveMessage(this.testMessage, this.testChannel);
-        test.assertTrue(this.testReceiverFunctionCalled,
-            "Assert receiver function was called.");
+        this.testMessageRouter.addMessagePropagator(this.dummyMessagePropagator);
+        test.assertTrue(this.spyDummyMessagePropagator.getSpy("addEventPropagator").wasCalled(),
+            "Assert dummy's addEventPropagator function was called");
+        test.assertTrue(this.testMessageRouter.hasMessagePropagator(this.dummyMessagePropagator),
+            "Assert messageRouter has a messagePropagator that matches the dummy");
     }
 };
-annotate(messageRouterSimpleAddMessageReceiverReceiveMessageTest).with(
-    test().name("MessageRouter simple addMessageReceiver and receiveMessage test")
+annotate(messageRouterSimpleAddMessagePropagatorTest).with(
+    test().name("MessageRouter simple addMessagePropagator test")
 );
 
 
@@ -93,38 +88,35 @@ annotate(messageRouterSimpleAddMessageReceiverReceiveMessageTest).with(
  * 1) Adding multiple MessageReceivers to a MessageRouter
  * 2) Receiving a simple Message and routing that message to the right receiver
  */
-var messageRouterMultipleAddMessageReceiverReceiveMessageTest = {
+var messageRouterMultipleAddMessageReceiverPropagateMessageTest = {
 
     // Setup Test
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
         var _this = this;
+        this.testReceiverContext1 = {
+            receiverFunction: function(message, channel) {
+                test.assertEqual(this, _this.testReceiverContext1,
+                    "Assert that the receiver context is the test context");
+                test.assertEqual(message, _this.testMessage,
+                    "Assert that the received message is the test message");
+                test.assertEqual(channel, _this.testChannel,
+                    "Assert that the received channel is the test channel");
+            }
+        };
+        this.spyReceiverContext1 = spyOnObject(this.testReceiverContext1);
+        this.testMessageReceiver1 = new MessageReceiver(this.testReceiverContext1.receiverFunction, this.testReceiverContext1);
 
-        this.testReceiverFunction1Called = false;
+        this.testReceiverContext2 = {
+            receiverFunction: function(message, channel) {}
+        };
+        this.spyReceiverContext2 = spyOnObject(this.testReceiverContext2);
+        this.testMessageReceiver2 = new MessageReceiver(this.testReceiverContext2.receiverFunction, this.testReceiverContext2);
         this.testChannel = MessageDefines.MessageChannels.MESSAGE;
-        this.testReceiverFunction1 = function(message, channel) {
-            _this.testReceiverFunction1Called = true;
-            test.assertEqual(message, _this.testMessage,
-                "Assert received message is equal to testMessage");
-            test.assertEqual(channel, _this.testChannel,
-                "Assert that the channel received by the receiver function was the test channel");
-        };
-        this.testMessageReceiver1 = new MessageReceiver(this.testReceiverFunction1);
-
-        this.testReceiverFunction2Called = false;
-        this.testReceiverFunction2 = function(message, channel) {
-            _this.testReceiverFunction2Called = true;
-            test.assertEqual(message, _this.testMessage,
-                "Assert received message is equal to testMessage");
-            test.assertEqual(channel, _this.testChannel,
-                "Assert that the channel received by the receiver function was the test channel");
-        };
-        this.testMessageReceiver2 = new MessageReceiver(this.testReceiverFunction2);
-
         this.testMessageTopic = "testMessageTopic";
         this.testMessage = new Message(this.testMessageTopic);
-        this.testMessage.setDestinationAddress(this.testMessageReceiver1.getAddress());
+        this.testMessage.setReceiverAddress(this.testMessageReceiver1.getAddress());
         this.testMessageRouter = new MessageRouter();
     },
 
@@ -133,15 +125,17 @@ var messageRouterMultipleAddMessageReceiverReceiveMessageTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
-        this.testMessageRouter.addMessageReceiver(this.testMessageReceiver1);
-        this.testMessageRouter.addMessageReceiver(this.testMessageReceiver2);
-        this.testMessageRouter.receiveMessage(this.testMessage, this.testChannel);
-        test.assertTrue(this.testReceiverFunction1Called,
-            "Assert receiver function1 was called.");
-        test.assertFalse(this.testReceiverFunction2Called,
-            "Assert receiver function2 was NOT called.");
+        this.testMessageRouter.addMessagePropagator(this.testMessageReceiver1);
+        this.testMessageRouter.addMessagePropagator(this.testMessageReceiver2);
+        this.testMessageReceiver1.turnOn();
+        this.testMessageReceiver2.turnOn();
+        this.testMessageRouter.propagateMessage(this.testMessage, this.testChannel);
+        test.assertTrue(this.spyReceiverContext1.getSpy("receiverFunction").wasCalled(),
+            "Assert receiverFunction on testReceiverContext1 was called.");
+        test.assertTrue(this.spyReceiverContext2.getSpy("receiverFunction").wasNotCalled(),
+            "Assert receiverFunction on testReceiverContext2 was NOT called.");
     }
 };
-annotate(messageRouterMultipleAddMessageReceiverReceiveMessageTest).with(
-    test().name("MessageRouter multiple addMessageReceiver and receiveMessage test")
+annotate(messageRouterMultipleAddMessageReceiverPropagateMessageTest).with(
+    test().name("MessageRouter multiple addMessageReceiver and propagateMessage test")
 );

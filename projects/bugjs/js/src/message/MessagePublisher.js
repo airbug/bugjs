@@ -9,11 +9,10 @@
 //@Export('MessagePublisher')
 
 //@Require('Class')
-//@Require('IMessageReceiver')
+//@Require('IMessagePropagator')
 //@Require('List')
 //@Require('MessageBroadcaster')
-//@Require('Obj')
-//@Require('UuidGenerator')
+//@Require('MessagePropagator')
 
 
 //-------------------------------------------------------------------------------
@@ -28,18 +27,17 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
-var IMessageReceiver    = bugpack.require('IMessageReceiver');
+var IMessagePropagator  = bugpack.require('IMessagePropagator');
 var Map                 = bugpack.require('Map');
 var MessageBroadcaster  = bugpack.require('MessageBroadcaster');
-var Obj                 = bugpack.require('Obj');
-var UuidGenerator       = bugpack.require('UuidGenerator');
+var MessagePropagator   = bugpack.require('MessagePropagator');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var MessagePublisher = Class.extend(Obj, {
+var MessagePublisher = Class.extend(MessagePropagator, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -55,12 +53,6 @@ var MessagePublisher = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {string}
-         */
-        this.address = UuidGenerator.generateUuid();
-
-        /**
-         * @private
          * @type {Map.<string, MessageBroadcaster>}
          */
         this.messageTopicToMessageBroadcasterMap = new Map();
@@ -68,24 +60,17 @@ var MessagePublisher = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // IMessageReceiver Implementation
+    // IMessagePropagator Implementation
     //-------------------------------------------------------------------------------
-
-    /**
-     * @return {string}
-     */
-    getAddress: function() {
-        return this.address;
-    },
 
     /**
      * @param {Message} message
      * @param {string} channel
      */
-    receiveMessage: function(message, channel) {
+    propagateMessage: function(message, channel) {
         var messageBroadcaster = this.messageTopicToMessageBroadcasterMap.get(message.getTopic());
         if (messageBroadcaster) {
-            messageBroadcaster.receiveMessage(message, channel);
+            messageBroadcaster.propagateMessage(message, channel);
         }
     },
 
@@ -96,17 +81,18 @@ var MessagePublisher = Class.extend(Obj, {
 
     /**
      * @param {string} messageTopic
-     * @param {MessageReceiver} messageReceiver
+     * @param {MessagePropagator} messagePropagator
      * @return {boolean}
      */
-    addMessageReceiverForTopic: function(messageTopic, messageReceiver) {
+    addMessagePropagatorForTopic: function(messageTopic, messagePropagator) {
         var messageBroadcaster = this.messageTopicToMessageBroadcasterMap.get(messageTopic);
         if (!messageBroadcaster) {
             messageBroadcaster = new MessageBroadcaster();
+            messageBroadcaster.addEventPropagator(this);
             this.messageTopicToMessageBroadcasterMap.put(messageTopic, messageBroadcaster);
         }
-        if (!messageBroadcaster.hasMessageReceiver(messageReceiver)) {
-            messageBroadcaster.addMessageReceiver(messageReceiver);
+        if (!messageBroadcaster.hasMessagePropagator(messagePropagator)) {
+            messageBroadcaster.addMessagePropagator(messagePropagator);
             return true;
         }
         return false;
@@ -116,23 +102,28 @@ var MessagePublisher = Class.extend(Obj, {
      * @param {string} messageTopic
      * @return {boolean}
      */
-    hasMessageReceiverForTopic: function(messageTopic) {
+    hasMessagePropagatorForTopic: function(messageTopic) {
         var messageBroadcaster = this.messageTopicToMessageBroadcasterMap.get(messageTopic);
         if (messageBroadcaster) {
-            return !messageBroadcaster.isMessageReceiverListEmpty();
+            return !messageBroadcaster.isMessagePropagatorListEmpty();
         }
-        return this.messageTopicToMessageBroadcasterMap.containsKey(messageTopic);
+        return false;
     },
 
     /**
      * @param {string} messageTopic
-     * @param {MessageReceiver} messageReceiver
+     * @param {MessagePropagator} messagePropagator
      * @return {boolean}
      */
-    removeMessageReceiverForTopic: function(messageTopic, messageReceiver) {
+    removeMessagePropagatorForTopic: function(messageTopic, messagePropagator) {
         var messageBroadcaster = this.messageTopicToMessageBroadcasterMap.get(messageTopic);
         if (messageBroadcaster) {
-            return messageBroadcaster.remove(messageReceiver);
+            var result = messageBroadcaster.removeMessagePropagator(messagePropagator);
+            if (messageBroadcaster.isMessagePropagatorListEmpty()) {
+                this.messageTopicToMessageBroadcasterMap.remove(messageTopic);
+                messageBroadcaster.removeEventPropagator(this);
+            }
+            return result;
         }
         return false;
     }
@@ -143,7 +134,7 @@ var MessagePublisher = Class.extend(Obj, {
 // Interfaces
 //-------------------------------------------------------------------------------
 
-Class.implement(MessagePublisher, IMessageReceiver);
+Class.implement(MessagePublisher, IMessagePropagator);
 
 
 //-------------------------------------------------------------------------------

@@ -2,13 +2,14 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('socketio:server')
-
-//@Export('SocketIoConnection')
+//@Export('MessageDestination')
 
 //@Require('Class')
 //@Require('Event')
 //@Require('EventDispatcher')
+//@Require('IMessageDestination')
+//@Require('MessagePropagator')
+//@Require('Obj')
 //@Require('UuidGenerator')
 
 
@@ -23,23 +24,24 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var Event           = bugpack.require('Event');
-var EventDispatcher = bugpack.require('EventDispatcher');
-var UuidGenerator   = bugpack.require('UuidGenerator');
+var Class               = bugpack.require('Class');
+var Event               = bugpack.require('Event');
+var EventDispatcher     = bugpack.require('EventDispatcher');
+var IMessageDestination = bugpack.require('IMessageDestination');
+var UuidGenerator       = bugpack.require('UuidGenerator');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SocketIoConnection = Class.extend(EventDispatcher, {
+var MessageDestination = Class.extend(EventDispatcher, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(socket) {
+    _constructor: function() {
 
         this._super();
 
@@ -50,15 +52,15 @@ var SocketIoConnection = Class.extend(EventDispatcher, {
 
         /**
          * @private
-         * @type {*}
+         * @type {string}
          */
-        this.socket = socket;
+        this.address = UuidGenerator.generateUuid();
 
         /**
          * @private
-         * @type {string}
+         * @type {boolean}
          */
-        this.uuid = UuidGenerator.generateUuid();
+        this.addressRegistered = false;
     },
 
 
@@ -67,61 +69,73 @@ var SocketIoConnection = Class.extend(EventDispatcher, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @private
-     * @return {string}
+     * @return {boolean}
      */
-    getUuid: function() {
-        return this.uuid;
+    isAddressRegistered: function() {
+        return this.addressRegistered;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // IMessageDestination Implementation
     //-------------------------------------------------------------------------------
 
     /**
      *
      */
-    deinitialize: function() {
-        this.socket.removeAllListeners();
+    deregisterAddress: function() {
+        if (this.addressRegistered) {
+            this.addressRegistered = false;
+            this.dispatchEvent(new Event(MessageDestination.EventTypes.ADDRESS_DEREGISTERED, {
+                address: this.getAddress()
+            }));
+        }
     },
 
     /**
-     * @param {function(Error)} callback
+     * @return {string}
      */
-    initialize: function(callback) {
-        var _this = this;
-        this.socket.on("disconnect", function() {
-            _this.dispatchEvent(new Event(SocketIoConnection.EventTypes.DISCONNECT));
-        });
-        this.socket.on("event", function(data) {
-            _this.dispatchEvent(new Event(SocketIoConnection.EventTypes.EVENT, {eventType: data.eventType, eventData: data.eventData}));
-        });
-        this.socket.on("message", function(message) {
-            _this.dispatchEvent(new Event(SocketIoConnection.EventTypes.MESSAGE, {message: message}));
-        });
+    getAddress: function() {
+        return this.address;
+    },
 
-        callback();
+    /**
+     *
+     */
+    registerAddress: function() {
+        if (!this.addressRegistered) {
+            this.addressRegistered = true;
+            this.dispatchEvent(new Event(MessageDestination.EventTypes.ADDRESS_REGISTERED, {
+                address: this.getAddress()
+            }));
+        }
     }
 });
 
 
 //-------------------------------------------------------------------------------
-// Static Variables
+// Interfaces
+//-------------------------------------------------------------------------------
+
+Class.implement(MessageDestination, IMessageDestination);
+
+
+//-------------------------------------------------------------------------------
+// Static Methods
 //-------------------------------------------------------------------------------
 
 /**
  * @enum {string}
  */
-SocketIoConnection.EventTypes = {
-    DISCONNECT: "SocketIoConnection:Disconnect",
-    EVENT:      "SocketIoConnect:Event",
-    MESSAGE:    "SocketIoConnection:Message"
+MessageDestination.EventTypes = {
+    ADDRESS_REGISTERED: "MessageRoute:AddressRegistered",
+    ADDRESS_DEREGISTERED: "MessageRoute:AddressDeregistered"
 };
 
 
+
 //-------------------------------------------------------------------------------
-// Exports
+// Export
 //-------------------------------------------------------------------------------
 
-bugpack.export('socketio:server.SocketIoConnection', SocketIoConnection);
+bugpack.export('MessageDestination', MessageDestination);

@@ -78,11 +78,14 @@ var Set = Class.extend(Collection, {
 
     /**
      * @param {*} value
+     * @return {boolean}
      */
     add: function(value) {
         if (!this.hashStore.hasValue(value)) {
             this.hashStore.addValue(value);
+            return true;
         }
+        return false;
     }
 });
 

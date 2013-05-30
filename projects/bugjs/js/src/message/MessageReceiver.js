@@ -5,9 +5,10 @@
 //@Export('MessageReceiver')
 
 //@Require('Class')
-//@Require('IMessageReceiver')
+//@Require('Event')
+//@Require('EventDispatcher')
+//@Require('IMessagePropagator')
 //@Require('Obj')
-//@Require('UuidGenerator')
 
 
 //-------------------------------------------------------------------------------
@@ -22,16 +23,17 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
-var IMessageReceiver    = bugpack.require('IMessageReceiver');
+var Event               = bugpack.require('Event');
+var EventDispatcher     = bugpack.require('EventDispatcher');
+var IMessagePropagator  = bugpack.require('IMessagePropagator');
 var Obj                 = bugpack.require('Obj');
-var UuidGenerator       = bugpack.require('UuidGenerator');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var MessageReceiver = Class.extend(Obj, {
+var MessageReceiver = Class.extend(EventDispatcher, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -45,12 +47,6 @@ var MessageReceiver = Class.extend(Obj, {
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {string}
-         */
-        this.address = UuidGenerator.generateUuid();
 
         /**
          * @private
@@ -86,21 +82,14 @@ var MessageReceiver = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // IMessageReceiver Implementation
+    // IMessagePropagator Implementation
     //-------------------------------------------------------------------------------
-
-    /**
-     * @return {string}
-     */
-    getAddress: function() {
-        return this.address;
-    },
 
     /**
      * @param {Message} message
      * @param {string} channel
      */
-    receiveMessage: function(message, channel) {
+    propagateMessage: function(message, channel) {
         if (!message) {
             throw new Error("message must be specified. message:" + message);
         }
@@ -129,6 +118,9 @@ var MessageReceiver = Class.extend(Obj, {
         return false;
     },
 
+    /**
+     * @return {number}
+     */
     hashCode: function() {
         if (!this._hashCode) {
             this._hashCode = Obj.hashCode("[MessageReceiver]" +
@@ -144,7 +136,7 @@ var MessageReceiver = Class.extend(Obj, {
 // Interfaces
 //-------------------------------------------------------------------------------
 
-Class.implement(MessageReceiver, IMessageReceiver);
+Class.implement(MessageReceiver, IMessagePropagator);
 
 
 //-------------------------------------------------------------------------------

@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('IEventDispatcher')
+//@Export('IEventPropagator')
 
 //@Require('Interface')
 
@@ -25,53 +25,19 @@ var Interface = bugpack.require('Interface');
 // Declare Interface
 //-------------------------------------------------------------------------------
 
-var IEventDispatcher = Interface.declare({
+/**
+ * @interface
+ */
+var IEventPropagator = Interface.declare({
 
     //-------------------------------------------------------------------------------
     // Interface Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {EventDispatcher}
-     */
-    getParentDispatcher: function() {},
-
-    /**
-     * @param {EventDispatcher} parentDispatcher
-     */
-    setParentDispatcher: function(parentDispatcher) {},
-
-    /**
-     * @param {string} eventType
-     * @param {function(Event)} listenerFunction
-     * @param {?Object} listenerContext (optional)
-     */
-    addEventListener: function(eventType, listenerFunction, listenerContext) {},
-
-    /**
      * @param {Event} event
-     * @param {?boolean=} bubbles
      */
-    dispatchEvent: function(event, bubbles) {},
-
-    /**
-     * @param {string} eventType
-     * @param {function(Event)} listenerFunction
-     * @param {?Object} listenerContext (optional)
-     */
-    hasEventListener: function(eventType, listenerFunction, listenerContext) {},
-
-    /**
-     *
-     */
-    removeAllListeners: function() {},
-
-    /**
-     * @param {string} eventType
-     * @param {function(Event)} listenerFunction
-     * @param {Object} listenerContext
-     */
-    removeEventListener: function(eventType, listenerFunction, listenerContext) {}
+    propagateEvent: function(event) {},
 });
 
 
@@ -79,4 +45,4 @@ var IEventDispatcher = Interface.declare({
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('IEventDispatcher', IEventDispatcher);
+bugpack.export('IEventPropagator', IEventPropagator);

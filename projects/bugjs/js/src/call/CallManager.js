@@ -48,7 +48,6 @@ var CallManager = Class.extend(Obj, {
 
     _constructor: function() {
 
-        var _this = this;
         this._super();
 
 
@@ -70,9 +69,9 @@ var CallManager = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {IMessageReceiver}
+         * @type {IMessagePropagator}
          */
-        this.outgoingMessageReceiver = null;
+        this.outgoingMessagePropagator = null;
 
         /**
          * @private
@@ -95,11 +94,11 @@ var CallManager = Class.extend(Obj, {
 
     /**
      *
-     * @param {IMessageReceiver} messageReceiver
+     * @param {IMessagePropagator} messagePropagator
      */
-    setOutGoingMessageReceiver: function(messageReceiver) {
-        this.outgoingMessageReceiver = messageReceiver;
-        this.outgoingMessageProxy.setMessageReceiver(this.outgoingMessageReceiver)
+    setOutgoingMessagePropagator: function(messagePropagator) {
+        this.outgoingMessagePropagator = messagePropagator;
+        this.outgoingMessageProxy.setMessagePropagator(this.outgoingMessagePropagator)
     },
 
 
@@ -113,9 +112,9 @@ var CallManager = Class.extend(Obj, {
     deregisterCall: function(call) {
         if (this.registerdCallSet.contains(call)) {
             this.registerdCallSet.remove(call);
-            this.incomingMessageRouter.removeMessageReceiver(call);
-            call.setMessageReceiver(null);
-            call.removeEventListener(Call.EventTypes.COMPLETE, this.hearCallComplete, this);
+            this.incomingMessageRouter.removeMessagePropagator(call);
+            call.setOutGoingMessagePropagator(null);
+            call.removeEventListener(Call.EventTypes.CLEANUP, this.hearCallCleanup, this);
         }
     },
 
@@ -125,8 +124,8 @@ var CallManager = Class.extend(Obj, {
     registerCall: function(call) {
         if (!this.registerdCallSet.contains(call)) {
             this.registerdCallSet.add(call);
-            this.incomingMessageRouter.addMessageReceiver(call);
-            call.setMessageReceiver(this.outgoingMessageProxy);
+            this.incomingMessageRouter.addMessagePropagator(call);
+            call.setOutGoingMessagePropagator(this.outgoingMessageProxy);
             call.addEventListener(Call.EventTypes.CLEANUP, this.hearCallCleanup, this);
         }
     },
