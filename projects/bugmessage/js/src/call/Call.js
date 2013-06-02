@@ -7,10 +7,10 @@
 //@Require('Class')
 //@Require('Event')
 //@Require('EventDispatcher')
-//@Require('IMessageGateway')
 //@Require('List')
 //@Require('Map')
-//@Require('MessageDestination')
+//@Require('Obj')
+//@Require('bugmessage.IMessageSender')
 
 
 //-------------------------------------------------------------------------------
@@ -24,13 +24,13 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var Event               = bugpack.require('Event');
-var EventDispatcher     = bugpack.require('EventDispatcher');
-var IMessageGateway     = bugpack.require('IMessageGateway');
-var List                = bugpack.require('List');
-var Map                 = bugpack.require('Map');
-var MessageDestination  = bugpack.require('MessageDestination');
+var Class           = bugpack.require('Class');
+var Event           = bugpack.require('Event');
+var EventDispatcher = bugpack.require('EventDispatcher');
+var List            = bugpack.require('List');
+var Map             = bugpack.require('Map');
+var Obj             = bugpack.require('Obj');
+var IMessageSender  = bugpack.require('bugmessage.IMessageSender');
 
 
 //-------------------------------------------------------------------------------
@@ -41,7 +41,7 @@ var MessageDestination  = bugpack.require('MessageDestination');
  * @constructor
  * @extends EventDispatcher
  */
-var Call = Class.extend(MessageDestination, {
+var Call = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -63,9 +63,9 @@ var Call = Class.extend(MessageDestination, {
 
         /**
          * @private
-         * @type {IMessagePropagator}
+         * @type {IMessageChannel}
          */
-        this.outGoingMessagePropagator = null;
+        this.outGoingMessageChannel = null;
     },
 
 
@@ -74,34 +74,33 @@ var Call = Class.extend(MessageDestination, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {IMessagePropagator}
+     * @return {IMessageChannel}
      */
-    getOutGoingMessagePropagator: function() {
-        return this.outGoingMessagePropagator;
+    getOutGoingMessageChannel: function() {
+        return this.outGoingMessageChannel;
     },
 
     /**
-     * @param {IMessagePropagator} outGoingMessagePropagator
+     * @param {IMessageChannel} outGoingMessageChannel
      */
-    setOutGoingMessagePropagator: function(outGoingMessagePropagator) {
-        this.outGoingMessagePropagator = outGoingMessagePropagator;
+    setOutGoingMessageChannel: function(outGoingMessageChannel) {
+        this.outGoingMessageChannel = outGoingMessageChannel;
     },
 
 
     //-------------------------------------------------------------------------------
-    // IMessagePropagator Implementation
+    // IMessageSender Implementation
     //-------------------------------------------------------------------------------
 
     /**
      * @param {Message} incomingMessage
-     * @param {string} channel
+     * @param {MessageResponder} messageResponder
      */
-    propagateMessage: function(incomingMessage, channel) {
+    channelMessage: function(incomingMessage, messageResponder) {
         if (channel === "error") {
             this.dispatchEvent(new Event(Call.EventTypes.ERROR, {
-                message: message,
-                error: message.getData().error,
-                channel: channel
+                message: incomingMessage,
+                error: incomingMessage.getData().error
             }));
         } else {
             this.dispatchEvent(new Event(Call.EventTypes.MESSAGE, {
@@ -118,10 +117,10 @@ var Call = Class.extend(MessageDestination, {
 
     /**
      * @param {Message} message
-     * @param {string} channel
+     * @param {IMessageChannel} messageChannel
      */
     sendMessage: function(message, channel) {
-        this.outGoingMessagePropagator.propagateMessage(message, channel);
+        this.outGoingMessageChannel.channelMessage(message, channel);
     },
 
 
@@ -154,7 +153,7 @@ var Call = Class.extend(MessageDestination, {
 // Interfaces
 //-------------------------------------------------------------------------------
 
-Class.implement(Call, IMessageGateway);
+Class.implement(Call, IMessageSender);
 
 
 //-------------------------------------------------------------------------------

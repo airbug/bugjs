@@ -2,7 +2,12 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('MessageDefines')
+//@Package('bugmessage')
+
+//@Export('IMessageReceiver')
+
+//@Require('Interface')
+//@Require('bugmessage.IMessageChannel')
 
 
 //-------------------------------------------------------------------------------
@@ -13,24 +18,36 @@ var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
-// Declare Class
+// BugPack
 //-------------------------------------------------------------------------------
 
-var MessageDefines = {};
-
-
-//-------------------------------------------------------------------------------
-// Static Variables
-//-------------------------------------------------------------------------------
-
-MessageDefines.MessageChannels = {
-    ERROR: "error",
-    MESSAGE: "message"
-};
+var Interface       = bugpack.require('Interface');
+var IMessageChannel = bugpack.require('bugmessage.IMessageChannel');
 
 
 //-------------------------------------------------------------------------------
-// Export
+// Declare Interface
 //-------------------------------------------------------------------------------
 
-bugpack.export('MessageDefines', MessageDefines);
+/**
+ * @interface
+ */
+var IMessageReceiver = Interface.extend(IMessageChannel, {
+
+    //-------------------------------------------------------------------------------
+    // Interface Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {Message} message
+     * @param {MessageResponder} messageResponder
+     */
+    receiveMessage: function(message, messageResponder) {}
+});
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export('bugmessage.IMessageReceiver', IMessageReceiver);

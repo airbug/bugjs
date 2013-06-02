@@ -4,13 +4,12 @@
 
 //@Package('socketio:server')
 
-//@Export('SocketIoConnectionMessagePropagator')
+//@Export('SocketIoConnectionMessageChannel')
 
 //@Require('Class')
 //@Require('IEventPropagator')
-//@Require('IMessagePropagator')
+//@Require('IMessageChannel')
 //@Require('Message')
-//@Require('MessageDefines')
 //@Require('Obj')
 //@Require('Queue')
 //@Require('UuidGenerator')
@@ -30,9 +29,8 @@ var bugpack = require('bugpack').context();
 
 var Class               = bugpack.require('Class');
 var IEventPropagator    = bugpack.require('IEventPropagator');
-var IMessagePropagator  = bugpack.require('IMessagePropagator');
+var IMessageChannel  = bugpack.require('IMessageChannel');
 var Message             = bugpack.require('Message');
-var MessageDefines      = bugpack.require('MessageDefines');
 var Obj                 = bugpack.require('Obj');
 var Queue               = bugpack.require('Queue');
 var UuidGenerator       = bugpack.require('UuidGenerator');
@@ -43,7 +41,7 @@ var SocketIoConnection  = bugpack.require('socketio:client.SocketIoConnection');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SocketIoConnectionMessagePropagator = Class.extend(Obj, {
+var SocketIoConnectionMessageChannel = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -60,9 +58,9 @@ var SocketIoConnectionMessagePropagator = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {IMessagePropagator}
+         * @type {IMessageChannel}
          */
-        this.incomingMessagePropagator = null;
+        this.incomingMessageChannel = null;
 
         /**
          * @private
@@ -77,21 +75,21 @@ var SocketIoConnectionMessagePropagator = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {IMessagePropagator}
+     * @return {IMessageChannel}
      */
-    getIncomingMessagePropagator: function() {
-        return this.incomingMessagePropagator;
+    getIncomingMessageChannel: function() {
+        return this.incomingMessageChannel;
     },
 
     /**
-     * @param {IMessagePropagator} incomingMessagePropagator
+     * @param {IMessageChannel} incomingMessageChannel
      */
-    setIncomingMessagePropagator: function(incomingMessagePropagator) {
-        if (incomingMessagePropagator) {
-            this.incomingMessagePropagator.removeEventPropagator(this);
+    setIncomingMessageChannel: function(incomingMessageChannel) {
+        if (incomingMessageChannel) {
+            this.incomingMessageChannel.removeEventPropagator(this);
         }
-        this.incomingMessagePropagator = incomingMessagePropagator;
-        this.incomingMessagePropagator.addEventPropagator(this);
+        this.incomingMessageChannel = incomingMessageChannel;
+        this.incomingMessageChannel.addEventPropagator(this);
     },
 
 
@@ -113,14 +111,14 @@ var SocketIoConnectionMessagePropagator = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // IMessagePropagator Implementation
+    // IMessageChannel Implementation
     //-------------------------------------------------------------------------------
 
     /**
      * @param {Message} message
      * @param {string} channel
      */
-    propagateMessage: function(message, channel) {
+    channelMessage: function(message, channel) {
         this.socketIoConnection.send({message: message.toObject(), channel: channel});
     },
 
@@ -163,12 +161,6 @@ var SocketIoConnectionMessagePropagator = Class.extend(Obj, {
             //TODO BRN: Figure out what to do with the error here..
             console.error(error);
 
-            /*var message = new Message("error", error);
-             if (this.incomingMessagePropagator) {
-             this.incomingMessagePropagator.propagateMessage(message, MessageDefines.MessageChannels.ERROR);
-             } else {
-             throw new Error("Must set incomingMessageReceiver before it starts hearing events from the client");
-             }*/
         } else {
             throw new Error("Message Transport received an incompatible error. error:" + error);
         }
@@ -196,8 +188,8 @@ var SocketIoConnectionMessagePropagator = Class.extend(Obj, {
             if (messageData.receiverAddress) {
                 message.setReceiverAddress(messageData.receiverAddress);
             }
-            if (this.incomingMessagePropagator) {
-                this.incomingMessagePropagator.propagateMessage(message, channel);
+            if (this.incomingMessageChannel) {
+                this.incomingMessageChannel.channelMessage(message, channel);
             } else {
                 throw new Error("Must set incomingMessageReceiver before it starts hearing events from the client");
             }
@@ -241,12 +233,12 @@ var SocketIoConnectionMessagePropagator = Class.extend(Obj, {
 // Interfaces
 //-------------------------------------------------------------------------------
 
-Class.implement(SocketIoConnectionMessagePropagator, IEventPropagator);
-Class.implement(SocketIoConnectionMessagePropagator, IMessagePropagator);
+Class.implement(SocketIoConnectionMessageChannel, IEventPropagator);
+Class.implement(SocketIoConnectionMessageChannel, IMessageChannel);
 
 
 //-------------------------------------------------------------------------------
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export('socketio:server.SocketIoConnectionMessagePropagator', SocketIoConnectionMessagePropagator);
+bugpack.export('socketio:server.SocketIoConnectionMessageChannel', SocketIoConnectionMessageChannel);

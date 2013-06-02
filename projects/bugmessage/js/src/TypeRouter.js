@@ -9,10 +9,10 @@
 //@Export('MessagePublisher')
 
 //@Require('Class')
-//@Require('IMessagePropagator')
+//@Require('IMessageChannel')
 //@Require('List')
 //@Require('MessageBroadcaster')
-//@Require('MessagePropagator')
+//@Require('MessageChannel')
 
 
 //-------------------------------------------------------------------------------
@@ -27,17 +27,17 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
-var IMessagePropagator  = bugpack.require('IMessagePropagator');
+var IMessageChannel  = bugpack.require('IMessageChannel');
 var Map                 = bugpack.require('Map');
 var MessageBroadcaster  = bugpack.require('MessageBroadcaster');
-var MessagePropagator   = bugpack.require('MessagePropagator');
+var MessageChannel   = bugpack.require('MessageChannel');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var MessagePublisher = Class.extend(MessagePropagator, {
+var MessagePublisher = Class.extend(MessageChannel, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -60,17 +60,17 @@ var MessagePublisher = Class.extend(MessagePropagator, {
 
 
     //-------------------------------------------------------------------------------
-    // IMessagePropagator Implementation
+    // IMessageChannel Implementation
     //-------------------------------------------------------------------------------
 
     /**
      * @param {Message} message
      * @param {string} channel
      */
-    propagateMessage: function(message, channel) {
+    channelMessage: function(message, channel) {
         var messageBroadcaster = this.messageTopicToMessageBroadcasterMap.get(message.getTopic());
         if (messageBroadcaster) {
-            messageBroadcaster.propagateMessage(message, channel);
+            messageBroadcaster.channelMessage(message, channel);
         }
     },
 
@@ -81,18 +81,18 @@ var MessagePublisher = Class.extend(MessagePropagator, {
 
     /**
      * @param {string} messageTopic
-     * @param {MessagePropagator} messagePropagator
+     * @param {MessageChannel} messageChannel
      * @return {boolean}
      */
-    addMessagePropagatorForTopic: function(messageTopic, messagePropagator) {
+    addMessageChannelForTopic: function(messageTopic, messageChannel) {
         var messageBroadcaster = this.messageTopicToMessageBroadcasterMap.get(messageTopic);
         if (!messageBroadcaster) {
             messageBroadcaster = new MessageBroadcaster();
             messageBroadcaster.addEventPropagator(this);
             this.messageTopicToMessageBroadcasterMap.put(messageTopic, messageBroadcaster);
         }
-        if (!messageBroadcaster.hasMessagePropagator(messagePropagator)) {
-            messageBroadcaster.addMessagePropagator(messagePropagator);
+        if (!messageBroadcaster.hasMessageChannel(messageChannel)) {
+            messageBroadcaster.addMessageChannel(messageChannel);
             return true;
         }
         return false;
@@ -102,24 +102,24 @@ var MessagePublisher = Class.extend(MessagePropagator, {
      * @param {string} messageTopic
      * @return {boolean}
      */
-    hasMessagePropagatorForTopic: function(messageTopic) {
+    hasMessageChannelForTopic: function(messageTopic) {
         var messageBroadcaster = this.messageTopicToMessageBroadcasterMap.get(messageTopic);
         if (messageBroadcaster) {
-            return !messageBroadcaster.isMessagePropagatorListEmpty();
+            return !messageBroadcaster.isMessageChannelListEmpty();
         }
         return false;
     },
 
     /**
      * @param {string} messageTopic
-     * @param {MessagePropagator} messagePropagator
+     * @param {MessageChannel} messageChannel
      * @return {boolean}
      */
-    removeMessagePropagatorForTopic: function(messageTopic, messagePropagator) {
+    removeMessageChannelForTopic: function(messageTopic, messageChannel) {
         var messageBroadcaster = this.messageTopicToMessageBroadcasterMap.get(messageTopic);
         if (messageBroadcaster) {
-            var result = messageBroadcaster.removeMessagePropagator(messagePropagator);
-            if (messageBroadcaster.isMessagePropagatorListEmpty()) {
+            var result = messageBroadcaster.removeMessageChannel(messageChannel);
+            if (messageBroadcaster.isMessageChannelListEmpty()) {
                 this.messageTopicToMessageBroadcasterMap.remove(messageTopic);
                 messageBroadcaster.removeEventPropagator(this);
             }
@@ -134,7 +134,7 @@ var MessagePublisher = Class.extend(MessagePropagator, {
 // Interfaces
 //-------------------------------------------------------------------------------
 
-Class.implement(MessagePublisher, IMessagePropagator);
+Class.implement(MessagePublisher, IMessageChannel);
 
 
 //-------------------------------------------------------------------------------

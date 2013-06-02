@@ -2,9 +2,13 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('IMessagePropagator')
+//@Package('bugmessage')
 
-//@Require('Interface')
+//@Export('AbstractMessageChannel')
+
+//@Require('Class')
+//@Require('EventPropagator')
+//@Require('bugmessage.IMessageChannel')
 
 
 //-------------------------------------------------------------------------------
@@ -18,34 +22,48 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var IEventPropagator    = bugpack.require('IEventPropagator');
-var Interface           = bugpack.require('Interface');
+var Class               = bugpack.require('Class');
+var EventPropagator     = bugpack.require('EventPropagator');
+var IMessageChannel     = bugpack.require('bugmessage.IMessageChannel');
 
 
 //-------------------------------------------------------------------------------
-// Declare Interface
+// Declare Class
 //-------------------------------------------------------------------------------
 
-/**
- * @interface
- * @extends {IEventDispatcher}
- */
-var IMessagePropagator = Interface.extend(IEventPropagator, {
+var AbstractMessageChannel = Class.extend(EventPropagator, {
+
+    /**
+     * @abstract
+     * @param message
+     * @param messageResponder
+     */
+    //doChannelMessage: function(message, messageResponder) {},
+
 
     //-------------------------------------------------------------------------------
-    // Interface Methods
+    // IMessageChannel Implementation
     //-------------------------------------------------------------------------------
 
     /**
      * @param {Message} message
-     * @param {string} channel
+     * @param {MessageResponder} messageResponder
      */
-    propagateMessage: function(message, channel) {}
+    channelMessage: function(message, messageResponder) {
+        this.doChannelMessage(message, messageResponder);
+    }
 });
 
 
 //-------------------------------------------------------------------------------
-// Exports
+// Interfaces
 //-------------------------------------------------------------------------------
 
-bugpack.export('IMessagePropagator', IMessagePropagator);
+Class.implement(AbstractMessageChannel, IMessageChannel);
+
+
+//-------------------------------------------------------------------------------
+// Export
+//-------------------------------------------------------------------------------
+
+bugpack.export('bugmessage.AbstractMessageChannel', AbstractMessageChannel);

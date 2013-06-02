@@ -2,12 +2,14 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('MessageBroadcaster')
+//@Package('bugmessage')
+
+//@Export('BroadcasterChannel')
 
 //@Require('Class')
-//@Require('IMessagePropagator')
 //@Require('List')
-//@Require('MessagePropagator')
+//@Require('bugmessage.AbstractMessageChannel')
+//@Require('bugmessage.IBroadcasterChannel')
 
 
 //-------------------------------------------------------------------------------
@@ -21,17 +23,17 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var IMessagePropagator  = bugpack.require('IMessagePropagator');
-var List                = bugpack.require('List');
-var MessagePropagator   = bugpack.require('MessagePropagator');
+var Class                   = bugpack.require('Class');
+var List                    = bugpack.require('List');
+var AbstractMessageChannel  = bugpack.require('bugmessage.AbstractMessageChannel');
+var IBroadcasterChannel     = bugpack.require('bugmessage.IBroadcasterChannel');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var MessageBroadcaster = Class.extend(MessagePropagator, {
+var BroadcasterChannel = Class.extend(AbstractMessageChannel, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -47,40 +49,40 @@ var MessageBroadcaster = Class.extend(MessagePropagator, {
 
         /**
          * @private
-         * @type {List.<MessagePropagator>}
+         * @type {Object}
          */
-        this.messagePropagatorList = new List();
+        this.messageReceiverList = new List();
     },
 
 
     //-------------------------------------------------------------------------------
-    // IMessagePropagator Implementation
+    // AbstractMessageChannel Implementation
     //-------------------------------------------------------------------------------
 
     /**
      * @param {Message} message
-     * @param {string} channel
+     * @param {MessageResponder} messageResponder
      */
-    propagateMessage: function(message, channel) {
-        var messagePropagatorListClone = this.messagePropagatorList.clone();
-        messagePropagatorListClone.forEach(function(messagePropagator) {
-            messagePropagator.propagateMessage(message, channel);
+    doChannelMessage: function(message, messageResponder) {
+        var messageReceiverListClone = this.messageReceiverList.clone();
+        messageReceiverListClone.forEach(function(messageReceiver) {
+            messageReceiver.receiveMessage(message, messageResponder);
         });
     },
 
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Instance Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {MessagePropagator} messagePropagator
+     * @param {MessageReceiver} messageReceiver
      * @return {boolean}
      */
-    addMessagePropagator: function(messagePropagator) {
-        if (!this.messagePropagatorList.contains(messagePropagator)) {
-            this.messagePropagatorList.add(messagePropagator);
-            messagePropagator.addEventPropagator(this);
+    addMessageReceiver: function(messageReceiver) {
+        if (!this.messageReceiverList.contains(messageReceiver)) {
+            this.messageReceiverList.add(messageReceiver);
+            messageReceiver.addEventPropagator(this);
             return true;
         }
         return false;
@@ -89,33 +91,33 @@ var MessageBroadcaster = Class.extend(MessagePropagator, {
     /**
      * @return {number}
      */
-    getMessagePropagatorCount: function() {
-        return this.messagePropagatorList.getCount();
+    getMessageReceiverCount: function() {
+        return this.messageReceiverList.getCount();
     },
 
     /**
-     * @param {MessagePropagator} messagePropagator
+     * @param {MessageReceiver} messageReceiver
      * @return {boolean}
      */
-    hasMessagePropagator: function(messagePropagator) {
-        return this.messagePropagatorList.contains(messagePropagator);
+    hasMessageReceiver: function(messageReceiver) {
+        return this.messageReceiverList.contains(messageReceiver);
     },
 
     /**
      * @return {boolean}
      */
-    isMessagePropagatorListEmpty: function() {
-        return this.messagePropagatorList.isEmpty();
+    isMessageReceiverListEmpty: function() {
+        return this.messageReceiverList.isEmpty();
     },
 
     /**
-     * @param {MessagePropagator} messagePropagator
+     * @param {MessageReceiver} messageReceiver
      * @return {boolean}
      */
-    removeMessagePropagator: function(messagePropagator) {
-        var result = this.messagePropagatorList.remove(messagePropagator);
+    removeMessageReceiver: function(messageReceiver) {
+        var result = this.messageReceiverList.remove(messageReceiver);
         if (result) {
-            messagePropagator.removeEventPropagator(this);
+            messageReceiver.removeEventPropagator(this);
         }
         return result;
     }
@@ -126,11 +128,11 @@ var MessageBroadcaster = Class.extend(MessagePropagator, {
 // Interfaces
 //-------------------------------------------------------------------------------
 
-Class.implement(MessageBroadcaster, IMessagePropagator);
+Class.implement(BroadcasterChannel, IBroadcasterChannel);
 
 
 //-------------------------------------------------------------------------------
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export('MessageBroadcaster', MessageBroadcaster);
+bugpack.export('bugmessage.BroadcasterChannel', BroadcasterChannel);

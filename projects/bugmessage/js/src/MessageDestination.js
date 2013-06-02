@@ -2,14 +2,13 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
+//@Package('bugmessage')
+
 //@Export('MessageDestination')
 
 //@Require('Class')
 //@Require('Event')
 //@Require('EventDispatcher')
-//@Require('IMessageDestination')
-//@Require('MessagePropagator')
-//@Require('Obj')
 //@Require('UuidGenerator')
 
 
@@ -27,7 +26,6 @@ var bugpack = require('bugpack').context();
 var Class               = bugpack.require('Class');
 var Event               = bugpack.require('Event');
 var EventDispatcher     = bugpack.require('EventDispatcher');
-var IMessageDestination = bugpack.require('IMessageDestination');
 var UuidGenerator       = bugpack.require('UuidGenerator');
 
 
@@ -41,7 +39,7 @@ var MessageDestination = Class.extend(EventDispatcher, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(messageReceiver) {
 
         this._super();
 
@@ -61,12 +59,27 @@ var MessageDestination = Class.extend(EventDispatcher, {
          * @type {boolean}
          */
         this.addressRegistered = false;
+
+        /**
+         * @private
+         * @type {IMessageReceiver}
+         */
+        this.messageReceiver = messageReceiver;
+
+        this.addEventPropagator(this.messageReceiver);
     },
 
 
     //-------------------------------------------------------------------------------
     // Getters and Setters
     //-------------------------------------------------------------------------------
+
+    /**
+     * @return {IMessageReceiver}
+     */
+    getMessageReceiver: function() {
+        return this.messageReceiver;
+    },
 
     /**
      * @return {boolean}
@@ -114,13 +127,6 @@ var MessageDestination = Class.extend(EventDispatcher, {
 
 
 //-------------------------------------------------------------------------------
-// Interfaces
-//-------------------------------------------------------------------------------
-
-Class.implement(MessageDestination, IMessageDestination);
-
-
-//-------------------------------------------------------------------------------
 // Static Methods
 //-------------------------------------------------------------------------------
 
@@ -128,8 +134,8 @@ Class.implement(MessageDestination, IMessageDestination);
  * @enum {string}
  */
 MessageDestination.EventTypes = {
-    ADDRESS_REGISTERED: "MessageRoute:AddressRegistered",
-    ADDRESS_DEREGISTERED: "MessageRoute:AddressDeregistered"
+    ADDRESS_REGISTERED: "MessageDestination:AddressRegistered",
+    ADDRESS_DEREGISTERED: "MessageDestination:AddressDeregistered"
 };
 
 
@@ -138,4 +144,4 @@ MessageDestination.EventTypes = {
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export('MessageDestination', MessageDestination);
+bugpack.export('bugmessage.MessageDestination', MessageDestination);

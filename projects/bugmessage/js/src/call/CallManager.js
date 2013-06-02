@@ -69,9 +69,9 @@ var CallManager = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {IMessagePropagator}
+         * @type {IMessageChannel}
          */
-        this.outgoingMessagePropagator = null;
+        this.outgoingMessageChannel = null;
 
         /**
          * @private
@@ -94,11 +94,11 @@ var CallManager = Class.extend(Obj, {
 
     /**
      *
-     * @param {IMessagePropagator} messagePropagator
+     * @param {IMessageChannel} messageChannel
      */
-    setOutgoingMessagePropagator: function(messagePropagator) {
-        this.outgoingMessagePropagator = messagePropagator;
-        this.outgoingMessageProxy.setMessagePropagator(this.outgoingMessagePropagator)
+    setOutgoingMessageChannel: function(messageChannel) {
+        this.outgoingMessageChannel = messageChannel;
+        this.outgoingMessageProxy.setMessageChannel(this.outgoingMessageChannel)
     },
 
 
@@ -112,8 +112,8 @@ var CallManager = Class.extend(Obj, {
     deregisterCall: function(call) {
         if (this.registerdCallSet.contains(call)) {
             this.registerdCallSet.remove(call);
-            this.incomingMessageRouter.removeMessagePropagator(call);
-            call.setOutGoingMessagePropagator(null);
+            this.incomingMessageRouter.removeMessageChannel(call);
+            call.setOutGoingMessageChannel(null);
             call.removeEventListener(Call.EventTypes.CLEANUP, this.hearCallCleanup, this);
         }
     },
@@ -124,8 +124,8 @@ var CallManager = Class.extend(Obj, {
     registerCall: function(call) {
         if (!this.registerdCallSet.contains(call)) {
             this.registerdCallSet.add(call);
-            this.incomingMessageRouter.addMessagePropagator(call);
-            call.setOutGoingMessagePropagator(this.outgoingMessageProxy);
+            this.incomingMessageRouter.addMessageChannel(call);
+            call.setOutGoingMessageChannel(this.outgoingMessageProxy);
             call.addEventListener(Call.EventTypes.CLEANUP, this.hearCallCleanup, this);
         }
     },

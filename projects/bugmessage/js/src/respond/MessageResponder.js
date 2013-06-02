@@ -2,11 +2,15 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('MessageProxy')
+//@Package('bugmessage')
+
+//@Export('MessageResponder')
 
 //@Require('Class')
-//@Require('IMessagePropagator')
-//@Require('MessagePropagator')
+//@Require('Obj')
+//@Require('TypeUtil')
+//@Require('UuidGenerator')
+//@Require('bugmessage.Response')
 
 
 //-------------------------------------------------------------------------------
@@ -20,25 +24,26 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var IMessagePropagator  = bugpack.require('IMessagePropagator');
-var MessagePropagator   = bugpack.require('MessagePropagator');
+var Class           = bugpack.require('Class');
+var Obj             = bugpack.require('Obj');
+var TypeUtil        = bugpack.require('TypeUtil');
+var UuidGenerator   = bugpack.require('UuidGenerator');
+var Response        = bugpack.require('bugmessage.Response');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var MessageProxy = Class.extend(MessagePropagator, {
+var MessageResponder = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(messageResponderObject) {
 
         this._super();
-
 
         //-------------------------------------------------------------------------------
         // Declare Variables
@@ -46,9 +51,19 @@ var MessageProxy = Class.extend(MessagePropagator, {
 
         /**
          * @private
-         * @type {IMessagePropagator}
+         * @type {string}
          */
-        this.messagePropagator = null;
+        this.uuid = null;
+
+        if (messageResponderObject) {
+            if (TypeUtil.isString(messageResponderObject.uuid)) {
+                this.uuid = messageResponderObject.uuid;
+            }
+        }
+
+        if (!this.uuid) {
+            UuidGenerator.generateUuid();
+        }
     },
 
 
@@ -57,47 +72,35 @@ var MessageProxy = Class.extend(MessagePropagator, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {IMessagePropagator}
+     * @return {string}
      */
-    getMessagePropagator: function() {
-        return this.messagePropagator;
-    },
-
-    /**
-     * @param {IMessagePropagator} messagePropagator
-     */
-    setMessagePropagator: function(messagePropagator) {
-        if (this.messagePropagator) {
-            this.messagePropagator.removeEventPropagator(this);
-        }
-        this.messagePropagator = messagePropagator;
-        this.messagePropagator.addEventPropagator(this);
+    getUuid: function() {
+        return this.uuid;
     },
 
 
     //-------------------------------------------------------------------------------
-    // IMessagePropagator Implementation
+    // Instance Methods
     //-------------------------------------------------------------------------------
 
+    respond: function() {
+        //TODO BRN: Generate a new Response
+    },
+
+
     /**
-     * @param {Message} message
-     * @param {string} channel
+     * @return {Object}
      */
-    propagateMessage: function(message, channel) {
-        this.messagePropagator.propagateMessage(message, channel);
+    toObject: function() {
+        return {
+            uuid: this.uuid
+        };
     }
 });
-
-
-//-------------------------------------------------------------------------------
-// Interfaces
-//-------------------------------------------------------------------------------
-
-Class.implement(MessageProxy, IMessagePropagator);
 
 
 //-------------------------------------------------------------------------------
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export('MessageProxy', MessageProxy);
+bugpack.export('bugmessage.MessageResponder', MessageResponder);

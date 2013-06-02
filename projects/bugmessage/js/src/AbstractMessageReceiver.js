@@ -2,9 +2,13 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('IMessageGateway')
+//@Package('bugmessage')
 
-//@Require('Interface')
+//@Export('AbstractMessageReceiver')
+
+//@Require('Class')
+//@Require('EventPropagator')
+//@Require('bugmessage.IMessageReceiver')
 
 
 //-------------------------------------------------------------------------------
@@ -18,30 +22,49 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Interface   = bugpack.require('Interface');
+var Class               = bugpack.require('Class');
+var EventPropagator     = bugpack.require('EventPropagator');
+var IMessageReceiver    = bugpack.require('bugmessage.IMessageReceiver');
 
 
 //-------------------------------------------------------------------------------
-// Declare Interface
+// Declare Class
 //-------------------------------------------------------------------------------
 
-var IMessageGateway = Interface.declare({
+var AbstractMessageReceiver = Class.extend(EventPropagator, {
+
+    /**
+     * @abstract
+     * @param {Message} message
+     * @param {MessageResponder} messageResponder
+     */
+    //doReceiveMessage: function(message, messageResponder) {},
+
 
     //-------------------------------------------------------------------------------
-    // Interface Methods
+    // IMessageReceiver Implementation
     //-------------------------------------------------------------------------------
 
     /**
      * @param {Message} message
-     * @param {IMessageChannel} channel
-     * @param {function(ResponseChannel)} callback
+     * @param {MessageResponder} messageResponder
      */
-    sendMessage: function(message, channel, callback) {}
+    receiveMessage: function(message, messageResponder) {
+        this.doReceiveMessage(message, messageResponder);
+    }
 });
 
 
+
 //-------------------------------------------------------------------------------
-// Exports
+// Interfaces
 //-------------------------------------------------------------------------------
 
-bugpack.export('IMessageGateway', IMessageGateway);
+Class.implement(AbstractMessageReceiver, IMessageReceiver);
+
+
+//-------------------------------------------------------------------------------
+// Export
+//-------------------------------------------------------------------------------
+
+bugpack.export('bugmessage.AbstractMessageReceiver', AbstractMessageReceiver);

@@ -2,12 +2,14 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('MessageRoute')
+//@Package('bugmessage')
+
+//@Export('DestinationRoute')
 
 //@Require('Class')
 //@Require('EventDispatcher')
-//@Require('MessageReceiver')
 //@Require('Set')
+//@Require('bugmessage.MessageDestination')
 
 
 //-------------------------------------------------------------------------------
@@ -23,21 +25,21 @@ var bugpack = require('bugpack').context();
 
 var Class               = bugpack.require('Class');
 var EventDispatcher     = bugpack.require('EventDispatcher');
-var MessageReceiver     = bugpack.require('MessageReceiver');
 var Set                 = bugpack.require('Set');
+var MessageDestination  = bugpack.require('bugmessage.MessageDestination');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var MessageRoute = Class.extend(EventDispatcher, {
+var DestinationRoute = Class.extend(EventDispatcher, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(messagePropagator) {
+    _constructor: function(messageChannel) {
 
         this._super();
 
@@ -59,9 +61,9 @@ var MessageRoute = Class.extend(EventDispatcher, {
 
         /**
          * @private
-         * @type {MessagePropagator}
+         * @type {MessageChannel}
          */
-        this.messagePropagator = messagePropagator;
+        this.messageChannel = messageChannel;
     },
 
 
@@ -77,10 +79,10 @@ var MessageRoute = Class.extend(EventDispatcher, {
     },
 
     /**
-     * @return {MessagePropagator}
+     * @return {MessageChannel}
      */
-    getMessagePropagator: function() {
-        return this.messagePropagator;
+    getMessageChannel: function() {
+        return this.messageChannel;
     },
 
     /**
@@ -101,9 +103,9 @@ var MessageRoute = Class.extend(EventDispatcher, {
     deinitialize: function() {
         if (this.isInitialized()) {
             this.initialized = false;
-            this.messagePropagator.removeEventPropagator(this);
-            this.removeEventListener(MessageReceiver.EventTypes.ADDRESS_DEREGISTERED, this.hearAddressDeregisteredEvent, this);
-            this.removeEventListener(MessageReceiver.EventTypes.ADDRESS_REGISTERED, this.hearAddressRegisteredEvent, this);
+            this.messageChannel.removeEventPropagator(this);
+            this.removeEventListener(MessageDestination.EventTypes.ADDRESS_DEREGISTERED, this.hearAddressDeregisteredEvent, this);
+            this.removeEventListener(MessageDestination.EventTypes.ADDRESS_REGISTERED, this.hearAddressRegisteredEvent, this);
         }
     },
 
@@ -113,18 +115,10 @@ var MessageRoute = Class.extend(EventDispatcher, {
     initialize: function() {
         if (!this.isInitialized()) {
             this.initialized = true;
-            this.messagePropagator.addEventPropagator(this);
-            this.addEventListener(MessageReceiver.EventTypes.ADDRESS_DEREGISTERED, this.hearAddressDeregisteredEvent, this);
-            this.addEventListener(MessageReceiver.EventTypes.ADDRESS_REGISTERED, this.hearAddressRegisteredEvent, this);
+            this.messageChannel.addEventPropagator(this);
+            this.addEventListener(MessageDestination.EventTypes.ADDRESS_DEREGISTERED, this.hearAddressDeregisteredEvent, this);
+            this.addEventListener(MessageDestination.EventTypes.ADDRESS_REGISTERED, this.hearAddressRegisteredEvent, this);
         }
-    },
-
-    /**
-     * @param {Message} message
-     * @param {string} channel
-     */
-    routeMessage: function(message, channel) {
-        this.messagePropagator.propagateMessage(message, channel);
     },
 
 
@@ -181,4 +175,4 @@ var MessageRoute = Class.extend(EventDispatcher, {
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export('MessageRoute', MessageRoute);
+bugpack.export('bugmessage.DestinationRoute', DestinationRoute);

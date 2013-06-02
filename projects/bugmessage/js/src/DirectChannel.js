@@ -2,12 +2,10 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('Message')
+//@Export('DirectChannel')
 
 //@Require('Class')
-//@Require('Obj')
-//@Require('TypeUtil')
-//@Require('UuidGenerator')
+//@Require('bugmessage.AbstractMessageChannel')
 
 
 //-------------------------------------------------------------------------------
@@ -21,25 +19,24 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var Obj             = bugpack.require('Obj');
-var TypeUtil        = bugpack.require('TypeUtil');
-var UuidGenerator   = bugpack.require('UuidGenerator');
+var Class                   = bugpack.require('Class');
+var AbstractMessageChannel  = bugpack.require('bugmessage.AbstractMessageChannel');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Message = Class.extend(Obj, {
+var DirectChannel = Class.extend(AbstractMessageChannel, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(topic, data) {
+    _constructor: function() {
 
         this._super();
+
 
         //-------------------------------------------------------------------------------
         // Declare Variables
@@ -47,27 +44,9 @@ var Message = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {Object}
+         * @type {IMessageReceiver}
          */
-        this.data = data;
-
-        /**
-         * @private
-         * @type {string}
-         */
-        this.uuid = UuidGenerator.generateUuid();
-
-        /**
-         * @private
-         * @type {string}
-         */
-        this.receiverAddress = null;
-
-        /**
-         * @private
-         * @type {string}
-         */
-        this.topic = TypeUtil.isString(topic) ? topic : "";
+        this.messageReceiver = null;
     },
 
 
@@ -76,54 +55,34 @@ var Message = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {Object}
+     * @return {IMessageReceiver}
      */
-    getData: function() {
-        return this.data;
+    getMessageReceiver: function() {
+        return this.messageReceiver;
     },
 
     /**
-     * @return {string}
+     * @param {IMessageReceiver} messageReceiver
      */
-    getUuid: function() {
-        return this.uuid;
-    },
-
-    /**
-     * @return {string}
-     */
-    getReceiverAddress: function() {
-        return this.receiverAddress;
-    },
-
-    /**
-     * @param {string} receiverAddress
-     */
-    setReceiverAddress: function(receiverAddress) {
-        this.receiverAddress = receiverAddress;
-    },
-
-    /**
-     * @return {string}
-     */
-    getTopic: function() {
-        return this.topic;
+    setMessageChannel: function(messageReceiver) {
+        if (this.messageReceiver) {
+            this.messageReceiver.removeEventPropagator(this);
+        }
+        this.messageReceiver = messageReceiver;
+        this.messageReceiver.addEventPropagator(this);
     },
 
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // AbstractMessageChannel Implementation
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {Object}
+     * @param {Message} message
+     * @param {MessageResponder} messageResponder
      */
-    toObject: function() {
-        return {
-            topic: this.topic,
-            data: this.data,
-            receiverAddress: this.receiverAddress
-        };
+    doChannelMessage: function(message, messageResponder) {
+        this.messageReceiver.receiveMessage(message, messageResponder);
     }
 });
 
@@ -132,4 +91,4 @@ var Message = Class.extend(Obj, {
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export('Message', Message);
+bugpack.export('bugmessage.DirectChannel', DirectChannel);
