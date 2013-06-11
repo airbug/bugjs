@@ -58,198 +58,78 @@ var SocketIoClient = Class.extend(EventDispatcher, {
 
         /**
          * @private
-         * @type {function()}
+         * @type {boolean}
          */
-        this.initializeCallback = null;
+        this.connected = false;
 
         /**
          * @private
          * @type {boolean}
          */
-        this.initializeCallbackFired = false;
-
-        /**
-         * @private
-         * @type {boolean}
-         */
-        this.initialized = false;
-
-        /**
-         * @private
-         * @type {boolean}
-         */
-        this.isConnected = false;
-
-        /**
-         * @private
-         * @type {boolean}
-         */
-        this.isConnecting = false;
-
-        /**
-         * @private
-         * @type {Queue}
-         */
-        this.queue = new Queue();
-
-        /**
-         * @private
-         * @type {number}
-         */
-        this.retryAttempts = 0;
-
-        /**
-         * @private
-         * @type {number}
-         */
-        this.retryLimit = 3;
+        this.connecting = false;
 
         /**
          * @private
          * @type {*}
          */
-        this.socket = null;
+        this.socketConnection = null;
 
         /**
          * @private
          * @type {ISocketFactory}
          */
         this.socketFactory = socketFactory;
-
-
-        //-------------------------------------------------------------------------------
-        // Native Listeners
-        //-------------------------------------------------------------------------------
-
-        var _this = this;
-        this.handleSocketConnect = function() {
-            _this.isConnected = true;
-            _this.isConnecting = false;
-            console.log('SocketIoClient is connected');
-            _this.processEmitQueue();
-        };
-
-        this.handleSocketConnectError = function(error) {
-            _this.isConnecting = false;
-            console.log('SocketIoClient connect_error:', error);
-        };
-
-        this.handleSocketConnecting = function() {
-            console.log("SocketIoClient connecting");
-        };
-
-        //TODO BRN: Not sure if this fires
-        this.handleSocketDisconnect = function() {
-            _this.isConnecting = false;
-            _this.isConnected = false;
-            console.log('SocketIoClient disconnected');
-        };
-
-        //TODO BRN: Not sure if this fires
-        this.handleSocketError = function(error) {
-            _this.isConnecting = false;
-            _this.processSocketError(error);
-            _this.retryConnect();
-        };
-
-        this.handleSocketEvent = function(data) {
-            _this.processSocketEvent(data.eventType, data.eventData);
-        };
-
-        this.handleSocketMessage = function(message) {
-            //TEST
-            console.log("SocketIoClient message:", message);
-            _this.processSocketMessage(message);
-        };
-
-        this.handleSocketReconnect = function(reconnectCount) {
-            _this.isConnected = true;
-            _this.processEmitQueue();
-            console.log('SocketIoClient reconnected - reconnectCount:' + reconnectCount);
-        };
-
-        this.handleSocketReconnecting = function() {
-            console.log('SocketIoClient reconnecting:');
-        };
-
-        this.handleSocketReconnectFailed = function() {
-            console.log('SocketIoClient reconnect_failed');
-        };
-    },
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {string} emitName
-     * @param {Object} emitData
-     */
-    emit: function(emitName, emitData) {
-        if (this.initialized) {
-            var emit = new SocketIoEmit(emitName, emitData);
-            this.queueEmit(emit);
-            if (this.isConnected) {
-                this.processEmitQueue();
-            } else {
-                this.connect();
-            }
-        } else {
-            throw new Error("Must initialize SocketIoClient before calling send()");
-        }
-    },
-    
-    /**
-     * @param {function} callback
-     */
-    initialize: function(callback) {
-        if (!this.initialized) {
-            this.initialized = true;
-            this.initializeCallback = callback;
-            this.connect();
-        } else {
-            throw new Error("SonarbugClient has already been initialized.");
-        }
-    },
-
-    /**
-     * @param {Object} messageData
-     */
-    send: function(messageData) {
-        this.emit("message", messageData);
     },
 
 
     //-------------------------------------------------------------------------------
-    // Private Class Methods
+    // Getters and Setters
     //-------------------------------------------------------------------------------
 
     /**
-     * @private
-     * @param {Error=} error
+     * @return {SocketIoConnection}
      */
-    completeInitialization: function(error) {
-        if (!this.initializeCallbackFired){
-            this.initializeCallbackFired = true;
-            if (this.initializeCallback) {
-                this.initializeCallback(error);
-            }
-        }
+    getConnection: function() {
+        return this.socketConnection;
     },
 
     /**
-     * @private
+     * @return {boolean}
+     */
+    isConnected: function() {
+        return this.connected;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    isConnecting: function() {
+        return this.connecting;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Public Instance Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     *
      */
     connect: function() {
         if (!this.isConnected && !this.isConnecting) {
             this.isConnecting = true;
             console.log('SocketIoClient is attempting to connect...');
-            if (this.socket) {
+            if (this.socketIoConnection) {
                 this.destroySocket();
             }
-            this.socket = this.createSocket();
+            this.createSocket();
         }
     },
+
+
+    //-------------------------------------------------------------------------------
+    // Private Instance Methods
+    //-------------------------------------------------------------------------------
 
     /**
      * @private
@@ -257,55 +137,59 @@ var SocketIoClient = Class.extend(EventDispatcher, {
     createSocket: function() {
         var options = {
             port: this.config.getPort(),
-            resource: this.config.getResource()
-            //   , secure: false
-            //   , document: 'document' in global ? document : false,
-            //   , transports: io.transports
-            //   , 'connect timeout': 10000
-            //   , 'try multiple transports': true
-            //   , 'reconnect': true
-            //   , 'reconnection delay': 500
-            //   , 'reconnection limit': Infinity
-            //   , 'reopen delay': 3000
-            //   , 'max reconnection attempts': 10
-            //   , 'sync disconnect on unload': false
-            //   , 'auto connect': true
-            //   , 'flash policy port': 10843
-            //   , 'manualFlush': false
+            resource: this.config.getResource(),
+            //secure: false,
+            //document: 'document' in global ? document : false,
+            //transports: io.transports,
+            //'connect timeout': 10000,
+            //'try multiple transports': true,
+            reconnect: false,
+            //'reconnection delay': 500,
+            //'reconnection limit': Infinity,
+            //'reopen delay': 3000,
+            //'max reconnection attempts': 10,
+            //'sync disconnect on unload': false,
+            //'auto connect': true,
+            //'flash policy port': 10843,
+            //'manualFlush': false,
+            'force new connection': true
         };
-        this.socket = this.socketFactory.createSocket(this.config.getHost(), options);
-        this.socket.on('connect', this.handleSocketConnect);
-        this.socket.on('connect_error', this.handleSocketConnectError);
-        this.socket.on('connecting', this.handleSocketConnecting);
-        this.socket.on('disconnect', this.handleSocketDisconnect);
-        this.socket.on('error', this.handleSocketError);
-        this.socket.on('event', this.handleSocketEvent);
-        this.socket.on('message', this.handleSocketMessage);
-        this.socket.on('reconnect', this.handleSocketReconnect);
-        this.socket.on('reconnecting', this.handleSocketReconnecting);
-        this.socket.on('reconnect_failed', this.handleSocketReconnectFailed)
+        this.socketIoConnection = this.socketFactory.createSocketConnection(this.config.getHost(), options);
+        this.socketIoConnection.addEventListener('connect', this.hearSocketConnect, this);
+        this.socketIoConnection.addEventListener('connect_error', this.hearSocketConnectError, this);
+        this.socketIoConnection.addEventListener('connecting', this.hearSocketConnecting, this);
+        this.socketIoConnection.addEventListener('disconnect', this.hearSocketDisconnect, this);
+        this.socketIoConnection.addEventListener('error', this.hearSocketError, this);
+        this.socketIoConnection.addEventListener('reconnect', this.hearSocketReconnect, this);
+        this.socketIoConnection.addEventListener('reconnecting', this.hearSocketReconnecting, this);
+        this.socketIoConnection.addEventListener('reconnect_failed', this.hearSocketReconnectFailed, this);
     },
 
     /**
      * @private
      */
     destroySocket: function() {
-        this.socket.removeAllListeners();
-        this.socket = null;
+        this.socketIoConnection.removeAllListeners();
+        this.socketIoConnection = null;
     },
 
     /**
      * @private
      */
-    processEmitQueue: function() {
-        while (!this.queue.isEmpty() && this.isConnected){
-            var socketIoEmit = this.queue.dequeue();
-            if (socketIoEmit.getName() === "message") {
-                this.socketSend(socketIoEmit);
-            } else {
-                this.socketEmit(socketIoEmit);
-            }
-        }
+    dispatchConnection: function() {
+        this.dispatchEvent(new Event(SocketIoClient.EventTypes.CONNECTION, {
+            connection: this.socketIoConnection
+        }));
+    },
+
+    /**
+     * @private
+     * @param {Error} error
+     */
+    dispatchError: function(error) {
+        this.dispatchEvent(new Event(SocketIoClient.EventTypes.ERROR, {
+            error: error
+        }));
     },
 
     /**
@@ -316,60 +200,87 @@ var SocketIoClient = Class.extend(EventDispatcher, {
         this.dispatchEvent(new Event(SocketIoClient.EventTypes.ERROR, {error: error}));
     },
 
+
+    //-------------------------------------------------------------------------------
+    // Event Listeners
+    //-------------------------------------------------------------------------------
+
     /**
      * @private
-     * @param {string} eventType
-     * @param {Object} eventData
+     * @param {NodeJsEvent} event
      */
-    processSocketEvent: function(eventType, eventData) {
-        this.dispatchEvent(new Event(SocketIoClient.EventTypes.EVENT, {
-            eventType: eventType,
-            eventData: eventData
-        }));
+    hearSocketConnect: function(event) {
+        this.isConnected = true;
+        this.isConnecting = false;
+        console.log('SocketIoClient is connected');
+        this.dispatchConnection();
     },
 
     /**
      * @private
-     * @param {Object} message
+     * @param {NodeJsEvent} event
      */
-    processSocketMessage: function(message) {
-        this.dispatchEvent(new Event(SocketIoClient.EventTypes.MESSAGE, {message: message}));
+    hearSocketConnectError: function(event) {
+        var error = event.getArguments()[0];
+        this.isConnecting = false;
+        console.log('SocketIoClient connect_error:', error);
     },
 
     /**
      * @private
-     * @param {SocketIoEmit} socketIoEmit
+     * @param {NodeJsEvent} event
      */
-    queueEmit: function(socketIoEmit) {
-        this.queue.enqueue(socketIoEmit);
+    hearSocketConnecting: function(event) {
+        this.isConnecting = true;
+        console.log("SocketIoClient connecting");
     },
 
     /**
      * @private
+     * @param {NodeJsEvent} event
      */
-    retryConnect: function() {
-        if (this.retryAttempts < this.retryLimit) {
-            this.retryAttempts++;
-            this.connect();
-        } else {
-            this.completeInitialization(new Error("Maximum retries reached. Could not connect to sonarbug server."));
-        }
+    hearSocketDisconnect: function(event) {
+        this.isConnecting = false;
+        this.isConnected = false;
+        console.log('SocketIoClient disconnected');
+    },
+
+    //TODO BRN: Not sure if this fires
+    /**
+     * @private
+     * @param {NodeJsEvent} event
+     */
+    hearSocketError: function(event) {
+        var error = event.getArguments()[0];
+        this.isConnecting = false;
+        this.processSocketError(error);
+    },
+
+    //TODO BRN: Figure out these handlers
+    /**
+     * @private
+     * @param {NodeJsEvent} event
+     */
+    hearSocketReconnect: function(event) {
+        var reconnectCount = event.getArguments()[0];
+        this.isConnected = true;
+        console.log('SocketIoClient reconnected - reconnectCount:' + reconnectCount);
     },
 
     /**
      * @private
-     * @param {SocketIoEmit} socketIoEmit
+     * @param {NodeJsEvent} event
      */
-    socketEmit: function(socketIoEmit) {
-        this.socket.emit(socketIoEmit.getName(), socketIoEmit.getData());
+    hearSocketReconnecting: function(event) {
+        console.log('SocketIoClient reconnecting:');
     },
-    
+
     /**
      * @private
-     * @param {SocketIoEmit} socketIoEmit
+     * @param {NodeJsEvent} event
      */
-    socketSend: function(socketIoEmit) {
-        this.socket.send(socketIoEmit.getData());
+    hearSocketReconnectFailed: function(event) {
+        console.log('SocketIoClient reconnect_failed');
     }
 });
 
@@ -382,9 +293,8 @@ var SocketIoClient = Class.extend(EventDispatcher, {
  * @enum {string}
  */
 SocketIoClient.EventTypes = {
-    ERROR: "SocketIoClient:Error",
-    EVENT: "SocketIoClient:Event",
-    MESSAGE: "SocketIoClient:Message"
+    CONNECTION: "SocketIoClient:Connection",
+    ERROR: "SocketIoClient:Error"
 };
 
 

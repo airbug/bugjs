@@ -2,13 +2,12 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('socketio:server')
+//@Package('bugcall')
 
-//@Export('SocketIoConnection')
+//@Export('CallRequest')
 
 //@Require('Class')
-//@Require('Event')
-//@Require('EventDispatcher')
+//@Require('Obj')
 //@Require('UuidGenerator')
 
 
@@ -24,8 +23,7 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
-var Event           = bugpack.require('Event');
-var EventDispatcher = bugpack.require('EventDispatcher');
+var Obj             = bugpack.require('Obj');
 var UuidGenerator   = bugpack.require('UuidGenerator');
 
 
@@ -33,16 +31,19 @@ var UuidGenerator   = bugpack.require('UuidGenerator');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SocketIoConnection = Class.extend(EventDispatcher, {
+/**
+ * @constructor
+ * @extends {Obj}
+ */
+var CallRequest = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(socket) {
+    _constructor: function(type, data) {
 
         this._super();
-
 
         //-------------------------------------------------------------------------------
         // Declare Variables
@@ -52,7 +53,13 @@ var SocketIoConnection = Class.extend(EventDispatcher, {
          * @private
          * @type {*}
          */
-        this.socket = socket;
+        this.data = data;
+
+        /**
+         * @private
+         * @type {string}
+         */
+        this.type = type;
 
         /**
          * @private
@@ -67,61 +74,43 @@ var SocketIoConnection = Class.extend(EventDispatcher, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @private
+     * @return {*}
+     */
+    getData: function() {
+        return this.data;
+    },
+
+    /**
+     * @return {string}
+     */
+    getType: function() {
+        return this.type;
+    },
+
+    /**
      * @return {string}
      */
     getUuid: function() {
-        return this.uuid;
+        return this.uuid
     },
 
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Instance Methods
     //-------------------------------------------------------------------------------
 
-    /**
-     *
-     */
-    deinitialize: function() {
-        this.socket.removeAllListeners();
-    },
-
-    /**
-     * @param {function(Error)} callback
-     */
-    initialize: function(callback) {
-        var _this = this;
-        this.socket.on("disconnect", function() {
-            _this.dispatchEvent(new Event(SocketIoConnection.EventTypes.DISCONNECT));
-        });
-        this.socket.on("event", function(data) {
-            _this.dispatchEvent(new Event(SocketIoConnection.EventTypes.EVENT, {eventType: data.eventType, eventData: data.eventData}));
-        });
-        this.socket.on("message", function(message) {
-            _this.dispatchEvent(new Event(SocketIoConnection.EventTypes.MESSAGE, {message: message}));
-        });
-
-        callback();
+    toObject: function() {
+        return {
+            uuid: this.getUuid(),
+            type: this.getType(),
+            data: this.getData()
+        }
     }
 });
 
 
 //-------------------------------------------------------------------------------
-// Static Variables
+// Export
 //-------------------------------------------------------------------------------
 
-/**
- * @enum {string}
- */
-SocketIoConnection.EventTypes = {
-    DISCONNECT: "SocketIoConnection:Disconnect",
-    EVENT:      "SocketIoConnect:Event",
-    MESSAGE:    "SocketIoConnection:Message"
-};
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('socketio:server.SocketIoConnection', SocketIoConnection);
+bugpack.export('bugcall.CallRequest', CallRequest);

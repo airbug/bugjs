@@ -4,10 +4,9 @@
 
 //@Package('bugmessage')
 
-//@Export('MessageResponder')
+//@Export('IResponseSender')
 
-//@Require('Class')
-//@Require('bugmessage.AbstractResponder')
+//@Require('Interface')
 
 
 //-------------------------------------------------------------------------------
@@ -21,33 +20,34 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var AbstractResponder   = bugpack.require('bugmessage.AbstractResponder');
+var Interface   = bugpack.require('Interface');
 
 
 //-------------------------------------------------------------------------------
-// Declare Class
+// Declare Interface
 //-------------------------------------------------------------------------------
 
-var MessageResponder = Class.extend(AbstractResponder, {
+var IResponseSender = Interface.declare({
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Interface Methods
     //-------------------------------------------------------------------------------
 
     /**
      * @param {Response} response
      * @param {function(Error)} callback
      */
-    doSendResponse: function(response, callback) {
-        response.setHeader("responseChannelUuid", this.getResponseChannel().getUuid());
-        this.getResponseChannel().channelResponse(response);
-    }
+    sendResponse: function(response, callback) {},
+
+    /**
+     *
+     */
+    close: function() {}
 });
 
 
 //-------------------------------------------------------------------------------
-// Export
+// Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugmessage.MessageResponder', MessageResponder);
+bugpack.export('bugmessage.IResponseSender', IResponseSender);

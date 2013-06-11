@@ -34,9 +34,9 @@ var ISocketFactory = Interface.declare({
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {Socket}
+     * @return {SocketIoConnection}
      */
-    createSocket: function() {}
+    createSocketConnection: function() {}
 });
 
 

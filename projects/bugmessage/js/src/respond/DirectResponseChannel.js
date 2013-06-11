@@ -2,13 +2,10 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('express')
-
-//@Export('ExpressApp')
+//@Export('DirectResponseChannel')
 
 //@Require('Class')
-//@Require('Obj')
-//@Require('Proxy')
+//@Require('bugmessage.AbstractResponseChannel')
 
 
 //-------------------------------------------------------------------------------
@@ -16,23 +13,21 @@
 //-------------------------------------------------------------------------------
 
 var bugpack = require('bugpack').context();
-var express = require('express');
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class   = bugpack.require('Class');
-var Obj     = bugpack.require('Obj');
-var Proxy   = bugpack.require('Proxy');
+var Class                   = bugpack.require('Class');
+var AbstractResponseChannel  = bugpack.require('bugmessage.AbstractResponseChannel');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ExpressApp = Class.extend(Obj, {
+var DirectResponseChannel = Class.extend(AbstractResponseChannel, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -47,28 +42,11 @@ var ExpressApp = Class.extend(Obj, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        this.app = express();
-    },
-
-
-    configure: function() {
-        this.app.configure.apply(this.app, arguments);
-    },
-
-    get: function() {
-        return this.app.get.apply(this.app, arguments);
-    },
-
-    on: function() {
-        this.app.on.apply(this.app, arguments);
-    },
-
-    set: function() {
-        this.app.set.apply(this.app, arguments);
-    },
-
-    use: function() {
-        this.app.use.apply(this.app, arguments);
+        /**
+         * @private
+         * @type {IResponseReceiver}
+         */
+        this.responseReceiver = null;
     },
 
 
@@ -77,39 +55,49 @@ var ExpressApp = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {express}
+     * @return {IResponseReceiver}
      */
-    getApp: function() {
-        return this.app;
+    getResponseReceiver: function() {
+        return this.responseReceiver;
+    },
+
+    /**
+     * @param {IResponseReceiver} responseReceiver
+     */
+    setResponseReceiver: function(responseReceiver) {
+        if (this.responseReceiver) {
+            this.responseReceiver.removeEventPropagator(this);
+        }
+        this.responseReceiver = responseReceiver;
+        if (this.responseReceiver) {
+            this.responseReceiver.addEventPropagator(this);
+        }
     },
 
 
     //-------------------------------------------------------------------------------
-    // Public Class Methods
+    // AbstractMessageChannel Implementation
     //-------------------------------------------------------------------------------
 
-    initialize: function() {
-        var _this = this;
+    /**
+     * @param {Response} response
+     */
+    doChannelResponse: function(response) {
+        this.responseReceiver.receiveResponse(response);
+    },
 
-        // Shut Down
-        //-------------------------------------------------------------------------------
-
-        // Graceful Shutdown
-        process.on('SIGTERM', function () {
-            console.log("Server Closing");
-            _this.app.close();
-        });
-
-        this.on('close', function () {
-            console.log("Server Closed");
-        });
-
+    /**
+     *
+     */
+    doCloseChannel: function() {
+        this.responseReceiver.closeReceiver();
+        this.setResponseReceiver(null);
     }
 });
 
 
 //-------------------------------------------------------------------------------
-// Exports
+// Export
 //-------------------------------------------------------------------------------
 
-bugpack.export('express.ExpressApp', ExpressApp);
+bugpack.export('bugmessage.DirectResponseChannel', DirectResponseChannel);

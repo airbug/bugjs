@@ -4,7 +4,7 @@
 
 //@Package('bugmessage')
 
-//@Export('BroadcasterChannel')
+//@Export('BroadcasterMessageChannel')
 
 //@Require('Class')
 //@Require('List')
@@ -26,14 +26,13 @@ var bugpack = require('bugpack').context();
 var Class                   = bugpack.require('Class');
 var List                    = bugpack.require('List');
 var AbstractMessageChannel  = bugpack.require('bugmessage.AbstractMessageChannel');
-var IBroadcasterChannel     = bugpack.require('bugmessage.IBroadcasterChannel');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var BroadcasterChannel = Class.extend(AbstractMessageChannel, {
+var BroadcasterMessageChannel = Class.extend(AbstractMessageChannel, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -125,14 +124,7 @@ var BroadcasterChannel = Class.extend(AbstractMessageChannel, {
 
 
 //-------------------------------------------------------------------------------
-// Interfaces
-//-------------------------------------------------------------------------------
-
-Class.implement(BroadcasterChannel, IBroadcasterChannel);
-
-
-//-------------------------------------------------------------------------------
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugmessage.BroadcasterChannel', BroadcasterChannel);
+bugpack.export('bugmessage.BroadcasterMessageChannel', BroadcasterMessageChannel);

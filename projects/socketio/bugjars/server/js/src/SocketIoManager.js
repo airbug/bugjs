@@ -11,7 +11,7 @@
 //@Require('EventDispatcher')
 //@Require('Map')
 //@Require('bugflow.BugFlow')
-//@Require('socketio:server.SocketIoConnection')
+//@Require('socketio:socket.SocketIoConnection')
 
 
 //-------------------------------------------------------------------------------
@@ -103,7 +103,7 @@ var SocketIoManager = Class.extend(EventDispatcher, {
             socketConnection.on(SocketIoConnection.EventTypes.DISCONNECT, _this.hearSocketDisconnect, _this);
             _this.socketUuidToSocketConnectionMap.put(socketConnection.getUuid(), socketConnection);
             _this.dispatchEvent(new Event(SocketIoManager.EventTypes.CONNECTION, {
-                socket: socketConnection
+                socketConnection: socketConnection
             }));
         });
 

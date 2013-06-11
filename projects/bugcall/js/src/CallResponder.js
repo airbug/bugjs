@@ -2,13 +2,14 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('express')
+//@Package('bugcall')
 
-//@Export('ExpressApp')
+//@Export('CallResponder')
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('Proxy')
+//@Require('bugcall.CallResponse')
+//@Require('bugcall.OutgoingResponse')
 
 
 //-------------------------------------------------------------------------------
@@ -16,100 +17,75 @@
 //-------------------------------------------------------------------------------
 
 var bugpack = require('bugpack').context();
-var express = require('express');
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class   = bugpack.require('Class');
-var Obj     = bugpack.require('Obj');
-var Proxy   = bugpack.require('Proxy');
+var Class                   = bugpack.require('Class');
+var Obj                     = bugpack.require('Obj');
+var CallResponse            = bugpack.require('bugcall.CallResponse');
+var OutgoingResponse        = bugpack.require('bugcall.OutgoingResponse');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ExpressApp = Class.extend(Obj, {
+var CallResponder = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(callManager, incomingRequest) {
 
         this._super();
-
 
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        this.app = express();
-    },
+        /**
+         * @private
+         * @type {CallManager}
+         */
+        this.callManager = callManager;
 
-
-    configure: function() {
-        this.app.configure.apply(this.app, arguments);
-    },
-
-    get: function() {
-        return this.app.get.apply(this.app, arguments);
-    },
-
-    on: function() {
-        this.app.on.apply(this.app, arguments);
-    },
-
-    set: function() {
-        this.app.set.apply(this.app, arguments);
-    },
-
-    use: function() {
-        this.app.use.apply(this.app, arguments);
+        /**
+         * @private
+         * @type {IncomingRequest}
+         */
+        this.incomingRequest = incomingRequest;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Public Instance Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {express}
+     * @param {string} responseType
+     * @param {*} responseData
+     * @return {CallResponse}
      */
-    getApp: function() {
-        return this.app;
+    response: function(responseType, responseData) {
+        return new CallResponse(responseType, responseData, this.incomingRequest.getUuid());
     },
 
-
-    //-------------------------------------------------------------------------------
-    // Public Class Methods
-    //-------------------------------------------------------------------------------
-
-    initialize: function() {
-        var _this = this;
-
-        // Shut Down
-        //-------------------------------------------------------------------------------
-
-        // Graceful Shutdown
-        process.on('SIGTERM', function () {
-            console.log("Server Closing");
-            _this.app.close();
-        });
-
-        this.on('close', function () {
-            console.log("Server Closed");
-        });
-
+    /**
+     * @param {CallResponse} callResponse
+     */
+    sendResponse: function(callResponse) {
+        var outgoingResponse = new OutgoingResponse(callResponse);
+        this.callManager.sendResponse(outgoingResponse);
     }
 });
 
 
 //-------------------------------------------------------------------------------
-// Exports
+// Export
 //-------------------------------------------------------------------------------
 
-bugpack.export('express.ExpressApp', ExpressApp);
+bugpack.export('bugcall.CallResponder', CallResponder);

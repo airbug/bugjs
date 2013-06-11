@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('DestinationRouter')
+//@Export('DestinationMessageRouter')
 
 //@Require('Class')
 //@Require('Map')
@@ -35,7 +35,7 @@ var MessageDestination      = bugpack.require('bugmessage.MessageDestination');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var DestinationRouter = Class.extend(AbstractMessageRouter, {
+var DestinationMessageRouter = Class.extend(AbstractMessageRouter, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -212,4 +212,4 @@ var DestinationRouter = Class.extend(AbstractMessageRouter, {
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugmessage.DestinationRouter', DestinationRouter);
+bugpack.export('bugmessage.DestinationMessageRouter', DestinationMessageRouter);

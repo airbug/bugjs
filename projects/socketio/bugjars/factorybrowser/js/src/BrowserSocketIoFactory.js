@@ -10,6 +10,7 @@
 //@Require('Obj')
 //@Require('socket-io.SocketIo')
 //@Require('socketio:browserfactory.ISocketFactory')
+//@Require('socketio:socket.SocketIoConnection')
 
 
 //-------------------------------------------------------------------------------
@@ -23,10 +24,11 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var Obj             = bugpack.require('Obj');
-var SocketIo        = bugpack.require('socket-io.SocketIo');
-var ISocketFactory  = bugpack.require('socketio:browserfactory.ISocketFactory');
+var Class               = bugpack.require('Class');
+var Obj                 = bugpack.require('Obj');
+var SocketIo            = bugpack.require('socket-io.SocketIo');
+var ISocketFactory      = bugpack.require('socketio:browserfactory.ISocketFactory');
+var SocketIoConnection  = bugpack.require('socketio:socket.SocketIoConnection');
 
 
 //-------------------------------------------------------------------------------
@@ -45,10 +47,10 @@ var BrowserSocketIoFactory = Class.extend(Obj, {
      *     port: number,
      *     resource: string
      * }} options
-     * @return {Socket}
+     * @return {SocketIoConnection}
      */
-    generateSocket: function(host, options) {
-        return SocketIo.connect(host, options);
+    createSocketConnection: function(host, options) {
+        return new SocketIoConnection(SocketIo.connect(host, options));
     }
 });
 

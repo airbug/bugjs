@@ -2,14 +2,12 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('socketio:factoryserver')
+//@Package('socketio:socket')
 
-//@Export('ServerSocketIoFactory')
+//@Export('SocketIoEmit')
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('socketio:client.ISocketFactory')
-//@Require('socketio:socket.SocketIoConnection')
 
 
 //-------------------------------------------------------------------------------
@@ -17,51 +15,71 @@
 //-------------------------------------------------------------------------------
 
 var bugpack = require('bugpack').context();
-var io      = require('socket.io-client');
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var Obj                 = bugpack.require('Obj');
-var ISocketFactory      = bugpack.require('socketio:client.ISocketFactory');
-var SocketIoConnection  = bugpack.require('socketio:socket.SocketIoConnection');
+var Class   = bugpack.require('Class');
+var Obj     = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ServerSocketIoFactory = Class.extend(Obj, {
+var SocketIoEmit = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
-    // ISocketFactory Implementation
+    // Constructor
+    //-------------------------------------------------------------------------------
+
+    _constructor: function(name, data) {
+
+        this._super();
+
+
+        //-------------------------------------------------------------------------------
+        // Declare Variables
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {Object}
+         */
+        this.data = data;
+
+        /**
+         * @private
+         * @type {string}
+         */
+        this.name = name;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {string} host
-     * @param {{
-        *     port: number,
-     *     resource: string
-     * }} options
-     * @return {Socket}
+     * @return {Object}
      */
-    createSocketConnection: function(host, options) {
-        return new SocketIoConnection(io.connect(host, options));
+    getData: function() {
+        return this.data;
+    },
+
+    /**
+     * @return {string}
+     */
+    getName: function() {
+        return this.name;
     }
 });
 
 
 //-------------------------------------------------------------------------------
-// Interfaces
-//-------------------------------------------------------------------------------
-
-Class.implement(ServerSocketIoFactory, ISocketFactory);
-
-//-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("socketio:factoryserver.ServerSocketIoFactory", ServerSocketIoFactory);
+bugpack.export("socketio:socket.SocketIoEmit", SocketIoEmit);

@@ -2,10 +2,12 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('DirectChannel')
+//@Package('bugmessage')
+
+//@Export('CallbackResponseChannel')
 
 //@Require('Class')
-//@Require('bugmessage.AbstractMessageChannel')
+//@Require('bugmessage.AbstractResponseChannel')
 
 
 //-------------------------------------------------------------------------------
@@ -20,20 +22,21 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                   = bugpack.require('Class');
-var AbstractMessageChannel  = bugpack.require('bugmessage.AbstractMessageChannel');
+var AbstractResponseChannel = bugpack.require('bugmessage.AbstractResponseChannel');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var DirectChannel = Class.extend(AbstractMessageChannel, {
+var CallbackResponseChannel = Class.extend(AbstractResponseChannel, {
+
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(receiverCallback, receiverContext) {
 
         this._super();
 
@@ -44,9 +47,15 @@ var DirectChannel = Class.extend(AbstractMessageChannel, {
 
         /**
          * @private
-         * @type {IMessageReceiver}
+         * @type {function(Response)}
          */
-        this.messageReceiver = null;
+        this.receiverCallback = receiverCallback;
+
+        /**
+         * @private
+         * @type {Object}
+         */
+        this.receiverContext = receiverContext;
     },
 
 
@@ -55,34 +64,37 @@ var DirectChannel = Class.extend(AbstractMessageChannel, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {IMessageReceiver}
+     * @return {function(Response)}
      */
-    getMessageReceiver: function() {
-        return this.messageReceiver;
+    getReceiverCallback: function() {
+        return this.receiverCallback;
     },
 
     /**
-     * @param {IMessageReceiver} messageReceiver
+     * @return {Object}
      */
-    setMessageChannel: function(messageReceiver) {
-        if (this.messageReceiver) {
-            this.messageReceiver.removeEventPropagator(this);
-        }
-        this.messageReceiver = messageReceiver;
-        this.messageReceiver.addEventPropagator(this);
+    getReceiverContext: function() {
+        return this.receiverContext;
     },
 
 
     //-------------------------------------------------------------------------------
-    // AbstractMessageChannel Implementation
+    // AbstractResponseReceiver Implementation
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Message} message
-     * @param {MessageResponder} messageResponder
+     *
      */
-    doChannelMessage: function(message, messageResponder) {
-        this.messageReceiver.receiveMessage(message, messageResponder);
+    doCloseReceiver: function() {
+        this.receiverContext = null;
+        this.receiverCallback = null;
+    },
+
+    /**
+     * @param {Response} response
+     */
+    doReceiveResponse: function(response) {
+        this.receiverCallback.call(this.receiverContext, response);
     }
 });
 
@@ -91,4 +103,4 @@ var DirectChannel = Class.extend(AbstractMessageChannel, {
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugmessage.DirectChannel', DirectChannel);
+bugpack.export('bugmessage.CallbackResponseChannel', CallbackResponseChannel);

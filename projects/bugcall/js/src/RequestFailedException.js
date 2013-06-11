@@ -2,12 +2,10 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('socketio:client')
-
-//@Export('SocketIoEmit')
+//@Export('RequestFailedException')
 
 //@Require('Class')
-//@Require('Obj')
+//@Require('Exception')
 
 
 //-------------------------------------------------------------------------------
@@ -21,59 +19,23 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class   = bugpack.require('Class');
-var Obj     = bugpack.require('Obj');
+var Class       = bugpack.require('Class');
+var Exception   = bugpack.require('Exception');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SocketIoEmit = Class.extend(Obj, {
+var RequestFailedException = Class.extend(Exception, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(name, data) {
+    _constructor: function(data) {
 
-        this._super();
-
-
-        //-------------------------------------------------------------------------------
-        // Declare Variables
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {Object}
-         */
-        this.data = data;
-
-        /**
-         * @private
-         * @type {string}
-         */
-        this.name = name;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @return {Object}
-     */
-    getData: function() {
-        return this.data;
-    },
-
-    /**
-     * @return {string}
-     */
-    getName: function() {
-        return this.name;
+        this._super("requestFailed", data);
     }
 });
 
@@ -82,4 +44,4 @@ var SocketIoEmit = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("socketio:client.SocketIoEmit", SocketIoEmit);
+bugpack.export('RequestFailedException', RequestFailedException);

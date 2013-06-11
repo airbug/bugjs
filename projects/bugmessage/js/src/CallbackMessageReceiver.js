@@ -2,13 +2,12 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('express')
+//@Package('bugmessage')
 
-//@Export('ExpressApp')
+//@Export('CallbackMessageReceiver')
 
 //@Require('Class')
-//@Require('Obj')
-//@Require('Proxy')
+//@Require('bugmessage.AbstractMessageReceiver')
 
 
 //-------------------------------------------------------------------------------
@@ -16,29 +15,27 @@
 //-------------------------------------------------------------------------------
 
 var bugpack = require('bugpack').context();
-var express = require('express');
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class   = bugpack.require('Class');
-var Obj     = bugpack.require('Obj');
-var Proxy   = bugpack.require('Proxy');
+var Class                   = bugpack.require('Class');
+var AbstractMessageReceiver = bugpack.require('bugmessage.AbstractMessageReceiver');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ExpressApp = Class.extend(Obj, {
+var CallbackMessageReceiver = Class.extend(AbstractMessageReceiver, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(receiverCallback, receiverContext) {
 
         this._super();
 
@@ -47,28 +44,17 @@ var ExpressApp = Class.extend(Obj, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        this.app = express();
-    },
+        /**
+         * @private
+         * @type {function(Message, MessageResponder)}
+         */
+        this.receiverCallback = receiverCallback;
 
-
-    configure: function() {
-        this.app.configure.apply(this.app, arguments);
-    },
-
-    get: function() {
-        return this.app.get.apply(this.app, arguments);
-    },
-
-    on: function() {
-        this.app.on.apply(this.app, arguments);
-    },
-
-    set: function() {
-        this.app.set.apply(this.app, arguments);
-    },
-
-    use: function() {
-        this.app.use.apply(this.app, arguments);
+        /**
+         * @private
+         * @type {Object}
+         */
+        this.receiverContext = receiverContext;
     },
 
 
@@ -77,39 +63,36 @@ var ExpressApp = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {express}
+     * @return {function(Message, MessageResponder)}
      */
-    getApp: function() {
-        return this.app;
+    getReceiverCallback: function() {
+        return this.receiverCallback;
+    },
+
+    /**
+     * @return {Object}
+     */
+    getReceiverContext: function() {
+        return this.receiverContext;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Public Class Methods
+    // AbstractMessageReceiver Implementation
     //-------------------------------------------------------------------------------
 
-    initialize: function() {
-        var _this = this;
-
-        // Shut Down
-        //-------------------------------------------------------------------------------
-
-        // Graceful Shutdown
-        process.on('SIGTERM', function () {
-            console.log("Server Closing");
-            _this.app.close();
-        });
-
-        this.on('close', function () {
-            console.log("Server Closed");
-        });
-
+    /**
+     * @param {Message} message
+     * @param {MessageResponder} messageResponder
+     */
+    doReceiveMessage: function(message, messageResponder) {
+        this.receiverCallback.call(this.receiverContext, message, messageResponder);
     }
 });
 
 
 //-------------------------------------------------------------------------------
-// Exports
+// Export
 //-------------------------------------------------------------------------------
 
-bugpack.export('express.ExpressApp', ExpressApp);
+bugpack.export('bugmessage.CallbackMessageReceiver', CallbackMessageReceiver);

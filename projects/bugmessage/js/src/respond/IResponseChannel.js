@@ -4,10 +4,10 @@
 
 //@Package('bugmessage')
 
-//@Export('MessageResponder')
+//@Export('IResponseChannel')
 
-//@Require('Class')
-//@Require('bugmessage.AbstractResponder')
+//@Require('IEventPropagator')
+//@Require('Interface')
 
 
 //-------------------------------------------------------------------------------
@@ -21,33 +21,38 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var AbstractResponder   = bugpack.require('bugmessage.AbstractResponder');
+var IEventPropagator    = bugpack.require('IEventPropagator');
+var Interface           = bugpack.require('Interface');
 
 
 //-------------------------------------------------------------------------------
-// Declare Class
+// Declare Interface
 //-------------------------------------------------------------------------------
 
-var MessageResponder = Class.extend(AbstractResponder, {
+/**
+ * @interface
+ * @extends {IEventDispatcher}
+ */
+var IResponseChannel = Interface.extend(IEventPropagator, {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Interface Methods
     //-------------------------------------------------------------------------------
 
     /**
      * @param {Response} response
-     * @param {function(Error)} callback
      */
-    doSendResponse: function(response, callback) {
-        response.setHeader("responseChannelUuid", this.getResponseChannel().getUuid());
-        this.getResponseChannel().channelResponse(response);
-    }
+    channelResponse: function(response) {},
+
+    /**
+     *
+     */
+    closeChannel: function() {}
 });
 
 
 //-------------------------------------------------------------------------------
-// Export
+// Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugmessage.MessageResponder', MessageResponder);
+bugpack.export('bugmessage.IResponseChannel', IResponseChannel);

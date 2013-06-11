@@ -2,14 +2,13 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('socketio:factoryserver')
+//@Package('bugmessage')
 
-//@Export('ServerSocketIoFactory')
+//@Export('AbstractResponseReceiver')
 
 //@Require('Class')
-//@Require('Obj')
-//@Require('socketio:client.ISocketFactory')
-//@Require('socketio:socket.SocketIoConnection')
+//@Require('EventPropagator')
+//@Require('bugmessage.IResponseReceiver')
 
 
 //-------------------------------------------------------------------------------
@@ -17,7 +16,6 @@
 //-------------------------------------------------------------------------------
 
 var bugpack = require('bugpack').context();
-var io      = require('socket.io-client');
 
 
 //-------------------------------------------------------------------------------
@@ -25,43 +23,55 @@ var io      = require('socket.io-client');
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
-var Obj                 = bugpack.require('Obj');
-var ISocketFactory      = bugpack.require('socketio:client.ISocketFactory');
-var SocketIoConnection  = bugpack.require('socketio:socket.SocketIoConnection');
+var EventPropagator     = bugpack.require('EventPropagator');
+var IResponseReceiver   = bugpack.require('bugmessage.IResponseReceiver');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ServerSocketIoFactory = Class.extend(Obj, {
-
-    //-------------------------------------------------------------------------------
-    // ISocketFactory Implementation
-    //-------------------------------------------------------------------------------
+var AbstractResponseReceiver = Class.extend(EventPropagator, {
 
     /**
-     * @param {string} host
-     * @param {{
-        *     port: number,
-     *     resource: string
-     * }} options
-     * @return {Socket}
+     * @abstract
      */
-    createSocketConnection: function(host, options) {
-        return new SocketIoConnection(io.connect(host, options));
+    //doCloseReceiver: function() {},
+
+    /**
+     * @abstract
+     * @param {Response} response
+     */
+    //doReceiveResponse: function(message, messageResponder) {},
+
+
+    //-------------------------------------------------------------------------------
+    // IResponseReceiver Implementation
+    //-------------------------------------------------------------------------------
+
+    closeReceiver: function() {
+        this.doCloseReceiver();
+    },
+
+    /**
+     * @param {Response} response
+     */
+    receiveResponse: function(response) {
+        this.doReceiveResponse(response);
     }
 });
+
 
 
 //-------------------------------------------------------------------------------
 // Interfaces
 //-------------------------------------------------------------------------------
 
-Class.implement(ServerSocketIoFactory, ISocketFactory);
+Class.implement(AbstractResponseReceiver, IResponseReceiver);
+
 
 //-------------------------------------------------------------------------------
-// Exports
+// Export
 //-------------------------------------------------------------------------------
 
-bugpack.export("socketio:factoryserver.ServerSocketIoFactory", ServerSocketIoFactory);
+bugpack.export('bugmessage.AbstractResponseReceiver', AbstractResponseReceiver);

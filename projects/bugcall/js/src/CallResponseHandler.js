@@ -2,13 +2,12 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('express')
+//@Package('bugcall')
 
-//@Export('ExpressApp')
+//@Export('CallResponseHandler')
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('Proxy')
 
 
 //-------------------------------------------------------------------------------
@@ -16,59 +15,43 @@
 //-------------------------------------------------------------------------------
 
 var bugpack = require('bugpack').context();
-var express = require('express');
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class   = bugpack.require('Class');
-var Obj     = bugpack.require('Obj');
-var Proxy   = bugpack.require('Proxy');
+var Class           = bugpack.require('Class');
+var Obj             = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ExpressApp = Class.extend(Obj, {
+/**
+ * @constructor
+ * @extends {Obj}
+ */
+var CallResponseHandler = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(callback) {
 
         this._super();
-
 
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        this.app = express();
-    },
-
-
-    configure: function() {
-        this.app.configure.apply(this.app, arguments);
-    },
-
-    get: function() {
-        return this.app.get.apply(this.app, arguments);
-    },
-
-    on: function() {
-        this.app.on.apply(this.app, arguments);
-    },
-
-    set: function() {
-        this.app.set.apply(this.app, arguments);
-    },
-
-    use: function() {
-        this.app.use.apply(this.app, arguments);
+        /**
+         * @private
+         * @type {function()}
+         */
+        this.callback = callback;
     },
 
 
@@ -77,39 +60,29 @@ var ExpressApp = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {express}
+     * @return {function(Error, CallResponse)}
      */
-    getApp: function() {
-        return this.app;
+    getCallback: function() {
+        return this.callback;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Public Class Methods
+    // Instance Methods
     //-------------------------------------------------------------------------------
 
-    initialize: function() {
-        var _this = this;
-
-        // Shut Down
-        //-------------------------------------------------------------------------------
-
-        // Graceful Shutdown
-        process.on('SIGTERM', function () {
-            console.log("Server Closing");
-            _this.app.close();
-        });
-
-        this.on('close', function () {
-            console.log("Server Closed");
-        });
-
+    /**
+     * @param {Exception} exception
+     * @param {CallResponse} callResponse
+     */
+    handle: function(exception, callResponse) {
+        this.callback(exception, callResponse);
     }
 });
 
 
 //-------------------------------------------------------------------------------
-// Exports
+// Export
 //-------------------------------------------------------------------------------
 
-bugpack.export('express.ExpressApp', ExpressApp);
+bugpack.export('bugcall.CallResponseHandler', CallResponseHandler);

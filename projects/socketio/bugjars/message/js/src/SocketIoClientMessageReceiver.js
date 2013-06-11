@@ -4,15 +4,14 @@
 
 //@Package('socketio:client')
 
-//@Export('SocketIoClientMessageChannel')
+//@Export('SocketIoClientChannel')
 
 //@Require('Class')
 //@Require('IEventPropagator')
-//@Require('IMessageChannel')
-//@Require('Message')
-//@Require('Obj')
 //@Require('Queue')
 //@Require('UuidGenerator')
+//@Require('bugmessage.IMessageChannel')
+//@Require('bugmessage.Message')
 //@Require('socketio:client.SocketIoClient')
 
 
@@ -27,21 +26,21 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var IEventPropagator    = bugpack.require('IEventPropagator');
-var IMessageChannel  = bugpack.require('IMessageChannel');
-var Message             = bugpack.require('Message');
-var Obj                 = bugpack.require('Obj');
-var Queue               = bugpack.require('Queue');
-var UuidGenerator       = bugpack.require('UuidGenerator');
-var SocketIoClient      = bugpack.require('socketio:client.SocketIoClient');
+var Class                   = bugpack.require('Class');
+var IEventPropagator        = bugpack.require('IEventPropagator');
+var Queue                   = bugpack.require('Queue');
+var UuidGenerator           = bugpack.require('UuidGenerator');
+var AbstractMessageChannel  = bugpack.require('bugmessage.AbstractMessageChannel');
+var IMessageChannel         = bugpack.require('bugmessage.IMessageChannel');
+var Message                 = bugpack.require('bugmessage.Message');
+var SocketIoClient          = bugpack.require('socketio:client.SocketIoClient');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SocketIoClientMessageChannel = Class.extend(Obj, {
+var SocketIoClientChannel = Class.extend(AbstractMessageChannel, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -55,12 +54,6 @@ var SocketIoClientMessageChannel = Class.extend(Obj, {
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {IMessageChannel}
-         */
-        this.incomingMessageChannel = null;
 
         /**
          * @private
@@ -174,8 +167,8 @@ var SocketIoClientMessageChannel = Class.extend(Obj, {
     processSocketMessage: function(messageObject) {
         //TODO BRN: Should use BugMarshaller here to perform the conversion
         if (messageObject) {
-            var messageData = messageObject.message;
-            var channel = messageObject.channel;
+            var messageObject = messageObject.message;
+            var responseChannelObject = messageObject.responseChannel;
             var message = new Message(messageData.topic, messageData.data);
             if (messageData.receiverAddress) {
                 message.setReceiverAddress(messageData.receiverAddress);
@@ -225,12 +218,12 @@ var SocketIoClientMessageChannel = Class.extend(Obj, {
 // Interfaces
 //-------------------------------------------------------------------------------
 
-Class.implement(SocketIoClientMessageChannel, IEventPropagator);
-Class.implement(SocketIoClientMessageChannel, IMessageChannel);
+Class.implement(SocketIoClientChannel, IEventPropagator);
+Class.implement(SocketIoClientChannel, IMessageChannel);
 
 
 //-------------------------------------------------------------------------------
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export('socketio:client.SocketIoClientMessageChannel', SocketIoClientMessageChannel);
+bugpack.export('socketio:client.SocketIoClientChannel', SocketIoClientChannel);

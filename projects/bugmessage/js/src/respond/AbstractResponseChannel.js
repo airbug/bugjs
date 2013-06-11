@@ -4,12 +4,12 @@
 
 //@Package('bugmessage')
 
-//@Export('Response')
+//@Export('AbstractResponseChannel')
 
 //@Require('Class')
-//@Require('Map')
-//@Require('Obj')
-//@Require('TypeUtil')
+//@Require('EventPropagator')
+//@Require('UuidGenerator')
+//@Require('bugmessage.IResponseChannel')
 
 
 //-------------------------------------------------------------------------------
@@ -23,23 +23,23 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var Map         = bugpack.require('Map');
-var Obj         = bugpack.require('Obj');
-var TypeUtil    = bugpack.require('TypeUtil');
+var Class               = bugpack.require('Class');
+var EventPropagator     = bugpack.require('EventPropagator');
+var UuidGenerator       = bugpack.require('UuidGenerator');
+var IResponseChannel    = bugpack.require('bugmessage.IResponseChannel');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Response = Class.extend(Obj, {
+var AbstractResponseChannel = Class.extend(EventPropagator, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(type, data) {
+    _constructor: function() {
 
         this._super();
 
@@ -49,21 +49,16 @@ var Response = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {Object}
+         * @type {boolean}
          */
-        this.data = data;
+        this.closed = false;
 
-        /**
-         * @private
-         * @type {Map.<string, *>}
-         */
-        this.headerMap = new Map();
-
+        //TODO BRN: Uuid of channel should be consistent through out the entire channel/receiver chain
         /**
          * @private
          * @type {string}
          */
-        this.type = TypeUtil.isString(type) ? type : "";
+        this.uuid = UuidGenerator.generateUuid();
     },
 
 
@@ -72,61 +67,81 @@ var Response = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {Object}
-     */
-    getData: function() {
-        return this.data;
-    },
-
-    /**
-     * @param {string} name
-     * @return {*}
-     */
-    getHeader: function(name) {
-        return this.headerMap.get(name);
-    },
-
-    /**
-     * @param {string} name
-     * @param {*} header
-     */
-    setHeader: function(name, header) {
-        this.headerMap.put(name, header);
-    },
-
-    /**
      * @return {string}
      */
-    getType: function() {
-        return this.type;
+    getUuid: function() {
+        return this.uuid;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    isClosed: function() {
+        return this.closed;
+    },
+
+
+    /**
+     * @abstract
+     * @param {Response} response
+     */
+    //doChannelResponse: function(response) {},
+
+    /**
+     * @abstract
+     */
+    //doCloseChannel: function() {},
+
+
+    //-------------------------------------------------------------------------------
+    // IMessageChannel Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {Response} response
+     */
+    channelResponse: function(response) {
+        if (!this.isClosed()) {
+            this.doChannelResponse(response);
+        } else {
+            throw new Error("Cannot channel a response after channel is closed");
+        }
+    },
+
+    /**
+     *
+     */
+    closeChannel: function() {
+        if (!this.isClosed()) {
+            this.doCloseChannel();
+        }
     },
 
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Instance Methods
     //-------------------------------------------------------------------------------
 
     /**
      * @return {Object}
      */
     toObject: function() {
-        var _this = this;
-        var headerMapObject = {};
-        this.headerMap.getKeyArray().forEach(function(name) {
-            var header = _this.headerMap.get(name);
-            headerMapObject[name] = header;
-        });
         return {
-            data: this.data,
-            headerMap: headerMapObject,
-            type: this.type
+            uuid: this.uuid
         };
     }
 });
 
 
 //-------------------------------------------------------------------------------
+// Interfaces
+//-------------------------------------------------------------------------------
+
+Class.implement(AbstractResponseChannel, IResponseChannel);
+
+
+//-------------------------------------------------------------------------------
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugmessage.Response', Response);
+bugpack.export('bugmessage.AbstractResponseChannel', AbstractResponseChannel);

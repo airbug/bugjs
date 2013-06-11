@@ -2,13 +2,12 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('express')
+//@Package('bugcall')
 
-//@Export('ExpressApp')
+//@Export('CallResponse')
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('Proxy')
 
 
 //-------------------------------------------------------------------------------
@@ -16,59 +15,55 @@
 //-------------------------------------------------------------------------------
 
 var bugpack = require('bugpack').context();
-var express = require('express');
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class   = bugpack.require('Class');
-var Obj     = bugpack.require('Obj');
-var Proxy   = bugpack.require('Proxy');
+var Class           = bugpack.require('Class');
+var Obj             = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ExpressApp = Class.extend(Obj, {
+/**
+ * @constructor
+ * @extends {Obj}
+ */
+var CallResponse = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(type, data, requestUuid) {
 
         this._super();
-
 
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        this.app = express();
-    },
+        /**
+         * @private
+         * @type {*}
+         */
+        this.data = data;
 
+        /**
+         * @private
+         * @type {string}
+         */
+        this.requestUuid = requestUuid;
 
-    configure: function() {
-        this.app.configure.apply(this.app, arguments);
-    },
-
-    get: function() {
-        return this.app.get.apply(this.app, arguments);
-    },
-
-    on: function() {
-        this.app.on.apply(this.app, arguments);
-    },
-
-    set: function() {
-        this.app.set.apply(this.app, arguments);
-    },
-
-    use: function() {
-        this.app.use.apply(this.app, arguments);
+        /**
+         * @private
+         * @type {string}
+         */
+        this.type = type;
     },
 
 
@@ -77,39 +72,43 @@ var ExpressApp = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {express}
+     * @return {*}
      */
-    getApp: function() {
-        return this.app;
+    getData: function() {
+        return this.data;
+    },
+
+    /**
+     * @return {string}
+     */
+    getRequestUuid: function() {
+        return this.requestUuid
+    },
+
+    /**
+     * @return {string}
+     */
+    getType: function() {
+        return this.type;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Public Class Methods
+    // Instance Methods
     //-------------------------------------------------------------------------------
 
-    initialize: function() {
-        var _this = this;
-
-        // Shut Down
-        //-------------------------------------------------------------------------------
-
-        // Graceful Shutdown
-        process.on('SIGTERM', function () {
-            console.log("Server Closing");
-            _this.app.close();
-        });
-
-        this.on('close', function () {
-            console.log("Server Closed");
-        });
-
+    toObject: function() {
+        return {
+            requestUuid: this.getRequestUuid(),
+            type: this.getType(),
+            data: this.getData()
+        }
     }
 });
 
 
 //-------------------------------------------------------------------------------
-// Exports
+// Export
 //-------------------------------------------------------------------------------
 
-bugpack.export('express.ExpressApp', ExpressApp);
+bugpack.export('bugcall.CallResponse', CallResponse);

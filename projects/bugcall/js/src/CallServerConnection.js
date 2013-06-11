@@ -2,12 +2,12 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugmessage')
+//@Package('bugcall')
 
-//@Export('CallbackReceiver')
+//@Export('CallServerConnection')
 
 //@Require('Class')
-//@Require('bugmessage.AbstractMessageReceiver')
+//@Require('bugcall.CallConnection')
 
 
 //-------------------------------------------------------------------------------
@@ -21,72 +21,75 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                   = bugpack.require('Class');
-var AbstractMessageReceiver = bugpack.require('bugmessage.AbstractMessageReceiver');
+var Class           = bugpack.require('Class');
+var CallConnection  = bugpack.require('bugcall.CallConnection');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var CallbackReceiver = Class.extend(AbstractMessageReceiver, {
+/**
+ * @constructor
+ * @extends {CallConnection}
+ */
+var CallServerConnection = Class.extend(CallConnection, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(receiverCallback, receiverContext) {
+    _constructor: function(socketConnection) {
 
-        this._super();
+        this._super(socketConnection);
 
 
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        /**
-         * @private
-         * @type {function(Message, MessageResponder)}
-         */
-        this.receiverCallback = receiverCallback;
 
-        /**
-         * @private
-         * @type {Object}
-         */
-        this.receiverContext = receiverContext;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // CallConnection Implementation
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {function(Message, MessageResponder)}
+     * @protected
      */
-    getReceiverCallback: function() {
-        return this.receiverCallback;
+    doClose: function() {
+        this.socketConnection.emit("callClosing");
+        this.socketConnection.disconnect();
     },
 
     /**
-     * @return {Object}
+     * @protected
      */
-    getReceiverContext: function() {
-        return this.receiverContext;
+    doDeinitialize: function() {
+        this.socketConnection.removeEventListener("callTerminate", this.hearCallTerminate, this);
+    },
+
+    /**
+     * @protected
+     */
+    doInitialize: function() {
+        this.socketConnection.addEventListener("callTerminate", this.hearCallTerminate, this);
     },
 
 
     //-------------------------------------------------------------------------------
-    // AbstractMessageReceiver Implementation
+    // Event Listeners
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Message} message
-     * @param {MessageResponder} messageResponder
+     * @private
+     * @param {NodeJsEvent} event
      */
-    doReceiveMessage: function(message, messageResponder) {
-        this.receiverCallback.call(this.receiverContext, message, messageResponder);
+    hearCallTerminate: function(event) {
+        this.changeStateClosing();
+        this.doClose();
     }
 });
 
@@ -95,4 +98,4 @@ var CallbackReceiver = Class.extend(AbstractMessageReceiver, {
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugmessage.CallbackReceiver', CallbackReceiver);
+bugpack.export('bugcall.CallServerConnection', CallServerConnection);

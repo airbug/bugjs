@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugmessage')
-
-//@Export('IMessageSender')
+//@Export('IEventReceiver')
 
 //@Require('Interface')
 
@@ -20,24 +18,58 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Interface   = bugpack.require('Interface');
+var Interface           = bugpack.require('Interface');
 
 
 //-------------------------------------------------------------------------------
 // Declare Interface
 //-------------------------------------------------------------------------------
 
-var IMessageSender = Interface.declare({
+/**
+ * @interface
+ */
+var IEventReceiver = Interface.declare({
 
     //-------------------------------------------------------------------------------
     // Interface Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Message} message
-     * @param {function(Error, IResponseReceiver)} callback
+     * @return {IEventPropagator}
      */
-    sendMessage: function(message, callback) {}
+    getParentPropagator: function() {},
+
+    /**
+     * @param {IEventPropagator} parentPropagator
+     */
+    setParentPropagator: function(parentPropagator) {},
+
+    /**
+     * @param {string} eventType
+     * @param {function(Event)} listenerFunction
+     * @param {?Object=} listenerContext (optional)
+     * @param {boolean=} once
+     */
+    addEventListener: function(eventType, listenerFunction, listenerContext, once) {},
+
+    /**
+     * @param {string} eventType
+     * @param {function(Event)} listenerFunction
+     * @param {?Object} listenerContext (optional)
+     */
+    hasEventListener: function(eventType, listenerFunction, listenerContext) {},
+
+    /**
+     *
+     */
+    removeAllListeners: function() {},
+
+    /**
+     * @param {string} eventType
+     * @param {function(Event)} listenerFunction
+     * @param {Object} listenerContext
+     */
+    removeEventListener: function(eventType, listenerFunction, listenerContext) {}
 });
 
 
@@ -45,4 +77,4 @@ var IMessageSender = Interface.declare({
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugmessage.IMessageSender', IMessageSender);
+bugpack.export('IEventReceiver', IEventReceiver);

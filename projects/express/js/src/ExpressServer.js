@@ -58,10 +58,6 @@ var ExpressServer = Class.extend(Obj, {
          * @type {http.Server}
          */
         this.httpServer = http.createServer(this.expressApp.getApp());
-
-        Proxy.proxy(this, this.httpServer, [
-            "listen"
-        ]);
     },
 
 
@@ -85,6 +81,7 @@ var ExpressServer = Class.extend(Obj, {
      * @param callback
      */
     start: function(callback) {
+        console.log("starting express server on port " + this.expressApp.get('port'));
         this.httpServer.listen(this.expressApp.get('port'), callback);
     }
 });

@@ -31,7 +31,7 @@ var Interface           = bugpack.require('Interface');
 
 /**
  * @interface
- * @extends {IEventDispatcher}
+ * @extends {IEventPropagator}
  */
 var IMessageChannel = Interface.extend(IEventPropagator, {
 

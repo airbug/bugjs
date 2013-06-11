@@ -6,8 +6,8 @@
 
 //@Export('IMessageReceiver')
 
+//@Require('IEventPropagator')
 //@Require('Interface')
-//@Require('bugmessage.IMessageChannel')
 
 
 //-------------------------------------------------------------------------------
@@ -21,8 +21,8 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Interface       = bugpack.require('Interface');
-var IMessageChannel = bugpack.require('bugmessage.IMessageChannel');
+var IEventPropagator    = bugpack.require('IEventPropagator');
+var Interface           = bugpack.require('Interface');
 
 
 //-------------------------------------------------------------------------------
@@ -32,7 +32,7 @@ var IMessageChannel = bugpack.require('bugmessage.IMessageChannel');
 /**
  * @interface
  */
-var IMessageReceiver = Interface.extend(IMessageChannel, {
+var IMessageReceiver = Interface.extend(IEventPropagator, {
 
     //-------------------------------------------------------------------------------
     // Interface Methods

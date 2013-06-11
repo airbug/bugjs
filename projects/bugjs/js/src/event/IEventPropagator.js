@@ -37,7 +37,7 @@ var IEventPropagator = Interface.declare({
     /**
      * @param {Event} event
      */
-    propagateEvent: function(event) {},
+    propagateEvent: function(event) {}
 });
 
 
