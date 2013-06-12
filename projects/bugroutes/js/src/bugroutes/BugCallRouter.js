@@ -11,8 +11,7 @@
 //@Require('Obj')
 //@Require('TypeUtil')
 //@Require('bugroutes.BugCallRoute')
-//@Require('socketio:server.SocketIoManager')
-//@Require('socketio:socket.SocketIoConnection')
+//@Require('bugcall.BugCallServer')
 
 
 //-------------------------------------------------------------------------------
@@ -31,8 +30,7 @@ var Map                 = bugpack.require('Map');
 var Obj                 = bugpack.require('Obj');
 var TypeUtil            = bugpack.require('TypeUtil');
 var BugCallRoute        = bugpack.require('bugroutes.BugCallRoute');
-var SocketIoManager     = bugpack.require('socketio:server.SocketIoManager');
-var SocketIoConnection  = bugpack.require('socketio:socket.SocketIoConnection');
+var BugCallServer       = bugpack.require('bugcall.BugCallServer');
 
 
 //-------------------------------------------------------------------------------
