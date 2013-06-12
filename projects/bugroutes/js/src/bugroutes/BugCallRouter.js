@@ -10,6 +10,7 @@
 //@Require('Map')
 //@Require('Obj')
 //@Require('TypeUtil')
+//@Require('bugroutes.BugCallRoute')
 //@Require('socketio:server.SocketIoManager')
 //@Require('socketio:socket.SocketIoConnection')
 
@@ -29,6 +30,7 @@ var Class               = bugpack.require('Class');
 var Map                 = bugpack.require('Map');
 var Obj                 = bugpack.require('Obj');
 var TypeUtil            = bugpack.require('TypeUtil');
+var BugCallRoute        = bugpack.require('bugroutes.BugCallRoute');
 var SocketIoManager     = bugpack.require('socketio:server.SocketIoManager');
 var SocketIoConnection  = bugpack.require('socketio:socket.SocketIoConnection');
 
@@ -80,11 +82,7 @@ var BugCallRouter = Class.extend(Obj, {
     initialize: function(callback){
         if(!callback || typeof callback !== 'function') var callback = function(){};
 
-        var _this = this;
-        this.bugCallServer.on(BugCallServer.EventTypes.CONNECTION_ESTABLISHED, function(event){
-            _this.bugCallServer.on(BugCallServer.EventTypes.DISCONNECT, _this.handleConnectionDisconnect, _this;)
-            _this.bugCallServer.on(BugCallServer.EventTypes.REQUEST, _this.handleConnectionRequest, _this);
-        });
+        this.bugCallServer.on(BugCallServer.EventTypes.REQUEST, this.handleConnectionRequest, this);
 
         callback();
     },
@@ -108,16 +106,18 @@ var BugCallRouter = Class.extend(Obj, {
         var _this = this;
         if(TypeUtil.isArray(routes)){
             routes.forEach(function(route){
-                _this.add(route.getRequestType(), route);
+                _this.add(route);
             });
-        } else if(TypeUtil.isObject(routes) && !TypeUtil.isFunction(routes)){
+        } else if(TypeUtil.isObject(routes)){
             for(var requestType in routes){
-                _this.add(requestType, routes[requestType]);
-                //NOTE: This might need refining. For example: does this add properties that are not routes?
+                var listener = routes[requestType];
+                if(TypeUtil.isFunction(listener)){
+                    _this.add(new BugCallRoute(requestType, listener))
+                }
             }
         } else {
             var routes = Array.prototype.slice.call(arguments);
-            _this.addAll(routes);
+            this.addAll(routes);
         }
     },
 
@@ -125,16 +125,6 @@ var BugCallRouter = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
     // Event Listener
     //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     * @param {Event} event
-     */
-    handleConnectionDisconnect: function(event) {
-        // var callConnection = event.getData().callConnection;
-        this.removeEventListener(BugCallServer.EventTypes.DISCONNECT, this.handleConnectionDisconnect, this);
-        this.removeEventListener(BugCallServer.EventTypes.REQUEST, this.handleConnectionRequest, this);
-    },
 
     /**
      * @private
