@@ -35,7 +35,7 @@ var SocketRoute = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(name, listener){
+    _constructor: function(messageType, listener){
 
         this._super();
 
@@ -43,7 +43,6 @@ var SocketRoute = Class.extend(Obj, {
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
-
 
         /**
          * @private
@@ -55,7 +54,7 @@ var SocketRoute = Class.extend(Obj, {
          * @private
          * @type {string}
          */
-        this.name = name;
+        this.messageType = messageType;
     },
 
 
@@ -73,8 +72,21 @@ var SocketRoute = Class.extend(Obj, {
     /**
      * @return {string}
      */
-    getName: function() {
-        return this.name;
+    getMessageType: function() {
+        return this.messageType;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Public Instance Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {SocketIoConnection} socket
+     * @param {Object} message
+     */
+    route: function(socket, message) {
+        this.listener.call(null, socket, message);
     }
 });
 

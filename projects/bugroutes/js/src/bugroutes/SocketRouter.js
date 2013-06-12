@@ -96,31 +96,24 @@ var SocketRouter = Class.extend(Obj, {
      */
     add: function(route){
         var messageType = route.getMessageType();
-        if(this.routesMap.get(messageType) === null){
+        if (!this.routesMap.containsKey(messageType)) {
             this.routesMap.put(messageType, route);
         } else {
             throw new Error("The messageType " + messageType + " already exists in the routesMap");
         }
-
     },
 
     /**
-     * @param {Array.<SocketRoute> | {*}} routes
+     * @param {Array.<SocketRoute>} routes
      */
     addAll: function(routes){
         var _this = this;
-        if(TypeUtil.isArray(routes)){
-            routes.forEach(function(route){
-                _this.add(route.getMessageType(), route);
+        if (TypeUtil.isArray(routes)) {
+            routes.forEach(function(route) {
+                _this.add(route);
             });
-        } else if(TypeUtil.isObject(routes) && !TypeUtil.isFunction(routes)){
-            for(var messageType in routes){
-                _this.add(messageType, routes[messageType]);
-                //NOTE: This might need refining. For example: does this add properties that are not routes?
-            }
-        } else {
-            var routes = Array.prototype.slice.call(arguments);
-            _this.addAll(routes);
+        }  else {
+            throw new Error("Expects array of SocketRoutes");
         }
     },
 
@@ -145,11 +138,14 @@ var SocketRouter = Class.extend(Obj, {
      */
     handleConnectionMessage: function(event) {
         var message     = event.getData().message;
-        var data        = message.data;
+        var socket      = event.getTarget();
         var messageType = message.type;
-        var socketRoute = this.routesMap.get(messageType);
-        if(socketRoute) socketRoute.fire(socket, data);
-        // use socket to get access to connection object via the ioManager
+        if (messageType) {
+            var socketRoute = this.routesMap.get(messageType);
+            if (socketRoute) {
+                socketRoute.route(socket, message);
+            }
+        }
     }
 });
 

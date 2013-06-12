@@ -51,8 +51,16 @@ var ExpressApp = Class.extend(Obj, {
     },
 
 
+    //-------------------------------------------------------------------------------
+    // Proxied Methods
+    //-------------------------------------------------------------------------------
+
     configure: function() {
         this.app.configure.apply(this.app, arguments);
+    },
+
+    engine: function() {
+        this.app.engine.apply(this.app, arguments);
     },
 
     get: function() {
@@ -88,7 +96,7 @@ var ExpressApp = Class.extend(Obj, {
     // Public Class Methods
     //-------------------------------------------------------------------------------
 
-    initialize: function() {
+    initialize: function(callback) {
         var _this = this;
 
         // Shut Down
@@ -103,7 +111,7 @@ var ExpressApp = Class.extend(Obj, {
         this.on('close', function () {
             console.log("Server Closed");
         });
-
+        callback();
     }
 });
 
