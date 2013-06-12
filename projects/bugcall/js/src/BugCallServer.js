@@ -142,8 +142,8 @@ var BugCallServer = Class.extend(EventDispatcher, {
      * @param {function(Exception, CallResponse)} requestCallback
      */
     request: function(callConnection, requestType, requestData, requestCallback) {
-        var callRequester = this.callConnectionToCallRequesterMap.get(callConnection);
-        var callRequest = callRequester.request(requestType, requestData);
+        var callRequester       = this.callConnectionToCallRequesterMap.get(callConnection);
+        var callRequest         = callRequester.request(requestType, requestData);
         var callResponseHandler = new CallResponseHandler(requestCallback);
         callRequester.sendRequest(callRequest, callResponseHandler);
     },
@@ -244,8 +244,8 @@ var BugCallServer = Class.extend(EventDispatcher, {
      * @param {CallConnection} callConnection
      */
     processConnectionEstablished: function(callConnection) {
-        var callManager = this.createCallManager(callConnection);
-        var callRequester = this.createCallRequester(callManager);
+        var callManager     = this.createCallManager(callConnection);
+        var callRequester   = this.createCallRequester(callManager);
         this.dispatchConnectionEstablished(callConnection, callManager, callRequester);
     },
 
@@ -254,8 +254,8 @@ var BugCallServer = Class.extend(EventDispatcher, {
      * @param {IncomingRequest} incomingRequest
      */
     processIncomingRequest: function(incomingRequest) {
-        var callManager = incomingRequest.getCallManager();
-        var callResponder = new CallResponder(callManager, incomingRequest);
+        var callManager     = incomingRequest.getCallManager();
+        var callResponder   = new CallResponder(callManager, incomingRequest);
         this.dispatchEvent(new Event(BugCallServer.EventTypes.REQUEST, {
             request: incomingRequest,
             responder: callResponder

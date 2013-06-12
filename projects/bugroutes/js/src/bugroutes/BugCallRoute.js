@@ -4,7 +4,7 @@
 
 //@Package('bugroutes')
 
-//@Export('SocketRoute')
+//@Export('BugCallRoute')
 
 //@Require('Class')
 //@Require('Obj')
@@ -29,13 +29,13 @@ var Obj         = bugpack.require('Obj');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SocketRoute = Class.extend(Obj, {
+var BugCallRoute = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(messageType, listener){
+    _constructor: function(requestType, listener){
 
         this._super();
 
@@ -48,21 +48,21 @@ var SocketRoute = Class.extend(Obj, {
          * @private
          * @type {function(...)}
          */
-        this.listener       = listener;
+        this.listener = listener;
 
         /**
          * @private
          * @type {string}
          */
-        this.messageType    = messageType;
+        this.requestType = requestType;
     },
 
     /**
-     * @param {SocketIoConnection | socket} socket
-     * @param {{*}} data
+     * @param {CallRequest} request
+     * @param {CallReponder} responder
      */
-    fire: function(socket, data) {
-        this.listener(socket, data);
+    fire: function(request, responder) {
+        this.listener(request, responder);
     },
 
     //-------------------------------------------------------------------------------
@@ -79,21 +79,8 @@ var SocketRoute = Class.extend(Obj, {
     /**
      * @return {string}
      */
-    getMessageType: function() {
-        return this.messageType;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Public Instance Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {SocketIoConnection} socket
-     * @param {Object} message
-     */
-    route: function(socket, message) {
-        this.listener.call(null, socket, message);
+    getRequestType: function() {
+        return this.requestType;
     }
 });
 
@@ -102,4 +89,4 @@ var SocketRoute = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugroutes.SocketRoute', SocketRoute);
+bugpack.export('bugroutes.BugCallRoute', BugCallRoute);
