@@ -2,6 +2,8 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
+//@Package('bugcall')
+
 //@Export('RequestFailedException')
 
 //@Require('Class')
@@ -44,4 +46,4 @@ var RequestFailedException = Class.extend(Exception, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('RequestFailedException', RequestFailedException);
+bugpack.export('bugcall.RequestFailedException', RequestFailedException);
