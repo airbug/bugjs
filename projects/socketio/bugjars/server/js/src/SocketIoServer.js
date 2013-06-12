@@ -71,7 +71,7 @@ var SocketIoServer = Class.extend(EventDispatcher, {
          * @private
          * @type {*}
          */
-        this.ioServer = io.listen(this.expressServer);
+        this.ioServer = io.listen(this.expressServer.getHttpServer());
 
         Proxy.proxy(this, this.ioServer, [
             "of"
