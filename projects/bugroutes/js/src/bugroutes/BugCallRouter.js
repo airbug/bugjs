@@ -111,8 +111,8 @@ var BugCallRouter = Class.extend(Obj, {
                 _this.add(route.getRequestType(), route);
             });
         } else if(TypeUtil.isObject(routes) && !TypeUtil.isFunction(routes)){
-            for(var routeName in routes){
-                _this.add(routeName, routes[routeName]);
+            for(var requestType in routes){
+                _this.add(requestType, routes[requestType]);
                 //NOTE: This might need refining. For example: does this add properties that are not routes?
             }
         } else {
