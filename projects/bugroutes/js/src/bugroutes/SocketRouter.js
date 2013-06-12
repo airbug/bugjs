@@ -4,13 +4,15 @@
 
 //@Package('bugroutes')
 
-//@Export('SocketRoutesManager')
+//@Export('SocketRouter')
 
 //@Require('Class')
 //@Require('Map')
 //@Require('Obj')
 //@Require('TypeUtil')
-//@Require('socketio::server.SocketIoManager')
+//@Require('socketio:server.SocketIoManager')
+//@Require('socketio:socket.SocketIoConnection')
+
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -23,35 +25,50 @@ var bugpack     = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var Obj             = bugpack.require('Obj');
-var SocketIoManager = bugpack.require('socketio::server.SocketIoManager');
-var TypeUtil        = bugpack.require('TypeUtil');
+var Class               = bugpack.require('Class');
+var Map                 = bugpack.require('Map');
+var Obj                 = bugpack.require('Obj');
+var TypeUtil            = bugpack.require('TypeUtil');
+var SocketIoManager     = bugpack.require('socketio:server.SocketIoManager');
+var SocketIoConnection  = bugpack.require('socketio:socket.SocketIoConnection');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SocketRoutesManager = Class.extend(Obj, {
+var SocketRouter = Class.extend(Obj, {
 
-    /*
+
+    //-------------------------------------------------------------------------------
+    // Constructor
+    //-------------------------------------------------------------------------------
+
+    /**
      * @param {SocketIoManager} ioManager
-     **/
+     */
     _constructor: function(ioManager){
 
         this._super();
 
-        /*
-         * @type {}
-         **/
-        this.ioManager  = ioManager;
 
-        /*
-         * @type {Map}
-         **/
-         this.routesMap = new Map();
+        //-------------------------------------------------------------------------------
+        // Declare Variables
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {}
+         */
+        this.ioManager = ioManager;
+
+        /**
+         * @private
+         * @type {Map.<}
+         */
+        this.routesMap = new Map();
     },
+
 
     //-------------------------------------------------------------------------------
     // Public Instance Methods
@@ -60,30 +77,23 @@ var SocketRoutesManager = Class.extend(Obj, {
     /**
      * @param {function(error)} callback
      */
-    // ioManager listen for message and disconnect onto connection
     initialize: function(callback){
         if(!callback || typeof callback !== 'function') var callback = function(){};
 
         var _this = this;
         this.ioManager.on(SocketIoManager.EventTypes.CONNECTION, function(event){
             /** @type {SocketIoConnection} */
-            var socket = event.getData().socket;
-            socket.on(SocketIoManager.EventTypes.MESSAGE, function(event){
-                var message     = event.getData().message;
-                var data        = message.data;
-                var messageType = message.type;
-                var socketRoute = _this.routesMap.get(messageType);
-                if(socketRoute) socketRoute.fire(socket, data);
-                // use socket to get access to connection object via the ioManager
-            });
+            var socketConnection = event.getData().socketConnection;
+            socketConnection.on(SocketIoConnection.EventTypes.DISCONNECT, this.handleConnectionDisconnect, this);
+            socketConnection.on(SocketIoConnection.EventTypes.MESSAGE, this.handleConnectionMessage, this);
         });
 
         callback();
     },
 
-    /*
+    /**
      * @param {SocketRoute} route
-     **/
+     */
     add: function(route){
         var messageType = route.getMessageType();
         if(this.routesMap.get(messageType) === null){
@@ -94,9 +104,9 @@ var SocketRoutesManager = Class.extend(Obj, {
 
     },
 
-    /*
+    /**
      * @param {Array.<SocketRoute> | {*}} routes
-     **/
+     */
     addAll: function(routes){
         var _this = this;
         if(TypeUtil.isArray(routes)){
@@ -112,6 +122,34 @@ var SocketRoutesManager = Class.extend(Obj, {
             var routes = Array.prototype.slice.call(arguments);
             _this.addAll(routes);
         }
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Event Listener
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {Event} event
+     */
+    handleConnectionDisconnect: function(event) {
+        var socketConnection = event.getTarget();
+        socketConnection.removeEventListener(SocketIoConnection.EventTypes.DISCONNECT, this.handleConnectionDisconnect, this);
+        socketConnection.removeEventListener(SocketIoConnection.EventTypes.MESSAGE, this.handleConnectionMessage, this);
+    },
+
+    /**
+     * @private
+     * @param {Event} event
+     */
+    handleConnectionMessage: function(event) {
+        var message     = event.getData().message;
+        var data        = message.data;
+        var messageType = message.type;
+        var socketRoute = this.routesMap.get(messageType);
+        if(socketRoute) socketRoute.fire(socket, data);
+        // use socket to get access to connection object via the ioManager
     }
 });
 
@@ -119,4 +157,4 @@ var SocketRoutesManager = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugroutes.SocketRoutesManager', SocketRoutesManager);
+bugpack.export('bugroutes.SocketRouter', SocketRouter);

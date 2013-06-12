@@ -31,7 +31,7 @@ var Event               = bugpack.require('Event');
 var EventDispatcher     = bugpack.require('EventDispatcher');
 var Map                 = bugpack.require('Map');
 var BugFlow             = bugpack.require('bugflow.BugFlow');
-var SocketIoConnection  = bugpack.require('socketio:server.SocketIoConnection');
+var SocketIoConnection  = bugpack.require('socketio:socket.SocketIoConnection');
 
 
 //-------------------------------------------------------------------------------

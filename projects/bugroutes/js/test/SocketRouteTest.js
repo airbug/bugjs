@@ -67,32 +67,3 @@ annotate(constructorTest).with(
     test().name("SocketRoute ._constructor Test")
 );
 
-var enableTest = {
-    
-    //-------------------------------------------------------------------------------
-    // Setup Test
-    //-------------------------------------------------------------------------------
-    setup: function(){
-        var routeName       = "testRoute";
-        var listener        = function(){};
-        this.socketRoute    = new SocketRoute(routeName, listener);
-    },
-
-    //-------------------------------------------------------------------------------
-    // Run Test
-    //-------------------------------------------------------------------------------
-    test: function(test){
-        var socket          = {
-            on: function(){ 
-                this.called = true;
-            }
-        };
-        this.socketRoute.enable(socket);
-
-        test.assertEqual(socket.called, true, 
-            "Asserts that SocketRoute #enable calls the socket #on function")
-    }
-};
-annotate(enableTest).with(
-    test().name("SocketRoute #enable Test")
-);

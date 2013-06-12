@@ -31,19 +31,50 @@ var Obj         = bugpack.require('Obj');
 
 var SocketRoute = Class.extend(Obj, {
 
+    //-------------------------------------------------------------------------------
+    // Constructor
+    //-------------------------------------------------------------------------------
+
     _constructor: function(name, listener){
 
         this._super();
 
-        this.name = name;
 
+        //-------------------------------------------------------------------------------
+        // Declare Variables
+        //-------------------------------------------------------------------------------
+
+
+        /**
+         * @private
+         * @type {function(...)}
+         */
         this.listener = listener;
 
+        /**
+         * @private
+         * @type {string}
+         */
+        this.name = name;
     },
 
-    enable: function(socket){
-        var _this = this;
-        socket.on(_this.name, _this.listener);
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {function(...)}
+     */
+    getListener: function() {
+        return this.listener;
+    },
+
+    /**
+     * @return {string}
+     */
+    getName: function() {
+        return this.name;
     }
 });
 

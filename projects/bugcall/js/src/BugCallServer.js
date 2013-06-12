@@ -254,7 +254,7 @@ var BugCallServer = Class.extend(EventDispatcher, {
      * @param {IncomingRequest} incomingRequest
      */
     processIncomingRequest: function(incomingRequest) {
-        var callManager = this.callConnectionToCallManagerMap.get(incomingRequest.getCallRequest());
+        var callManager = incomingRequest.getCallManager();
         var callResponder = new CallResponder(callManager, incomingRequest);
         this.dispatchEvent(new Event(BugCallServer.EventTypes.REQUEST, {
             request: incomingRequest,

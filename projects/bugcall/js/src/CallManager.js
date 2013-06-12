@@ -147,6 +147,7 @@ var CallManager = Class.extend(EventDispatcher, {
             _this.doFailOutgoingRequest(outgoingRequest);
         });
     },
+
     /**
      * @param {OutgoingRequest} outgoingRequest
      */
@@ -170,6 +171,9 @@ var CallManager = Class.extend(EventDispatcher, {
         var requestUuid = outgoingResponse.getRequestUuid();
         if (this.incomingRequestMap.containsKey(requestUuid)) {
             this.incomingRequestMap.remove(requestUuid);
+
+            //TODO BRN: What do we do if the connection has dropped?
+
             this.callConnection.sendResponse(outgoingResponse.getCallResponse());
         } else {
             throw new Error("There is no request pending with the uuid:" + requestUuid + ". This request may have already been responded to.");

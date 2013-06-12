@@ -110,8 +110,13 @@ var CarapaceApplication = Class.extend(Obj, {
     /**
      *
      */
-    start: function() {
+    start: function(callback) {
         var result = Backbone.history.start();
+
+        //TEST
+        console.log("Result:", result);
+
+        callback();
     },
 
 
