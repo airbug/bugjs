@@ -2,6 +2,8 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
+//@Package('handshaker')
+
 //@Export('Handshaker')
 
 //@Require('Class')
@@ -21,6 +23,7 @@ var bugpack             = require('bugpack').context();
 
 var Class               = bugpack.require('Class');
 var BugFlow             = bugpack.require('bugflow.BugFlow');
+var Obj                 = bugpack.require('Obj');
 var Set                 = bugpack.require('Set');
 
 
@@ -38,35 +41,46 @@ var $forEachParallel    = BugFlow.$forEachParallel;
 var Handshaker = Class.extend(Obj, {
 
     /**
-     * @param {Array.<shaker>} args
+     * @param {Array.<Hand>} args
      */
     _constructor: function(args){
 
         this._super();
 
-        this.shakers = new Set(args);
+        this.hands = new Set(args);
     },
 
     /**
-     @param {Object} shaker
+     @param {Hand} hand
      */
-    addShaker: function(shaker){
-        this.shakers.add(shaker);
+    addHand: function(hand){
+        this.hands.add(hand);
     },
 
     /**
-     @param {Object} shaker
+     @param {Array.<Hand> | ...Hand} hand
      */
-    removeShaker: function(shaker){
-        this.shakers.remove(shaker);
+    addHands: function(hands){
+        if(TypeUtil.isArray(hands)){
+            this.hands.addAll(hands);
+        } else {
+            this.hands.addAll(Array.prototype.slice.call(arguments));
+        }
     },
 
     /**
-     @param {Object} shaker
+     @param {Hand} hand
      @return {boolean}
      */
-    hasShaker: function(shaker){
-        return this.shakers.contains(shaker);
+    hasHand: function(hand){
+        return this.hands.contains(hand);
+    },
+
+    /**
+     @param {Hand} hand
+     */
+    removeHand: function(hand){
+        this.hands.remove(hand);
     },
 
     /**
@@ -84,8 +98,8 @@ var Handshaker = Class.extend(Obj, {
      */
     shake: function(handshakeData, callback){
         var authorizations = new Set();
-        $foreachParallel(flow, this.shakers, function(shaker){
-            shaker.authorize(handshakeData, function(error, authorized){
+        $foreachParallel(flow, this.hand, function(hand){
+            hand.authorize(handshakeData, function(error, authorized){
                 authorizations.add(authorized);
                 flow.complete(error);
             });
@@ -99,4 +113,4 @@ var Handshaker = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('Handshaker', Handshaker);
+bugpack.export('handshaker.Handshaker', Handshaker);
