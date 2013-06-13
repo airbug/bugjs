@@ -52,6 +52,10 @@ var SocketIoManager = Class.extend(EventDispatcher, {
     // Constructor
     //-------------------------------------------------------------------------------
 
+    /**
+     * @param {socketIoServer} socketIoServer
+     * @param {string} namespace
+     */
     _constructor: function(socketIoServer, namespace) {
 
         this._super();
@@ -65,13 +69,13 @@ var SocketIoManager = Class.extend(EventDispatcher, {
          * @private
          * @type {*}
          */
-        this.ioManager = socketIoServer.of(namespace);
+        this.ioManager          = socketIoServer.of(namespace);
 
         /**
          * @private
          * @type {SocketIoServer}
          */
-        this.socketIoServer  = socketIoServer;
+        this.socketIoServer     = socketIoServer;
 
         /**
          * @private

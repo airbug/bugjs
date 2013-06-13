@@ -51,7 +51,7 @@ var SocketIoServer = Class.extend(EventDispatcher, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(config, expressServer) {
+    _constructor: function(config, expressServer, handshaker) {
 
         this._super();
 
@@ -67,11 +67,17 @@ var SocketIoServer = Class.extend(EventDispatcher, {
          */
         this.expressServer  = expressServer;
 
+       /**
+         * @private
+         * @type {Handshaker}
+         */
+        this.handshaker     = handshaker;
+
         /**
          * @private
          * @type {*}
          */
-        this.ioServer = io.listen(this.expressServer.getHttpServer());
+        this.ioServer       = io.listen(this.expressServer.getHttpServer());
 
         Proxy.proxy(this, this.ioServer, [
             "of"
@@ -110,18 +116,15 @@ var SocketIoServer = Class.extend(EventDispatcher, {
      */
     configure: function(callback) {
         var _this = this;
+        this.ioServer.configure(function(){ //NOTE: Can specify an environment flag as the first argument. Defaults to all enviroments
+            _this.ioServer.set('authorization', function(handshakeData, callback){
+                _this.handshaker.shake(handshakeData, callback);
+            });
+        });
         this.ioServer.set('match origin protocol', this.config.getMatchOriginProtocol()); //NOTE: Only necessary for use with wss, WebSocket Secure protocol
         this.ioServer.set('resource', this.config.getResource()); //NOTE: forward slash is required here unlike client setting
         this.ioServer.set('transports', this.config.getTransports());
 
-        this.ioServer.configure(function () {
-            _this.ioServer.set('authorization', function (handshakeData, callback) {
-                //TEST
-                console.log(handshakeData);
-
-                callback(null, true); // error first callback style
-            });
-        });
         callback();
     }
 });
