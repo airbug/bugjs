@@ -91,7 +91,7 @@ var Handshaker = Class.extend(Obj, {
      *  , xdomain: !!headers.origin  // <Boolean> was it a cross domain request?
      *  , secure: socket.secure      // <Boolean> https connection
      *  , issued: +date              // <Number> EPOCH of when the handshake was created
-     *  , url: request.url          // <String> the entrance path of the request
+     *  , url: request.url           // <String> the entrance path of the request
      *  , query: data.query          // <Object> the result of url.parse().query or a empty object
      * } handshakeData
      * @param {function(error, authorized)} callback
