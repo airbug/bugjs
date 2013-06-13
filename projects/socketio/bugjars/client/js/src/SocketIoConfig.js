@@ -43,6 +43,13 @@ var SocketIoConfig = Class.extend(Config, {
     },
 
     /**
+     * @param {string} host
+     */
+    setHost: function(host) {
+        this.properties.setProperty("host", host);
+    },
+
+    /**
      * @return {number}
      */
     getPort: function() {
@@ -50,10 +57,24 @@ var SocketIoConfig = Class.extend(Config, {
     },
 
     /**
+     * @param {number} port
+     */
+    setPort: function(port) {
+        this.properties.setProperty("port", port);
+    },
+
+    /**
      * @return {string}
      */
     getResource: function() {
         return this.properties.getProperty("resource");
+    },
+
+    /**
+     * @param {string} resource
+     */
+    setResource: function(resource) {
+        this.properties.setProperty("resource", resource);
     }
 });
 

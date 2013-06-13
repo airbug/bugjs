@@ -109,9 +109,19 @@ var SocketIoServer = Class.extend(EventDispatcher, {
      * @param {function()} callback
      */
     configure: function(callback) {
+        var _this = this;
         this.ioServer.set('match origin protocol', this.config.getMatchOriginProtocol()); //NOTE: Only necessary for use with wss, WebSocket Secure protocol
         this.ioServer.set('resource', this.config.getResource()); //NOTE: forward slash is required here unlike client setting
         this.ioServer.set('transports', this.config.getTransports());
+
+        this.ioServer.configure(function () {
+            _this.ioServer.set('authorization', function (handshakeData, callback) {
+                //TEST
+                console.log(handshakeData);
+
+                callback(null, true); // error first callback style
+            });
+        });
         callback();
     }
 });
