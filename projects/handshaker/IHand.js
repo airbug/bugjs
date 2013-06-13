@@ -22,7 +22,7 @@ var bugpack             = require('bugpack').context();
 var Interface           = bugpack.require('Interface');
 
 //-------------------------------------------------------------------------------
-// Declare Class
+// Declare Interface
 //-------------------------------------------------------------------------------
 
 var IHand = Interface.declare({

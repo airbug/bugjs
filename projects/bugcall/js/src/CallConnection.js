@@ -9,6 +9,7 @@
 //@Require('Class')
 //@Require('EventReceiver')
 //@Require('Map')
+//@Require('UuidGenerator')
 //@Require('bugcall.CallRequest')
 //@Require('bugcall.CallResponse')
 //@Require('socketio:socket.SocketIoConnection')
@@ -59,31 +60,36 @@ var CallConnection = Class.extend(EventReceiver, {
          * @private
          * @type {boolean}
          */
-        this.closed = false;
+        this.closed             = false;
 
         /**
          * @private
          * @type {boolean}
          */
-        this.closing = false;
+        this.closing            = false;
 
         /**
          * @private
          * @type {boolean}
          */
-        this.failed = false;
+        this.failed             = false;
 
         /**
          * @private
          * @type {boolean}
          */
-        this.initialized = false;
+        this.initialized        = false;
 
         /**
          * @private
          * @type {SocketIoConnection}
          */
-        this.socketConnection = socketConnection;
+        this.socketConnection   = socketConnection;
+
+        /**
+         * @type {string} 
+         */
+        this.uuid               = UuidGenerator.generateUuid();    
 
         this.initialize();
     },
@@ -92,6 +98,34 @@ var CallConnection = Class.extend(EventReceiver, {
     //-------------------------------------------------------------------------------
     // Getters and Setters
     //-------------------------------------------------------------------------------
+
+    /**
+     * @return {}
+     */
+    getHandshakeData: function() {
+        return this.socketConnection.getSocket().handshake;
+    },
+
+    /**
+     * @return {SocketIoConnection}
+     */
+    getSocketConnection: function() {
+        return this.socketConnection;
+    },
+
+    /**
+     * @return {string}
+     */
+    getSocketConnectionUuid: function() {
+        return this.socketConnection.getUuid();
+    },
+
+    /**
+     * @return {string}
+     */
+    getUuid: function(){
+        return this.uuid;
+    }
 
     /**
      * @return {boolean}

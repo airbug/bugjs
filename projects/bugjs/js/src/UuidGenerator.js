@@ -22,6 +22,9 @@ var UuidGenerator = {
     // Static Methods
     //-------------------------------------------------------------------------------
 
+    /**
+     * @return {string}
+     */
     generateUuid: function() {
         var s4 = function() {
             return Math.floor((1 + Math.random()) * 0x10000)
