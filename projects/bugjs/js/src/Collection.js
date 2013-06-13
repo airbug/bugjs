@@ -14,6 +14,7 @@
 //@Require('HashStore')
 //@Require('IIterable')
 //@Require('Obj')
+//@Require('TypeUtil')
 
 
 //-------------------------------------------------------------------------------
@@ -44,7 +45,10 @@ var Collection = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    /**
+     * @param {Collection | Array} collectionOrArray
+     */
+    _constructor: function(collectionOrArray) {
 
         this._super();
 
@@ -58,6 +62,20 @@ var Collection = Class.extend(Obj, {
          * @type {HashStore}
          */
         this.hashStore = new HashStore();
+
+
+        //-------------------------------------------------------------------------------
+        // Add Arguments to HashStore
+        //-------------------------------------------------------------------------------
+
+        var _this = this;
+        if (Class.doesExtend(collectionOrArray, Collection) {
+            this.addAll(collectionOrArray);
+        } else if (TypeUtil.isArray(collectionOrArray)) {
+            collectionOrArray.forEach(function(item){
+                _this.add(item);
+            });
+        }
     },
 
 
