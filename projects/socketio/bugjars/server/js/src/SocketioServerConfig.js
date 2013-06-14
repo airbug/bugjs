@@ -45,6 +45,13 @@ var SocketIoServerConfig = Class.extend(Config, {
     },
 
     /**
+     * @param {boolean} matchOriginProtocol
+     */
+    setMatchOriginProtocol: function(matchOriginProtocol) {
+        this.properties.setProperty("matchOriginProtocol", matchOriginProtocol);
+    },
+
+    /**
      * @return {string}
      */
     getResource: function() {
@@ -53,6 +60,13 @@ var SocketIoServerConfig = Class.extend(Config, {
             resource = "/socket.io"
         }
         return resource;
+    },
+
+    /**
+     * @param {string} resource
+     */
+    setResource: function(resource) {
+        this.properties.setProperty("resource", resource);
     },
 
     /**
@@ -70,6 +84,13 @@ var SocketIoServerConfig = Class.extend(Config, {
             ];
         }
         return transports;
+    },
+
+    /**
+     * @param {Array.<string>} transports
+     */
+    setTransports: function(transports) {
+        this.properties.setProperty("transports", transports);
     }
 });
 

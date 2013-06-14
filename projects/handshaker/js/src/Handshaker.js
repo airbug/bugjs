@@ -7,8 +7,11 @@
 //@Export('Handshaker')
 
 //@Require('Class')
-//@Require('BugFlow')
+//@Require('Obj')
 //@Require('Set')
+//@Require('TypeUtil')
+//@Require('bugflow.BugFlow')
+
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -22,9 +25,10 @@ var bugpack             = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
-var BugFlow             = bugpack.require('bugflow.BugFlow');
 var Obj                 = bugpack.require('Obj');
 var Set                 = bugpack.require('Set');
+var TypeUtil            = bugpack.require('TypeUtil');
+var BugFlow             = bugpack.require('bugflow.BugFlow');
 
 
 //-------------------------------------------------------------------------------
@@ -40,28 +44,46 @@ var $forEachParallel    = BugFlow.$forEachParallel;
 
 var Handshaker = Class.extend(Obj, {
 
+    //-------------------------------------------------------------------------------
+    // Constructor
+    //-------------------------------------------------------------------------------
+
     /**
-     * @param {Array.<Hand>} args
+     * @param {Array.<IHand>} args
      */
     _constructor: function(args){
 
         this._super();
 
+
+        //-------------------------------------------------------------------------------
+        // Declare Variables
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {Set.<IHand>}
+         */
         this.hands = new Set(args);
     },
 
+
+    //-------------------------------------------------------------------------------
+    // Public Instance Methods
+    //-------------------------------------------------------------------------------
+
     /**
-     @param {Hand} hand
+     * @param {IHand} hand
      */
     addHand: function(hand){
         this.hands.add(hand);
     },
 
     /**
-     @param {Array.<Hand> | ...Hand} hand
+     * @param {Array.<IHand> | ...IHand} hands
      */
     addHands: function(hands){
-        if(TypeUtil.isArray(hands)){
+        if (TypeUtil.isArray(hands)) {
             this.hands.addAll(hands);
         } else {
             this.hands.addAll(Array.prototype.slice.call(arguments));
@@ -69,15 +91,15 @@ var Handshaker = Class.extend(Obj, {
     },
 
     /**
-     @param {Hand} hand
-     @return {boolean}
+     * @param {IHand} hand
+     * @return {boolean}
      */
     hasHand: function(hand){
         return this.hands.contains(hand);
     },
 
     /**
-     @param {Hand} hand
+     * @param {IHand} hand
      */
     removeHand: function(hand){
         this.hands.remove(hand);
@@ -98,12 +120,12 @@ var Handshaker = Class.extend(Obj, {
      */
     shake: function(handshakeData, callback){
         var authorizations = new Set();
-        $foreachParallel(flow, this.hand, function(hand){
-            hand.authorize(handshakeData, function(error, authorized){
+        $forEachParallel(this.hands, function(flow, hand) {
+            hand.shakeIt(handshakeData, function(error, authorized){
                 authorizations.add(authorized);
                 flow.complete(error);
             });
-        }).execute(function(error){
+        }).execute(function(error) {
             callback(error, !authorizations.contains(false));
         });
     }
