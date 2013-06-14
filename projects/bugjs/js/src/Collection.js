@@ -47,9 +47,9 @@ var Collection = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Collection | Array} collectionOrArray
+     * @param {...}
      */
-    _constructor: function(collectionOrArray) {
+    _constructor: function() {
 
         this._super();
 
@@ -70,13 +70,10 @@ var Collection = Class.extend(Obj, {
         //-------------------------------------------------------------------------------
 
         var _this = this;
-        if (Class.doesExtend(collectionOrArray, Collection)) {
-            this.addAll(collectionOrArray);
-        } else if (TypeUtil.isArray(collectionOrArray)) {
-            collectionOrArray.forEach(function(item){
-                _this.add(item);
-            });
-        }
+        var collection = Array.prototype.slice.call(arguments)
+        collection.forEach(function(item){
+            _this.add(item);
+        });
     },
 
 
@@ -245,6 +242,20 @@ var Collection = Class.extend(Obj, {
      */
     isEmpty: function() {
         return this.hashStore.isEmpty();
+    },
+
+    /**
+     * @param {Collection} collection
+     */
+    merge: function(collection) {
+        if (Class.doesExtend(collection, Collection)) {
+            var _this = this;
+            collection.forEach(function(value) {
+                _this.add(value);
+            });
+        } else {
+            throw new Error("collection must be an instance of Collection");
+        }
     },
 
     /**

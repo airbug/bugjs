@@ -15,31 +15,65 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =             bugpack.require('Class');
-var Collection =        bugpack.require('Collection');
-var Obj =               bugpack.require('Obj');
-var Annotate =          bugpack.require('annotate.Annotate');
-var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
+var Class               = bugpack.require('Class');
+var Collection          = bugpack.require('Collection');
+var Obj                 = bugpack.require('Obj');
+var Annotate            = bugpack.require('annotate.Annotate');
+var TestAnnotation      = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var test = TestAnnotation.test;
+var annotate            = Annotate.annotate;
+var test                = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
 // Declare Tests
 //-------------------------------------------------------------------------------
+
+var collectionConstructorTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.array = ["how's", "it", "going?"];
+    },
+    
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        this.collectionZero     = new Collection();
+        this.collectionOne      = new Collection("hello", "Brian");
+        this.collectionTwo      = new Collection(this.array);
+        this.collectionThree    = new Collection(this.collectionOne);
+
+        test.assertEqual(this.collectionZero.getCount(), 0, "Assert collection does not add arguments when none are given at construction time");
+
+        test.assertEqual(this.collectionOne.contains("hello"), true, "Assert collection accepts multiple arguments at construction time");
+        test.assertEqual(this.collectionOne.contains("Brian"), true, "Assert collection accepts multiple arguments at construction time");
+
+        test.assertEqual(this.collectionTwo.contains(this.array), true, "Assert collection accepts an Array as an argument at construction time");
+
+        test.assertEqual(this.collectionThree.contains(this.collectionOne), true, "Assert collection accepts a Collection as an argument at construction time");
+
+    }
+};
+annotate(collectionConstructorTest).with(
+    test().name("Collection constructor test")
+);
 
 /**
  *
@@ -88,6 +122,38 @@ annotate(collectionAddTest).with(
     test().name("Collection add test")
 );
 
+/**
+ *
+ */
+var collectionMergeTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.collectionOne = new Collection("Luke", "Leia", "Han");
+        this.collectionTwo = new Collection("Chewbacca", "R2D2", "C-3PO");
+    },
+    
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        this.collectionOne.merge(this.collectionTwo);
+        test.assertEqual(this.collectionOne.getCount(), 6, "Assert count value is incremented correctly after merging another item to the ");
+        test.assertEqual(this.collectionOne.contains('Chewbacca'), true, "Assert contains function indicates that the collection " +
+            "contains the added value.");
+        test.assertEqual(this.collectionOne.contains('R2D2'), true, "Assert contains function indicates that the collection " +
+            "contains the added value.");
+        test.assertEqual(this.collectionOne.contains('C-3PO'), true, "Assert contains function indicates that the collection " +
+            "contains the added value.");
+    }
+};
+annotate(collectionMergeTest).with(
+    test().name("Collection merge test")
+);
+
 
 /**
  *
@@ -131,8 +197,8 @@ var collectionAddEqualObjectsTest = {
     //-------------------------------------------------------------------------------
 
     setup: function() {
-        var _context = this;
-        this.NewClass = Class.extend(Obj, {
+        var _context    = this;
+        this.NewClass   = Class.extend(Obj, {
             equals: function(value) {
                 if (Class.doesExtend(value, _context.NewClass)) {
     
@@ -152,7 +218,7 @@ var collectionAddEqualObjectsTest = {
                 return 123;
             }
         });
-        this.instance1 = new this.NewClass();
+        this.instance1  = new this.NewClass();
         this.instance2  = new this.NewClass();
         this.collection = new Collection();
     },
@@ -193,9 +259,9 @@ var collectionAddNonEqualObjectsWithSameHashCodesTest = {
     //-------------------------------------------------------------------------------
 
     setup: function() {
-        var _context = this;
+        var _context    = this;
         this.valueCount = 123;
-        this.NewClass = Class.extend(Obj, {
+        this.NewClass   = Class.extend(Obj, {
             _constructor: function() {
                 this.valueCount = _context.valueCount++;
             },
@@ -214,7 +280,7 @@ var collectionAddNonEqualObjectsWithSameHashCodesTest = {
                 return 123;
             }
         });
-        this.instance1 = new this.NewClass();
+        this.instance1  = new this.NewClass();
         this.instance2  = new this.NewClass();
         this.collection = new Collection();
     },
