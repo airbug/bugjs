@@ -33,6 +33,7 @@ var CollectionIterator  = bugpack.require('CollectionIterator');
 var HashStore           = bugpack.require('HashStore');
 var IIterable           = bugpack.require('IIterable');
 var Obj                 = bugpack.require('Obj');
+var TypeUtil            = bugpack.require('TypeUtil');
 
 
 //-------------------------------------------------------------------------------
@@ -69,7 +70,7 @@ var Collection = Class.extend(Obj, {
         //-------------------------------------------------------------------------------
 
         var _this = this;
-        if (Class.doesExtend(collectionOrArray, Collection) {
+        if (Class.doesExtend(collectionOrArray, Collection)) {
             this.addAll(collectionOrArray);
         } else if (TypeUtil.isArray(collectionOrArray)) {
             collectionOrArray.forEach(function(item){
