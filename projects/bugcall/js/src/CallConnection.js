@@ -31,6 +31,8 @@ var EventReceiver           = bugpack.require('EventReceiver');
 var CallRequest             = bugpack.require('bugcall.CallRequest');
 var CallResponse            = bugpack.require('bugcall.CallResponse');
 var SocketIoConnection      = bugpack.require('socketio:socket.SocketIoConnection');
+var UuidGenerator           = bugpack.require('UuidGenerator');
+
 
 
 //-------------------------------------------------------------------------------
@@ -87,9 +89,10 @@ var CallConnection = Class.extend(EventReceiver, {
         this.socketConnection   = socketConnection;
 
         /**
-         * @type {string} 
+         * @private
+         * @type {string}
          */
-        this.uuid               = UuidGenerator.generateUuid();    
+        this.uuid               = UuidGenerator.generateUuid();
 
         this.initialize();
     },
@@ -125,7 +128,7 @@ var CallConnection = Class.extend(EventReceiver, {
      */
     getUuid: function(){
         return this.uuid;
-    }
+    },
 
     /**
      * @return {boolean}
