@@ -103,9 +103,9 @@ var CallConnection = Class.extend(EventReceiver, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {}
+     * @return {Object}
      */
-    getHandshakeData: function() {
+    getHandshake: function() {
         return this.socketConnection.getSocket().handshake;
     },
 

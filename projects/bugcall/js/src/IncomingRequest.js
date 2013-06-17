@@ -66,6 +66,13 @@ var IncomingRequest = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @return {CallConnection}
+     */
+    getCallConnection: function() {
+        return this.callManager.getConnection();
+    },
+
+    /**
      * @return {CallManager}
      */
     getCallManager: function() {
@@ -83,7 +90,14 @@ var IncomingRequest = Class.extend(Obj, {
      * @return {*}
      */
     getData: function() {
-        return thie.callRequest.getData();
+        return this.callRequest.getData();
+    },
+
+    /**
+     * @return {Object}
+     */
+    getHandshake: function() {
+        return this.getCallConnection().getHandshake();
     },
 
     /**
