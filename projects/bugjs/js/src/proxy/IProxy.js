@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('socketio:client')
-
-//@Export('ISocketFactory')
+//@Export('IProxy')
 
 //@Require('Interface')
 
@@ -27,16 +25,18 @@ var Interface = bugpack.require('Interface');
 // Declare Interface
 //-------------------------------------------------------------------------------
 
-var ISocketFactory = Interface.declare({
+var IProxy = Interface.declare({
 
     //-------------------------------------------------------------------------------
     // Interface Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {SocketIoConnection}
+     * @param {string} functionName
+     * @param {Array.<*>} args
+     * @return {*}
      */
-    createSocketConnection: function() {}
+    proxy: function(functionName, args) {}
 });
 
 
@@ -44,4 +44,4 @@ var ISocketFactory = Interface.declare({
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('socketio:client.ISocketFactory', ISocketFactory);
+bugpack.export('IProxy', IProxy);

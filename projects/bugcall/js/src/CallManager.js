@@ -47,9 +47,9 @@ var CallManager = Class.extend(EventDispatcher, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(callConnection) {
 
-        this._super(callConnection);
+        this._super();
 
         //-------------------------------------------------------------------------------
         // Declare Variables
@@ -98,6 +98,7 @@ var CallManager = Class.extend(EventDispatcher, {
         if (this.hasConnection()) {
             this.callConnection.removeEventListener(CallConnection.EventTypes.REQUEST, this.hearCallConnectionRequest, this);
             this.callConnection.removeEventListener(CallConnection.EventTypes.RESPONSE, this.hearCallConnectionResponse, this);
+            this.callConnection = null;
         }
     },
 
@@ -125,6 +126,7 @@ var CallManager = Class.extend(EventDispatcher, {
         this.callConnection = callConnection;
         this.callConnection.addEventListener(CallConnection.EventTypes.REQUEST, this.hearCallConnectionRequest, this);
         this.callConnection.addEventListener(CallConnection.EventTypes.RESPONSE, this.hearCallConnectionResponse, this);
+        this.processOutgoingRequestQueue();
     },
 
 
@@ -172,9 +174,12 @@ var CallManager = Class.extend(EventDispatcher, {
         if (this.incomingRequestMap.containsKey(requestUuid)) {
             this.incomingRequestMap.remove(requestUuid);
 
-            //TODO BRN: What do we do if the connection has dropped?
-
-            this.callConnection.sendResponse(outgoingResponse.getCallResponse());
+            if (this.callConnection) {
+                this.callConnection.sendResponse(outgoingResponse.getCallResponse());
+            } else {
+                // The connection has likely dropped
+                //TODO BRN: What do we do if the connection has dropped?
+            }
         } else {
             throw new Error("There is no request pending with the uuid:" + requestUuid + ". This request may have already been responded to.");
         }

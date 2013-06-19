@@ -100,6 +100,10 @@ var Scope = Class.extend(Obj, {
             args.push(refModule);
         });
 
+        var moduleMethod = configuration[this.iocModule.getMethodName()];
+        if (!moduleMethod) {
+            throw new Error("Cannot find module method in configuration that matches '" + this.iocModule.getMethodName() + "'");
+        }
         var module = configuration[this.iocModule.getMethodName()].apply(configuration, args);
 
         var iocPropertySet = this.iocModule.getIocPropertySet();

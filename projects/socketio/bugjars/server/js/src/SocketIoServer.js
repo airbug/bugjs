@@ -116,8 +116,11 @@ var SocketIoServer = Class.extend(EventDispatcher, {
      */
     configure: function(callback) {
         var _this = this;
-        this.ioServer.configure(function(){ //NOTE: Can specify an environment flag as the first argument. Defaults to all enviroments
-            _this.ioServer.set('authorization', function(handshakeData, callback){
+        this.ioServer.configure(function() { //NOTE: Can specify an environment flag as the first argument. Defaults to all enviroments
+            _this.ioServer.set('authorization', function(handshakeData, callback) {
+                //TEST
+                console.log("authorization - made it here");
+
                 _this.handshaker.shake(handshakeData, callback);
             });
         });

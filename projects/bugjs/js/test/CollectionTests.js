@@ -56,19 +56,23 @@ var collectionConstructorTest = {
 
     test: function(test) {
         this.collectionZero     = new Collection();
-        this.collectionOne      = new Collection("hello", "Brian");
+        this.collectionOne      = new Collection(["hello", "Brian"]);
         this.collectionTwo      = new Collection(this.array);
         this.collectionThree    = new Collection(this.collectionOne);
 
-        test.assertEqual(this.collectionZero.getCount(), 0, "Assert collection does not add arguments when none are given at construction time");
+        test.assertEqual(this.collectionZero.getCount(), 0,
+            "Assert collection does not add arguments when none are given at construction time");
 
-        test.assertEqual(this.collectionOne.contains("hello"), true, "Assert collection accepts multiple arguments at construction time");
-        test.assertEqual(this.collectionOne.contains("Brian"), true, "Assert collection accepts multiple arguments at construction time");
+        test.assertEqual(this.collectionTwo.containsAll(this.array), true,
+            "Assert collection accepts an Array as an argument at construction time and adds the array values to the collection");
 
-        test.assertEqual(this.collectionTwo.contains(this.array), true, "Assert collection accepts an Array as an argument at construction time");
+        test.assertEqual(this.collectionOne.contains("hello"), true,
+            "Assert collection added value from array in to collection");
+        test.assertEqual(this.collectionOne.contains("Brian"), true,
+            "Assert collection added value from array in to collection");
 
-        test.assertEqual(this.collectionThree.contains(this.collectionOne), true, "Assert collection accepts a Collection as an argument at construction time");
-
+        test.assertEqual(this.collectionThree.containsAll(this.collectionOne), true,
+            "Assert collection accepts a Collection as an argument at construction time and adds the collction values to the new collection");
     }
 };
 annotate(collectionConstructorTest).with(
@@ -131,8 +135,8 @@ var collectionMergeTest = {
     //-------------------------------------------------------------------------------
 
     setup: function() {
-        this.collectionOne = new Collection("Luke", "Leia", "Han");
-        this.collectionTwo = new Collection("Chewbacca", "R2D2", "C-3PO");
+        this.collectionOne = new Collection(["Luke", "Leia", "Han"]);
+        this.collectionTwo = new Collection(["Chewbacca", "R2D2", "C-3PO"]);
     },
     
 

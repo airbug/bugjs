@@ -4,7 +4,7 @@
 
 //@Package('bugflow')
 
-//@Export('ForEachParallel')
+//@Export('IteratorSeries')
 
 //@Require('Class')
 //@Require('bugflow.Iteration')
@@ -41,7 +41,7 @@ var $trace = BugTrace.$trace;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ForEachParallel = Class.extend(IteratorFlow, {
+var IteratorSeries = Class.extend(IteratorFlow, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -56,12 +56,11 @@ var ForEachParallel = Class.extend(IteratorFlow, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        if (Class.doesImplement(data, IIterate)
         /**
          * @private
          * @type {number}
          */
-        this.numberIterationsComplete = 0;
+        this.iteratorIndex = -1;
     },
 
 
@@ -73,12 +72,11 @@ var ForEachParallel = Class.extend(IteratorFlow, {
      * @param {Array<*>} args
      */
     executeFlow: function(args) {
-        this._super(args);
-        var _this = this;
-        if (this.getData().length > 0) {
-            this.getData().forEach(function(value, index) {
-                _this.executeIteration([value, index]);
-            });
+        if (!this.data) {
+            this.error("data value must be iterable");
+        }
+        if (this.data.length > 0) {
+            this.next();
         } else {
             this.complete();
         }
@@ -90,7 +88,6 @@ var ForEachParallel = Class.extend(IteratorFlow, {
     //-------------------------------------------------------------------------------
 
     /**
-     *
      * @param args
      */
     executeIteration: function(args) {
@@ -103,6 +100,20 @@ var ForEachParallel = Class.extend(IteratorFlow, {
 
 
     //-------------------------------------------------------------------------------
+    // Private Class Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     */
+    next: function() {
+        this.iteratorIndex++;
+        var nextValue = this.data[this.iteratorIndex];
+        this.executeIteration([nextValue, this.iteratorIndex]);
+    },
+
+
+    //-------------------------------------------------------------------------------
     // Event Listeners
     //-------------------------------------------------------------------------------
 
@@ -111,17 +122,15 @@ var ForEachParallel = Class.extend(IteratorFlow, {
      * @param {Error} error
      */
     iterationCallback: function(error) {
-
-        //TODO BRN: Figure out what to do if there is more than one error
-
         if (error) {
             if (!this.hasErrored()) {
                 this.error(error);
             }
         } else {
-            this.numberIterationsComplete++;
-            if (this.numberIterationsComplete >= this.getData().length && !this.hasErrored()) {
+            if (this.iteratorIndex >= (this.data.length - 1)) {
                 this.complete();
+            } else {
+                this.next();
             }
         }
     }
@@ -132,4 +141,4 @@ var ForEachParallel = Class.extend(IteratorFlow, {
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugflow.ForEachParallel', ForEachParallel);
+bugpack.export('bugflow.ForEachSeries', ForEachSeries);

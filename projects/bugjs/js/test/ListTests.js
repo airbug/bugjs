@@ -41,6 +41,44 @@ var test = TestAnnotation.test;
 // Declare Tests
 //-------------------------------------------------------------------------------
 
+var listConstructorTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.array = ["how's", "it", "going?"];
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        this.listZero     = new List();
+        this.listOne      = new List(["hello", "Brian"]);
+        this.listTwo      = new List(this.array);
+        this.listThree    = new List(this.listOne);
+
+        test.assertEqual(this.listZero.getCount(), 0,
+            "Assert List does not add arguments when none are given at construction time");
+
+        test.assertEqual(this.listTwo.containsAll(this.array), true,
+            "Assert List accepts an Array as an argument at construction time and adds the array values to the List");
+
+        test.assertEqual(this.listOne.contains("hello"), true,
+            "Assert List added value from array in to List");
+        test.assertEqual(this.listOne.contains("Brian"), true,
+            "Assert List added value from array in to List");
+
+        test.assertEqual(this.listThree.containsAll(this.listOne), true,
+            "Assert collection accepts a List as an argument at construction time and adds the List values to the new List");
+    }
+};
+annotate(listConstructorTest).with(
+    test().name("List constructor test")
+);
+
 /**
  *
  */

@@ -2,15 +2,12 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('socketio:factorybrowser')
-
-//@Export('BrowserSocketIoFactory')
+//@Export('ProxyObject')
 
 //@Require('Class')
+//@Require('Interface')
+//@Require('IProxy')
 //@Require('Obj')
-//@Require('socket-io.SocketIo')
-//@Require('socketio:client.ISocketFactory')
-//@Require('socketio:socket.SocketIoConnection')
 
 
 //-------------------------------------------------------------------------------
@@ -24,33 +21,49 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var Obj                 = bugpack.require('Obj');
-var SocketIo            = bugpack.require('socket-io.SocketIo');
-var ISocketFactory      = bugpack.require('socketio:client.ISocketFactory');
-var SocketIoConnection  = bugpack.require('socketio:socket.SocketIoConnection');
+var Class       = bugpack.require('Class');
+var Interface   = bugpack.require('Interface');
+var IProxy      = bugpack.require('IProxy');
+var Obj         = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var BrowserSocketIoFactory = Class.extend(Obj, {
+var ProxyObject = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
-    // ISocketFactory Implementation
+    // Constructor
+    //-------------------------------------------------------------------------------
+
+    _constructor: function(instance) {
+
+        this._super();
+
+
+        //-------------------------------------------------------------------------------
+        // Declare Variables
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {Object}
+         */
+        this.instance = instance;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // IProxy Implementation
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {string} host
-     * @param {{
-     *     port: number,
-     *     resource: string
-     * }} options
-     * @return {SocketIoConnection}
+     * @param {string} functionName
+     * @param {Array.<*>} args
      */
-    createSocketConnection: function(host, options) {
-        return new SocketIoConnection(SocketIo.connect(host, options));
+    proxy: function(functionName, args) {
+        return this.instance[functionName].apply(this.instance, args);
     }
 });
 
@@ -59,11 +72,11 @@ var BrowserSocketIoFactory = Class.extend(Obj, {
 // Interfaces
 //-------------------------------------------------------------------------------
 
-Class.implement(BrowserSocketIoFactory, ISocketFactory);
+Class.implement(ProxyObject, IProxy);
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("socketio:factorybrowser.BrowserSocketIoFactory", BrowserSocketIoFactory);
+bugpack.export('ProxyObject', ProxyObject);

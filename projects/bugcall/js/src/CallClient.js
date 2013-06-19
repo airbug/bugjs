@@ -104,14 +104,14 @@ var CallClient = Class.extend(EventDispatcher, {
      * @return {boolean}
      */
     isConnected: function() {
-        return this.socketIoClient.isConnected;
+        return this.socketIoClient.isConnected();
     },
 
     /**
      * @return {boolean}
      */
     isConnecting: function() {
-        return this.socketIoClient.isConnecting;
+        return this.socketIoClient.isConnecting();
     },
 
     /**
@@ -141,6 +141,9 @@ var CallClient = Class.extend(EventDispatcher, {
      *
      */
     openConnection: function() {
+        //TEST
+        console.log("CallClient openConnection - isConnected:", this.isConnected() + " isConnecting:", this.isConnecting());
+
         if (!this.isConnected()) {
             if (!this.isConnecting()) {
                 this.doOpenConnection();

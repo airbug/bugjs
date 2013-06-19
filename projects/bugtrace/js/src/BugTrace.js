@@ -341,7 +341,7 @@ BugTrace.getInstance = function() {
     return BugTrace.instance;
 };
 
-Proxy.proxy(BugTrace, BugTrace.getInstance, [
+Proxy.proxy(BugTrace, Proxy.method(BugTrace.getInstance), [
     "$error",
     "$trace",
     "$traceWithError"

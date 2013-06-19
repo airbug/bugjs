@@ -35,7 +35,7 @@ var BugFlow             = bugpack.require('bugflow.BugFlow');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var $forEachParallel    = BugFlow.$forEachParallel;
+var $forEachSeries    = BugFlow.$forEachSeries;
 
 
 //-------------------------------------------------------------------------------
@@ -49,9 +49,9 @@ var Handshaker = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Array.<IHand>} args
+     * @param {Array.<IHand>} hands
      */
-    _constructor: function(args){
+    _constructor: function(hands) {
 
         this._super();
 
@@ -64,7 +64,7 @@ var Handshaker = Class.extend(Obj, {
          * @private
          * @type {Set.<IHand>}
          */
-        this.hands = new Set(args);
+        this.hands = new Set(hands);
     },
 
 
@@ -119,9 +119,16 @@ var Handshaker = Class.extend(Obj, {
      * @param {function(error, authorized)} callback
      */
     shake: function(handshakeData, callback){
+        //TEST
+        console.log("Handshaker shake - handshakeData:", handshakeData);
+
         var authorizations = new Set();
-        $forEachParallel(this.hands, function(flow, hand) {
-            hand.shakeIt(handshakeData, function(error, authorized){
+
+        //TODO BRN: this.hands is not supported for forEachSeries. Implement the IterateSeries class. Also, add an error
+        // check in forEachSeries and forEachParallel to help prevent making this mistake in the future.
+
+        $forEachSeries(this.hands, function(flow, hand) {
+            hand.shakeIt(handshakeData, function(error, authorized) {
                 authorizations.add(authorized);
                 flow.complete(error);
             });

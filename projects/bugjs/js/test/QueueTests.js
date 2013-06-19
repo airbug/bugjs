@@ -41,6 +41,45 @@ var test = TestAnnotation.test;
 // Declare Tests
 //-------------------------------------------------------------------------------
 
+
+var queueConstructorTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.array = ["how's", "it", "going?"];
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        this.queueZero     = new Queue();
+        this.queueOne      = new Queue(["hello", "Brian"]);
+        this.queueTwo      = new Queue(this.array);
+        this.queueThree    = new Queue(this.queueOne);
+
+        test.assertEqual(this.queueZero.getCount(), 0,
+            "Assert Queue does not add arguments when none are given at construction time");
+
+        test.assertEqual(this.queueTwo.containsAll(this.array), true,
+            "Assert Queue accepts an Array as an argument at construction time and adds the array values to the List");
+
+        test.assertEqual(this.queueOne.contains("hello"), true,
+            "Assert Queue added value from array in to Queue");
+        test.assertEqual(this.queueOne.contains("Brian"), true,
+            "Assert Queue added value from array in to Queue");
+
+        test.assertEqual(this.queueThree.containsAll(this.queueOne), true,
+            "Assert collection accepts a Queue as an argument at construction time and adds the Queue values to the new Queue");
+    }
+};
+annotate(queueConstructorTest).with(
+    test().name("Queue constructor test")
+);
+
 /**
  * This tests
  * 1) queueing a few items and then making sure that they dequeue in the correct order

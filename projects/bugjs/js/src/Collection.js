@@ -47,9 +47,9 @@ var Collection = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {...}
+     * @param {(Collection.<*> | Array.<*>)} items
      */
-    _constructor: function() {
+    _constructor: function(items) {
 
         this._super();
 
@@ -69,11 +69,9 @@ var Collection = Class.extend(Obj, {
         // Add Arguments to HashStore
         //-------------------------------------------------------------------------------
 
-        var _this = this;
-        var collection = Array.prototype.slice.call(arguments)
-        collection.forEach(function(item){
-            _this.add(item);
-        });
+        if (items) {
+            this.addAll(items);
+        }
     },
 
 
@@ -89,7 +87,7 @@ var Collection = Class.extend(Obj, {
     },
 
     /**
-     * @return {Array}
+     * @return {Array.<*>}
      */
     getValueArray: function() {
         return this.hashStore.getValueArray();
@@ -127,7 +125,7 @@ var Collection = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {Collection}
+     * @return {Collection.<*>}
      */
     clone: function() {
         var cloneCollection = new Collection();
@@ -148,16 +146,16 @@ var Collection = Class.extend(Obj, {
     },
 
     /**
-     * @param {Collection} collection
+     * @param {(Collection.<*>|Array.<*>)} items
      */
-    addAll: function(collection) {
-        if (Class.doesExtend(collection, Collection)) {
+    addAll: function(items) {
+        if (Class.doesExtend(items, Collection) || TypeUtil.isArray(items)) {
             var _this = this;
-            collection.forEach(function(value) {
+            items.forEach(function(value) {
                 _this.add(value);
             });
         } else {
-            throw new Error("collection must be an instance of Collection");
+            throw new Error("'items' must be an instance of Collection or Array");
         }
     },
 
@@ -182,35 +180,41 @@ var Collection = Class.extend(Obj, {
      * If you want to check for exact equality, use the equals function.
      * Empty collections are always contained by another collection
      * e.g. Collection[0,1] containsAll Collection[] is true
-     * @param {Collection} collection
+     * @param {(Collection.<*> | Array.<*>)} items
      * @return {boolean}
      */
-    containsAll: function(collection) {
-        if (Class.doesExtend(collection, Collection)) {
-            var collectionValueArray = collection.getValueArray();
-            for (var i = 0, size = collectionValueArray.length; i < size; i++) {
-                var collectionValue = collectionValueArray[i];
-                if (!this.contains(collectionValue)) {
+    containsAll: function(items) {
+        if (Class.doesExtend(items, Collection) || TypeUtil.isArray(items)) {
+            var valueArray = items;
+            if (Class.doesExtend(items, Collection)) {
+                valueArray = items.getValueArray();
+            }
+            for (var i = 0, size = valueArray.length; i < size; i++) {
+                var value = valueArray[i];
+                if (!this.contains(value)) {
                     return false;
                 }
             }
             return true;
         } else {
-            throw new Error("collection must be an instance of Collection");
+            throw new Error("'items' must be an instance of Collection or Array");
         }
     },
 
     /**
-     * @param {Collection} collection
+     * @param {(Collection.<*> | Array.<*>)} items
      * @return {boolean}
      */
-    containsEqual: function(collection) {
-        if (Class.doesExtend(collection, Collection)) {
-            if (collection.getCount() === this.getCount()) {
+    containsEqual: function(items) {
+        if (TypeUtil.isArray(items)) {
+            items = new Collection(items);
+        }
+        if (Class.doesExtend(items, Collection)) {
+            if (items.getCount() === this.getCount()) {
                 var collectionValueArray = this.getValueArray();
-                for (var i = 0, size = collectionValueArray.length; i < size; i++) {
-                    var collectionValue = collectionValueArray[i];
-                    if (this.getValueCount(collectionValue) !== collection.getValueCount(collectionValue)) {
+                for (var i1 = 0, size1 = collectionValueArray.length; i1 < size1; i1++) {
+                    var collectionValue = collectionValueArray[i1];
+                    if (this.getValueCount(collectionValue) !== items.getValueCount(collectionValue)) {
                         return false;
                     }
                 }
@@ -218,7 +222,7 @@ var Collection = Class.extend(Obj, {
             }
             return false;
         } else {
-            throw new Error("collection must be an instance of Collection");
+            throw new Error("'items' must be an instance of Collection or Array");
         }
     },
 
@@ -267,12 +271,12 @@ var Collection = Class.extend(Obj, {
     },
 
     /**
-     * @param {Collection} collection
+     * @param {(Collection.<*> | Array.<*>)} items
      */
-    removeAll: function(collection) {
-        if (Class.doesExtend(collection, Collection)) {
+    removeAll: function(items) {
+        if (Class.doesExtend(items, Collection) || TypeUtil.isArray(items)) {
             var _this = this;
-            collection.forEach(function(value) {
+            items.forEach(function(value) {
                 _this.remove(value);
             });
         } else {

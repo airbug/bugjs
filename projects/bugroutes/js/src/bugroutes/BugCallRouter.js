@@ -88,29 +88,29 @@ var BugCallRouter = Class.extend(Obj, {
     /**
      * @param {BugCallRoute} route
      */
-    add: function(route){
+    add: function(route) {
         var requestType = route.getRequestType();
-        if(this.routesMap.get(requestType) === null){
+        if (!this.routesMap.containsKey(requestType)) {
             this.routesMap.put(requestType, route);
         } else {
-            throw new Error("The bugCallRoute" + requestType + " already exists in the routesMap");
+            throw new Error("The bugCallRoute '" + requestType + "' already exists in the routesMap");
         }
     },
 
     /**
-     * @param {Array.<BugCallRoute> | {*}} routes
+     * @param {(Array.<BugCallRoute> | {*})} routes
      */
     addAll: function(routes){
         var _this = this;
-        if(TypeUtil.isArray(routes)){
-            routes.forEach(function(route){
+        if (TypeUtil.isArray(routes)) {
+            routes.forEach(function(route) {
                 _this.add(route);
             });
-        } else if(TypeUtil.isObject(routes)){
-            for(var requestType in routes){
+        } else if (TypeUtil.isObject(routes)) {
+            for (var requestType in routes) {
                 var listener = routes[requestType];
-                if(TypeUtil.isFunction(listener)){
-                    _this.add(new BugCallRoute(requestType, listener))
+                if (TypeUtil.isFunction(listener)) {
+                    _this.add(new BugCallRoute(requestType, listener));
                 }
             }
         } else {

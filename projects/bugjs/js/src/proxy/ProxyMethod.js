@@ -2,13 +2,12 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('express')
-
-//@Export('ExpressApp')
+//@Export('ProxyMethod')
 
 //@Require('Class')
+//@Require('Interface')
+//@Require('IProxy')
 //@Require('Obj')
-//@Require('Proxy')
 
 
 //-------------------------------------------------------------------------------
@@ -16,29 +15,29 @@
 //-------------------------------------------------------------------------------
 
 var bugpack = require('bugpack').context();
-var express = require('express');
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class   = bugpack.require('Class');
-var Obj     = bugpack.require('Obj');
-var Proxy   = bugpack.require('Proxy');
+var Class       = bugpack.require('Class');
+var Interface   = bugpack.require('Interface');
+var IProxy      = bugpack.require('IProxy');
+var Obj         = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ExpressApp = Class.extend(Obj, {
+var ProxyMethod = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(method, context) {
 
         this._super();
 
@@ -47,57 +46,48 @@ var ExpressApp = Class.extend(Obj, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        this.app = express();
+        /**
+         * @private
+         * @type {Object}
+         */
+        this.context = context;
 
-        Proxy.proxy(this, this.app, [
-            "configure",
-            "engine",
-            "get",
-            "on",
-            "set",
-            "use"
-        ]);
+        /**
+         * @private
+         * @type {function()}
+         */
+        this.method = method;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // IProxy Implementation
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {express}
+     * @param {string} functionName
+     * @param {Array.<*>} args
      */
-    getApp: function() {
-        return this.app;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Public Class Methods
-    //-------------------------------------------------------------------------------
-
-    initialize: function(callback) {
-        var _this = this;
-
-        // Shut Down
-        //-------------------------------------------------------------------------------
-
-        // Graceful Shutdown
-        process.on('SIGTERM', function () {
-            console.log("Server Closing");
-            _this.app.close();
-        });
-
-        this.on('close', function () {
-            console.log("Server Closed");
-        });
-        callback();
+    proxy: function(functionName, args) {
+        var target = this.method.call(this.context);
+        if (target) {
+            return target[functionName].apply(target, args);
+        } else {
+            throw new Error("Method did not return a value that could be proxied.");
+        }
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Interfaces
+//-------------------------------------------------------------------------------
+
+Class.implement(ProxyMethod, IProxy);
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('express.ExpressApp', ExpressApp);
+bugpack.export('ProxyMethod', ProxyMethod);

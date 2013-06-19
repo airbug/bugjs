@@ -35,7 +35,10 @@ var Stack = Class.extend(Collection, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    /**
+     * @param {(Collection.<*> | Array.<*>)} items
+     */
+    _constructor: function(items) {
 
         this._super();
 
@@ -49,6 +52,10 @@ var Stack = Class.extend(Collection, {
          * @type {Array.<*>}
          */
         this.valueArray = [];
+
+        if (items) {
+            this.addAll(items);
+        }
     },
 
 

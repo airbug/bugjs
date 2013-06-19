@@ -10,7 +10,7 @@
 //@Require('EventDispatcher')
 //@Require('Proxy')
 //@Require('Queue')
-//@Require('socketio:client.SocketIoEmit')
+//@Require('socketio:socket.SocketIoEmit')
 
 
 //-------------------------------------------------------------------------------
@@ -28,7 +28,7 @@ var Class           = bugpack.require('Class');
 var EventDispatcher = bugpack.require('EventDispatcher');
 var Proxy           = bugpack.require('Proxy');
 var Queue           = bugpack.require('Queue');
-var SocketIoEmit    = bugpack.require('socketio:client.SocketIoEmit');
+var SocketIoEmit    = bugpack.require('socketio:socket.SocketIoEmit');
 
 
 //-------------------------------------------------------------------------------
@@ -116,10 +116,10 @@ var SocketIoClient = Class.extend(EventDispatcher, {
      *
      */
     connect: function() {
-        if (!this.isConnected && !this.isConnecting) {
-            this.isConnecting = true;
+        if (!this.isConnected() && !this.isConnecting()) {
+            this.connecting = true;
             console.log('SocketIoClient is attempting to connect...');
-            if (this.socketIoConnection) {
+            if (this.socketConnection) {
                 this.destroySocket();
             }
             this.createSocket();
@@ -154,23 +154,23 @@ var SocketIoClient = Class.extend(EventDispatcher, {
             //'manualFlush': false,
             'force new connection': true
         };
-        this.socketIoConnection = this.socketFactory.createSocketConnection(this.config.getHost(), options);
-        this.socketIoConnection.addEventListener('connect', this.hearSocketConnect, this);
-        this.socketIoConnection.addEventListener('connect_error', this.hearSocketConnectError, this);
-        this.socketIoConnection.addEventListener('connecting', this.hearSocketConnecting, this);
-        this.socketIoConnection.addEventListener('disconnect', this.hearSocketDisconnect, this);
-        this.socketIoConnection.addEventListener('error', this.hearSocketError, this);
-        this.socketIoConnection.addEventListener('reconnect', this.hearSocketReconnect, this);
-        this.socketIoConnection.addEventListener('reconnecting', this.hearSocketReconnecting, this);
-        this.socketIoConnection.addEventListener('reconnect_failed', this.hearSocketReconnectFailed, this);
+        this.socketConnection = this.socketFactory.createSocketConnection(this.config.getHost(), options);
+        this.socketConnection.addEventListener('connect', this.hearSocketConnect, this);
+        this.socketConnection.addEventListener('connect_error', this.hearSocketConnectError, this);
+        this.socketConnection.addEventListener('connecting', this.hearSocketConnecting, this);
+        this.socketConnection.addEventListener('disconnect', this.hearSocketDisconnect, this);
+        this.socketConnection.addEventListener('error', this.hearSocketError, this);
+        this.socketConnection.addEventListener('reconnect', this.hearSocketReconnect, this);
+        this.socketConnection.addEventListener('reconnecting', this.hearSocketReconnecting, this);
+        this.socketConnection.addEventListener('reconnect_failed', this.hearSocketReconnectFailed, this);
     },
 
     /**
      * @private
      */
     destroySocket: function() {
-        this.socketIoConnection.removeAllListeners();
-        this.socketIoConnection = null;
+        this.socketConnection.removeAllListeners();
+        this.socketConnection = null;
     },
 
     /**
@@ -178,7 +178,7 @@ var SocketIoClient = Class.extend(EventDispatcher, {
      */
     dispatchConnection: function() {
         this.dispatchEvent(new Event(SocketIoClient.EventTypes.CONNECTION, {
-            connection: this.socketIoConnection
+            connection: this.socketConnection
         }));
     },
 
@@ -210,8 +210,8 @@ var SocketIoClient = Class.extend(EventDispatcher, {
      * @param {NodeJsEvent} event
      */
     hearSocketConnect: function(event) {
-        this.isConnected = true;
-        this.isConnecting = false;
+        this.connected = true;
+        this.connecting = false;
         console.log('SocketIoClient is connected');
         this.dispatchConnection();
     },
@@ -222,7 +222,7 @@ var SocketIoClient = Class.extend(EventDispatcher, {
      */
     hearSocketConnectError: function(event) {
         var error = event.getArguments()[0];
-        this.isConnecting = false;
+        this.connecting = false;
         console.log('SocketIoClient connect_error:', error);
     },
 
@@ -231,7 +231,7 @@ var SocketIoClient = Class.extend(EventDispatcher, {
      * @param {NodeJsEvent} event
      */
     hearSocketConnecting: function(event) {
-        this.isConnecting = true;
+        this.connecting = true;
         console.log("SocketIoClient connecting");
     },
 
@@ -240,8 +240,8 @@ var SocketIoClient = Class.extend(EventDispatcher, {
      * @param {NodeJsEvent} event
      */
     hearSocketDisconnect: function(event) {
-        this.isConnecting = false;
-        this.isConnected = false;
+        this.connecting = false;
+        this.connected = false;
         console.log('SocketIoClient disconnected');
     },
 
@@ -252,7 +252,7 @@ var SocketIoClient = Class.extend(EventDispatcher, {
      */
     hearSocketError: function(event) {
         var error = event.getArguments()[0];
-        this.isConnecting = false;
+        this.connecting = false;
         this.processSocketError(error);
     },
 
@@ -263,7 +263,7 @@ var SocketIoClient = Class.extend(EventDispatcher, {
      */
     hearSocketReconnect: function(event) {
         var reconnectCount = event.getArguments()[0];
-        this.isConnected = true;
+        this.connected = true;
         console.log('SocketIoClient reconnected - reconnectCount:' + reconnectCount);
     },
 

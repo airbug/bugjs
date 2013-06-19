@@ -74,8 +74,6 @@ var BugCallClient = Class.extend(EventDispatcher, {
          * @type {boolean}
          */
         this.initialized = false;
-
-        this.initialize();
     },
 
 
@@ -224,7 +222,7 @@ var BugCallClient = Class.extend(EventDispatcher, {
      * @param {Event} event
      */
     hearCallClientConnectionClosed: function(event) {
-        var callConnection = event.getData().callConnection();
+        var callConnection = event.getData().callConnection;
         if (event.getData().failed) {
             this.processConnectionFailed(callConnection);
         } else {
@@ -237,7 +235,7 @@ var BugCallClient = Class.extend(EventDispatcher, {
      * @param {Event} event
      */
     hearCallClientConnectionOpened: function(event) {
-        var callConnection = event.getData().callConnection();
+        var callConnection = event.getData().callConnection;
         this.processConnectionOpened(callConnection);
     },
 

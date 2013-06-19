@@ -42,9 +42,12 @@ var Set = Class.extend(Collection, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    /**
+     * @param {(Collection.<*> | Array.<*>)} items
+     */
+    _constructor: function(items) {
 
-        this._super();
+        this._super(items);
 
 
         //-------------------------------------------------------------------------------
