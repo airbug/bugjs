@@ -38,7 +38,7 @@ var ClientPackageRegistry =     bugpack.require('clientjs.ClientPackageRegistry'
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var $foreachParallel =  BugFlow.$foreachParallel;
+var $forEachParallel =  BugFlow.$forEachParallel;
 var $parallel =         BugFlow.$parallel;
 var $series =           BugFlow.$series;
 var $task =             BugFlow.$task;

@@ -35,7 +35,7 @@ var BugFlow             = bugpack.require('bugflow.BugFlow');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var $forEachSeries    = BugFlow.$forEachSeries;
+var $iterableSeries    = BugFlow.$iterableSeries;
 
 
 //-------------------------------------------------------------------------------
@@ -119,15 +119,8 @@ var Handshaker = Class.extend(Obj, {
      * @param {function(error, authorized)} callback
      */
     shake: function(handshakeData, callback){
-        //TEST
-        console.log("Handshaker shake - handshakeData:", handshakeData);
-
         var authorizations = new Set();
-
-        //TODO BRN: this.hands is not supported for forEachSeries. Implement the IterateSeries class. Also, add an error
-        // check in forEachSeries and forEachParallel to help prevent making this mistake in the future.
-
-        $forEachSeries(this.hands, function(flow, hand) {
+        $iterableSeries(this.hands, function(flow, hand) {
             hand.shakeIt(handshakeData, function(error, authorized) {
                 authorizations.add(authorized);
                 flow.complete(error);

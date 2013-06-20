@@ -4,7 +4,7 @@
 
 //@Package('bugflow')
 
-//@Export('ForEachParallel')
+//@Export('IterableParallel')
 
 //@Require('Class')
 //@Require('IIterable')
@@ -43,12 +43,17 @@ var $trace = BugTrace.$trace;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ForEachParallel = Class.extend(IteratorFlow, {
+var IterableParallel = Class.extend(IteratorFlow, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
+    /**
+     * @param {IIterable} data
+     * @param {function(Flow, *)} iteratorMethod
+     * @private
+     */
     _constructor: function(data, iteratorMethod) {
 
         this._super(data, iteratorMethod);
@@ -58,15 +63,27 @@ var ForEachParallel = Class.extend(IteratorFlow, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        if (Class.doesImplement(data, IIterable)) {
-            throw new Error("ForEachParallel does not support IIterable instances. Use the IterableParallel instead.");
+        if (!Class.doesImplement(data, IIterable)) {
+            throw new Error("IterableParallel only supports IIterable instances.");
         }
+
+        /**
+         * @private
+         * @type {IIterable}
+         */
+        this.iterator = data.iterator();
 
         /**
          * @private
          * @type {number}
          */
         this.numberIterationsComplete = 0;
+
+        /**
+         * @private
+         * @type {number}
+         */
+        this.totalIterationCount = 0;
     },
 
 
@@ -79,11 +96,12 @@ var ForEachParallel = Class.extend(IteratorFlow, {
      */
     executeFlow: function(args) {
         this._super(args);
-        var _this = this;
-        if (this.getData().length > 0) {
-            this.getData().forEach(function(value, index) {
-                _this.executeIteration([value, index]);
-            });
+        if (this.iterator.hasNext()) {
+            while (this.iterator.hasNext()) {
+                var value = this.iterator.next();
+                this.totalIterationCount++;
+                this.executeIteration([value]);
+            }
         } else {
             this.complete();
         }
@@ -125,8 +143,8 @@ var ForEachParallel = Class.extend(IteratorFlow, {
             }
         } else {
             this.numberIterationsComplete++;
-            if (this.numberIterationsComplete >= this.getData().length && !this.hasErrored()) {
-                this.complete();
+            if (!this.iterator.hasNext() && this.numberIterationsComplete >= this.totalIterationCount && !this.hasErrored()) {
+                this.completeFlow();
             }
         }
     }
@@ -137,4 +155,4 @@ var ForEachParallel = Class.extend(IteratorFlow, {
 // Export
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugflow.ForEachParallel', ForEachParallel);
+bugpack.export('bugflow.IterableParallel', IterableParallel);

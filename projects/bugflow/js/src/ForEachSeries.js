@@ -7,6 +7,7 @@
 //@Export('ForEachSeries')
 
 //@Require('Class')
+//@Require('IIterable')
 //@Require('bugflow.Iteration')
 //@Require('bugflow.IteratorFlow')
 //@Require('bugtrace.BugTrace')
@@ -23,10 +24,11 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =         bugpack.require('Class');
-var Iteration =     bugpack.require('bugflow.Iteration');
-var IteratorFlow =  bugpack.require('bugflow.IteratorFlow');
-var BugTrace =      bugpack.require('bugtrace.BugTrace');
+var Class           = bugpack.require('Class');
+var IIterable       = bugpack.require('IIterable');
+var Iteration       = bugpack.require('bugflow.Iteration');
+var IteratorFlow    = bugpack.require('bugflow.IteratorFlow');
+var BugTrace        = bugpack.require('bugtrace.BugTrace');
 
 
 //-------------------------------------------------------------------------------
@@ -56,8 +58,9 @@ var ForEachSeries = Class.extend(IteratorFlow, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        // TODO BRN: Add support for BugJs data objects that implement the IIterate interface
-
+        if (Class.doesImplement(data, IIterable)) {
+            throw new Error("ForEachSeries does not support IIterable instances. Use the IterableSeries instead.");
+        }
         /**
          * @private
          * @type {number}

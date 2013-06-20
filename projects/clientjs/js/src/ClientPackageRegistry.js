@@ -72,7 +72,7 @@ var ClientPackageRegistry = Class.extend(Obj, {
                 });
             }),
             $task(function(flow) {
-                $foreachParallel(_packagePaths, function(flow, packagePath) {
+                $forEachParallel(_packagePaths, function(flow, packagePath) {
 
                 }).execute(function(error) {
                         flow.complete(error);

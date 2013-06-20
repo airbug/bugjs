@@ -39,7 +39,7 @@ var BugTrace =  bugpack.require('bugtrace.BugTrace');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var $foreachParallel = BugFlow.$foreachParallel;
+var $forEachParallel = BugFlow.$forEachParallel;
 var $if = BugFlow.$if;
 var $series = BugFlow.$series;
 var $task = BugFlow.$task;
@@ -2750,7 +2750,7 @@ var Path = Class.extend(Obj, {
                 });
             }),
             $task(function(flow) {
-                $foreachParallel(childPathArray, function(flow, childPath) {
+                $forEachParallel(childPathArray, function(flow, childPath) {
                     var copyPath = new Path(intoPath.getAbsolutePath() + path.sep + childPath.getName());
                     $if (function(flow) {
                             childPath._isDirectory(false, function(error, isDirectory) {
@@ -3638,7 +3638,7 @@ var Path = Class.extend(Obj, {
             $task(function(flow) {
                 if (childPathArray.length > 0) {
                     if (recursive) {
-                        $foreachParallel(childPathArray, function(flow, childPath) {
+                        $forEachParallel(childPathArray, function(flow, childPath) {
 
                             // TODO BRN: If "resolveSymlink" is true, do we want to continue to follow ALL symlinks, or
                             // should we only follow the first one?
@@ -4317,7 +4317,7 @@ var Path = Class.extend(Obj, {
                 });
             }),
             $task(function(flow) {
-                $foreachParallel(childPathArray, function(flow, childPath) {
+                $forEachParallel(childPathArray, function(flow, childPath) {
                     var movePath = new Path(intoPath.getAbsolutePath() + path.sep + childPath.getName());
                     childPath._move(movePath, syncMode, false, function(error) {
                         flow.complete(error);
@@ -5409,7 +5409,7 @@ var Path = Class.extend(Obj, {
                 });
             }),
             $task(function(flow) {
-                $foreachParallel(childPathArray, function(flow, childPath) {
+                $forEachParallel(childPathArray, function(flow, childPath) {
                     var symlinkPath = new Path(intoPath.getAbsolutePath() + path.sep + childPath.getName());
                     childPath._symlinkTo(symlinkPath, syncMode, function(error) {
                         flow.complete(error);
