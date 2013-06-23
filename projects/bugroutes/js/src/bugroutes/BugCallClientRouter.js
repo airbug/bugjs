@@ -4,14 +4,14 @@
 
 //@Package('bugroutes')
 
-//@Export('BugCallRouter')
+//@Export('BugCallClientRouter')
 
 //@Require('Class')
 //@Require('Map')
 //@Require('Obj')
 //@Require('TypeUtil')
+//@Require('bugcall.BugCallClient')
 //@Require('bugroutes.BugCallRoute')
-//@Require('bugcall.BugCallServer')
 
 
 //-------------------------------------------------------------------------------
@@ -29,15 +29,15 @@ var Class               = bugpack.require('Class');
 var Map                 = bugpack.require('Map');
 var Obj                 = bugpack.require('Obj');
 var TypeUtil            = bugpack.require('TypeUtil');
+var BugCallClient       = bugpack.require('bugcall.BugCallClient');
 var BugCallRoute        = bugpack.require('bugroutes.BugCallRoute');
-var BugCallServer       = bugpack.require('bugcall.BugCallServer');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var BugCallRouter = Class.extend(Obj, {
+var BugCallClientRouter = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
@@ -45,9 +45,9 @@ var BugCallRouter = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {bugCallServer} bugCallServer
+     * @param {bugCallClient} bugCallClient
      */
-    _constructor: function(bugCallServer){
+    _constructor: function(bugCallClient){
 
         this._super();
 
@@ -58,9 +58,9 @@ var BugCallRouter = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {BugCallServer}
+         * @type {BugCallClient}
          */
-        this.bugCallServer  = bugCallServer;
+        this.bugCallClient  = bugCallClient;
 
         /**
          * @private
@@ -80,7 +80,7 @@ var BugCallRouter = Class.extend(Obj, {
     initialize: function(callback){
         if(!callback || typeof callback !== 'function') var callback = function(){};
 
-        this.bugCallServer.on(BugCallServer.EventTypes.REQUEST, this.handleConnectionRequest, this);
+        this.bugCallClient.on(BugCallClient.EventTypes.REQUEST, this.handleConnectionRequest, this);
 
         callback();
     },
@@ -123,6 +123,10 @@ var BugCallRouter = Class.extend(Obj, {
     // Getters
     //-------------------------------------------------------------------------------
 
+    getBugCallClient: function(){
+        return this.bugCallClient;
+    },
+
     /**
      @return {BugCallServer}
      */
@@ -151,4 +155,4 @@ var BugCallRouter = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugroutes.BugCallRouter', BugCallRouter);
+bugpack.export('bugroutes.BugCallClientRouter', BugCallClientRouter);

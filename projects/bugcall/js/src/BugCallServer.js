@@ -65,25 +65,25 @@ var BugCallServer = Class.extend(EventDispatcher, {
          * @private
          * @type {Map.<CallConnection, CallManager>}
          */
-        this.callConnectionToCallManagerMap = new Map();
+        this.callConnectionToCallManagerMap     = new Map();
 
         /**
          * @private
          * @type {Map.<CallConnection, CallRequester>}
          */
-        this.callConnectionToCallRequesterMap = new Map();
+        this.callConnectionToCallRequesterMap   = new Map();
 
         /**
          * @private
          * @type {CallServer}
          */
-        this.callServer = callServer;
+        this.callServer                         = callServer;
 
         /**
          * @private
          * @type {boolean}
          */
-        this.initialized = false;
+        this.initialized                        = false;
 
         this.initialize();
     },
