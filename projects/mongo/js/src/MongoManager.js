@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('airbugserver')
+//@Package('mongo')
 
 //@Export('MongoManager')
 
