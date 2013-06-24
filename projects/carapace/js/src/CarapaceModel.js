@@ -26,13 +26,13 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var HashUtil = bugpack.require('HashUtil');
+var Class       = bugpack.require('Class');
+var HashUtil    = bugpack.require('HashUtil');
 var IdGenerator = bugpack.require('IdGenerator');
 var IDisposable = bugpack.require('IDisposable');
-var IEquals = bugpack.require('IEquals');
-var IHashCode = bugpack.require('IHashCode');
-var Backbone = bugpack.require('backbone.Backbone');
+var IEquals     = bugpack.require('IEquals');
+var IHashCode   = bugpack.require('IHashCode');
+var Backbone    = bugpack.require('backbone.Backbone');
 
 
 //-------------------------------------------------------------------------------

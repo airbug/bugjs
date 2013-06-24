@@ -23,10 +23,10 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var List = bugpack.require('List');
-var Map = bugpack.require('Map');
-var Obj = bugpack.require('Obj');
+var Class   = bugpack.require('Class');
+var List    = bugpack.require('List');
+var Map     = bugpack.require('Map');
+var Obj     = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
@@ -52,13 +52,13 @@ var CarapaceContainer = Class.extend(Obj, {
          * @private
          * @type {boolean}
          */
-        this.activated = false;
+        this.activated          = false;
 
         /**
          * @private
          * @type {Map<string, CarapaceCollection>}
          */
-        this.collectionMap = new Map();
+        this.collectionMap      = new Map();
 
         /**
          * @private
@@ -70,25 +70,25 @@ var CarapaceContainer = Class.extend(Obj, {
          * @private
          * @type {*}
          */
-        this.containerParent = null;
+        this.containerParent    = null;
 
         /**
          * @private
          * @type {boolean}
          */
-        this.created = false;
+        this.created            = false;
 
         /**
          * @private
          * @type {Map<CarapaceModel>}
          */
-        this.modelMap = new Map();
+        this.modelMap           = new Map();
 
         /**
          * @private
          * @type {CarapaceView}
          */
-        this.viewTop = null;
+        this.viewTop            = null;
     },
 
 

@@ -124,10 +124,26 @@ var BugCallRouter = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     @return {BugCallServer}
+     * deprecated
+     * @return {BugCallClient}
+     */
+    getBugCallClient: function() {
+        return this.bugCallRequestEventDispatcher;
+    },
+
+    /**
+     * @return {BugCallRequestEventDispatcher}
+     */
+    getBugCallRequestEventDispatcher: function() {
+        return this.bugCallRequestEventDispatcher;
+    },
+
+    /**
+     * deprecated
+     * @return {BugCallServer}
      */
     getBugCallServer: function() {
-        return this.bugCallServer;
+        return this.bugCallRequestEventDispatcher;
     },
 
     //-------------------------------------------------------------------------------

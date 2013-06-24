@@ -24,10 +24,10 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var List = bugpack.require('List');
-var Obj = bugpack.require('Obj');
-var Backbone = bugpack.require('backbone.Backbone');
+var Class           = bugpack.require('Class');
+var List            = bugpack.require('List');
+var Obj             = bugpack.require('Obj');
+var Backbone        = bugpack.require('backbone.Backbone');
 var ControllerRoute = bugpack.require('carapace.ControllerRoute');
 
 
@@ -54,25 +54,25 @@ var CarapaceController = Class.extend(Obj, {
          * @private
          * @type {boolean}
          */
-        this.activated = false;
+        this.activated      = false;
 
         /**
          * @private
          * @type {*}
          */
-        this.containerTop = null;
+        this.containerTop   = null;
 
         /**
          * @private
          * @type {boolean}
          */
-        this.created = false;
+        this.created        = false;
 
         /**
          * @private
          * @type {boolean}
          */
-        this.started = false;
+        this.started        = false;
     },
 
 
