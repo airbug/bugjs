@@ -49,7 +49,7 @@ var ServerSocketIoFactory = Class.extend(Obj, {
      * @return {Socket}
      */
     createSocketConnection: function(host, options) {
-        return new SocketIoConnection(io.connect(host, options));
+        return new SocketIoConnection(io.connect(host, options), false);
     }
 });
 

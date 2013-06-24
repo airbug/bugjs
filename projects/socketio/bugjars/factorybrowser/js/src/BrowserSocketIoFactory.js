@@ -50,7 +50,7 @@ var BrowserSocketIoFactory = Class.extend(Obj, {
      * @return {SocketIoConnection}
      */
     createSocketConnection: function(host, options) {
-        return new SocketIoConnection(SocketIo.connect(host, options));
+        return new SocketIoConnection(SocketIo.connect(host, options), false);
     }
 });
 

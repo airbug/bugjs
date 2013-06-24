@@ -54,31 +54,31 @@ var SocketIoClient = Class.extend(EventDispatcher, {
          * @private
          * @type {SocketIoConfig}
          */
-        this.config = config;
+        this.config             = config;
 
         /**
          * @private
          * @type {boolean}
          */
-        this.connected = false;
+        this.connected          = false;
 
         /**
          * @private
          * @type {boolean}
          */
-        this.connecting = false;
+        this.connecting         = false;
 
         /**
          * @private
          * @type {*}
          */
-        this.socketConnection = null;
+        this.socketConnection   = null;
 
         /**
          * @private
          * @type {ISocketFactory}
          */
-        this.socketFactory = socketFactory;
+        this.socketFactory      = socketFactory;
     },
 
 

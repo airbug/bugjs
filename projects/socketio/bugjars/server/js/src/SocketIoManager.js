@@ -103,7 +103,7 @@ var SocketIoManager = Class.extend(EventDispatcher, {
     initialize: function(callback) {
         var _this = this;
         this.ioManager.on("connection", function(socket) {
-            var socketConnection = new SocketIoConnection(socket);
+            var socketConnection = new SocketIoConnection(socket, true);
             socketConnection.on(SocketIoConnection.EventTypes.DISCONNECT, _this.hearSocketDisconnect, _this);
             _this.socketUuidToSocketConnectionMap.put(socketConnection.getUuid(), socketConnection);
             _this.dispatchEvent(new Event(SocketIoManager.EventTypes.CONNECTION, {

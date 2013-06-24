@@ -43,7 +43,7 @@ var SocketIoConnection = Class.extend(EventReceiver, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(socket) {
+    _constructor: function(socket, connected) {
 
         this._super(socket);
 
@@ -56,25 +56,25 @@ var SocketIoConnection = Class.extend(EventReceiver, {
          * @private
          * @type {boolean}
          */
-        this.connected = false;
+        this.connected              = connected;
 
         /**
          * @private
          * @type {Map.<string, function(...)}}
          */
-        this.eventListenerAdapters = new Map();
+        this.eventListenerAdapters  = new Map();
 
         /**
          * @private
          * @type {*}
          */
-        this.socket = socket;
+        this.socket                 = socket;
 
         /**
          * @private
          * @type {string}
          */
-        this.uuid = UuidGenerator.generateUuid();
+        this.uuid                   = UuidGenerator.generateUuid();
 
         this.initialize();
     },
@@ -240,8 +240,9 @@ var SocketIoConnection = Class.extend(EventReceiver, {
      * @private
      */
     initialize: function() {
-        this.socket.on("disconnect", this.hearDisconnect);
-        this.socket.on("terminate", this.hearTerminate);
+        this.on("connect",       this.hearConnect,      this);
+        this.on("disconnect",    this.hearDisconnect,   this);
+        this.on("terminate",     this.hearTerminate,    this);
     },
 
     /**
@@ -276,6 +277,14 @@ var SocketIoConnection = Class.extend(EventReceiver, {
     //-------------------------------------------------------------------------------
     // Event Listeners
     //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {NodeJsEvent} event
+     */
+    hearConnect: function(event) {
+        this.connected = true;
+    },
 
     /**
      * @private
