@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('EventDispatcher')
+//@Require('bugcall.BugCallRequestEvent')
 //@Require('bugcall.CallClient')
 //@Require('bugcall.CallManager')
 //@Require('bugcall.CallResponder')
@@ -27,6 +28,7 @@ var bugpack = require('bugpack').context();
 
 var Class                   = bugpack.require('Class');
 var EventDispatcher         = bugpack.require('EventDispatcher');
+var BugCallRequestEvent     = bugpack.require('bugcall.BugCallRequestEvent');
 var CallClient              = bugpack.require('bugcall.CallClient');
 var CallManager             = bugpack.require('bugcall.CallManager');
 var CallResponder           = bugpack.require('bugcall.CallResponder');
@@ -206,7 +208,7 @@ var BugCallClient = Class.extend(EventDispatcher, {
      */
     processIncomingRequest: function(incomingRequest) {
         var callResponder = new CallResponder(this.callManager, incomingRequest);
-        this.dispatchEvent(new Event(BugCallClient.EventTypes.REQUEST, {
+        this.dispatchEvent(new BugCallRequestEvent(BugCallRequestEvent.REQUEST, {
             request: incomingRequest,
             responder: callResponder
         }));
@@ -250,17 +252,6 @@ var BugCallClient = Class.extend(EventDispatcher, {
 });
 
 
-
-//-------------------------------------------------------------------------------
-// Static Variables
-//-------------------------------------------------------------------------------
-
-/**
- * @enum {string}
- */
-BugCallClient.EventTypes = {
-    REQUEST: "BugCallClient:Request"
-};
 
 
 //-------------------------------------------------------------------------------

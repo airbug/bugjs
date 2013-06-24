@@ -7,6 +7,7 @@
 //@Require('Class')
 //@Require('Collection')
 //@Require('Obj')
+//@Require('TypeUtil')
 
 
 //-------------------------------------------------------------------------------
@@ -20,9 +21,10 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =         bugpack.require('Class');
-var Collection =    bugpack.require('Collection');
-var Obj =           bugpack.require('Obj');
+var Class       = bugpack.require('Class');
+var Collection  = bugpack.require('Collection');
+var Obj         = bugpack.require('Obj');
+var TypeUtil    = bugpack.require('TypeUtil');
 
 
 //-------------------------------------------------------------------------------
@@ -159,13 +161,13 @@ var List = Class.extend(Collection, {
 
     /**
      * @param {number} index
-     * @param {Collection} collection
+     * @param {(Collection.<*> | Array.<*>)} items
      */
-    addAllAt: function(index, collection) {
-        if (Class.doesExtend(collection, Collection)) {
+    addAllAt: function(index, items) {
+        if (Class.doesExtend(items, Collection) || TypeUtil.isArray(items)) {
             var insertingIndex = index;
             var _this = this;
-            collection.forEach(function(value) {
+            items.forEach(function(value) {
                 _this.addAt(insertingIndex, value);
 
                 // NOTE BRN: We increment the inserting index so that the collection is inserted in the correct order.
@@ -173,7 +175,7 @@ var List = Class.extend(Collection, {
                 insertingIndex++;
             });
         } else {
-            throw new Error("collection must be an instance of Collection");
+            throw new Error("'items' must be an instance of Collection or Array");
         }
     },
 

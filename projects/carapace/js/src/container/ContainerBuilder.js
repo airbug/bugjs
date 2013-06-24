@@ -4,7 +4,7 @@
 
 //@Package('carapace')
 
-//@Export('ViewBuilder')
+//@Export('ContainerBuilder')
 
 //@Require('Class')
 //@Require('List')
@@ -31,13 +31,13 @@ var Obj     = bugpack.require('Obj');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ViewBuilder = Class.extend(Obj, {
+var ContainerBuilder = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(viewClass) {
+    _constructor: function(containerClass) {
 
         this._super();
 
@@ -50,43 +50,21 @@ var ViewBuilder = Class.extend(Obj, {
          * @private
          * @type {string}
          */
-        this.viewAppendTo = null;
+        this.containerAppendTo = null;
 
         /**
          * @private
-         * @type {Object}
+         * @type {List.<ContainerBuilder>}
          */
-        this.viewAttributes = {};
+        this.containerChildren = new List();
 
         /**
          * @private
-         * @type {List.<ViewBuilder>}
+         * @type {new:CarapaceContainer}
          */
-        this.viewChildren = new List();
+        this.containerClass = containerClass;
 
-        /**
-         * @private
-         * @type {new:CarapaceView}
-         */
-        this.viewClass = viewClass;
-
-        /**
-         * @private
-         * @type {CarapaceCollection}
-         */
-        this.viewCollection = null;
-
-        /**
-         * @private
-         * @type {string}
-         */
-        this.viewId = null;
-
-        /**
-         * @private
-         * @type {CarapaceModel}
-         */
-        this.viewModel = null;
+        this.containerModels = new Map
     },
 
 
@@ -130,7 +108,7 @@ var ViewBuilder = Class.extend(Obj, {
      * @return {ViewBuilder}
      */
     children: function(viewChildren) {
-        this.viewChildren.addAll(viewChildren);
+        this.viewChildren = viewChildren;
         return this;
     },
 
@@ -194,11 +172,11 @@ var ViewBuilder = Class.extend(Obj, {
 //-------------------------------------------------------------------------------
 
 /**
- * @param {new:CarapaceView} viewClass
- * @return {ViewBuilder}
+ * @param {new:CarapaceContainer} containerClass
+ * @return {ContainerBuilder}
  */
-ViewBuilder.view = function(viewClass) {
-    return new ViewBuilder(viewClass);
+ContainerBuilder.view = function(containerClass) {
+    return new ContainerBuilder(viewClass);
 };
 
 
@@ -206,4 +184,4 @@ ViewBuilder.view = function(viewClass) {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('carapace.ViewBuilder', ViewBuilder);
+bugpack.export('carapace.ContainerBuilder', ContainerBuilder);

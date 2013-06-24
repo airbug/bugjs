@@ -210,6 +210,7 @@ var CarapaceController = Class.extend(Obj, {
     },
 
     /**
+     * @abstract
      * @protected
      */
     createController: function() {

@@ -9,6 +9,8 @@
 //@Require('Class')
 //@Require('EventDispatcher')
 //@Require('Map')
+//@Require('bugcall.BugCallRequestEvent')
+//@Require('bugcall.BugCallServerEvent')
 //@Require('bugcall.CallConnection')
 //@Require('bugcall.CallManager')
 //@Require('bugcall.CallRequester')
@@ -31,6 +33,8 @@ var bugpack = require('bugpack').context();
 var Class               = bugpack.require('Class');
 var EventDispatcher     = bugpack.require('EventDispatcher');
 var Map                 = bugpack.require('Map');
+var BugCallRequestEvent = bugpack.require('bugcall.BugCallRequestEvent');
+var BugCallServerEvent  = bugpack.require('bugcall.BugCallServerEvent');
 var CallConnection      = bugpack.require('bugcall.CallConnection');
 var CallManager         = bugpack.require('bugcall.CallManager');
 var CallRequester       = bugpack.require('bugcall.CallRequester');
@@ -199,7 +203,7 @@ var BugCallServer = Class.extend(EventDispatcher, {
      * @param {CallConnection} callConnection
      */
     dispatchConnectionClosed: function(callConnection) {
-        this.dispatchEvent(new Event(CallServer.EventTypes.CONNECTION_CLOSED, {
+        this.dispatchEvent(new BugCallServerEvent(BugCallServerEvent.CONNECTION_CLOSED, {
             callConnection: callConnection
         }));
     },
@@ -211,7 +215,7 @@ var BugCallServer = Class.extend(EventDispatcher, {
      * @param {CallRequester} callRequester
      */
     dispatchConnectionEstablished: function(callConnection, callManager, callRequester) {
-        this.dispatchEvent(new Event(CallServer.EventTypes.CONNECTION_ESTABLISHED, {
+        this.dispatchEvent(new BugCallServerEvent(BugCallServerEvent.CONNECTION_ESTABLISHED, {
             callConnection: callConnection,
             callManager: callManager,
             callRequester: callRequester
@@ -256,7 +260,7 @@ var BugCallServer = Class.extend(EventDispatcher, {
     processIncomingRequest: function(incomingRequest) {
         var callManager     = incomingRequest.getCallManager();
         var callResponder   = new CallResponder(callManager, incomingRequest);
-        this.dispatchEvent(new Event(BugCallServer.EventTypes.REQUEST, {
+        this.dispatchEvent(new BugCallRequestEvent(BugCallRequestEvent.REQUEST, {
             request: incomingRequest,
             responder: callResponder
         }));
@@ -297,17 +301,10 @@ var BugCallServer = Class.extend(EventDispatcher, {
 
 
 //-------------------------------------------------------------------------------
-// Static Variables
+// Events
 //-------------------------------------------------------------------------------
 
-/**
- * @enum {string}
- */
-BugCallServer.EventTypes = {
-    CONNECTION_CLOSED: "BugCallServer:ConnectionClosed",
-    CONNECTION_ESTABLISHED: "BugCallServer:ConnectionEstablished",
-    REQUEST: "BugCallServer:Request"
-};
+//BugCallRequestEvent.REQUEST
 
 
 //-------------------------------------------------------------------------------

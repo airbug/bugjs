@@ -11,7 +11,7 @@
 //@Require('Obj')
 //@Require('TypeUtil')
 //@Require('bugroutes.BugCallRoute')
-//@Require('bugcall.BugCallServer')
+//@Require('bugcall.BugCallRequestEvent')
 
 
 //-------------------------------------------------------------------------------
@@ -30,7 +30,7 @@ var Map                 = bugpack.require('Map');
 var Obj                 = bugpack.require('Obj');
 var TypeUtil            = bugpack.require('TypeUtil');
 var BugCallRoute        = bugpack.require('bugroutes.BugCallRoute');
-var BugCallServer       = bugpack.require('bugcall.BugCallServer');
+var BugCallRequestEvent = bugpack.require('bugcall.BugCallRequestEvent');
 
 
 //-------------------------------------------------------------------------------
@@ -45,9 +45,9 @@ var BugCallRouter = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {bugCallServer} bugCallServer
+     * @param {bugCallRequestEventDispatcher} bugCallRequestEventDispatcher
      */
-    _constructor: function(bugCallServer){
+    _constructor: function(bugCallRequestEventDispatcher){
 
         this._super();
 
@@ -58,9 +58,9 @@ var BugCallRouter = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {BugCallServer}
+         * @type {bugCallRequestEventDispatcher}
          */
-        this.bugCallServer  = bugCallServer;
+        this.bugCallRequestEventDispatcher = bugCallRequestEventDispatcher;
 
         /**
          * @private
@@ -80,7 +80,7 @@ var BugCallRouter = Class.extend(Obj, {
     initialize: function(callback){
         if(!callback || typeof callback !== 'function') var callback = function(){};
 
-        this.bugCallServer.on(BugCallServer.EventTypes.REQUEST, this.handleConnectionRequest, this);
+        this.bugCallRequestEventDispatcher.on(BugCallRequestEvent.REQUEST, this.handleConnectionRequest, this);
 
         callback();
     },
@@ -142,7 +142,7 @@ var BugCallRouter = Class.extend(Obj, {
         var request         = event.getData().request;
         var requestType     = request.getType();
         var responder       = event.getData().responder;
-        var bugCallRoute    = _this.routesMap.get(requestType);
+        var bugCallRoute    = this.routesMap.get(requestType);
         if(bugCallRoute) bugCallRoute.fire(request, responder);
     }
 });

@@ -31,18 +31,18 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var Event = bugpack.require('Event');
+var Class           = bugpack.require('Class');
+var Event           = bugpack.require('Event');
 var EventDispatcher = bugpack.require('EventDispatcher');
-var HashUtil = bugpack.require('HashUtil');
-var IdGenerator = bugpack.require('IdGenerator');
-var IDisposable = bugpack.require('IDisposable');
-var IEquals = bugpack.require('IEquals');
-var IHashCode = bugpack.require('IHashCode');
-var List = bugpack.require('List');
-var Obj = bugpack.require('Obj');
-var Proxy = bugpack.require('Proxy');
-var Backbone = bugpack.require('backbone.Backbone');
+var HashUtil        = bugpack.require('HashUtil');
+var IdGenerator     = bugpack.require('IdGenerator');
+var IDisposable     = bugpack.require('IDisposable');
+var IEquals         = bugpack.require('IEquals');
+var IHashCode       = bugpack.require('IHashCode');
+var List            = bugpack.require('List');
+var Obj             = bugpack.require('Obj');
+var Proxy           = bugpack.require('Proxy');
+var Backbone        = bugpack.require('backbone.Backbone');
 
 
 //-------------------------------------------------------------------------------
