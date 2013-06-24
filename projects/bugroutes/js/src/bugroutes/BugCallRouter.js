@@ -45,7 +45,7 @@ var BugCallRouter = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {bugCallRequestEventDispatcher} bugCallRequestEventDispatcher
+     * @param {EventDispatcher} bugCallRequestEventDispatcher
      */
     _constructor: function(bugCallRequestEventDispatcher){
 
@@ -58,7 +58,7 @@ var BugCallRouter = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {bugCallRequestEventDispatcher}
+         * @type {EventDispatcher}
          */
         this.bugCallRequestEventDispatcher = bugCallRequestEventDispatcher;
 

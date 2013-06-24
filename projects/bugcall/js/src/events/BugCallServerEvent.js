@@ -7,7 +7,7 @@
 //@Export('BugCallServerEvent')
 
 //@Require('Class')
-//@Require('Obj')
+//@Require('Event')
 
 
 //-------------------------------------------------------------------------------
