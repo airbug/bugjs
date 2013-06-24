@@ -10,6 +10,7 @@
 //@Require('EventDispatcher')
 //@Require('bugcall.CallConnection')
 //@Require('bugcall.CallClientConnection')
+//@Require('bugcall.CallClientEvent')
 //@Require('bugcall.CallManager')
 //@Require('socketio:client.SocketIoClient')
 
@@ -28,6 +29,7 @@ var bugpack = require('bugpack').context();
 var Class                   = bugpack.require('Class');
 var EventDispatcher         = bugpack.require('EventDispatcher');
 var CallClientConnection    = bugpack.require('bugcall.CallClientConnection');
+var CallClientEvent         = bugpack.require('bugcall.CallClientEvent');
 var CallConnection          = bugpack.require('bugcall.CallConnection');
 var CallManager             = bugpack.require('bugcall.CallManager');
 var SocketIoClient          = bugpack.require('socketio:client.SocketIoClient');
@@ -60,6 +62,18 @@ var CallClient = Class.extend(EventDispatcher, {
          * @type {CallConnection}
          */
         this.callConnection = null;
+
+        /**
+         * @private
+         * @type {boolean}
+         */
+        this.connected = false;
+
+        /**
+         * @private
+         * @type {boolean}
+         */
+        this.connecting = false;
 
         /**
          * @private
@@ -104,14 +118,14 @@ var CallClient = Class.extend(EventDispatcher, {
      * @return {boolean}
      */
     isConnected: function() {
-        return this.socketIoClient.isConnected();
+        return this.connected;
     },
 
     /**
      * @return {boolean}
      */
     isConnecting: function() {
-        return this.socketIoClient.isConnecting();
+        return this.connecting;
     },
 
     /**
@@ -146,6 +160,7 @@ var CallClient = Class.extend(EventDispatcher, {
 
         if (!this.isConnected()) {
             if (!this.isConnecting()) {
+                this.retryAttempts = 0;
                 this.doOpenConnection();
             }
         }
@@ -183,7 +198,7 @@ var CallClient = Class.extend(EventDispatcher, {
      * @private
      */
     dispatchConnectionClosed: function(failed) {
-        this.dispatchEvent(new Event(CallClient.EventTypes.CONNECTION_CLOSED, {
+        this.dispatchEvent(new CallClientEvent(CallClientEvent.CONNECTION_CLOSED, {
             callConnection: this.callConnection,
             failed: failed
         }));
@@ -193,9 +208,16 @@ var CallClient = Class.extend(EventDispatcher, {
      * @private
      */
     dispatchConnectionOpened: function() {
-        this.dispatchEvent(new Event(CallClient.EventTypes.CONNECTION_OPENED, {
+        this.dispatchEvent(new CallClientEvent(CallClientEvent.CONNECTION_OPENED, {
             callConnection: this.callConnection
         }));
+    },
+
+    /**
+     * @private
+     */
+    dispatchRetryFailed: function() {
+        this.dispatchEvent(new CallClientEvent(CallClientEvent.RETRY_FAILED, {}));
     },
 
     /**
@@ -209,6 +231,7 @@ var CallClient = Class.extend(EventDispatcher, {
      * @private
      */
     doOpenConnection: function() {
+        this.connecting = true;
         this.socketIoClient.connect();
     },
 
@@ -216,27 +239,37 @@ var CallClient = Class.extend(EventDispatcher, {
      * @private
      */
     handleConnectionClosed: function() {
-        this.retryAttempts = 0;
         this.dispatchConnectionClosed(false);
         this.destroyConnection();
+        this.connected = false;
+        this.connecting = false;
     },
 
     /**
      * @private
      */
     handleConnectionFailed: function() {
-        this.retryAttempts = 0;
         this.dispatchConnectionClosed(true);
         this.destroyConnection();
+        this.connected = false;
+        this.connecting = false;
+        this.retryConnect();
     },
 
     /**
      * @private
      */
     handleConnectionOpened: function() {
-        this.retryAttempts = 0;
         this.createConnection();
         this.dispatchConnectionOpened();
+    },
+
+    /**
+     * @private
+     */
+    handleRetryFailed: function() {
+
+        this.dispatchRetryFailed();
     },
 
     /**
@@ -259,9 +292,9 @@ var CallClient = Class.extend(EventDispatcher, {
     retryConnect: function() {
         if (this.retryAttempts < this.retryLimit) {
             this.retryAttempts++;
-            this.connect();
+            this.doOpenConnection();
         } else {
-            this.handleConnectionFailed();
+            this.handleRetryFailed();
         }
     },
 
@@ -284,10 +317,10 @@ var CallClient = Class.extend(EventDispatcher, {
      */
     hearClientConnection: function(event) {
         if (this.callConnection) {
-            console.warn("New connection received when a connection already existed...");
-            this.destroyConnection();
+            throw new Error("New connection received when a connection already existed...");
+        } else {
+            this.handleConnectionOpened();
         }
-        this.handleConnectionOpened();
     },
 
     /**
@@ -296,26 +329,12 @@ var CallClient = Class.extend(EventDispatcher, {
      */
     hearConnectionClosed: function(event) {
         if (event.getData().failed) {
-            this.destroyConnection();
-            this.retryConnect();
+            this.handleConnectionFailed();
         } else {
             this.handleConnectionClosed();
         }
     }
 });
-
-
-//-------------------------------------------------------------------------------
-// Static Variables
-//-------------------------------------------------------------------------------
-
-/**
- * @enum {string}
- */
-CallClient.EventTypes = {
-    CONNECTION_CLOSED: "CallClient:ConnectionClosed",
-    CONNECTION_OPENED: "CallClient:ConnectionOpened"
-};
 
 
 //-------------------------------------------------------------------------------

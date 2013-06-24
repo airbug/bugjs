@@ -4,7 +4,7 @@
 
 //@Package('bugcall')
 
-//@Export('BugCallServerEvent')
+//@Export('CallManagerEvent')
 
 //@Require('Class')
 //@Require('Event')
@@ -29,7 +29,7 @@ var Event   = bugpack.require('Event');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var BugCallServerEvent = Class.extend(Event, {});
+var CallManagerEvent = Class.extend(Event, {});
 
 
 //-------------------------------------------------------------------------------
@@ -40,17 +40,29 @@ var BugCallServerEvent = Class.extend(Event, {});
  * @static
  * @const {string}
  */
-BugCallServerEvent.CALL_CLOSED        = "BugCallServerEvent:CallClosed";
+CallManagerEvent.CALL_CLOSED = "CallManagerEvent:CallClosed";
 
 /**
  * @static
  * @const {string}
  */
-BugCallServerEvent.CONNECTION_ESTABLISHED   = "BugCallServerEvent:ConnectionEstablished";
+CallManagerEvent.INCOMING_REQUEST = "CallManagerEvent:IncomingRequest";
+
+/**
+ * @static
+ * @const {string}
+ */
+CallManagerEvent.INCOMING_RESPONSE = "CallManagerEvent:IncomingResponse";
+
+/**
+ * @static
+ * @const {string}
+ */
+CallManagerEvent.REQUEST_FAILED = "CallManagerEvent:RequestFailed";
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugcall.BugCallServerEvent', BugCallServerEvent);
+bugpack.export('bugcall.CallManagerEvent', CallManagerEvent);

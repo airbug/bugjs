@@ -9,7 +9,7 @@
 //@Require('Class')
 //@Require('Map')
 //@Require('Obj')
-//@Require('bugcall.CallManager')
+//@Require('bugcall.CallManagerEvent')
 //@Require('bugcall.CallRequest')
 //@Require('bugcall.OutgoingRequest')
 //@Require('bugcall.RequestFailedException')
@@ -29,7 +29,7 @@ var bugpack = require('bugpack').context();
 var Class                   = bugpack.require('Class');
 var Map                     = bugpack.require('Map');
 var Obj                     = bugpack.require('Obj');
-var CallManager             = bugpack.require('bugcall.CallManager');
+var CallManagerEvent        = bugpack.require('bugcall.CallManagerEvent');
 var CallRequest             = bugpack.require('bugcall.CallRequest');
 var OutgoingRequest         = bugpack.require('bugcall.OutgoingRequest');
 var RequestFailedException  = bugpack.require('bugcall.RequestFailedException');
@@ -116,8 +116,8 @@ var CallRequester = Class.extend(Obj, {
     deinitialize: function() {
         if (this.isInitialized()) {
             this.initialized = false;
-            this.callManager.removeEventListener(CallManager.EventTypes.INCOMING_RESPONSE, this.hearIncomingResponse, this);
-            this.callManager.removeEventListener(CallManager.EventTypes.REQUEST_FAILED, this.hearRequestFailed, this);
+            this.callManager.removeEventListener(CallManagerEvent.INCOMING_RESPONSE, this.hearIncomingResponse, this);
+            this.callManager.removeEventListener(CallManagerEvent.REQUEST_FAILED, this.hearRequestFailed, this);
         }
     },
 
@@ -127,8 +127,8 @@ var CallRequester = Class.extend(Obj, {
     initialize: function() {
         if (!this.isInitialized()) {
             this.initialized = true;
-            this.callManager.addEventListener(CallManager.EventTypes.INCOMING_RESPONSE, this.hearIncomingResponse, this);
-            this.callManager.addEventListener(CallManager.EventTypes.REQUEST_FAILED, this.hearRequestFailed, this);
+            this.callManager.addEventListener(CallManagerEvent.INCOMING_RESPONSE, this.hearIncomingResponse, this);
+            this.callManager.addEventListener(CallManagerEvent.REQUEST_FAILED, this.hearRequestFailed, this);
         }
     },
 

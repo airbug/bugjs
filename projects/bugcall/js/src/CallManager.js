@@ -12,6 +12,7 @@
 //@Require('Queue')
 //@Require('Set')
 //@Require('bugcall.CallConnection')
+//@Require('bugcall.CallManagerEvent')
 //@Require('bugcall.IncomingRequest')
 //@Require('bugcall.IncomingResponse')
 
@@ -33,6 +34,7 @@ var Map                     = bugpack.require('Map');
 var Queue                   = bugpack.require('Queue');
 var Set                     = bugpack.require('Set');
 var CallConnection          = bugpack.require('bugcall.CallConnection');
+var CallManagerEvent        = bugpack.require('bugcall.CallManagerEvent');
 var IncomingRequest         = bugpack.require('bugcall.IncomingRequest');
 var IncomingResponse        = bugpack.require('bugcall.IncomingResponse');
 
@@ -134,10 +136,14 @@ var CallManager = Class.extend(EventDispatcher, {
     // Public Instance Methods
     //-------------------------------------------------------------------------------
 
+    closeCall: function() {
+        //
+    },
+
     /**
-     * @private
+     *
      */
-    failAllPendingOutgoingRequests: function() {
+    failCall: function() {
         //TODO BRN: For now we assume that there is no way to reconnect and receive a response to an open request.
         // Any number of things could have gone wrong here
         // 1) The server could have gone down
@@ -145,9 +151,11 @@ var CallManager = Class.extend(EventDispatcher, {
         // We send an error to all open requests and let the application logic determine what to do with an incomplete request.
 
         var _this = this;
+        this.clearConnection();
         this.pendingOutgoingRequestSet.forEach(function(outgoingRequest) {
             _this.doFailOutgoingRequest(outgoingRequest);
         });
+        this.dispatchEvent(new CallManagerEvent(CallManagerEvent.CALL_FAILED));
     },
 
     /**
@@ -197,7 +205,7 @@ var CallManager = Class.extend(EventDispatcher, {
     doFailOutgoingRequest: function(outgoingRequest) {
         this.outgoingRequestMap.remove(outgoingRequest);
         this.pendingOutgoingRequestSet.remove(outgoingRequest);
-        this.dispatchEvent(new Event(CallManager.EventTypes.REQUEST_FAILED, {
+        this.dispatchEvent(new CallManagerEvent(CallManagerEvent.REQUEST_FAILED, {
             outgoingRequest: outgoingRequest
         }));
     },
@@ -226,7 +234,7 @@ var CallManager = Class.extend(EventDispatcher, {
     processIncomingRequest: function(incomingRequest) {
         var requestUuid = incomingRequest.getUuid();
         this.incomingRequestMap.put(requestUuid, incomingRequest);
-        this.dispatchEvent(new Event(CallManager.EventTypes.INCOMING_REQUEST, {
+        this.dispatchEvent(new CallManagerEvent(CallManagerEvent.INCOMING_REQUEST, {
             incomingRequest: incomingRequest
         }));
     },
@@ -241,7 +249,7 @@ var CallManager = Class.extend(EventDispatcher, {
         if (outgoingRequest) {
             this.outgoingRequestMap.remove(requestUuid);
             this.pendingOutgoingRequestSet.remove(outgoingRequest);
-            this.dispatchEvent(new Event(CallManager.EventTypes.INCOMING_RESPONSE, {
+            this.dispatchEvent(new CallManagerEvent(CallManagerEvent.INCOMING_RESPONSE, {
                 incomingResponse: incomingResponse
             }));
         } else {
@@ -293,20 +301,6 @@ var CallManager = Class.extend(EventDispatcher, {
         }
     }
 });
-
-
-//-------------------------------------------------------------------------------
-// Static Variables
-//-------------------------------------------------------------------------------
-
-/**
- * @enum {string}
- */
-CallManager.EventTypes = {
-    INCOMING_REQUEST: "CallManager:IncomingRequest",
-    INCOMING_RESPONSE: "CallManager:IncomingResponse",
-    REQUEST_FAILED: "CallManager:RequestFailed"
-};
 
 
 //-------------------------------------------------------------------------------

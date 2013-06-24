@@ -89,29 +89,7 @@ var SocketIoServer = Class.extend(EventDispatcher, {
     // Public Class Methods
     //-------------------------------------------------------------------------------
 
-    start: function(callback) {
-        var _this = this;
-        $series([
-            $task(function(flow) {
-                _this.configure(function(error) {
-                    if (!error) {
-                        console.log("SocketIo server configured");
-                    } else {
-                        console.log("SocketIo server failed to configure");
-                    }
-                    flow.complete(error);
-                });
-            })
-        ]).execute(callback);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Private Class Methods
-    //-------------------------------------------------------------------------------
-
     /**
-     * @private
      * @param {function()} callback
      */
     configure: function(callback) {

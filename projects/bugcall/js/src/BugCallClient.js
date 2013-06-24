@@ -9,8 +9,9 @@
 //@Require('Class')
 //@Require('EventDispatcher')
 //@Require('bugcall.BugCallRequestEvent')
-//@Require('bugcall.CallClient')
+//@Require('bugcall.CallClientEvent')
 //@Require('bugcall.CallManager')
+//@Require('bugcall.CallManagerEvent')
 //@Require('bugcall.CallResponder')
 //@Require('bugcall.CallResponseHandler')
 
@@ -29,8 +30,9 @@ var bugpack = require('bugpack').context();
 var Class                   = bugpack.require('Class');
 var EventDispatcher         = bugpack.require('EventDispatcher');
 var BugCallRequestEvent     = bugpack.require('bugcall.BugCallRequestEvent');
-var CallClient              = bugpack.require('bugcall.CallClient');
+var CallClientEvent         = bugpack.require('bugcall.CallClientEvent');
 var CallManager             = bugpack.require('bugcall.CallManager');
+var CallManagerEvent        = bugpack.require('bugcall.CallManagerEvent');
 var CallResponder           = bugpack.require('bugcall.CallResponder');
 var CallResponseHandler     = bugpack.require('bugcall.CallResponseHandler');
 
@@ -122,6 +124,8 @@ var BugCallClient = Class.extend(EventDispatcher, {
     closeConnection: function() {
 
         //TODO BRN: Add some state logic here.
+        //TODO BRN: start the process of winding down the callManager so that it starts
+        //queuing requests again instead of sending them. Let it complete all open requests before closing the connection.
 
         this.callClient.closeConnection();
     },
@@ -158,9 +162,10 @@ var BugCallClient = Class.extend(EventDispatcher, {
     initialize: function() {
         if (!this.isInitialized()) {
             this.initialized = true;
-            this.callManager.addEventListener(CallManager.EventTypes.INCOMING_REQUEST, this.hearCallManagerIncomingRequest, this);
-            this.callClient.addEventListener(CallClient.EventTypes.CONNECTION_CLOSED, this.hearCallClientConnectionClosed, this);
-            this.callClient.addEventListener(CallClient.EventTypes.CONNECTION_OPENED, this.hearCallClientConnectionOpened, this);
+            this.callManager.addEventListener(CallManagerEvent.INCOMING_REQUEST, this.hearCallManagerIncomingRequest, this);
+            this.callClient.addEventListener(CallClientEvent.CONNECTION_CLOSED, this.hearCallClientConnectionClosed, this);
+            this.callClient.addEventListener(CallClientEvent.CONNECTION_OPENED, this.hearCallClientConnectionOpened, this);
+            this.callClient.addEventListener(CallClientEvent.RETRY_FAILED, this.hearCallClientRetryFailed, this);
 
 
             //TODO BRN: For now we assume we want to auto connect
@@ -178,11 +183,7 @@ var BugCallClient = Class.extend(EventDispatcher, {
      * @param {CallConnection} callConnection
      */
     processConnectionClosed: function(callConnection) {
-        this.callManager.clearConnection();
-
-        //TODO BRN: If there are pending outgoing requests, perhaps we should let them complete instead of failing them
-
-        this.callManager.failAllPendingOutgoingRequests();
+        this.callManager.closeCall();
     },
 
     /**
@@ -191,7 +192,6 @@ var BugCallClient = Class.extend(EventDispatcher, {
      */
     processConnectionFailed: function(callConnection) {
         this.callManager.clearConnection();
-        this.callManager.failAllPendingOutgoingRequests();
     },
 
     /**
@@ -214,6 +214,13 @@ var BugCallClient = Class.extend(EventDispatcher, {
         }));
     },
 
+    /**
+     * @private
+     */
+    processRetryFailed: function() {
+        this.callManager.failCall();
+    },
+
 
     //-------------------------------------------------------------------------------
     // Event Listeners
@@ -221,7 +228,7 @@ var BugCallClient = Class.extend(EventDispatcher, {
 
     /**
      * @private
-     * @param {Event} event
+     * @param {CallClientEvent} event
      */
     hearCallClientConnectionClosed: function(event) {
         var callConnection = event.getData().callConnection;
@@ -234,11 +241,19 @@ var BugCallClient = Class.extend(EventDispatcher, {
 
     /**
      * @private
-     * @param {Event} event
+     * @param {CallClientEvent} event
      */
     hearCallClientConnectionOpened: function(event) {
         var callConnection = event.getData().callConnection;
         this.processConnectionOpened(callConnection);
+    },
+
+    /**
+     * @private
+     * @param {CallClientEvent} event
+     */
+    hearCallClientRetryFailed: function(event) {
+        this.processRetryFailed();
     },
 
     /**

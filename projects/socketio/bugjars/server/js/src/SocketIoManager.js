@@ -82,6 +82,8 @@ var SocketIoManager = Class.extend(EventDispatcher, {
          * @type {Map.<string, SocketIoConnection>}
          */
         this.socketUuidToSocketConnectionMap = new Map();
+
+        this.initialize();
     },
 
 
@@ -97,12 +99,21 @@ var SocketIoManager = Class.extend(EventDispatcher, {
         return this.socketUuidToSocketConnectionMap.get(socketUuid);
     },
 
+
+    //-------------------------------------------------------------------------------
+    // Private Class Methods
+    //-------------------------------------------------------------------------------
+
     /**
-     * @param {function(Error)} callback
+     * @private
      */
-    initialize: function(callback) {
+    initialize: function() {
         var _this = this;
         this.ioManager.on("connection", function(socket) {
+
+            //TEST
+            console.log("SocketIoManager connection received - socket:", socket);
+
             var socketConnection = new SocketIoConnection(socket, true);
             socketConnection.on(SocketIoConnection.EventTypes.DISCONNECT, _this.hearSocketDisconnect, _this);
             _this.socketUuidToSocketConnectionMap.put(socketConnection.getUuid(), socketConnection);
@@ -110,8 +121,6 @@ var SocketIoManager = Class.extend(EventDispatcher, {
                 socketConnection: socketConnection
             }));
         });
-
-        callback();
     },
 
 

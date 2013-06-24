@@ -13,6 +13,7 @@
 //@Require('bugcall.BugCallServerEvent')
 //@Require('bugcall.CallConnection')
 //@Require('bugcall.CallManager')
+//@Require('bugcall.CallManagerEvent')
 //@Require('bugcall.CallRequester')
 //@Require('bugcall.CallResponder')
 //@Require('bugcall.CallResponseHandler')
@@ -37,6 +38,7 @@ var BugCallRequestEvent = bugpack.require('bugcall.BugCallRequestEvent');
 var BugCallServerEvent  = bugpack.require('bugcall.BugCallServerEvent');
 var CallConnection      = bugpack.require('bugcall.CallConnection');
 var CallManager         = bugpack.require('bugcall.CallManager');
+var CallManagerEvent    = bugpack.require('bugcall.CallManagerEvent');
 var CallRequester       = bugpack.require('bugcall.CallRequester');
 var CallResponder       = bugpack.require('bugcall.CallResponder');
 var CallResponseHandler = bugpack.require('bugcall.CallResponseHandler');
@@ -165,7 +167,7 @@ var BugCallServer = Class.extend(EventDispatcher, {
     createCallManager: function(callConnection) {
         var callManager = new CallManager(callConnection);
         this.callConnectionToCallManagerMap.put(callConnection, callManager);
-        callManager.addEventListener(CallManager.EventTypes.INCOMING_REQUEST, this.hearCallManagerIncomingRequest, this);
+        callManager.addEventListener(CallManagerEvent.INCOMING_REQUEST, this.hearCallManagerIncomingRequest, this);
         return callManager;
     },
 
@@ -187,7 +189,7 @@ var BugCallServer = Class.extend(EventDispatcher, {
     removeCallManager: function(callConnection) {
         var callManager = this.callConnectionToCallManagerMap.get(callConnection);
         this.callConnectionToCallManagerMap.remove(callConnection);
-        callManager.removeEventListener(CallManager.EventTypes.INCOMING_REQUEST, this.hearCallManagerIncomingRequest, this);
+        callManager.removeEventListener(CallManagerEvent.INCOMING_REQUEST, this.hearCallManagerIncomingRequest, this);
     },
 
     /**
@@ -200,11 +202,11 @@ var BugCallServer = Class.extend(EventDispatcher, {
 
     /**
      * @private
-     * @param {CallConnection} callConnection
+     * @param {CallManager} callManager
      */
-    dispatchConnectionClosed: function(callConnection) {
-        this.dispatchEvent(new BugCallServerEvent(BugCallServerEvent.CONNECTION_CLOSED, {
-            callConnection: callConnection
+    dispatchCallClosed: function(callManager) {
+        this.dispatchEvent(new BugCallServerEvent(BugCallServerEvent.CALL_CLOSED, {
+            callManager: callManager
         }));
     },
 
@@ -238,9 +240,12 @@ var BugCallServer = Class.extend(EventDispatcher, {
      * @param {CallConnection} callConnection
      */
     processConnectionClosed: function(callConnection) {
+
+        //TODO BRN: For now we assume that there is no way to reconnect for this Call
+
         this.removeCallManager(callConnection);
         this.removeCallRequester(callConnection);
-        this.dispatchConnectionClosed(callConnection);
+        this.dispatchCallClosed(callConnection);
     },
 
     /**
