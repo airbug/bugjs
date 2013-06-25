@@ -11,6 +11,7 @@
 //@Require('EventDispatcher')
 //@Require('Set')
 //@Require('bugcall.CallConnection')
+//@Require('bugcall.CallServerConnection')
 //@Require('socketio:server.SocketIoManager')
 
 
@@ -25,12 +26,13 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var Event           = bugpack.require('Event');
-var EventDispatcher = bugpack.require('EventDispatcher');
-var Set             = bugpack.require('Set');
-var CallConnection  = bugpack.require('bugcall.CallConnection');
-var SocketIoManager = bugpack.require('socketio:server.SocketIoManager');
+var Class                   = bugpack.require('Class');
+var Event                   = bugpack.require('Event');
+var EventDispatcher         = bugpack.require('EventDispatcher');
+var Set                     = bugpack.require('Set');
+var CallConnection          = bugpack.require('bugcall.CallConnection');
+var CallServerConnection    = bugpack.require('bugcall.CallServerConnection');
+var SocketIoManager         = bugpack.require('socketio:server.SocketIoManager');
 
 
 //-------------------------------------------------------------------------------
@@ -159,7 +161,7 @@ var CallServer = Class.extend(EventDispatcher, {
         //TEST
         console.log("Hear socket io manager connection - socketConnection");
 
-        var callConnection = new CallConnection(socketConnection);
+        var callConnection = new CallServerConnection(socketConnection);
         this.addCallConnection(callConnection);
         this.dispatchConnectionEstablished(callConnection);
     },

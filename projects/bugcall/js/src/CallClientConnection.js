@@ -51,6 +51,7 @@ var CallClientConnection = Class.extend(CallConnection, {
      * @protected
      */
     doDeinitialize: function() {
+        this._super();
         this.socketConnection.removeEventListener("callClosing", this.hearCallClosing, this);
     },
 
@@ -58,6 +59,7 @@ var CallClientConnection = Class.extend(CallConnection, {
      * @protected
      */
     doInitialize: function() {
+        this._super();
         this.socketConnection.addEventListener("callClosing", this.hearCallClosing, this);
     },
 
