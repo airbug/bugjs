@@ -53,7 +53,7 @@ var CallConnection = Class.extend(EventDispatcher, {
 
     _constructor: function(socketConnection) {
 
-        this._super(socketConnection);
+        this._super();
 
 
         //-------------------------------------------------------------------------------

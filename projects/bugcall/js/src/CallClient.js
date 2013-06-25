@@ -11,7 +11,6 @@
 //@Require('bugcall.CallConnection')
 //@Require('bugcall.CallClientConnection')
 //@Require('bugcall.CallClientEvent')
-//@Require('bugcall.CallManager')
 //@Require('socketio:client.SocketIoClient')
 
 
@@ -31,7 +30,6 @@ var EventDispatcher         = bugpack.require('EventDispatcher');
 var CallClientConnection    = bugpack.require('bugcall.CallClientConnection');
 var CallClientEvent         = bugpack.require('bugcall.CallClientEvent');
 var CallConnection          = bugpack.require('bugcall.CallConnection');
-var CallManager             = bugpack.require('bugcall.CallManager');
 var SocketIoClient          = bugpack.require('socketio:client.SocketIoClient');
 
 
@@ -268,7 +266,6 @@ var CallClient = Class.extend(EventDispatcher, {
      * @private
      */
     handleRetryFailed: function() {
-
         this.dispatchRetryFailed();
     },
 

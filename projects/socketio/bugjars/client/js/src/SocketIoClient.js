@@ -119,10 +119,11 @@ var SocketIoClient = Class.extend(EventDispatcher, {
         if (!this.isConnected() && !this.isConnecting()) {
             this.connecting = true;
             console.log('SocketIoClient is attempting to connect...');
-            if (this.socketConnection) {
-                this.destroySocket();
+            if (!this.socketConnection) {
+                this.createSocket();
+            } else {
+                throw new Error("SocketIoClient already has a connection. Something went wrong!");
             }
-            this.createSocket();
         }
     },
 
@@ -242,6 +243,7 @@ var SocketIoClient = Class.extend(EventDispatcher, {
     hearSocketDisconnect: function(event) {
         this.connecting = false;
         this.connected = false;
+        this.destroySocket();
         console.log('SocketIoClient disconnected');
     },
 
@@ -254,6 +256,7 @@ var SocketIoClient = Class.extend(EventDispatcher, {
         var error = event.getArguments()[0];
         this.connecting = false;
         this.processSocketError(error);
+        console.log("SocketIoClient socket error", error);
     },
 
     //TODO BRN: Figure out these handlers

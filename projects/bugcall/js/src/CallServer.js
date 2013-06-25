@@ -157,10 +157,6 @@ var CallServer = Class.extend(EventDispatcher, {
      */
     hearManagerConnection: function(event) {
         var socketConnection = event.getData().socketConnection;
-
-        //TEST
-        console.log("Hear socket io manager connection - socketConnection");
-
         var callConnection = new CallServerConnection(socketConnection);
         this.addCallConnection(callConnection);
         this.dispatchConnectionEstablished(callConnection);
@@ -172,10 +168,6 @@ var CallServer = Class.extend(EventDispatcher, {
      */
     hearConnectionClosed: function(event) {
         var callConnection = event.getTarget();
-
-        //TEST
-        console.log("Hear CallConnection closed - callConnection:", callConnection);
-
         this.removeCallConnection(callConnection);
         this.dispatchConnectionClosed(callConnection, event.getData().failed);
     }

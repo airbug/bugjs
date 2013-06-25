@@ -53,7 +53,7 @@ var SocketIoManager = Class.extend(EventDispatcher, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {socketIoServer} socketIoServer
+     * @param {SocketIoServer} socketIoServer
      * @param {string} namespace
      */
     _constructor: function(socketIoServer, namespace) {
@@ -110,10 +110,6 @@ var SocketIoManager = Class.extend(EventDispatcher, {
     initialize: function() {
         var _this = this;
         this.ioManager.on("connection", function(socket) {
-
-            //TEST
-            console.log("SocketIoManager connection received - socket:", socket);
-
             var socketConnection = new SocketIoConnection(socket, true);
             socketConnection.on(SocketIoConnection.EventTypes.DISCONNECT, _this.hearSocketDisconnect, _this);
             _this.socketUuidToSocketConnectionMap.put(socketConnection.getUuid(), socketConnection);

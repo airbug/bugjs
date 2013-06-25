@@ -88,7 +88,7 @@ var Properties = Class.extend(Obj, {
             if (TypeUtil.isObject(propertyValue) && TypeUtil.toType(propertyValue) === "Object") {
                 propertyValue = propertyValue[part];
             } else {
-                return null;
+                return undefined;
             }
         }
         return propertyValue;

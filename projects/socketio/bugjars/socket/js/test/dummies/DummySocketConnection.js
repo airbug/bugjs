@@ -4,7 +4,7 @@
 
 //@Package('socketio:socket')
 
-//@Export('SocketIoConnection')
+//@Export('DummySocketConnection')
 
 //@Require('Class')
 //@Require('EventReceiver')
@@ -37,15 +37,15 @@ var SocketIoEmit    = bugpack.require('socketio:socket.SocketIoEmit');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SocketIoConnection = Class.extend(EventReceiver, {
+var DummySocketConnection = Class.extend(EventReceiver, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(socket, connected) {
+    _constructor: function(dummySocket, connected) {
 
-        this._super();
+        this._super(dummySocket);
 
 
         //-------------------------------------------------------------------------------
@@ -68,7 +68,7 @@ var SocketIoConnection = Class.extend(EventReceiver, {
          * @private
          * @type {*}
          */
-        this.socket                 = socket;
+        this.socket                 = dummySocket;
 
         /**
          * @private
@@ -192,7 +192,6 @@ var SocketIoConnection = Class.extend(EventReceiver, {
             var eventListenerAdapter = function() {
                 var args = Array.prototype.slice.call(arguments, 0);
                 var nodeJsEvent = new NodeJsEvent(eventType, args);
-                nodeJsEvent.setTarget(_this.getTarget());
                 _this.propagateEvent(nodeJsEvent);
             };
             this.socket.addListener(eventType, eventListenerAdapter);
@@ -323,4 +322,4 @@ SocketIoConnection.EventTypes = {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('socketio:socket.SocketIoConnection', SocketIoConnection);
+bugpack.export('socketio:socket.DummySocketConnection', DummySocketConnection);
