@@ -60,13 +60,13 @@ var BugCallRouter = Class.extend(Obj, {
          * @private
          * @type {EventDispatcher}
          */
-        this.bugCallRequestEventDispatcher = bugCallRequestEventDispatcher;
+        this.bugCallRequestEventDispatcher  = bugCallRequestEventDispatcher;
 
         /**
          * @private
          * @type {Map.<}
          */
-        this.routesMap      = new Map();
+        this.routesMap                      = new Map();
     },
 
 
@@ -80,7 +80,8 @@ var BugCallRouter = Class.extend(Obj, {
     initialize: function(callback){
         if(!callback || typeof callback !== 'function') var callback = function(){};
 
-        this.bugCallRequestEventDispatcher.on(BugCallRequestEvent.REQUEST, this.handleConnectionRequest, this);
+        // this.bugCallRequestEventDispatcher.on(BugCallRequestEvent.REQUEST, this.handleConnectionRequest, this);
+        this.bugCallRequestEventDispatcher.on(BugCallRequestEvent.REQUEST, this.handleRequest, this);
 
         callback();
     },
@@ -155,10 +156,26 @@ var BugCallRouter = Class.extend(Obj, {
      * @param {Event} event
      */
     handleConnectionRequest: function(event) {
-        var request         = event.getData().request;
+        console.log("Inside BugCallRouter#handleConnectionRequest");
+        // var request         = event.getData().request;
+        // var requestType     = request.getType();
+        // var responder       = event.getData().responder;
+        // var bugCallRoute    = this.routesMap.get(requestType);
+        // if(bugCallRoute) bugCallRoute.fire(request, responder);
+    },
+
+    /**
+     * @private
+     * @param {Event} event
+     */
+    handleRequest: function(event) {
+        console.log("Inside BugCallRouter#handleRequest");
+        var data            = event.getData();
+        var request         = data.request;
         var requestType     = request.getType();
-        var responder       = event.getData().responder;
+        var responder       = data.responder;
         var bugCallRoute    = this.routesMap.get(requestType);
+        console.log("requestType:", requestType);
         if(bugCallRoute) bugCallRoute.fire(request, responder);
     }
 });
