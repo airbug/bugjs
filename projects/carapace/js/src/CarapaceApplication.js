@@ -30,7 +30,6 @@ var Class                   = bugpack.require('Class');
 var Obj                     = bugpack.require('Obj');
 var Set                     = bugpack.require('Set');
 var Backbone                = bugpack.require('backbone.Backbone');
-var CarapaceController      = bugpack.require('carapace.CarapaceController');
 var ControllerRoute         = bugpack.require('carapace.ControllerRoute');
 var RoutingRequest          = bugpack.require('carapace.RoutingRequest');
 

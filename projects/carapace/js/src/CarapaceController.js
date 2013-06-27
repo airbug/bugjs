@@ -122,6 +122,7 @@ var CarapaceController = Class.extend(Obj, {
 
     /**
      * @protected
+     * @param {Array<*>} routingArgs
      */
     activate: function(routingArgs) {
         if (!this.activated) {
@@ -132,13 +133,14 @@ var CarapaceController = Class.extend(Obj, {
 
     /**
      * @protected
+     * @param {Array<*>} routingArgs
      */
-    create: function() {
+    create: function(routingArgs) {
         if (!this.created) {
             this.created = true;
             this.createController();
             this.validateController();
-            this.getContainerTop().create();
+            this.getContainerTop().create(routingArgs);
             this.initializeController();
         }
     },
@@ -177,7 +179,7 @@ var CarapaceController = Class.extend(Obj, {
     start: function(routingArgs) {
         if (!this.started) {
             this.started = true;
-            this.create();
+            this.create(routingArgs);
             this.activate(routingArgs);
         }
     },

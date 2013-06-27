@@ -23,10 +23,10 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =             bugpack.require('Class');
-var Obj =               bugpack.require('Obj');
-var Annotate =          bugpack.require('annotate.Annotate');
-var ControllerRoute =   bugpack.require('carapace.ControllerRoute');
+var Class               = bugpack.require('Class');
+var Obj                 = bugpack.require('Obj');
+var Annotate            = bugpack.require('annotate.Annotate');
+var ControllerRoute     = bugpack.require('carapace.ControllerRoute');
 
 
 //-------------------------------------------------------------------------------

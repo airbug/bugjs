@@ -153,11 +153,11 @@ var CarapaceContainer = Class.extend(Obj, {
     /**
      *
      */
-    create: function() {
+    create: function(routingArgs) {
         if (!this.created) {
             this.created = true;
-            this.createContainer();
-            this.createContainerChildren();
+            this.createContainer(routingArgs);
+            this.createContainerChildren(routingArgs);
             this.initializeContainer();
         }
     },
@@ -345,15 +345,17 @@ var CarapaceContainer = Class.extend(Obj, {
 
     /**
      * @protected
+     * @param {Array<*>} routingArgs
      */
-    createContainer: function() {
+    createContainer: function(routingArgs) {
 
     },
 
     /**
      * @protected
+     * @param {Array<*>} routingArgs
      */
-    createContainerChildren: function() {
+    createContainerChildren: function(routingArgs) {
 
     },
 
