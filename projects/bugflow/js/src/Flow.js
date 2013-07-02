@@ -178,9 +178,9 @@ var Flow = Class.extend(Obj, {
         var _this = this;
         this.completed = true;
         if (this.callback) {
-            setTimeout($trace(function() {
+            //setTimeout($trace(function() {
                 _this.callback.apply(this, args);
-            }), 0);
+            //}), 0);
         }
     },
 

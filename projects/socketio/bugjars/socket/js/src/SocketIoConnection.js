@@ -10,7 +10,6 @@
 //@Require('EventReceiver')
 //@Require('Map')
 //@Require('NodeJsEvent')
-//@Require('UuidGenerator')
 //@Require('socketio:socket.SocketIoEmit')
 
 
@@ -29,7 +28,6 @@ var Class           = bugpack.require('Class');
 var EventReceiver   = bugpack.require('EventReceiver');
 var Map             = bugpack.require('Map');
 var NodeJsEvent     = bugpack.require('NodeJsEvent');
-var UuidGenerator   = bugpack.require('UuidGenerator');
 var SocketIoEmit    = bugpack.require('socketio:socket.SocketIoEmit');
 
 
@@ -70,12 +68,6 @@ var SocketIoConnection = Class.extend(EventReceiver, {
          */
         this.socket                 = socket;
 
-        /**
-         * @private
-         * @type {string}
-         */
-        this.uuid                   = UuidGenerator.generateUuid();
-
         this.initialize();
     },
 
@@ -89,14 +81,6 @@ var SocketIoConnection = Class.extend(EventReceiver, {
      */
     getSocket: function() {
         return this.socket;
-    },
-
-    /**
-     * @private
-     * @return {string}
-     */
-    getUuid: function() {
-        return this.uuid;
     },
 
     /**
@@ -160,10 +144,11 @@ var SocketIoConnection = Class.extend(EventReceiver, {
     /**
      * @param {string} emitName
      * @param {Object} emitData
+     * @param {function(data)} callback
      */
-    emit: function(emitName, emitData) {
+    emit: function(emitName, emitData, callback) {
         if (this.isConnected()) {
-            var socketIoEmit = new SocketIoEmit(emitName, emitData);
+            var socketIoEmit = new SocketIoEmit(emitName, emitData, callback);
             this.processEmit(socketIoEmit);
         } else {
             throw new Error("Socket is no longer connected.");
@@ -172,9 +157,10 @@ var SocketIoConnection = Class.extend(EventReceiver, {
 
     /**
      * @param {Object} messageData
+     * @param {function(data)} callback
      */
-    send: function(messageData) {
-        this.emit("message", messageData);
+    send: function(messageData, callback) {
+        this.emit("message", messageData, callback);
     },
 
 
@@ -251,27 +237,7 @@ var SocketIoConnection = Class.extend(EventReceiver, {
      * @param {SocketIoEmit} socketIoEmit
      */
     processEmit: function(socketIoEmit) {
-        if (socketIoEmit.getName() === "message") {
-            this.socketSend(socketIoEmit);
-        } else {
-            this.socketEmit(socketIoEmit);
-        }
-    },
-
-    /**
-     * @private
-     * @param {SocketIoEmit} socketIoEmit
-     */
-    socketEmit: function(socketIoEmit) {
-        this.socket.emit(socketIoEmit.getName(), socketIoEmit.getData());
-    },
-
-    /**
-     * @private
-     * @param {SocketIoEmit} socketIoEmit
-     */
-    socketSend: function(socketIoEmit) {
-        this.socket.send(socketIoEmit.getData());
+        this.socket.emit(socketIoEmit.getName(), socketIoEmit.getData(), socketIoEmit.getCallback());
     },
 
 

@@ -9,7 +9,6 @@
 //@Require('Class')
 //@Require('Event')
 //@Require('EventDispatcher')
-//@Require('Map')
 //@Require('bugflow.BugFlow')
 //@Require('socketio:socket.SocketIoConnection')
 
@@ -29,7 +28,6 @@ var io              = require('socket.io');
 var Class               = bugpack.require('Class');
 var Event               = bugpack.require('Event');
 var EventDispatcher     = bugpack.require('EventDispatcher');
-var Map                 = bugpack.require('Map');
 var BugFlow             = bugpack.require('bugflow.BugFlow');
 var SocketIoConnection  = bugpack.require('socketio:socket.SocketIoConnection');
 
@@ -77,26 +75,7 @@ var SocketIoManager = Class.extend(EventDispatcher, {
          */
         this.socketIoServer     = socketIoServer;
 
-        /**
-         * @private
-         * @type {Map.<string, SocketIoConnection>}
-         */
-        this.socketUuidToSocketConnectionMap = new Map();
-
         this.initialize();
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Public Class Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {string} socketUuid
-     * @return {SocketIoConnection}
-     */
-    getSocketConnection:function(socketUuid) {
-        return this.socketUuidToSocketConnectionMap.get(socketUuid);
     },
 
 
@@ -111,26 +90,10 @@ var SocketIoManager = Class.extend(EventDispatcher, {
         var _this = this;
         this.ioManager.on("connection", function(socket) {
             var socketConnection = new SocketIoConnection(socket, true);
-            socketConnection.on(SocketIoConnection.EventTypes.DISCONNECT, _this.hearSocketDisconnect, _this);
-            _this.socketUuidToSocketConnectionMap.put(socketConnection.getUuid(), socketConnection);
             _this.dispatchEvent(new Event(SocketIoManager.EventTypes.CONNECTION, {
                 socketConnection: socketConnection
             }));
         });
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Event Listeners
-    //-------------------------------------------------------------------------------
-
-    /**
-     *
-     * @param event
-     */
-    hearSocketDisconnect: function(event) {
-        var socketConnection = event.getTarget();
-        this.socketUuidToSocketConnectionMap.remove(socketConnection.getUuid());
     }
 });
 

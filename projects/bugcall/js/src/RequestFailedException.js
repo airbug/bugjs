@@ -35,9 +35,35 @@ var RequestFailedException = Class.extend(Exception, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(data) {
+    /**
+     * @param {CallRequest} callRequest
+     */
+    _constructor: function(callRequest) {
 
-        this._super("requestFailed", data);
+        this._super("requestFailed", {});
+
+
+        //-------------------------------------------------------------------------------
+        // Properties
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {CallRequest}
+         */
+        this.callRequest = callRequest;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {CallRequest}
+     */
+    getCallRequest: function() {
+        return this.callRequest;
     }
 });
 

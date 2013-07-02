@@ -14,7 +14,6 @@
 //@Require('bugcall.CallConnection')
 //@Require('bugcall.CallManager')
 //@Require('bugcall.CallManagerEvent')
-//@Require('bugcall.CallRequester')
 //@Require('bugcall.CallResponder')
 //@Require('bugcall.CallResponseHandler')
 //@Require('bugcall.CallServer')
@@ -39,7 +38,6 @@ var BugCallServerEvent  = bugpack.require('bugcall.BugCallServerEvent');
 var CallConnection      = bugpack.require('bugcall.CallConnection');
 var CallManager         = bugpack.require('bugcall.CallManager');
 var CallManagerEvent    = bugpack.require('bugcall.CallManagerEvent');
-var CallRequester       = bugpack.require('bugcall.CallRequester');
 var CallResponder       = bugpack.require('bugcall.CallResponder');
 var CallResponseHandler = bugpack.require('bugcall.CallResponseHandler');
 var CallServer          = bugpack.require('bugcall.CallServer');
@@ -71,25 +69,25 @@ var BugCallServer = Class.extend(EventDispatcher, {
          * @private
          * @type {Map.<CallConnection, CallManager>}
          */
-        this.callConnectionToCallManagerMap     = new Map();
+        this.callConnectionToCallManagerMap = new Map();
 
         /**
          * @private
-         * @type {Map.<CallConnection, CallRequester>}
+         * @type {Map.<string, CallManager>}
          */
-        this.callConnectionToCallRequesterMap   = new Map();
+        this.callUuidToCallManagerMap       = new Map();
 
         /**
          * @private
          * @type {CallServer}
          */
-        this.callServer                         = callServer;
+        this.callServer                     = callServer;
 
         /**
          * @private
          * @type {boolean}
          */
-        this.initialized                        = false;
+        this.initialized                    = false;
 
         this.initialize();
     },
@@ -100,19 +98,11 @@ var BugCallServer = Class.extend(EventDispatcher, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {CallConnection} callConnection
+     * @param {string} callUuid
      * @return {CallManager}
      */
-    getCallManagerForConnection: function(callConnection) {
-        return this.callConnectionToCallManagerMap.get(callConnection);
-    },
-
-    /**
-     * @param {CallConnection} callConnection
-     * @return {CallRequester}
-     */
-    getCallRequesterForConnection: function(callConnection) {
-        return this.callConnectionToCallRequesterMap.get(callConnection);
+    getCallManagerForCallUuid: function(callUuid) {
+        return this.callUuidToCallManagerMap.get(callUuid);
     },
 
     /**
@@ -142,16 +132,15 @@ var BugCallServer = Class.extend(EventDispatcher, {
     },
 
     /**
-     * @param {CallConnection} callConnection
+     * @param {CallManager} callManager
      * @param {string} requestType
      * @param {Object} requestData
      * @param {function(Exception, CallResponse)} requestCallback
      */
-    request: function(callConnection, requestType, requestData, requestCallback) {
-        var callRequester       = this.callConnectionToCallRequesterMap.get(callConnection);
-        var callRequest         = callRequester.request(requestType, requestData);
+    request: function(callManager, requestType, requestData, requestCallback) {
+        var callRequest         = callManager.request(requestType, requestData);
         var callResponseHandler = new CallResponseHandler(requestCallback);
-        callRequester.sendRequest(callRequest, callResponseHandler);
+        callManager.sendRequest(callRequest, callResponseHandler);
     },
 
 
@@ -162,11 +151,13 @@ var BugCallServer = Class.extend(EventDispatcher, {
     /**
      * @private
      * @param {CallConnection} callConnection
+     * @param {string} callUuid
      * @return {CallManager}
      */
-    createCallManager: function(callConnection) {
-        var callManager = new CallManager(callConnection);
+    createCallManager: function(callConnection, callUuid) {
+        var callManager = new CallManager(callConnection, callUuid);
         this.callConnectionToCallManagerMap.put(callConnection, callManager);
+        this.callUuidToCallManagerMap.put(callUuid, callManager);
         callManager.addEventListener(CallManagerEvent.INCOMING_REQUEST, this.hearCallManagerIncomingRequest, this);
         return callManager;
     },
@@ -174,53 +165,32 @@ var BugCallServer = Class.extend(EventDispatcher, {
     /**
      * @private
      * @param {CallManager} callManager
-     * @return {CallRequester}
      */
-    createCallRequester: function(callManager) {
-        var callRequester = new CallRequester(callManager);
-        this.callConnectionToCallRequesterMap.put(callManager.getConnection(), callRequester);
-        return callRequester;
-    },
-
-    /**
-     * @private
-     * @param {CallConnection} callConnection
-     */
-    removeCallManager: function(callConnection) {
-        var callManager = this.callConnectionToCallManagerMap.get(callConnection);
-        this.callConnectionToCallManagerMap.remove(callConnection);
+    removeCallManager: function(callManager) {
+        this.callConnectionToCallManagerMap.remove(callManager.getConnection());
+        this.callUuidToCallManagerMap.remove(callManager.getCallUuid());
         callManager.removeEventListener(CallManagerEvent.INCOMING_REQUEST, this.hearCallManagerIncomingRequest, this);
     },
 
     /**
      * @private
-     * @param {CallConnection} callConnection
-     */
-    removeCallRequester: function(callConnection) {
-        this.callConnectionToCallRequesterMap.remove(callConnection);
-    },
-
-    /**
-     * @private
      * @param {CallManager} callManager
+     * @param {boolean} failed
      */
-    dispatchCallClosed: function(callManager) {
+    dispatchCallClosed: function(callManager, failed) {
         this.dispatchEvent(new BugCallServerEvent(BugCallServerEvent.CALL_CLOSED, {
-            callManager: callManager
+            callManager: callManager,
+            failed: failed
         }));
     },
 
     /**
      * @private
-     * @param {CallConnection} callConnection
      * @param {CallManager} callManager
-     * @param {CallRequester} callRequester
      */
-    dispatchConnectionEstablished: function(callConnection, callManager, callRequester) {
-        this.dispatchEvent(new BugCallServerEvent(BugCallServerEvent.CONNECTION_ESTABLISHED, {
-            callConnection: callConnection,
-            callManager: callManager,
-            callRequester: callRequester
+    dispatchCallOpened: function(callManager) {
+        this.dispatchEvent(new BugCallServerEvent(BugCallServerEvent.CALL_OPENED, {
+            callManager: callManager
         }));
     },
 
@@ -240,12 +210,10 @@ var BugCallServer = Class.extend(EventDispatcher, {
      * @param {CallConnection} callConnection
      */
     processConnectionClosed: function(callConnection) {
-
-        //TODO BRN: For now we assume that there is no way to reconnect for this Call
-
-        this.removeCallManager(callConnection);
-        this.removeCallRequester(callConnection);
-        this.dispatchCallClosed(callConnection);
+        var callManager = this.callConnectionToCallManagerMap.get(callConnection);
+        this.removeCallManager(callManager);
+        callManager.closeCall();
+        this.dispatchCallClosed(callManager, false);
     },
 
     /**
@@ -253,9 +221,31 @@ var BugCallServer = Class.extend(EventDispatcher, {
      * @param {CallConnection} callConnection
      */
     processConnectionEstablished: function(callConnection) {
-        var callManager     = this.createCallManager(callConnection);
-        var callRequester   = this.createCallRequester(callManager);
-        this.dispatchConnectionEstablished(callConnection, callManager, callRequester);
+        //TODO BRN: This is where we will use the callConnection's handshake data to look up a previous CallManager
+        // that belonged to the same connection id. If it doesn't exist, then we create a new CallManager
+
+        var callUuid = callConnection.getHandshake().query.callUuid;
+        var callManager = this.getCallManagerForCallUuid(callUuid);
+        if (!callManager) {
+            callManager = this.createCallManager(callConnection, callUuid);
+            this.dispatchCallOpened(callManager);
+        } else {
+            callManager.updateConnection(callConnection);
+        }
+    },
+
+    /**
+     * @private
+     * @param {CallConnection} callConnection
+     */
+    processConnectionFailed: function(callConnection) {
+
+        //TODO BRN: For now we assume that there is no way to reconnect for this Call
+
+        var callManager = this.callConnectionToCallManagerMap.get(callConnection);
+        this.removeCallManager(callManager);
+        callManager.failCall();
+        this.dispatchCallClosed(callManager, true);
     },
 
     /**
@@ -282,7 +272,11 @@ var BugCallServer = Class.extend(EventDispatcher, {
      */
     hearServerConnectionClosed: function(event) {
         var callConnection = event.getData().callConnection;
-        this.processConnectionClosed(callConnection);
+        if (event.getData().failed) {
+            this.processConnectionFailed(callConnection);
+        } else {
+            this.processConnectionClosed(callConnection);
+        }
     },
 
     /**

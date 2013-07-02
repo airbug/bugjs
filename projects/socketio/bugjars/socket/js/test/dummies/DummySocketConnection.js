@@ -10,7 +10,6 @@
 //@Require('EventReceiver')
 //@Require('Map')
 //@Require('NodeJsEvent')
-//@Require('UuidGenerator')
 //@Require('socketio:socket.SocketIoEmit')
 
 
@@ -29,7 +28,6 @@ var Class           = bugpack.require('Class');
 var EventReceiver   = bugpack.require('EventReceiver');
 var Map             = bugpack.require('Map');
 var NodeJsEvent     = bugpack.require('NodeJsEvent');
-var UuidGenerator   = bugpack.require('UuidGenerator');
 var SocketIoEmit    = bugpack.require('socketio:socket.SocketIoEmit');
 
 
@@ -70,12 +68,6 @@ var DummySocketConnection = Class.extend(EventReceiver, {
          */
         this.socket                 = dummySocket;
 
-        /**
-         * @private
-         * @type {string}
-         */
-        this.uuid                   = UuidGenerator.generateUuid();
-
         this.initialize();
     },
 
@@ -89,14 +81,6 @@ var DummySocketConnection = Class.extend(EventReceiver, {
      */
     getSocket: function() {
         return this.socket;
-    },
-
-    /**
-     * @private
-     * @return {string}
-     */
-    getUuid: function() {
-        return this.uuid;
     },
 
     /**

@@ -2,13 +2,12 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugcall')
+//@Package('bugatomic')
 
-//@Export('CallResponse')
+//@Export('Operation')
 
 //@Require('Class')
-//@Require('Obj')
-//@Require('UuidGenerator')
+//@Require('EventDispatcher')
 
 
 //-------------------------------------------------------------------------------
@@ -23,27 +22,27 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
-var Obj             = bugpack.require('Obj');
-var UuidGenerator   = bugpack.require('UuidGenerator');
+var EventDispatcher = bugpack.require('EventDispatcher');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-/**
- * @constructor
- * @extends {Obj}
- */
-var CallResponse = Class.extend(Obj, {
+var Operation = Class.extend(EventDispatcher, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(type, data, requestUuid) {
+    /**
+     * @param {boolean} locking
+     * @param {function(Operation)} operationMethod
+     */
+    _constructor: function(locking, operationMethod) {
 
         this._super();
+
 
         //-------------------------------------------------------------------------------
         // Declare Variables
@@ -51,27 +50,15 @@ var CallResponse = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {*}
+         * @type {boolean}
          */
-        this.data = data;
+        this.locking = locking;
 
         /**
          * @private
-         * @type {string}
+         * @type {function(function(Error))}
          */
-        this.requestUuid = requestUuid;
-
-        /**
-         * @private
-         * @type {string}
-         */
-        this.type = type;
-
-        /**
-         * @private
-         * @type {string}
-         */
-        this.uuid = UuidGenerator.generateUuid();
+        this.operationMethod = operationMethod;
     },
 
 
@@ -80,54 +67,48 @@ var CallResponse = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {*}
+     * @return {boolean}
      */
-    getData: function() {
-        return this.data;
-    },
-
-    /**
-     * @return {string}
-     */
-    getRequestUuid: function() {
-        return this.requestUuid
-    },
-
-    /**
-     * @return {string}
-     */
-    getType: function() {
-        return this.type;
-    },
-
-    /**
-     * @return {string}
-     */
-    getUuid: function() {
-        return this.uuid;
+    isLocking: function() {
+        return this.locking;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Instance Methods
+    // Class Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {Object}
+     *
      */
-    toObject: function() {
-        return {
-            requestUuid: this.getRequestUuid(),
-            type: this.getType(),
-            data: this.getData(),
-            uuid: this.getUuid()
-        }
+    complete: function() {
+        this.dispatchEvent(new Event(Operation.COMPLETE));
+    },
+
+    /**
+     *
+     */
+    run: function() {
+        this.operationMethod(this);
     }
 });
 
 
+
 //-------------------------------------------------------------------------------
-// Export
+// Static Properties
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugcall.CallResponse', CallResponse);
+/**
+ * @enum {string}
+ */
+Operation.EventTypes = {
+    COMPLETE: "Operation:Complete"
+};
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export('bugatomic.Operation', Operation);

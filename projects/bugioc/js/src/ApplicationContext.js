@@ -4,13 +4,12 @@
 
 //@Package('bugioc')
 
-//@Export('BugIoc')
+//@Export('ApplicationContext')
 
 //@Require('Class')
 //@Require('DependencyGraph')
 //@Require('Map')
 //@Require('Obj')
-//@Require('Proxy')
 //@Require('Set')
 //@Require('bugflow.BugFlow')
 //@Require('bugioc.IConfiguration')
@@ -34,7 +33,6 @@ var Class           = bugpack.require('Class');
 var DependencyGraph = bugpack.require('DependencyGraph');
 var Map             = bugpack.require('Map');
 var Obj             = bugpack.require('Obj');
-var Proxy           = bugpack.require('Proxy');
 var Set             = bugpack.require('Set');
 var BugFlow         = bugpack.require('bugflow.BugFlow');
 var IConfiguration  = bugpack.require('bugioc.IConfiguration');
@@ -54,7 +52,7 @@ var $forEachParallel      = BugFlow.$forEachParallel;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var BugIoc = Class.extend(Obj, {
+var ApplicationContext = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -142,12 +140,18 @@ var BugIoc = Class.extend(Obj, {
     /**
      * @param {function(Error)} callback
      */
-    process: function(callback) {
+    initialize: function(callback) {
+        this.initializeConfigurations(callback);
+    },
+
+    /**
+     *
+     */
+    process: function() {
         this.buildModuleNameToIocModuleMap();
         this.buildDependencyGraph();
         this.processIocConfigurations();
         this.processIocModules();
-        this.initializeConfigurations(callback);
     },
 
     /**
@@ -296,30 +300,7 @@ var BugIoc = Class.extend(Obj, {
 
 
 //-------------------------------------------------------------------------------
-// Private Static Variables
-//-------------------------------------------------------------------------------
-
-/**
- * @private
- * @type {BugIoc}
- */
-BugIoc.instance = null;
-
-
-//-------------------------------------------------------------------------------
-// Bootstrap
-//-------------------------------------------------------------------------------
-
-BugIoc.instance = new BugIoc();
-Proxy.proxy(BugIoc, BugIoc.instance, [
-    "generateModuleByName",
-    "process",
-    "registerIocConfiguration"
-]);
-
-
-//-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugioc.BugIoc', BugIoc);
+bugpack.export('bugioc.ApplicationContext', ApplicationContext);

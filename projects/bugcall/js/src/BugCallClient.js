@@ -8,6 +8,8 @@
 
 //@Require('Class')
 //@Require('EventDispatcher')
+//@Require('TypeUtil')
+//@Require('UuidGenerator')
 //@Require('bugcall.BugCallRequestEvent')
 //@Require('bugcall.CallClientEvent')
 //@Require('bugcall.CallManager')
@@ -29,6 +31,8 @@ var bugpack = require('bugpack').context();
 
 var Class                   = bugpack.require('Class');
 var EventDispatcher         = bugpack.require('EventDispatcher');
+var TypeUtil                = bugpack.require('TypeUtil');
+var UuidGenerator           = bugpack.require('UuidGenerator');
 var BugCallRequestEvent     = bugpack.require('bugcall.BugCallRequestEvent');
 var CallClientEvent         = bugpack.require('bugcall.CallClientEvent');
 var CallManager             = bugpack.require('bugcall.CallManager');
@@ -47,7 +51,7 @@ var BugCallClient = Class.extend(EventDispatcher, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(callClient, callManager, callRequester) {
+    _constructor: function(callClient, callManager) {
 
         this._super();
 
@@ -59,25 +63,21 @@ var BugCallClient = Class.extend(EventDispatcher, {
          * @private
          * @type {CallClient}
          */
-        this.callClient = callClient;
+        this.callClient     = callClient;
 
         /**
          * @private
          * @type {CallManager}
          */
-        this.callManager = callManager;
+        this.callManager    = callManager;
 
         /**
          * @private
-         * @type {CallRequester}
+         * @type {string}
          */
-        this.callRequester = callRequester;
+        this.callUuid       = UuidGenerator.generateUuid();
 
-        /**
-         * @private
-         * @type {boolean}
-         */
-        this.initialized = false;
+        this.initialize();
     },
 
 
@@ -99,20 +99,6 @@ var BugCallClient = Class.extend(EventDispatcher, {
         return this.callManager;
     },
 
-    /**
-     * @return {CallRequester}
-     */
-    getCallRequester: function() {
-        return this.callRequester;
-    },
-
-    /**
-     * @return {boolean}
-     */
-    isInitialized: function() {
-        return this.initialized;
-    },
-
 
     //-------------------------------------------------------------------------------
     // Public Instance Methods
@@ -131,13 +117,14 @@ var BugCallClient = Class.extend(EventDispatcher, {
     },
 
     /**
-     *
+     * @param {*} data
      */
-    openConnection: function() {
-
-        //TODO BRN: Add some state logic here.
-
-        this.callClient.openConnection();
+    openConnection: function(data) {
+        if (!this.callClient.isConnected() && !this.callClient.isConnecting()) {
+            this.doOpenConnection(data);
+        } else {
+            throw new Error("BugCallClient is already connected");
+        }
     },
 
     /**
@@ -146,9 +133,9 @@ var BugCallClient = Class.extend(EventDispatcher, {
      * @param {function(Exception, CallResponse)} requestCallback
      */
     request: function(requestType, requestData, requestCallback) {
-        var callRequest = this.callRequester.request(requestType, requestData);
+        var callRequest = this.callManager.request(requestType, requestData);
         var callResponseHandler = new CallResponseHandler(requestCallback);
-        this.callRequester.sendRequest(callRequest, callResponseHandler);
+        this.callManager.sendRequest(callRequest, callResponseHandler);
     },
 
 
@@ -157,25 +144,27 @@ var BugCallClient = Class.extend(EventDispatcher, {
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @private
+     * @param {*} data
+     */
+    doOpenConnection: function(data) {
+        var querystring = "";
+        querystring += "callUuid=" + encodeURIComponent(this.callUuid);
+        if (!TypeUtil.isUndefined(data) && !TypeUtil.isNull(data)) {
+            querystring += "&data=" + encodeURIComponent(data);
+        }
+        this.callClient.openConnection(querystring);
+    },
+
+    /**
+     * @private
      */
     initialize: function() {
-        if (!this.isInitialized()) {
-            this.initialized = true;
-            this.callManager.addEventListener(CallManagerEvent.INCOMING_REQUEST, this.hearCallManagerIncomingRequest, this);
-            this.callClient.addEventListener(CallClientEvent.CONNECTION_CLOSED, this.hearCallClientConnectionClosed, this);
-            this.callClient.addEventListener(CallClientEvent.CONNECTION_OPENED, this.hearCallClientConnectionOpened, this);
-            this.callClient.addEventListener(CallClientEvent.RETRY_FAILED, this.hearCallClientRetryFailed, this);
-
-
-            //TODO BRN: For now we assume we want to auto connect
-
-            if (this.callClient.isConnected()) {
-                this.callManager.updateConnection(this.callClient.getConnection());
-            } else {
-                this.callClient.openConnection();
-            }
-        }
+        this.callManager.setCallUuid(this.callUuid);
+        this.callManager.addEventListener(CallManagerEvent.INCOMING_REQUEST, this.hearCallManagerIncomingRequest, this);
+        this.callClient.addEventListener(CallClientEvent.CONNECTION_CLOSED, this.hearCallClientConnectionClosed, this);
+        this.callClient.addEventListener(CallClientEvent.CONNECTION_OPENED, this.hearCallClientConnectionOpened, this);
+        this.callClient.addEventListener(CallClientEvent.RETRY_FAILED, this.hearCallClientRetryFailed, this);
     },
 
     /**
@@ -265,8 +254,6 @@ var BugCallClient = Class.extend(EventDispatcher, {
         this.processIncomingRequest(incomingRequest);
     }
 });
-
-
 
 
 //-------------------------------------------------------------------------------

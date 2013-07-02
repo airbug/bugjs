@@ -9,7 +9,6 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('annotate.Annotate')
-//@Require('bugioc.BugIoc')
 
 
 //-------------------------------------------------------------------------------
@@ -26,7 +25,6 @@ var bugpack = require('bugpack').context();
 var Class =     bugpack.require('Class');
 var Obj =       bugpack.require('Obj');
 var Annotate =  bugpack.require('annotate.Annotate');
-var BugIoc =    bugpack.require('bugioc.BugIoc');
 
 
 //-------------------------------------------------------------------------------
@@ -39,7 +37,10 @@ var AutowiredScan = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    /**
+     * @param {ApplicationContext} applicationContext
+     */
+    _constructor: function(applicationContext) {
 
         this._super();
 
@@ -47,6 +48,12 @@ var AutowiredScan = Class.extend(Obj, {
         //-------------------------------------------------------------------------------
         // Declare Variables
         //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {ApplicationContext}
+         */
+        this.applicationContext = applicationContext;
 
         /**
          * @private
@@ -89,6 +96,7 @@ var AutowiredScan = Class.extend(Obj, {
      * @param {Annotation} autowiredAnnotation
      */
     processAutowiredAnnotation: function(autowiredAnnotation) {
+        var _scan = this;
         var autowiredClass = autowiredAnnotation.getReference();
         var propertyAnnotationArray = autowiredAnnotation.getProperties();
         var currentConstructor = autowiredClass.prototype._constructor;
@@ -96,7 +104,7 @@ var AutowiredScan = Class.extend(Obj, {
             var _this = this;
             currentConstructor.apply(this, arguments);
             propertyAnnotationArray.forEach(function(propertyAnnotation) {
-                _this[propertyAnnotation.getName()] = BugIoc.generateModuleByName(propertyAnnotation.getRef());
+                _this[propertyAnnotation.getName()] = _scan.applicationContext.generateModuleByName(propertyAnnotation.getRef());
             });
         };
     }

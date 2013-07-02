@@ -10,6 +10,7 @@
 //@Require('EventDispatcher')
 //@Require('Proxy')
 //@Require('Queue')
+//@Require('TypeUtil')
 //@Require('socketio:socket.SocketIoEmit')
 
 
@@ -28,6 +29,7 @@ var Class           = bugpack.require('Class');
 var EventDispatcher = bugpack.require('EventDispatcher');
 var Proxy           = bugpack.require('Proxy');
 var Queue           = bugpack.require('Queue');
+var TypeUtil        = bugpack.require('TypeUtil');
 var SocketIoEmit    = bugpack.require('socketio:socket.SocketIoEmit');
 
 
@@ -113,14 +115,14 @@ var SocketIoClient = Class.extend(EventDispatcher, {
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @param {string} querystring
      */
-    connect: function() {
+    connect: function(querystring) {
         if (!this.isConnected() && !this.isConnecting()) {
             this.connecting = true;
             console.log('SocketIoClient is attempting to connect...');
             if (!this.socketConnection) {
-                this.createSocket();
+                this.createSocket(querystring);
             } else {
                 throw new Error("SocketIoClient already has a connection. Something went wrong!");
             }
@@ -134,8 +136,9 @@ var SocketIoClient = Class.extend(EventDispatcher, {
 
     /**
      * @private
+     * @param {string} querystring
      */
-    createSocket: function() {
+    createSocket: function(querystring) {
         var options = {
             port: this.config.getPort(),
             resource: this.config.getResource(),
@@ -155,7 +158,11 @@ var SocketIoClient = Class.extend(EventDispatcher, {
             //'manualFlush': false,
             'force new connection': true
         };
-        this.socketConnection = this.socketFactory.createSocketConnection(this.config.getHost(), options);
+        var host = this.config.getHost();
+        if (TypeUtil.isString(querystring)) {
+            host += "?" + querystring
+        }
+        this.socketConnection = this.socketFactory.createSocketConnection(host, options);
         this.socketConnection.addEventListener('connect', this.hearSocketConnect, this);
         this.socketConnection.addEventListener('connect_error', this.hearSocketConnectError, this);
         this.socketConnection.addEventListener('connecting', this.hearSocketConnecting, this);

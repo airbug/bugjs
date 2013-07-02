@@ -40,13 +40,13 @@ var BugCallServerEvent = Class.extend(Event, {});
  * @static
  * @const {string}
  */
-BugCallServerEvent.CALL_CLOSED        = "BugCallServerEvent:CallClosed";
+BugCallServerEvent.CALL_CLOSED  = "BugCallServerEvent:CallClosed";
 
 /**
  * @static
  * @const {string}
  */
-BugCallServerEvent.CONNECTION_ESTABLISHED   = "BugCallServerEvent:ConnectionEstablished";
+BugCallServerEvent.CALL_OPENED  = "BugCallServerEvent:CallOpened";
 
 
 //-------------------------------------------------------------------------------

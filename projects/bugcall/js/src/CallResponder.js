@@ -76,10 +76,11 @@ var CallResponder = Class.extend(Obj, {
 
     /**
      * @param {CallResponse} callResponse
+     * @param {function(Error)} callback
      */
-    sendResponse: function(callResponse) {
+    sendResponse: function(callResponse, callback) {
         var outgoingResponse = new OutgoingResponse(callResponse);
-        this.callManager.sendResponse(outgoingResponse);
+        this.callManager.sendResponse(outgoingResponse, callback);
     }
 });
 

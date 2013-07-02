@@ -90,12 +90,6 @@ var CallConnection = Class.extend(EventDispatcher, {
          */
         this.socketConnection   = socketConnection;
 
-        /**
-         * @private
-         * @type {string}
-         */
-        this.uuid               = UuidGenerator.generateUuid();
-
         this.initialize();
     },
 
@@ -116,20 +110,6 @@ var CallConnection = Class.extend(EventDispatcher, {
      */
     getSocketConnection: function() {
         return this.socketConnection;
-    },
-
-    /**
-     * @return {string}
-     */
-    getSocketConnectionUuid: function() {
-        return this.socketConnection.getUuid();
-    },
-
-    /**
-     * @return {string}
-     */
-    getUuid: function(){
-        return this.uuid;
     },
 
     /**
@@ -177,18 +157,20 @@ var CallConnection = Class.extend(EventDispatcher, {
 
     /**
      * @param {CallRequest} callRequest
+     * @param {function(data)} callback
      */
-    sendRequest: function(callRequest) {
+    sendRequest: function(callRequest, callback) {
         console.log("CallConnection sending request");
-        this.socketConnection.emit("callRequest", callRequest.toObject());
+        this.socketConnection.emit("callRequest", callRequest.toObject(), callback);
     },
 
     /**
      * @param {CallResponse} callResponse
+     * @param {function(data)} callback
      */
-    sendResponse: function(callResponse) {
+    sendResponse: function(callResponse, callback) {
         console.log("CallConnection sending response");
-        this.socketConnection.emit("callResponse", callResponse.toObject());
+        this.socketConnection.emit("callResponse", callResponse.toObject(), callback);
     },
 
 

@@ -1,13 +1,18 @@
+/**
+ * Map info
+ * 1) Supports null values but not undefined values. Undefined values are used to indicate something doesn't exist.
+ * 2) Any value can be used as a key including null but not undefined.
+ */
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('socketio:socket')
-
-//@Export('SocketIoEmit')
+//@Export('MultiSetMap')
 
 //@Require('Class')
-//@Require('Obj')
+//@Require('MultiMap')
+//@Require('Set')
 
 
 //-------------------------------------------------------------------------------
@@ -21,72 +26,51 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class   = bugpack.require('Class');
-var Obj     = bugpack.require('Obj');
+var Class       = bugpack.require('Class');
+var MultiMap    = bugpack.require('MultiMap');
+var Set         = bugpack.require('Set');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SocketIoEmit = Class.extend(Obj, {
+var MultiSetMap = Class.extend(MultiMap, {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Object Implementation
     //-------------------------------------------------------------------------------
 
-    _constructor: function(name, data, callback) {
-
-        this._super();
-
-
-        //-------------------------------------------------------------------------------
-        // Declare Variables
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {function(?)}
-         */
-        this.callback = callback;
-
-        /**
-         * @private
-         * @type {Object}
-         */
-        this.data = data;
-
-        /**
-         * @private
-         * @type {string}
-         */
-        this.name = name;
+    /**
+     * @return {*}
+     */
+    clone: function() {
+        var cloneMultiSetMap = new MultiSetMap();
+        cloneMultiSetMap.putAll(this);
+        return cloneMultiSetMap;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Class methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {function(?)}
+     * @param {*} key
+     * @param {*} value
+     * @return {*}
      */
-    getCallback: function() {
-        return this.callback;
-    },
-
-    /**
-     * @return {Object}
-     */
-    getData: function() {
-        return this.data;
-    },
-
-    /**
-     * @return {string}
-     */
-    getName: function() {
-        return this.name;
+    put: function(key, value) {
+        var valueSet = this.hashTable.get(key);
+        if (!valueSet) {
+            valueSet = new Set();
+            this.hashTable.put(key, valueSet);
+        }
+        var result = valueSet.add(value);
+        if (result) {
+            return value;
+        }
+        return undefined;
     }
 });
 
@@ -95,4 +79,4 @@ var SocketIoEmit = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export("socketio:socket.SocketIoEmit", SocketIoEmit);
+bugpack.export('MultiSetMap', MultiSetMap);

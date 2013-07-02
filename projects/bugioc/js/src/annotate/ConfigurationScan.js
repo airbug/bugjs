@@ -11,7 +11,6 @@
 //@Require('Obj')
 //@Require('annotate.Annotate')
 //@Require('bugioc.AutowiredScan')
-//@Require('bugioc.BugIoc')
 //@Require('bugioc.IocArg')
 //@Require('bugioc.IocConfiguration')
 //@Require('bugioc.IocModule')
@@ -34,7 +33,6 @@ var Map =               bugpack.require('Map');
 var Obj =               bugpack.require('Obj');
 var Annotate =          bugpack.require('annotate.Annotate');
 var AutowiredScan =     bugpack.require('bugioc.AutowiredScan');
-var BugIoc =            bugpack.require('bugioc.BugIoc');
 var IocArg =            bugpack.require('bugioc.IocArg');
 var IocConfiguration =  bugpack.require('bugioc.IocConfiguration');
 var IocModule =         bugpack.require('bugioc.IocModule');
@@ -51,7 +49,10 @@ var ConfigurationScan = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    /**
+     * @param {ApplicationContext} applicationContext
+     */
+    _constructor: function(applicationContext) {
 
         this._super();
 
@@ -60,12 +61,17 @@ var ConfigurationScan = Class.extend(Obj, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
+        /**
+         * @private
+         * @type {ApplicationContext}
+         */
+        this.applicationContext = applicationContext;
 
         /**
          * @private
          * @type {AutowiredScan}
          */
-        this.autowiredScan = new AutowiredScan();
+        this.autowiredScan = new AutowiredScan(applicationContext);
 
         /**
          * @private
@@ -80,9 +86,9 @@ var ConfigurationScan = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {function(Error)} callback
+     *
      */
-    scan: function(callback) {
+    scan: function() {
         var _this = this;
         this.autowiredScan.scan();
         var configurationAnnotations = Annotate.getAnnotationsByType("Configuration");
@@ -92,7 +98,6 @@ var ConfigurationScan = Class.extend(Obj, {
                 var moduleAnnotationArray = annotation.getModules();
                 _this.createIocConfiguration(configurationClass, moduleAnnotationArray);
             });
-            BugIoc.process(callback);
         }
     },
 
@@ -124,7 +129,7 @@ var ConfigurationScan = Class.extend(Obj, {
                 iocConfiguration.addIocModule(iocModule)
             });
             this.configurationClassToIocConfigurationMap.put(configurationClass, iocConfiguration);
-            BugIoc.registerIocConfiguration(iocConfiguration);
+            this.applicationContext.registerIocConfiguration(iocConfiguration);
         }
     },
 

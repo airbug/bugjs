@@ -40,25 +40,19 @@ var CallManagerEvent = Class.extend(Event, {});
  * @static
  * @const {string}
  */
-CallManagerEvent.CALL_CLOSED = "CallManagerEvent:CallClosed";
-
-/**
- * @static
- * @const {string}
- */
 CallManagerEvent.INCOMING_REQUEST = "CallManagerEvent:IncomingRequest";
 
 /**
  * @static
  * @const {string}
  */
-CallManagerEvent.INCOMING_RESPONSE = "CallManagerEvent:IncomingResponse";
+CallManagerEvent.REQUEST_FAILED = "CallManagerEvent:RequestFailed";
 
 /**
  * @static
- * @const {string}
+ * @type {string}
  */
-CallManagerEvent.REQUEST_FAILED = "CallManagerEvent:RequestFailed";
+CallManagerEvent.RESPONSE_FAILED = "CallManagerEvent:ResponseFailed";
 
 
 //-------------------------------------------------------------------------------

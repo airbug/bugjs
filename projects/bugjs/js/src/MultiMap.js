@@ -8,12 +8,11 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('Map')
+//@Export('MultiMap')
 
 //@Require('Class')
 //@Require('Collection')
-//@Require('HashTable')
-//@Require('Obj')
+//@Require('Map')
 
 
 //-------------------------------------------------------------------------------
@@ -27,38 +26,16 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =         bugpack.require('Class');
-var Collection =    bugpack.require('Collection');
-var HashTable =     bugpack.require('HashTable');
-var Obj =           bugpack.require('Obj');
+var Class       = bugpack.require('Class');
+var Collection  = bugpack.require('Collection');
+var Map         = bugpack.require('Map');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Map = Class.extend(Obj, {
-
-    //-------------------------------------------------------------------------------
-    // Constructor
-    //-------------------------------------------------------------------------------
-
-    _constructor: function() {
-
-        this._super();
-
-
-        //-------------------------------------------------------------------------------
-        // Declare Variables
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {HashTable}
-         */
-        this.hashTable = new HashTable();
-    },
-
+var MultiMap = Class.extend(Map, {
 
     //-------------------------------------------------------------------------------
     // Getters and Setters
@@ -67,8 +44,8 @@ var Map = Class.extend(Obj, {
     /**
      * @return {number}
      */
-    getCount: function() {
-        return this.hashTable.getCount();
+    getKeyCount: function() {
+        return this.getCount();
     },
 
 
@@ -77,12 +54,12 @@ var Map = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {*}
+     * @return {MultiMap}
      */
     clone: function() {
-        var cloneMap = new Map();
-        cloneMap.putAll(this);
-        return cloneMap;
+        var cloneMultiMap = new MultiMap();
+        cloneMultiMap.putAll(this);
+        return cloneMultiMap;
     },
 
 
@@ -91,38 +68,32 @@ var Map = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     *
-     */
-    clear: function() {
-        this.hashTable = new HashTable();
-    },
-
-    /**
-     * @param {*} key
-     * @return {boolean}
-     */
-    containsKey: function(key) {
-        return this.hashTable.containsKey(key);
-    },
-
-    /**
      * @param {*} value
      * @return {boolean}
      */
     containsValue: function(value) {
-        return this.hashTable.containsValue(value);
+        var valueArray = this.hashTable.getValueArray();
+        for (var i = 0, size = valueArray.length; i < size; i++) {
+            var valueCollection = valueArray[i];
+            if (valueCollection.contains(value)) {
+                return true;
+            }
+        }
+        return false;
     },
 
     /**
      * @param {function(*)} func
      */
-    forEach: function(func) {
-        this.hashTable.forEach(func);
+    forEachValue: function(func) {
+        this.hashTable.forEach(function(valueCollection) {
+            valueCollection.forEach(func);
+        });
     },
 
     /**
      * @param {*} key
-     * @return {*} Returns undefined if no value is found.
+     * @return {(Set.<*>|undefined)}
      */
     get: function(key) {
         return this.hashTable.get(key);
@@ -150,7 +121,11 @@ var Map = Class.extend(Obj, {
      * @return {Array<*>}
      */
     getValueArray: function() {
-        return this.hashTable.getValueArray();
+        var valueArray = [];
+        this.hashTable.forEach(function(valueSet) {
+            valueArray = valueArray.concat(valueSet.getValueArray());
+        });
+        return valueArray;
     },
 
     /**
@@ -158,17 +133,10 @@ var Map = Class.extend(Obj, {
      */
     getValueCollection: function() {
         var valueCollection = new Collection();
-        this.hashTable.forEach(function(value) {
-            valueCollection.add(value);
+        this.hashTable.forEach(function(valueSet) {
+            valueCollection.addAll(valueSet);
         });
         return valueCollection;
-    },
-
-    /**
-     * @return {boolean}
-     */
-    isEmpty: function() {
-        return this.hashTable.isEmpty();
     },
 
     /**
@@ -177,11 +145,17 @@ var Map = Class.extend(Obj, {
      * @return {*}
      */
     put: function(key, value) {
-        return this.hashTable.put(key, value);
+        var valueCollection = this.hashTable.get(key);
+        if (!valueCollection) {
+            valueCollection = new Collection();
+            this.hashTable.put(key, valueCollection);
+        }
+        valueCollection.add(value);
+        return value;
     },
 
     /**
-     * @param {Map} map
+     * @param {(Map|MultiMap)} map
      */
     putAll: function(map) {
         if (Class.doesExtend(map, Map)) {
@@ -190,15 +164,42 @@ var Map = Class.extend(Obj, {
                 var value = map.get(key);
                 this.put(key, value);
             });
+        } else if (Class.doesExtend(map, MultiMap)) {
+            var keys = map.getKeyArray();
+            keys.forEach(function(key) {
+                var valueCollection = map.get(key);
+                valueCollection.forEach(function(value) {
+                    this.put(key, value);
+                });
+            });
         }
     },
 
     /**
+     * Removes all values under the key
      * @param {*} key
      * @return {*}
      */
     remove: function(key) {
         return this.hashTable.remove(key);
+    },
+
+    /**
+     * Removes a specific value associated with the key
+     * @param {*} key
+     * @param {*} value
+     * @return {boolean}
+     */
+    removeKeyValuePair: function(key, value) {
+        var result = false;
+        var valueCollection = this.hashTable.get(key);
+        if (valueCollection) {
+            result = valueCollection.remove(value);
+            if (result && valueCollection.isEmpty()) {
+                this.hashTable.remove(valueCollection);
+            }
+        }
+        return result;
     }
 });
 
@@ -207,4 +208,4 @@ var Map = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('Map', Map);
+bugpack.export('MultiMap', MultiMap);

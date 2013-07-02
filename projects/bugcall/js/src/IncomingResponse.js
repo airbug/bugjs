@@ -100,6 +100,13 @@ var IncomingResponse = Class.extend(Obj, {
         return this.callResponse.getType();
     },
 
+    /**
+     * @return {string}
+     */
+    getUuid: function() {
+        return this.callResponse.getUuid();
+    },
+
 
     //-------------------------------------------------------------------------------
     // Instance Methods

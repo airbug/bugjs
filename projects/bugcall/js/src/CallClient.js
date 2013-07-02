@@ -81,6 +81,12 @@ var CallClient = Class.extend(EventDispatcher, {
 
         /**
          * @private
+         * @type {?string}
+         */
+        this.querystring = null;
+
+        /**
+         * @private
          * @type {number}
          */
         this.retryAttempts = 0;
@@ -150,15 +156,13 @@ var CallClient = Class.extend(EventDispatcher, {
     },
 
     /**
-     *
+     * @param {string} querystring
      */
-    openConnection: function() {
-        //TEST
-        console.log("CallClient openConnection - isConnected:", this.isConnected() + " isConnecting:", this.isConnecting());
-
+    openConnection: function(querystring) {
         if (!this.isConnected()) {
             if (!this.isConnecting()) {
                 this.retryAttempts = 0;
+                this.querystring = querystring;
                 this.doOpenConnection();
             }
         }
@@ -230,7 +234,7 @@ var CallClient = Class.extend(EventDispatcher, {
      */
     doOpenConnection: function() {
         this.connecting = true;
-        this.socketIoClient.connect();
+        this.socketIoClient.connect(this.querystring);
     },
 
     /**
@@ -276,10 +280,7 @@ var CallClient = Class.extend(EventDispatcher, {
         if (!this.isInitialized()) {
             this.initialized = true;
             this.socketIoClient.addEventListener(SocketIoClient.EventTypes.CONNECTION, this.hearClientConnection, this);
-            this.socketIoClient.addEventListener(SocketIoClient.EventTypes.CONNECT_ERROR, this.hearClientConnectError, this);
-            if (this.isConnected()) {
-                this.createConnection();
-            }
+            this.socketIoClient.addEventListener(SocketIoClient.EventTypes.ERROR, this.hearClientConnectError, this);
         }
     },
 
