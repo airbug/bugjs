@@ -2,11 +2,13 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('Semaphore')
+//@Export('Lock')
 
 //@Require('Class')
-//@Require('Obj')
+//@Require('Event')
+//@Require('EventDispatcher')
 //@Require('Queue')
+//@Require('bugtrace.BugTrace')
 
 
 //-------------------------------------------------------------------------------
@@ -20,10 +22,12 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var Obj =   bugpack.require('Obj');
-var Queue = bugpack.require('Queue');
-var BugTrace =  bugpack.require('bugtrace.BugTrace');
+var Class           = bugpack.require('Class');
+var Event           = bugpack.require('Event');
+var EventDispatcher = bugpack.require('Obj');
+var Queue           = bugpack.require('Queue');
+var BugTrace        = bugpack.require('bugtrace.BugTrace');
+
 
 
 //-------------------------------------------------------------------------------
@@ -37,13 +41,13 @@ var $trace = BugTrace.$trace;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Semaphore = Class.extend(Obj, {
+var Lock = Class.extend(EventDispatcher, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(numberPermits) {
+    _constructor: function() {
 
         this._super();
 
@@ -60,15 +64,9 @@ var Semaphore = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {number}
+         * @type {boolean}
          */
-        this.numberPermitsAcquired = 0;
-
-        /**
-         * @private
-         * @type {number}
-         */
-        this.numberPermits = numberPermits;
+        this.locked = false;
     },
 
 
@@ -77,25 +75,32 @@ var Semaphore = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @return {boolean}
+     */
+    hasWaiters: function() {
+        return this.acquisitionQueue.getCount() > 0;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    isLocked: function() {
+        return this.locked;
+    },
+
+    /**
      * @param {function()} method
      */
-    acquire: function(method) {
-
-        // NOTE BRN: This check speeds up the code a bit by allowing us to avoid hitting the queue when the queue is
-        // empty.
-
-        if (this.numberPermitsAcquired < this.numberPermits && this.acquisitionQueue.getCount() === 0) {
-            this.acquirePermit(method);
-        } else {
-            this.queueAcquisition(method);
-        }
+    tryLock: function(method) {
+        this.queueAcquisition(method);
+        this.processQueue();
     },
 
     /**
      *
      */
-    release: function() {
-        this.releasePermit();
+    unlock: function() {
+        this.releaseLock();
     },
 
 
@@ -106,8 +111,8 @@ var Semaphore = Class.extend(Obj, {
     /**
      * @private
      */
-    acquirePermit: function(method) {
-        this.numberPermitsAcquired++;
+    acquireLock: function(method) {
+        this.locked = true;
         method();
     },
 
@@ -115,17 +120,14 @@ var Semaphore = Class.extend(Obj, {
      * @private
      */
     processQueue: function() {
-        var _this = this;
-
-        // NOTE BRN: We use a setTimeout here to help prevent stack overflows when it comes to the processing of the
-        // queue.
-
-        setTimeout($trace(function() {
-            while (_this.numberPermitsAcquired < _this.numberPermits && _this.acquisitionQueue.getCount() > 0) {
-                var nextMethod = _this.acquisitionQueue.dequeue();
-                _this.acquirePermit(nextMethod);
+        if (!this.isLocked()) {
+            if (this.acquisitionQueue.getCount() > 0) {
+                var nextMethod = this.acquisitionQueue.dequeue();
+                this.acquireLock(nextMethod);
+            } else {
+                this.dispatchEvent(new Event(Lock.EventTypes.EMPTY));
             }
-        }), 0);
+        }
     },
 
     /**
@@ -134,21 +136,41 @@ var Semaphore = Class.extend(Obj, {
      */
     queueAcquisition: function(method) {
         this.acquisitionQueue.enqueue(method);
-        this.processQueue();
     },
 
     /**
      * @private
      */
-    releasePermit: function() {
-        this.numberPermitsAcquired--;
-        this.processQueue();
+    releaseLock: function() {
+        this.locked = false;
+        this.dispatchEvent(new Event(Lock.RELEASED));
+        var _this = this;
+
+        // NOTE BRN: We use a setTimeout here to help prevent stack overflows when it comes to the processing of the
+        // queue.
+
+        setTimeout($trace(function() {
+            _this.processQueue();
+        }), 0);
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Static Properties
+//-------------------------------------------------------------------------------
+
+/**
+ * @enum {string}
+ */
+Lock.EventTypes = {
+    EMPTY: "Lock:Empty",
+    RELEASED: "Lock:Released"
+};
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('Semaphore', Semaphore);
+bugpack.export('Lock', Lock);

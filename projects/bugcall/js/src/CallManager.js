@@ -269,6 +269,7 @@ var CallManager = Class.extend(EventDispatcher, {
         this.pendingOutgoingRequestSet.forEach(function(outgoingRequest) {
             _this.doFailOutgoingRequest(outgoingRequest);
         });
+        this.dispatchCallClosed(false);
     },
 
     /**
@@ -286,6 +287,7 @@ var CallManager = Class.extend(EventDispatcher, {
         this.pendingOutgoingRequestSet.forEach(function(outgoingRequest) {
             _this.doFailOutgoingRequest(outgoingRequest);
         });
+        this.dispatchCallClosed(true);
     },
 
 
@@ -313,6 +315,14 @@ var CallManager = Class.extend(EventDispatcher, {
         /** @type {CallRequest} */
         var callRequest = outgoingRequest.getCallRequest();
         this.routeResponse(callRequest.getUuid(), new RequestFailedException(callRequest));
+    },
+
+    /**
+     * @private
+     * @param {boolean} failed
+     */
+    dispatchCallClosed: function(failed) {
+        this.dispatchEvent(new CallManagerEvent(CallManagerEvent.CALL_CLOSED, {failed: failed}));
     },
 
     /**
