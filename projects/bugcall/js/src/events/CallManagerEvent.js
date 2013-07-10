@@ -38,12 +38,6 @@ var CallManagerEvent = Class.extend(Event, {});
 
 /**
  * @static
- * @type {string}
- */
-CallManagerEvent.CALL_CLOSED        = "CallManagerEvent:CallClosed";
-
-/**
- * @static
  * @const {string}
  */
 CallManagerEvent.INCOMING_REQUEST   = "CallManagerEvent:IncomingRequest";

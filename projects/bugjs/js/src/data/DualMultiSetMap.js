@@ -83,10 +83,10 @@ var DualMultiSetMap = Class.extend(DualMultiMap, {
         }
         var result = valueCollection.add(value);
         if (result) {
-            var keyCollection = this.valueKeyHashTable.get(value);
+            var keyCollection = this.valueKeyCollectionHashTable.get(value);
             if (!keyCollection) {
                 keyCollection = new Set();
-                this.valueKeyHashTable.put(value, keyCollection);
+                this.valueKeyCollectionHashTable.put(value, keyCollection);
             }
             keyCollection.add(key);
             return value;

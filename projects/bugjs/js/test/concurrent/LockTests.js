@@ -96,9 +96,12 @@ var lockTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
-        this.testLock.tryLock(this.testMethod1);
-        this.testLock.tryLock(this.testMethod2);
-        this.testLock.tryLock(this.testMethod3);
+        this.testLock.tryLock(this.testMethod1Spy);
+        test.assertTrue(this.testMethod2Spy.wasNotCalled(),
+            "Assert testMethod2 was not called");
+
+        this.testLock.tryLock(this.testMethod2Spy);
+        this.testLock.tryLock(this.testMethod3Spy);
     }
 };
 annotate(lockTest).with(

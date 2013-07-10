@@ -4,7 +4,7 @@
 
 //@Package('bugcall')
 
-//@Export('BugCallServerEvent')
+//@Export('CallEvent')
 
 //@Require('Class')
 //@Require('Event')
@@ -29,7 +29,7 @@ var Event   = bugpack.require('Event');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var BugCallServerEvent = Class.extend(Event, {});
+var CallEvent = Class.extend(Event, {});
 
 
 //-------------------------------------------------------------------------------
@@ -40,17 +40,17 @@ var BugCallServerEvent = Class.extend(Event, {});
  * @static
  * @const {string}
  */
-BugCallServerEvent.CALL_CLOSED  = "BugCallServerEvent:CallClosed";
+CallEvent.CLOSED  = "CallEvent:Closed";
 
 /**
  * @static
  * @const {string}
  */
-BugCallServerEvent.CALL_OPENED  = "BugCallServerEvent:CallOpened";
+CallEvent.OPENED  = "CallEvent:Opened";
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugcall.BugCallServerEvent', BugCallServerEvent);
+bugpack.export('bugcall.CallEvent', CallEvent);

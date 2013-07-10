@@ -80,6 +80,13 @@ var IncomingRequest = Class.extend(Obj, {
     },
 
     /**
+     * @return {string}
+     */
+    getCallUuid: function() {
+        return this.callManager.getCallUuid();
+    },
+
+    /**
      * @return {CallRequest}
      */
     getCallRequest: function() {

@@ -2,12 +2,13 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugcall')
+//@Package('syncbug')
 
-//@Export('IncomingResponse')
+//@Export('SyncObject')
 
 //@Require('Class')
-//@Require('Obj')
+//@Require('Event')
+//@Require('EventDispatcher')
 
 
 //-------------------------------------------------------------------------------
@@ -22,111 +23,83 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
-var Obj             = bugpack.require('Obj');
+var Event           = bugpack.require('Event');
+var EventDispatcher = bugpack.require('EventDispatcher');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-/**
- * @constructor
- * @extends {Obj}
- */
-var IncomingResponse = Class.extend(Obj, {
+var SyncObject = Class.extend(EventDispatcher, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(callResponse, callManager) {
+    _constructor: function(syncObject) {
 
         this._super();
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Properties
         //-------------------------------------------------------------------------------
 
-        /**
-         * @private
-         * @type {CallManager}
-         */
-        this.callManager = callManager;
-
-        /**
-         * @private
-         * @type {CallResponse}
-         */
-        this.callResponse = callResponse;
+        this.syncObject = syncObject;
     },
-
-
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @return {CallManager}
-     */
-    getCallManager: function() {
-        return this.callManager;
-    },
-
-    /**
-     * @return {string}
-     */
-    getCallUuid: function() {
-        return this.callManager.getCallUuid();
-    },
-
-    /**
-     * @return {CallResponse}
-     */
-    getCallResponse: function() {
-        return this.callResponse;
-    },
-
-    /**
-     * @return {*}
-     */
-    getData: function() {
-        return this.callResponse.getData();
-    },
-
-    /**
-     * @return {string}
-     */
-    getRequestUuid: function() {
-        return this.callResponse.getRequestUuid()
-    },
-
-    /**
-     * @return {string}
-     */
-    getType: function() {
-        return this.callResponse.getType();
-    },
-
-    /**
-     * @return {string}
-     */
-    getUuid: function() {
-        return this.callResponse.getUuid();
-    },
-
 
     //-------------------------------------------------------------------------------
     // Instance Methods
     //-------------------------------------------------------------------------------
 
-    toObject: function() {
-        return this.callResponse.toObject();
+    /**
+     * @param {string} prop
+     * @return {*}
+     */
+    get: function(prop) {
+        return this.syncObject[prop];
+    },
+
+    /**
+     * @param {string} prop
+     */
+    remove: function(prop) {
+        delete this.syncObject[prop];
+    },
+
+    /**
+     * @param {string} prop
+     * @param {*} value
+     */
+    set: function(prop, value) {
+        this.syncObject[prop] = value;
+    },
+
+    /**
+     *
+     * @param syncObject
+     */
+    setSyncObject: function(syncObject) {
+        this.syncObject = syncObject;
+        this.dispatchEvent(new Event(SyncObject.EventTypes.CHANGED));
     }
 });
 
 
 //-------------------------------------------------------------------------------
-// Export
+// Static Properties
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugcall.IncomingResponse', IncomingResponse);
+/**
+ * @enum {string}
+ */
+SyncObject.EventTypes = {
+    CHANGED: "changed"
+};
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export('syncbug.SyncObject', SyncObject);

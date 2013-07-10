@@ -10,7 +10,7 @@
 //@Require('EventDispatcher')
 //@Require('Map')
 //@Require('bugcall.BugCallRequestEvent')
-//@Require('bugcall.BugCallServerEvent')
+//@Require('bugcall.CallEvent')
 //@Require('bugcall.CallConnection')
 //@Require('bugcall.CallManager')
 //@Require('bugcall.CallManagerEvent')
@@ -34,7 +34,7 @@ var Class               = bugpack.require('Class');
 var EventDispatcher     = bugpack.require('EventDispatcher');
 var Map                 = bugpack.require('Map');
 var BugCallRequestEvent = bugpack.require('bugcall.BugCallRequestEvent');
-var BugCallServerEvent  = bugpack.require('bugcall.BugCallServerEvent');
+var CallEvent           = bugpack.require('bugcall.CallEvent');
 var CallConnection      = bugpack.require('bugcall.CallConnection');
 var CallManager         = bugpack.require('bugcall.CallManager');
 var CallManagerEvent    = bugpack.require('bugcall.CallManagerEvent');
@@ -150,15 +150,14 @@ var BugCallServer = Class.extend(EventDispatcher, {
 
     /**
      * @private
-     * @param {CallConnection} callConnection
      * @param {string} callUuid
      * @return {CallManager}
      */
-    createCallManager: function(callConnection, callUuid) {
-        var callManager = new CallManager(callConnection, callUuid);
-        this.callConnectionToCallManagerMap.put(callConnection, callManager);
+    createCallManager: function(callUuid) {
+        var callManager = new CallManager(callUuid);
         this.callUuidToCallManagerMap.put(callUuid, callManager);
         callManager.addEventListener(CallManagerEvent.INCOMING_REQUEST, this.hearCallManagerIncomingRequest, this);
+        callManager.addEventPropagator(this);
         return callManager;
     },
 
@@ -167,31 +166,9 @@ var BugCallServer = Class.extend(EventDispatcher, {
      * @param {CallManager} callManager
      */
     removeCallManager: function(callManager) {
-        this.callConnectionToCallManagerMap.remove(callManager.getConnection());
         this.callUuidToCallManagerMap.remove(callManager.getCallUuid());
         callManager.removeEventListener(CallManagerEvent.INCOMING_REQUEST, this.hearCallManagerIncomingRequest, this);
-    },
-
-    /**
-     * @private
-     * @param {CallManager} callManager
-     * @param {boolean} failed
-     */
-    dispatchCallClosed: function(callManager, failed) {
-        this.dispatchEvent(new BugCallServerEvent(BugCallServerEvent.CALL_CLOSED, {
-            callManager: callManager,
-            failed: failed
-        }));
-    },
-
-    /**
-     * @private
-     * @param {CallManager} callManager
-     */
-    dispatchCallOpened: function(callManager) {
-        this.dispatchEvent(new BugCallServerEvent(BugCallServerEvent.CALL_OPENED, {
-            callManager: callManager
-        }));
+        callManager.removeEventPropagator(this);
     },
 
     /**
@@ -212,8 +189,8 @@ var BugCallServer = Class.extend(EventDispatcher, {
     processConnectionClosed: function(callConnection) {
         var callManager = this.callConnectionToCallManagerMap.get(callConnection);
         this.removeCallManager(callManager);
+        this.callConnectionToCallManagerMap.remove(callConnection);
         callManager.closeCall();
-        this.dispatchCallClosed(callManager, false);
     },
 
     /**
@@ -228,10 +205,9 @@ var BugCallServer = Class.extend(EventDispatcher, {
         var callManager = this.getCallManagerForCallUuid(callUuid);
         if (!callManager) {
             callManager = this.createCallManager(callConnection, callUuid);
-            this.dispatchCallOpened(callManager);
-        } else {
-            callManager.updateConnection(callConnection);
         }
+        this.callConnectionToCallManagerMap.put(callConnection, callManager);
+        callManager.openCall(callConnection);
     },
 
     /**
@@ -244,8 +220,8 @@ var BugCallServer = Class.extend(EventDispatcher, {
 
         var callManager = this.callConnectionToCallManagerMap.get(callConnection);
         this.removeCallManager(callManager);
+        this.callConnectionToCallManagerMap.remove(callConnection);
         callManager.failCall();
-        this.dispatchCallClosed(callManager, true);
     },
 
     /**

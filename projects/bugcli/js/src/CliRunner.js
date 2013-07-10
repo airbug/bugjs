@@ -163,6 +163,7 @@ var CliRunner = Class.extend(Obj, {
      * @param {function(Error)} callback
      */
     validateCliAction: function(cliAction, callback) {
+        var cliActionInstance = this.cliBuild.getCliActionInstance();
         var validateMethod = cliAction.getValidateMethod();
         if (validateMethod) {
             validateMethod(this.cliBuild, cliActionInstance, function(error) {

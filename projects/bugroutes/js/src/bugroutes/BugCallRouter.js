@@ -79,10 +79,7 @@ var BugCallRouter = Class.extend(Obj, {
      */
     initialize: function(callback){
         if(!callback || typeof callback !== 'function') var callback = function(){};
-
-        // this.bugCallRequestEventDispatcher.on(BugCallRequestEvent.REQUEST, this.handleConnectionRequest, this);
         this.bugCallRequestEventDispatcher.on(BugCallRequestEvent.REQUEST, this.handleRequest, this);
-
         callback();
     },
 
@@ -125,44 +122,16 @@ var BugCallRouter = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * deprecated
-     * @return {BugCallClient}
-     */
-    getBugCallClient: function() {
-        return this.bugCallRequestEventDispatcher;
-    },
-
-    /**
-     * @return {BugCallRequestEventDispatcher}
+     * @return {EventDispatcher}
      */
     getBugCallRequestEventDispatcher: function() {
         return this.bugCallRequestEventDispatcher;
     },
 
-    /**
-     * deprecated
-     * @return {BugCallServer}
-     */
-    getBugCallServer: function() {
-        return this.bugCallRequestEventDispatcher;
-    },
 
     //-------------------------------------------------------------------------------
     // Event Listeners
     //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     * @param {Event} event
-     */
-    handleConnectionRequest: function(event) {
-        console.log("Inside BugCallRouter#handleConnectionRequest");
-        // var request         = event.getData().request;
-        // var requestType     = request.getType();
-        // var responder       = event.getData().responder;
-        // var bugCallRoute    = this.routesMap.get(requestType);
-        // if(bugCallRoute) bugCallRoute.fire(request, responder);
-    },
 
     /**
      * @private

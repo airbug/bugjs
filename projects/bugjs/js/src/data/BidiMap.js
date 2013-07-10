@@ -2,15 +2,15 @@
  * Map info
  * 1) Supports null values but not undefined values. Undefined values are used to indicate something doesn't exist.
  * 2) Any value can be used as a key including null but not undefined.
- * 3) Unlinke the BidiMap, this map can have multiple entries for the same value. When looking up by value, a Collection
- *      of keys will be returned
+ * 3) There can only be one instance of a value in this map. If a value is added again under another key, then we
+ *      remove the old key/value pair before adding the new key/value mapping.
  */
 
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('DualMap')
+//@Export('BidiMap')
 
 //@Require('Class')
 //@Require('Collection')
@@ -43,7 +43,7 @@ var TypeUtil    = bugpack.require('TypeUtil');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var DualMap = Class.extend(Obj, {
+var BidiMap = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -68,7 +68,7 @@ var DualMap = Class.extend(Obj, {
          * @private
          * @type {HashTable}
          */
-        this.valueKeyCollectionHashTable = new HashTable();
+        this.valueKeyHashTable = new HashTable();
     },
 
 
@@ -89,12 +89,12 @@ var DualMap = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {DualMap.<*, *>}
+     * @return {BidiMap}
      */
     clone: function() {
-        var cloneDualMap = new DualMap();
-        cloneDualMap.putAll(this);
-        return cloneDualMap;
+        var cloneMap = new BidiMap();
+        cloneMap.putAll(this);
+        return cloneMap;
     },
 
 
@@ -107,7 +107,7 @@ var DualMap = Class.extend(Obj, {
      */
     clear: function() {
         this.keyValueHashTable = new HashTable();
-        this.valueKeyCollectionHashTable = new HashTable();
+        this.valueKeyHashTable = new HashTable();
     },
 
     /**
@@ -123,7 +123,7 @@ var DualMap = Class.extend(Obj, {
      * @return {boolean}
      */
     containsValue: function(value) {
-        return this.valueKeyCollectionHashTable.containsKey(value);
+        return this.valueKeyHashTable.containsKey(value);
     },
 
     /**
@@ -134,11 +134,11 @@ var DualMap = Class.extend(Obj, {
     },
 
     /**
-     * @param {*} value
-     * @return {Collection.<*>}
+     * @param {string} value
+     * @return {(*|undefined)}
      */
-    getKeys: function(value) {
-        return this.valueKeyCollectionHashTable.get(value);
+    getKey: function(value) {
+        return this.valueKeyHashTable.get(value);
     },
 
     /**
@@ -157,21 +157,25 @@ var DualMap = Class.extend(Obj, {
     },
 
     /**
-     * @return {Collection.<*>}
+     * @return {Collection}
      */
     getKeyCollection: function() {
-        return new Collection(this.keyValueHashTable.getKeyArray());
+        var keyCollection = new Collection();
+        this.valueKeyHashTable.forEach(function(key) {
+            keyCollection.add(key);
+        });
+        return keyCollection;
     },
 
     /**
-     * @return {Array.<*>}
+     * @return {Array<*>}
      */
     getValueArray: function() {
         return this.keyValueHashTable.getValueArray();
     },
 
     /**
-     * @return {Collection.<*>}
+     * @return {Collection}
      */
     getValueCollection: function() {
         var valueCollection = new Collection();
@@ -194,22 +198,15 @@ var DualMap = Class.extend(Obj, {
      * @return {*}
      */
     put: function(key, value) {
-        var previousValue = undefined;
-        if (this.containsKey(key)) {
-            previousValue = this.removeByKey(key);
+        var currentKey = this.valueKeyHashTable.put(value, key);
+        if (currentKey && !Obj.equals(currentKey, key)) {
+            this.keyValueHashTable.remove(currentKey);
         }
-        this.keyValueHashTable.put(key, value);
-        var keyCollection = this.valueKeyCollectionHashTable.get(value);
-        if (!keyCollection) {
-            keyCollection = new Collection();
-            this.valueKeyCollectionHashTable.put(value, keyCollection);
-        }
-        keyCollection.add(key);
-        return previousValue;
+        return this.keyValueHashTable.put(key, value);
     },
 
     /**
-     * @param {(Map.<*, *>|DualMap.<*, *>)} map
+     * @param {(Map|DualMap)} map
      */
     putAll: function(map) {
         if (Class.doesExtend(map, Map)) {
@@ -234,28 +231,21 @@ var DualMap = Class.extend(Obj, {
     removeByKey: function(key) {
         var value = this.keyValueHashTable.remove(key);
         if (!TypeUtil.isUndefined(value)) {
-            var keyCollection = this.valueKeyCollectionHashTable.get(value);
-            keyCollection.remove(key);
-            if (keyCollection.isEmpty()) {
-                this.valueKeyCollectionHashTable.remove(value);
-            }
+            this.valueKeyHashTable.remove(value);
         }
         return value;
     },
 
     /**
      * @param {*} value
-     * @return {*} Returns a Collection of the keys that this value was removed from
+     * @return {*}
      */
     removeByValue: function(value) {
-        var _this = this;
-        var keyCollection = this.valueKeyCollectionHashTable.get(value);
-        if (!TypeUtil.isUndefined(keyCollection)) {
-            keyCollection.forEach(function(key) {
-                _this.removeByKey(key);
-            });
+        var key = this.valueKeyHashTable.remove(value);
+        if (!TypeUtil.isUndefined(key)) {
+            this.keyValueHashTable.remove(key);
         }
-        return keyCollection;
+        return key;
     }
 });
 
@@ -264,4 +254,4 @@ var DualMap = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('DualMap', DualMap);
+bugpack.export('BidiMap', BidiMap);

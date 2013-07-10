@@ -101,6 +101,13 @@ var CliFlagInstance = Class.extend(Obj, {
     },
 
     /**
+     * @return {string}
+     */
+    getName: function() {
+        return this.cliFlag.getName();
+    },
+
+    /**
      * @param {string} parameterName
      * @return {*}
      */

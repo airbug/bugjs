@@ -85,6 +85,13 @@ var MultiMap = Class.extend(Map, {
     /**
      * @param {function(*)} func
      */
+    forEachCollection: function(func) {
+        this.hashTable.forEach(func);
+    },
+
+    /**
+     * @param {function(*)} func
+     */
     forEachValue: function(func) {
         this.hashTable.forEach(function(valueCollection) {
             valueCollection.forEach(func);

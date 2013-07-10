@@ -82,16 +82,8 @@ var DualMultiMap = Class.extend(DualMap, {
     },
 
     /**
-     * @param {string} value
-     * @return {(Set.<*> | undefined)}
-     */
-    getKey: function(value) {
-        return this.valueKeyHashTable.get(value);
-    },
-
-    /**
      * @param {*} key
-     * @return {(Set.<*> | undefined)} Returns undefined if no value is found.
+     * @return {(Collection.<*> | undefined)} Returns undefined if no value is found.
      */
     getValue: function(key) {
         return this.keyValueHashTable.get(key);
@@ -109,10 +101,10 @@ var DualMultiMap = Class.extend(DualMap, {
             this.keyValueHashTable.put(key, valueCollection);
         }
         valueCollection.add(value);
-        var keyCollection = this.valueKeyHashTable.get(value);
+        var keyCollection = this.valueKeyCollectionHashTable.get(value);
         if (!keyCollection) {
             keyCollection = new Collection();
-            this.valueKeyHashTable.put(value, keyCollection);
+            this.valueKeyCollectionHashTable.put(value, keyCollection);
         }
         keyCollection.add(key);
         return value;
@@ -133,14 +125,13 @@ var DualMultiMap = Class.extend(DualMap, {
         return valueCollection;
     },
 
-
     /**
      * @param {*} value
      * @return {*} Returns a Collection of the keys that this value was removed from
      */
     removeByValue: function(value) {
         var _this = this;
-        var keyCollection = this.valueKeyHashTable.get(value);
+        var keyCollection = this.valueKeyCollectionHashTable.get(value);
         if (!TypeUtil.isUndefined(keyCollection)) {
             keyCollection.forEach(function(key) {
                 _this.removeKeyValuePair(key, value);
@@ -164,10 +155,10 @@ var DualMultiMap = Class.extend(DualMap, {
                 if (valueCollection.isEmpty()) {
                     this.keyValueHashTable.remove(valueCollection);
                 }
-                var keyCollection = this.valueKeyHashTable.get(value);
+                var keyCollection = this.valueKeyCollectionHashTable.get(value);
                 keyCollection.remove(key);
                 if (keyCollection.isEmpty()) {
-                    this.valueKeyHashTable.remove(keyCollection);
+                    this.valueKeyCollectionHashTable.remove(keyCollection);
                 }
             }
         }

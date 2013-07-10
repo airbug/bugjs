@@ -161,6 +161,7 @@ var BugCallClient = Class.extend(EventDispatcher, {
      */
     initialize: function() {
         this.callManager.setCallUuid(this.callUuid);
+        this.callManager.addEventPropagator(this);
         this.callManager.addEventListener(CallManagerEvent.INCOMING_REQUEST, this.hearCallManagerIncomingRequest, this);
         this.callClient.addEventListener(CallClientEvent.CONNECTION_CLOSED, this.hearCallClientConnectionClosed, this);
         this.callClient.addEventListener(CallClientEvent.CONNECTION_OPENED, this.hearCallClientConnectionOpened, this);
@@ -180,7 +181,7 @@ var BugCallClient = Class.extend(EventDispatcher, {
      * @param {CallConnection} callConnection
      */
     processConnectionFailed: function(callConnection) {
-        this.callManager.clearConnection();
+        this.callManager.failCall();
     },
 
     /**
@@ -188,7 +189,7 @@ var BugCallClient = Class.extend(EventDispatcher, {
      * @param {CallConnection} callConnection
      */
     processConnectionOpened: function(callConnection) {
-        this.callManager.updateConnection(callConnection);
+        this.callManager.openCall(callConnection);
     },
 
     /**

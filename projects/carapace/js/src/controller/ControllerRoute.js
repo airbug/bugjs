@@ -98,7 +98,8 @@ var ControllerRoute = Class.extend(EventDispatcher, {
             this.initialized = true;
             var _this = this;
             router.route(this.route, this.routeId, function() {
-                _this.requestRouting(arguments);
+                var args = Array.prototype.slice.call(arguments, 0);
+                _this.requestRouting(args);
             });
         }
     },
@@ -110,7 +111,7 @@ var ControllerRoute = Class.extend(EventDispatcher, {
 
     /**
      * @protected
-     * @param {Array<*>} routingArgs
+     * @param {Array.<*>} routingArgs
      */
     requestRouting: function(routingArgs) {
         var routingRequest = new RoutingRequest(this, routingArgs);

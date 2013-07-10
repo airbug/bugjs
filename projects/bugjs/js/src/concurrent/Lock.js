@@ -24,7 +24,7 @@ var bugpack = require('bugpack').context();
 
 var Class           = bugpack.require('Class');
 var Event           = bugpack.require('Event');
-var EventDispatcher = bugpack.require('Obj');
+var EventDispatcher = bugpack.require('EventDispatcher');
 var Queue           = bugpack.require('Queue');
 var BugTrace        = bugpack.require('bugtrace.BugTrace');
 
@@ -143,7 +143,7 @@ var Lock = Class.extend(EventDispatcher, {
      */
     releaseLock: function() {
         this.locked = false;
-        this.dispatchEvent(new Event(Lock.RELEASED));
+        this.dispatchEvent(new Event(Lock.EventTypes.RELEASED));
         var _this = this;
 
         // NOTE BRN: We use a setTimeout here to help prevent stack overflows when it comes to the processing of the

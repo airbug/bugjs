@@ -12,6 +12,7 @@
 //@Require('Queue')
 //@Require('Set')
 //@Require('bugcall.CallConnection')
+//@Require('bugcall.CallEvent')
 //@Require('bugcall.CallManagerEvent')
 //@Require('bugcall.CallRequest')
 //@Require('bugcall.IncomingRequest')
@@ -37,6 +38,7 @@ var Map                     = bugpack.require('Map');
 var Queue                   = bugpack.require('Queue');
 var Set                     = bugpack.require('Set');
 var CallConnection          = bugpack.require('bugcall.CallConnection');
+var CallEvent               = bugpack.require('bugcall.CallEvent');
 var CallManagerEvent        = bugpack.require('bugcall.CallManagerEvent');
 var CallRequest             = bugpack.require('bugcall.CallRequest');
 var IncomingRequest         = bugpack.require('bugcall.IncomingRequest');
@@ -290,6 +292,14 @@ var CallManager = Class.extend(EventDispatcher, {
         this.dispatchCallClosed(true);
     },
 
+    /**
+     * @param {CallConnection} callConnection
+     */
+    openCall: function(callConnection) {
+        this.updateConnection(callConnection);
+        this.dispatchCallOpened();
+    },
+
 
     //-------------------------------------------------------------------------------
     // Private Instance Methods
@@ -322,7 +332,19 @@ var CallManager = Class.extend(EventDispatcher, {
      * @param {boolean} failed
      */
     dispatchCallClosed: function(failed) {
-        this.dispatchEvent(new CallManagerEvent(CallManagerEvent.CALL_CLOSED, {failed: failed}));
+        this.dispatchEvent(new CallEvent(CallEvent.CLOSED, {
+            callManager: this,
+            failed: failed
+        }));
+    },
+
+    /**
+     * @private
+     */
+    dispatchCallOpened: function() {
+        this.dispatchEvent(new CallEvent(CallEvent.OPENED, {
+            callManager: this
+        }));
     },
 
     /**
