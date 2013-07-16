@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('syncbug')
+//@Package('bugsync')
 
 //@Export('SyncObject')
 
@@ -102,4 +102,4 @@ SyncObject.EventTypes = {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('syncbug.SyncObject', SyncObject);
+bugpack.export('bugsync.SyncObject', SyncObject);

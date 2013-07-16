@@ -2,47 +2,42 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugatomic')
+//@Package('bugentity')
 
-//@Export('Operation')
+//@Export('EntityManager')
 
 //@Require('Class')
 //@Require('EventDispatcher')
-//@Require('Set')
+//@Require('Map')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
-// BugPack
+// Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var EventDispatcher = bugpack.require('EventDispatcher');
-var Set             = bugpack.require('Set');
+var Class               = bugpack.require('Class');
+var EventDispatcher     = bugpack.require('EventDispatcher');
+var Map                 = bugpack.require('Map');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Operation = Class.extend(EventDispatcher, {
+var EntityManager = Class.extend(EventDispatcher, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    /**
-     * @param {string} type
-     * @param {Array.<string>} locks
-     * @param {function(Operation)} method
-     */
-    _constructor: function(type, locks, method) {
+    _constructor: function(lockEngine, dataStore) {
 
         this._super();
 
@@ -53,78 +48,36 @@ var Operation = Class.extend(EventDispatcher, {
 
         /**
          * @private
-         * @type {string}
+         * @type {IDataEngine}
          */
-        this.type       = type;
+        this.dataStore  = dataStore;
 
         /**
          * @private
-         * @type {Set.<string>}
+         * @type {Map.<string, *>}
          */
-        this.lockSet    = new Set(locks);
+        this.entityMap  = new Map();
 
         /**
          * @private
-         * @type {function(function(Error))}
+         * @type {ILockEngine}
          */
-        this.method     = method;
+        this.lockEngine = lockEngine;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Public Instance Methods
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {Set.<string>}
-     */
-    getLockSet: function() {
-        return this.lockSet;
-    },
-
-    /**
-     * @return {string}
-     */
-    getType: function() {
-        return this.type;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     *
-     */
-    complete: function() {
-        this.dispatchEvent(new Event(Operation.COMPLETE));
-    },
-
-    /**
-     *
-     */
-    run: function() {
-        this.method(this);
+    generateEntity: function(entityClass) {
+        //TODO BRN: Look up
     }
 });
-
-
-
-//-------------------------------------------------------------------------------
-// Static Properties
-//-------------------------------------------------------------------------------
-
-/**
- * @enum {string}
- */
-Operation.EventTypes = {
-    COMPLETE: "Operation:Complete"
-};
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugatomic.Operation', Operation);
+bugpack.export('bugentity.EntityManager', EntityManager);

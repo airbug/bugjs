@@ -8,9 +8,12 @@
 
 //@Require('Class')
 //@Require('EventDispatcher')
-//@Require('Queue')
+//@Require('List')
+//@Require('Map')
 //@Require('Set')
 //@Require('bugatomic.Operation')
+//@Require('bugatomic.OperationBatch')
+//@Require('bugatomic.OperationBatchRunner')
 
 
 //-------------------------------------------------------------------------------
@@ -24,11 +27,14 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var EventDispatcher = bugpack.require('EventDispatcher');
-var Queue           = bugpack.require('Queue');
-var Set             = bugpack.require('Set');
-var Operation       = bugpack.require('bugatomic.Operation');
+var Class                   = bugpack.require('Class');
+var EventDispatcher         = bugpack.require('EventDispatcher');
+var List                    = bugpack.require('List');
+var Map                     = bugpack.require('Map');
+var Set                     = bugpack.require('Set');
+var Operation               = bugpack.require('bugatomic.Operation');
+var OperationBatch          = bugpack.require('bugatomic.OperationBatch');
+var OperationBatchRunner    = bugpack.require('bugatomic.OperationBatchRunner');
 
 
 //-------------------------------------------------------------------------------
@@ -42,9 +48,10 @@ var OperationProcessor = Class.extend(EventDispatcher, {
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @param {string} key
+     * @param {ILockOperator} lockOperator
      */
-    _constructor: function(key, numberLocks) {
+    _constructor: function(key, lockOperator) {
 
         this._super();
 
@@ -55,33 +62,33 @@ var OperationProcessor = Class.extend(EventDispatcher, {
 
         /**
          * @private
+         * @type {OperationBatch}
+         */
+        this.currentOperationBatch      = null;
+
+        /**
+         * @private
+         * @type {number}
+         */
+        this.delayTimeoutId             = null;
+
+        /**
+         * @private
          * @type {string}
          */
-        this.key = key;
+        this.key                        = key;
 
         /**
          * @private
-         * @type {number}
+         * @type {ILockOperator}
          */
-        this.numberLocks = numberLocks;
+        this.lockOperator               = lockOperator;
 
         /**
          * @private
-         * @type {number}
+         * @type {List.<OperationBatchRunner}
          */
-        this.numberLocksAcquired = 0;
-
-        /**
-         * @private
-         * @type {Queue.<Operation>}
-         */
-        this.operationQueue = new Queue();
-
-        /**
-         * @private
-         * @type {Set.<Operation>}
-         */
-        this.pendingOperationSet = new Set();
+        this.operationBatchRunnerList   = new List();
     },
 
 
@@ -103,10 +110,10 @@ var OperationProcessor = Class.extend(EventDispatcher, {
 
     /**
      * @param {Operation} operation
+     * @param {boolean} batch
      */
-    process: function(operation) {
-        this.queueOperation(operation);
-        this.processQueue();
+    process: function(operation, batch) {
+        this.scheduleOperation(operation, batch);
     },
 
 
@@ -115,25 +122,55 @@ var OperationProcessor = Class.extend(EventDispatcher, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @private
+     * @param {OperationBatchRunner} operationBatchRunner
      */
-    acquireLock: function() {
-        this.numberLocksAcquired++;
+    cleanupRun: function(operationBatchRunner) {
+        this.operationBatchRunnerList.remove(operationBatchRunner);
+        operationBatchRunner.off(OperationBatchRunner.EventTypes.RUN_COMPLETE, this.hearRunComplete, this);
+        if (this.operationBatchRunnerList.isEmpty() && !this.currentOperationBatch) {
+            this.noMoreOperations();
+        }
     },
 
     /**
      * @private
-     * @param {Operation} operation
      */
-    completeOperation: function(operation) {
-        if (operation.isLocking()) {
-            this.releaseLock();
-            this.processQueue();
+    clearDelayedRun: function() {
+        if (this.delayTimeoutId) {
+            clearTimeout(this.delayTimeoutId);
         }
-        this.pendingOperationSet.remove(operation);
-        if (this.pendingOperationSet.isEmpty() && this.operationQueue.isEmpty()) {
-            this.noMoreOperations();
+    },
+
+    /**
+     * @private
+     */
+    delayRunOperationBatch: function() {
+        var _this = this;
+        if (!this.delayTimeoutId) {
+            this.delayTimeoutId = setTimeout(function() {
+                _this.delayTimeoutId = null;
+                _this.runOperationBatch(_this.currentOperationBatch);
+            }, 0);
         }
+    },
+
+    /**
+     * @private
+     * @param {string} type
+     * @param {Set.<string>} locks
+     * @return {OperationBatch}
+     */
+    factoryOperationBatch: function(type, locks) {
+        return new OperationBatch(type, locks);
+    },
+
+    /**
+     * @private
+     * @param {OperationBatch} operationBatch
+     * @return {OperationBatchRunner}
+     */
+    factoryOperationBatchRunner: function(operationBatch) {
+        return new OperationBatchRunner(this.key, operationBatch, this.lockOperator);
     },
 
     /**
@@ -146,39 +183,44 @@ var OperationProcessor = Class.extend(EventDispatcher, {
     /**
      * @private
      */
-    processQueue: function() {
-        while (this.numberLocksAcquired < this.numberLocks && !this.operationQueue.isEmpty()) {
-            var operation = this.operationQueue.dequeue();
-            this.runOperation(operation);
-        }
+    runCurrentOperationBatch: function() {
+        this.clearDelayedRun();
+        var operationBatch = this.currentOperationBatch;
+        this.currentOperationBatch = null;
+        this.runOperationBatch(operationBatch);
+    },
+
+    /**
+     * @private
+     * @param {OperationBatch} operationBatch
+     */
+    runOperationBatch: function(operationBatch) {
+        var operationBatchRunner = this.factoryOperationBatchRunner(operationBatch);
+        this.operationBatchRunnerList.add(operationBatchRunner);
+        operationBatchRunner.on(OperationBatchRunner.EventTypes.RUN_COMPLETE, this.hearRunComplete, this);
+        operationBatchRunner.run();
     },
 
     /**
      * @private
      * @param {Operation} operation
+     * @param {boolean} batch
      */
-    queueOperation: function(operation) {
-        this.operationQueue.enqueue(operation);
-    },
-
-    /**
-     * @private
-     */
-    releaseLock: function() {
-        this.numberLocksAcquired--;
-    },
-
-    /**
-     * @private
-     * @param {Operation} operation
-     */
-    runOperation: function(operation) {
-        operation.on(Operation.EventTypes.COMPLETE, this.hearOperationComplete, this);
-        if (operation.isLocking()) {
-            this.acquireLock();
+    scheduleOperation: function(operation, batch) {
+        var operationBatch = this.currentOperationBatch;
+        if (!operationBatch) {
+            operationBatch = this.factoryOperationBatch(operation.getType(), operation.getLockSet());
+        } else if (!batch || !operationBatch.canBatchOperation(operation)) {
+            this.runCurrentOperationBatch();
+            operationBatch = this.factoryOperationBatch(operation.getType(), operation.getLockSet());
         }
-        this.pendingOperationSet.add(operation);
-        operation.run();
+
+        if (batch) {
+            operationBatch.addOperation(operation);
+            this.delayRunOperationBatch();
+        } else {
+            this.runOperationBatch(operationBatch);
+        }
     },
 
 
@@ -190,9 +232,9 @@ var OperationProcessor = Class.extend(EventDispatcher, {
      * @private
      * @param {Event} event
      */
-    hearOperationComplete: function(event) {
-        var operation = event.getTarget();
-        this.completeOperation(operation);
+    hearRunComplete: function(event) {
+        var operationBatchRunner = event.getTarget();
+        this.cleanupRun(operationBatchRunner);
     }
 });
 

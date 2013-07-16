@@ -379,6 +379,7 @@ var CarapaceView = Class.adapt(Backbone.View, {
 
     /**
      * @param {string} domQuery
+     * @return {Element}
      */
     findElement: function(domQuery) {
         return this.$el.find('*').andSelf().filter(domQuery);

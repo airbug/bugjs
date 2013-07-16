@@ -4,10 +4,11 @@
 
 //@Package('bugatomic')
 
-//@Export('Operation')
+//@Export('OperationBatch')
 
 //@Require('Class')
 //@Require('EventDispatcher')
+//@Require('List')
 //@Require('Set')
 
 
@@ -24,6 +25,7 @@ var bugpack = require('bugpack').context();
 
 var Class           = bugpack.require('Class');
 var EventDispatcher = bugpack.require('EventDispatcher');
+var List            = bugpack.require('List');
 var Set             = bugpack.require('Set');
 
 
@@ -31,7 +33,7 @@ var Set             = bugpack.require('Set');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Operation = Class.extend(EventDispatcher, {
+var OperationBatch = Class.extend(EventDispatcher, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -40,9 +42,8 @@ var Operation = Class.extend(EventDispatcher, {
     /**
      * @param {string} type
      * @param {Array.<string>} locks
-     * @param {function(Operation)} method
      */
-    _constructor: function(type, locks, method) {
+    _constructor: function(type, locks) {
 
         this._super();
 
@@ -53,21 +54,21 @@ var Operation = Class.extend(EventDispatcher, {
 
         /**
          * @private
+         * @type {Array.<string>}
+         */
+        this.lockSet        = new Set(locks);
+
+        /**
+         * @private
+         * @type {List.<Operation>}
+         */
+        this.operationList  = new List();
+
+        /**
+         * @private
          * @type {string}
          */
-        this.type       = type;
-
-        /**
-         * @private
-         * @type {Set.<string>}
-         */
-        this.lockSet    = new Set(locks);
-
-        /**
-         * @private
-         * @type {function(function(Error))}
-         */
-        this.method     = method;
+        this.type           = type;
     },
 
 
@@ -83,6 +84,13 @@ var Operation = Class.extend(EventDispatcher, {
     },
 
     /**
+     * @return {List.<Operation>}
+     */
+    getOperationList: function() {
+        return this.operationList;
+    },
+
+    /**
      * @return {string}
      */
     getType: function() {
@@ -91,40 +99,28 @@ var Operation = Class.extend(EventDispatcher, {
 
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Public Instance Methods
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @param {Operation} operation
+     * @return {boolean}
      */
-    complete: function() {
-        this.dispatchEvent(new Event(Operation.COMPLETE));
+    canBatchOperation: function(operation) {
+        return (this.lockSet.containsEqual(operation.getLockSet()) && this.type === operation.getType());
     },
 
     /**
-     *
+     * @param {Operation} operation
      */
-    run: function() {
-        this.method(this);
+    addOperation: function(operation) {
+        this.operationList.add(operation);
     }
 });
-
-
-
-//-------------------------------------------------------------------------------
-// Static Properties
-//-------------------------------------------------------------------------------
-
-/**
- * @enum {string}
- */
-Operation.EventTypes = {
-    COMPLETE: "Operation:Complete"
-};
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugatomic.Operation', Operation);
+bugpack.export('bugatomic.OperationBatch', OperationBatch);

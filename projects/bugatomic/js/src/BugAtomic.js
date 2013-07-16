@@ -42,9 +42,9 @@ var BugAtomic = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @param {ILockOperator} lockOperator
      */
-    _constructor: function(numberLocks) {
+    _constructor: function(lockOperator) {
 
         this._super();
 
@@ -61,9 +61,9 @@ var BugAtomic = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {number}
+         * @type {ILockOperator}
          */
-        this.numberLocks = numberLocks;
+        this.lockOperator               = lockOperator;
     },
 
 
@@ -73,16 +73,18 @@ var BugAtomic = Class.extend(Obj, {
 
     /**
      * @param {string} key
-     * @param {boolean} locking
-     * @param {function(Operation)} operationMethod
+     * @param {string} type
+     * @param {(Array.<string> | Collection.<string>)} locks
+     * @param {boolean} batch
+     * @param {function(Operation)} method
      */
-    operation: function(key, locking, operationMethod) {
-        var operation = new Operation(locking, operationMethod);
+    operation: function(key, type, locks, batch, method) {
+        var operation = new Operation(type, locks, method);
         var operationProcessor = this.keyToOperationProcessorMap.get(key);
         if (!operationProcessor) {
             operationProcessor = this.factoryOperationProcessor(key);
         }
-        operationProcessor.process(operation);
+        operationProcessor.process(operation, batch);
     },
 
 
@@ -96,7 +98,7 @@ var BugAtomic = Class.extend(Obj, {
      * @return {OperationProcessor}
      */
     factoryOperationProcessor: function(key) {
-        var operationProcessor = new OperationProcessor(key, this.numberLocks);
+        var operationProcessor = new OperationProcessor(key, this.lockOperator);
         this.keyToOperationProcessorMap.put(key, operationProcessor);
         operationProcessor.on(OperationProcessor.EventTypes.NO_MORE_OPERATIONS, this.hearNoMoreOperations, this);
         return operationProcessor;
