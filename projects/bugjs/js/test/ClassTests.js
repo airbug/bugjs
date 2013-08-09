@@ -9,7 +9,7 @@
 //@Require('Interface')
 //@Require('Obj')
 //@Require('TypeUtil')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -17,28 +17,28 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =             bugpack.require('Class');
-var IHashCode =         bugpack.require('IHashCode');
-var Interface =         bugpack.require('Interface');
-var Obj =               bugpack.require('Obj');
-var TypeUtil =          bugpack.require('TypeUtil');
-var Annotate =          bugpack.require('annotate.Annotate');
-var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
+var Class           = bugpack.require('Class');
+var IHashCode       = bugpack.require('IHashCode');
+var Interface       = bugpack.require('Interface');
+var Obj             = bugpack.require('Obj');
+var TypeUtil        = bugpack.require('TypeUtil');
+var BugMeta         = bugpack.require('bugmeta.BugMeta');
+var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var test = TestAnnotation.test;
+var bugmeta         = BugMeta.context();
+var test            = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
@@ -84,7 +84,7 @@ var classExtendObjTest = {
             "Assert instance of new class implements IHashCode");
     }
 };
-annotate(classExtendObjTest).with(
+bugmeta.annotate(classExtendObjTest).with(
     test().name("Class extend Obj test")
 );
 
@@ -141,7 +141,7 @@ var classExtendTest = {
             "Assert child class extends parent class");
     }
 };
-annotate(classExtendTest).with(
+bugmeta.annotate(classExtendTest).with(
     test().name("Class extend test")
 );
 
@@ -197,7 +197,7 @@ var classImplementTest = {
             "Assert Class.doesImplement returns true for instance implementing TestInterface");
     }
 };
-annotate(classImplementTest).with(
+bugmeta.annotate(classImplementTest).with(
     test().name("Class implement test")
 );
 
@@ -252,7 +252,7 @@ var classDoesImplementTest = {
         });
     }
 };
-annotate(classDoesImplementTest).with(
+bugmeta.annotate(classDoesImplementTest).with(
     test().name("Class doesImplement test")
 );
 
@@ -286,6 +286,6 @@ var classConstructorTest = {
             "Assert that the constructor was called during instantiation");
     }
 };
-annotate(classConstructorTest).with(
+bugmeta.annotate(classConstructorTest).with(
     test().name("Class constructor test")
 );

@@ -7,7 +7,7 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('Queue')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -15,26 +15,26 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =             bugpack.require('Class');
-var Obj =               bugpack.require('Obj');
-var Queue =             bugpack.require('Queue');
-var Annotate =          bugpack.require('annotate.Annotate');
-var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
+var Class           = bugpack.require('Class');
+var Obj             = bugpack.require('Obj');
+var Queue           = bugpack.require('Queue');
+var BugMeta         = bugpack.require('bugmeta.BugMeta');
+var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var test = TestAnnotation.test;
+var bugmeta         = BugMeta.context();
+var test            = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
@@ -76,7 +76,7 @@ var queueConstructorTest = {
             "Assert collection accepts a Queue as an argument at construction time and adds the Queue values to the new Queue");
     }
 };
-annotate(queueConstructorTest).with(
+bugmeta.annotate(queueConstructorTest).with(
     test().name("Queue constructor test")
 );
 
@@ -114,6 +114,6 @@ var enqueueDequeueTest = {
             "Assert the third value dequeued from the queue is 'value3'");
     }
 };
-annotate(enqueueDequeueTest).with(
+bugmeta.annotate(enqueueDequeueTest).with(
     test().name("Queue enqueue and dequeue test")
 );

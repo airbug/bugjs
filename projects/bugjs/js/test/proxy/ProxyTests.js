@@ -6,8 +6,8 @@
 
 //@Require('Class')
 //@Require('Proxy')
-//@Require('Obj')
-//@Require('annotate.Annotate')
+//@Require('bugdouble.BugDouble')
+//@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -23,10 +23,9 @@ var bugpack             = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
-var Collection          = bugpack.require('Collection');
 var Proxy               = bugpack.require('Proxy');
-var Annotate            = bugpack.require('annotate.Annotate');
 var BugDouble           = bugpack.require('bugdouble.BugDouble');
+var BugMeta             = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation      = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
@@ -34,7 +33,7 @@ var TestAnnotation      = bugpack.require('bugunit-annotate.TestAnnotation');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate            = Annotate.annotate;
+var bugmeta             = BugMeta.context();
 var test                = TestAnnotation.test;
 var spyOnObject         = BugDouble.spyOnObject;
 
@@ -90,7 +89,7 @@ var proxyDefaultsTest = {
             "Assert that the proxiedFunctionObject method's return value was successfully returned");
     }
 };
-annotate(proxyDefaultsTest).with(
+bugmeta.annotate(proxyDefaultsTest).with(
     test().name("Proxy defaults test")
 );
 
@@ -151,7 +150,7 @@ var proxyPropertyTest = {
             "Assert that the proxiedBasicFunction.property method's return value was successfully returned");
     }
 };
-annotate(proxyPropertyTest).with(
+bugmeta.annotate(proxyPropertyTest).with(
     test().name("Proxy property test")
 );
 

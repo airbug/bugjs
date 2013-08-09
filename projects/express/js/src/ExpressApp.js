@@ -52,8 +52,10 @@ var ExpressApp = Class.extend(Obj, {
         Proxy.proxy(this, this.app, [
             "configure",
             "engine",
+            "head",
             "get",
             "on",
+            "post",
             "set",
             "use"
         ]);

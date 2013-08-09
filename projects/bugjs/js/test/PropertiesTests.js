@@ -5,7 +5,7 @@
 //@TestFile
 
 //@Require('Properties')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -13,7 +13,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -21,7 +21,7 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Properties      = bugpack.require('Properties');
-var Annotate        = bugpack.require('annotate.Annotate');
+var BugMeta         = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
@@ -29,8 +29,8 @@ var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate    = Annotate.annotate;
-var test        = TestAnnotation.test;
+var bugmeta         = BugMeta.context();
+var test            = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
@@ -69,6 +69,6 @@ var propertiesInstantiationTest = {
             "Assert a property that does exist but has no sub properties not exist will return 'undefined' if we try to access a sub property");
     }
 };
-annotate(propertiesInstantiationTest).with(
+bugmeta.annotate(propertiesInstantiationTest).with(
     test().name("Properties instantiation test")
 );

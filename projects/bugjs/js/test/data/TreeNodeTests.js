@@ -5,7 +5,7 @@
 //@TestFile
 
 //@Require('TreeNode')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -13,24 +13,24 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var TreeNode =          bugpack.require('TreeNode');
-var Annotate =          bugpack.require('annotate.Annotate');
-var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
+var TreeNode        = bugpack.require('TreeNode');
+var BugMeta         = bugpack.require('bugmeta.BugMeta');
+var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var test = TestAnnotation.test;
+var bugmeta         = BugMeta.context();
+var test            = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
@@ -67,6 +67,6 @@ var instantiateTreeNodeTest = {
             "Assert TreeNode childNodes is empty after instantiation");
     }
 };
-annotate(instantiateTreeNodeTest).with(
+bugmeta.annotate(instantiateTreeNodeTest).with(
     test().name("TreeNode instantiation test")
 );

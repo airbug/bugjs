@@ -7,7 +7,7 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('Set')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -15,26 +15,26 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =             bugpack.require('Class');
-var Obj =               bugpack.require('Obj');
-var Set =               bugpack.require('Set');
-var Annotate =          bugpack.require('annotate.Annotate');
-var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
+var Class           = bugpack.require('Class');
+var Obj             = bugpack.require('Obj');
+var Set             = bugpack.require('Set');
+var BugMeta         = bugpack.require('bugmeta.BugMeta');
+var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var test = TestAnnotation.test;
+var bugmeta         = BugMeta.context();
+var test            = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
@@ -79,7 +79,7 @@ var setAddTest = {
             "Assert that true was returned when adding value2");
     }
 };
-annotate(setAddTest).with(
+bugmeta.annotate(setAddTest).with(
     test().name("Set add test")
 );
 
@@ -118,7 +118,7 @@ var setAddRepeatTest = {
             "Assert that false was returned when adding value1 again");
     }
 };
-annotate(setAddRepeatTest).with(
+bugmeta.annotate(setAddRepeatTest).with(
     test().name("Set add repeat test")
 );
 
@@ -168,7 +168,7 @@ var setAddEqualObjectsTest = {
         test.assertEqual(this.set.getCount(), 1, 'Assert count is still 1 after adding instance 2.');
     }
 };
-annotate(setAddEqualObjectsTest).with(
+bugmeta.annotate(setAddEqualObjectsTest).with(
     test().name("Set add equal objects test")
 );
 
@@ -228,6 +228,6 @@ var setContainsNonEqualObjectsWithSameHashCodesTest = {
             "Assert set contains instance2");
     }
 };
-annotate(setContainsNonEqualObjectsWithSameHashCodesTest).with(
+bugmeta.annotate(setContainsNonEqualObjectsWithSameHashCodesTest).with(
     test().name("Set contains non equal objects that have the same hashCodes test")
 );

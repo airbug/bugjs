@@ -115,7 +115,7 @@ var List = Class.extend(Collection, {
 
     /**
      * @override
-     * @param {function(*)} func
+     * @param {function(*, number)} func
      */
     forEach: function(func) {
         for (var i = 0, size = this.valueArray.length; i < size; i++) {

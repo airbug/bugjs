@@ -35,7 +35,7 @@ var Scope = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(bugIOC, iocModule) {
+    _constructor: function(iocContext, iocModule) {
 
         this._super();
 
@@ -46,9 +46,9 @@ var Scope = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {*}
+         * @type {IocContext}
          */
-        this.bugIOC = bugIOC;
+        this.iocContext = iocContext;
 
         /**
          * @private
@@ -91,12 +91,12 @@ var Scope = Class.extend(Obj, {
      * @return {*}
      */
     createModule: function() {
-        var _this = this;
-        var configuration = this.bugIOC.findConfigurationByIocModule(this.iocModule);
-        var args = [];
-        var iocArgSet = this.iocModule.getIocArgSet();
-        iocArgSet.forEach(function(iocArg) {
-            var refModule = _this.bugIOC.generateModuleByName(iocArg.getRef());
+        var _this           = this;
+        var configuration   = this.iocContext.findConfigurationByIocModule(this.iocModule);
+        var args            = [];
+        var iocArgList       = this.iocModule.getIocArgList();
+        iocArgList.forEach(function(iocArg) {
+            var refModule = _this.iocContext.generateModuleByName(iocArg.getRef());
             args.push(refModule);
         });
 
@@ -108,7 +108,7 @@ var Scope = Class.extend(Obj, {
 
         var iocPropertySet = this.iocModule.getIocPropertySet();
         iocPropertySet.forEach(function(iocProperty) {
-            module[iocProperty.getName()] = _this.bugIOC.generateModuleByName(iocProperty.getRef());
+            module[iocProperty.getName()] = _this.iocContext.generateModuleByName(iocProperty.getRef());
         });
         return module;
     }

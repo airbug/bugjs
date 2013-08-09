@@ -6,7 +6,7 @@
 
 //@Require('Interface')
 //@Require('TypeUtil')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -14,25 +14,25 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Interface =         bugpack.require('Interface');
-var TypeUtil =          bugpack.require('TypeUtil');
-var Annotate =          bugpack.require('annotate.Annotate');
-var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
+var Interface       = bugpack.require('Interface');
+var TypeUtil        = bugpack.require('TypeUtil');
+var BugMeta         = bugpack.require('bugmeta.BugMeta');
+var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var test = TestAnnotation.test;
+var bugmeta         = BugMeta.context();
+var test            = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
@@ -69,7 +69,7 @@ var interfaceDeclareTest = {
             "Assert second function added to interface is function and is present in interface prototype");
     }
 };
-annotate(interfaceDeclareTest).with(
+bugmeta.annotate(interfaceDeclareTest).with(
     test().name("Interface declare test")
 );
 
@@ -117,6 +117,6 @@ var interfaceExtendTest = {
             "Assert third function added to sub interface is function and is present in interface prototype");
     }
 };
-annotate(interfaceExtendTest).with(
+bugmeta.annotate(interfaceExtendTest).with(
     test().name("Interface extend test")
 );

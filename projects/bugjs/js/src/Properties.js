@@ -6,6 +6,7 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('TypeUtil')
 
 
 //-------------------------------------------------------------------------------
@@ -19,9 +20,9 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =     bugpack.require('Class');
-var Obj =       bugpack.require('Obj');
-var TypeUtil =  bugpack.require('TypeUtil');
+var Class       = bugpack.require('Class');
+var Obj         = bugpack.require('Obj');
+var TypeUtil    = bugpack.require('TypeUtil');
 
 
 //-------------------------------------------------------------------------------
@@ -46,6 +47,11 @@ var Properties = Class.extend(Obj, {
         if (!TypeUtil.isObject(propertiesObject) || !TypeUtil.toType(propertiesObject) === "Object") {
             throw new Error("propertiesObject must be a generic object");
         }
+
+        /**
+         * @private
+         * @type {Object}
+         */
         this.propertiesObject = propertiesObject;
     },
 

@@ -7,7 +7,7 @@
 //@Require('Class')
 //@Require('Collection')
 //@Require('Obj')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -25,7 +25,7 @@ var bugpack             = require('bugpack').context();
 var Class               = bugpack.require('Class');
 var Collection          = bugpack.require('Collection');
 var Obj                 = bugpack.require('Obj');
-var Annotate            = bugpack.require('annotate.Annotate');
+var BugMeta             = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation      = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
@@ -33,7 +33,7 @@ var TestAnnotation      = bugpack.require('bugunit-annotate.TestAnnotation');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate            = Annotate.annotate;
+var bugmeta             = BugMeta.context();
 var test                = TestAnnotation.test;
 
 
@@ -75,7 +75,7 @@ var collectionConstructorTest = {
             "Assert collection accepts a Collection as an argument at construction time and adds the collction values to the new collection");
     }
 };
-annotate(collectionConstructorTest).with(
+bugmeta.annotate(collectionConstructorTest).with(
     test().name("Collection constructor test")
 );
 
@@ -122,7 +122,7 @@ var collectionAddTest = {
             "contains the third added value.");
     }
 };
-annotate(collectionAddTest).with(
+bugmeta.annotate(collectionAddTest).with(
     test().name("Collection add test")
 );
 
@@ -154,7 +154,7 @@ var collectionMergeTest = {
             "contains the added value.");
     }
 };
-annotate(collectionMergeTest).with(
+bugmeta.annotate(collectionMergeTest).with(
     test().name("Collection merge test")
 );
 
@@ -187,7 +187,7 @@ var collectionGetValueArrayTest = {
         test.assertEqual(valuesArray[2], 'value3', "Assert value[2] from getValueArray call is value3");
     }
 };
-annotate(collectionGetValueArrayTest).with(
+bugmeta.annotate(collectionGetValueArrayTest).with(
     test().name("Collection getValueArray test")
 );
 
@@ -249,7 +249,7 @@ var collectionAddEqualObjectsTest = {
             "Assert collection count is 2 after adding instance2");
     }
 };
-annotate(collectionAddEqualObjectsTest).with(
+bugmeta.annotate(collectionAddEqualObjectsTest).with(
     test().name("Collection add equal objects test")
 );
 
@@ -301,7 +301,7 @@ var collectionAddNonEqualObjectsWithSameHashCodesTest = {
             "Assert collection does not contain instance2 since instance1 and instance2 are not equal");
     }
 };
-annotate(collectionAddNonEqualObjectsWithSameHashCodesTest).with(
+bugmeta.annotate(collectionAddNonEqualObjectsWithSameHashCodesTest).with(
     test().name("Collection add non equal objects that have the same hashCodes test")
 );
 
@@ -378,7 +378,7 @@ var collectionAddAndRemoveDifferentValuesTest = {
             "Assert return value from second remove() call was false");
     }
 };
-annotate(collectionAddAndRemoveDifferentValuesTest).with(
+bugmeta.annotate(collectionAddAndRemoveDifferentValuesTest).with(
     test().name("Collection add and remove different values test")
 );
 
@@ -439,7 +439,7 @@ var collectionAddAndRemoveSameValuesTest = {
             "Assert return value from second remove() call was false");
     }
 };
-annotate(collectionAddAndRemoveSameValuesTest).with(
+bugmeta.annotate(collectionAddAndRemoveSameValuesTest).with(
     test().name("Collection add and remove same values test")
 );
 
@@ -492,7 +492,7 @@ var collectionContainsAllTest = {
             "Assert a collection that only contains some of the values of another collection is not considered to contain all the values of the other collection");
     }
 };
-annotate(collectionContainsAllTest).with(
+bugmeta.annotate(collectionContainsAllTest).with(
     test().name("Collection contains all test")
 );
 
@@ -545,6 +545,6 @@ var collectionContainsEqualTest = {
             "Inverse assertion: Assert a collection with all of the values of another collection is containsEqual with that collection");
     }
 };
-annotate(collectionContainsEqualTest).with(
+bugmeta.annotate(collectionContainsEqualTest).with(
     test().name("Collection contains equal test")
 );

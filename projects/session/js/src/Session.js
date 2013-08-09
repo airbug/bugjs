@@ -7,6 +7,7 @@
 //@Export('Session')
 
 //@Require('Class')
+//@Require('IObjectable')
 //@Require('Obj')
 //@Require('TypeUtil')
 //@Require('UuidGenerator')
@@ -24,6 +25,7 @@ var bugpack     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
+var IObjectable     = bugpack.require('IObjectable');
 var Obj             = bugpack.require('Obj');
 var TypeUtil        = bugpack.require('TypeUtil');
 var UuidGenerator   = bugpack.require('UuidGenerator');
@@ -70,13 +72,33 @@ var Session = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @private
      * @return {Session}
      */
     getSessionUuid: function() {
         return this.sessionUuid;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // IObjectable Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {Object}
+     */
+    toObject: function() {
+        return {
+            sessionUuid: this.sessionUuid
+        };
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Interfaces
+//-------------------------------------------------------------------------------
+
+Class.implement(Session, IObjectable);
 
 
 //-------------------------------------------------------------------------------

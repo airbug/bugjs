@@ -5,7 +5,7 @@
 //@TestFile
 
 //@Require('IdGenerator')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -13,24 +13,24 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var IdGenerator =       bugpack.require('IdGenerator');
-var Annotate =          bugpack.require('annotate.Annotate');
-var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
+var IdGenerator     = bugpack.require('IdGenerator');
+var BugMeta         = bugpack.require('bugmeta.BugMeta');
+var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var test = TestAnnotation.test;
+var bugmeta         = BugMeta.context();
+var test            = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
@@ -66,6 +66,6 @@ var generateIdTest = {
             "Assert the third id generated and the first id generated are not equal");
     }
 };
-annotate(generateIdTest).with(
+bugmeta.annotate(generateIdTest).with(
     test().name("IdGenerator generate id test")
 );

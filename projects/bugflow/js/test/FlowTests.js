@@ -6,7 +6,7 @@
 
 //@Require('Class')
 //@Require('bugflow.Flow')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -21,17 +21,17 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =             bugpack.require('Class');
-var Flow =              bugpack.require('bugflow.Flow');
-var Annotate =          bugpack.require('annotate.Annotate');
-var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
+var Class               = bugpack.require('Class');
+var Flow                = bugpack.require('bugflow.Flow');
+var BugMeta             = bugpack.require('bugmeta.BugMeta');
+var TestAnnotation      = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
+var bugmeta = BugMeta.context();
 var test = TestAnnotation.test;
 
 
@@ -62,6 +62,6 @@ var bugflowExecuteFlowTest = {
             "Assert flow has executed");
     }
 };
-annotate(bugflowExecuteFlowTest).with(
+bugmeta.annotate(bugflowExecuteFlowTest).with(
     test().name("BugFlow Flow execute without extension test")
 );

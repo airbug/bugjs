@@ -6,7 +6,7 @@
 
 //@Require('Tree')
 //@Require('TreeNode')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -14,25 +14,25 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var TypeUtil =              bugpack.require('TypeUtil');
-var Annotate =              bugpack.require('annotate.Annotate');
-var TestAnnotation =        bugpack.require('bugunit-annotate.TestAnnotation');
-var TypeValueSetsHelper =   bugpack.require('tests.TypeValueSetsHelper');
+var TypeUtil            = bugpack.require('TypeUtil');
+var BugMeta             = bugpack.require('bugmeta.BugMeta');
+var TestAnnotation      = bugpack.require('bugunit-annotate.TestAnnotation');
+var TypeValueSetsHelper = bugpack.require('tests.TypeValueSetsHelper');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var test = TestAnnotation.test;
+var bugmeta             = BugMeta.context();
+var test                = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
@@ -59,7 +59,7 @@ var typeComparisonTest = {
     }
 
 };
-annotate(typeComparisonTest).with(
+bugmeta.annotate(typeComparisonTest).with(
     test().name("TypeUtil Comparison Test")
 );
 

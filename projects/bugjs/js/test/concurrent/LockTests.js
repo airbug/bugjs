@@ -6,8 +6,8 @@
 
 //@Require('Class')
 //@Require('Lock')
-//@Require('annotate.Annotate')
 //@Require('bugdouble.BugDouble')
+//@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -24,8 +24,8 @@ var bugpack = require('bugpack').context();
 
 var Class           = bugpack.require('Class');
 var Lock            = bugpack.require('Lock');
-var Annotate        = bugpack.require('annotate.Annotate');
 var BugDouble       = bugpack.require('bugdouble.BugDouble');
+var BugMeta         = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
@@ -33,9 +33,9 @@ var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate            = Annotate.annotate;
-var test                = TestAnnotation.test;
-var spyOnFunction       = BugDouble.spyOnFunction;
+var bugmeta         = BugMeta.context();
+var test            = TestAnnotation.test;
+var spyOnFunction   = BugDouble.spyOnFunction;
 
 
 //-------------------------------------------------------------------------------
@@ -104,7 +104,7 @@ var lockTest = {
         this.testLock.tryLock(this.testMethod3Spy);
     }
 };
-annotate(lockTest).with(
+bugmeta.annotate(lockTest).with(
     test().name("Lock test")
 );
 

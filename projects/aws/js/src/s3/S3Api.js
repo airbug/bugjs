@@ -20,31 +20,32 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var AWS = require('aws-sdk');
-var bugpack = require('bugpack').context();
+var AWS             = require('aws-sdk');
+var bugpack         = require('bugpack').context();
+var zlib            = require('zlib');
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =                 bugpack.require('Class');
-var Map =                   bugpack.require('Map');
-var Obj =                   bugpack.require('Obj');
-var TypeUtil =              bugpack.require('TypeUtil');
-var AwsConfig =             bugpack.require('aws.AwsConfig');
-var S3Object =              bugpack.require('aws.S3Object');
-var BugFlow =               bugpack.require('bugflow.BugFlow');
-var BugFs =                 bugpack.require('bugfs.BugFs');
+var Class           = bugpack.require('Class');
+var Map             = bugpack.require('Map');
+var Obj             = bugpack.require('Obj');
+var TypeUtil        = bugpack.require('TypeUtil');
+var AwsConfig       = bugpack.require('aws.AwsConfig');
+var S3Object        = bugpack.require('aws.S3Object');
+var BugFlow         = bugpack.require('bugflow.BugFlow');
+var BugFs           = bugpack.require('bugfs.BugFs');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var $if = BugFlow.$if;
-var $series = BugFlow.$series;
-var $task = BugFlow.$task;
+var $if             = BugFlow.$if;
+var $series         = BugFlow.$series;
+var $task           = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
@@ -211,6 +212,7 @@ var S3Api = Class.extend(Obj, {
      *     grantRead: ?string,
      *     grantReadACP: ?string,
      *     grantWriteACP: ?string,
+     *     gzip: ?boolean,
      *     storageClass: ?string
      * }} options
      * @param {function(Error, S3Object)} callback
@@ -248,11 +250,26 @@ var S3Api = Class.extend(Obj, {
                     });
                 }),
                 $task(function(flow) {
+                    if (options.gzip) {
+                        zlib.gzip(fileData, function(error, gzipData) {
+                            if (!error) {
+                                fileData = gzipData;
+                            }
+                            flow.complete(error);
+                        });
+                    } else {
+                        flow.complete();
+                    }
+                }),
+                $task(function(flow) {
                     s3Object = new S3Object({
                         body: fileData,
                         key: filePath.getName(),
                         contentType: _this.autoDiscoverContentType(filePath)
                     });
+                    if (options.gzip) {
+                        s3Object.setContentEncoding(S3Api.ContentEncoding.GZIP);
+                    }
                     _this.putObject(s3Object, s3Bucket, options, function(error) {
                         flow.complete(error);
                     });
@@ -387,7 +404,15 @@ var S3Api = Class.extend(Obj, {
  * @type {Object}
  */
 S3Api.extToContentType = {
-    '.tgz': 'application/x-compressed'
+    ".tgz": "application/x-compressed",
+    ".js": "application/x-javascript"
+};
+
+/**
+ * @enum {string}
+ */
+S3Api.ContentEncoding = {
+    GZIP: "gzip"
 };
 
 

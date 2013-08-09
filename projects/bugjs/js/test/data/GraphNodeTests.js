@@ -6,7 +6,7 @@
 
 //@Require('Class')
 //@Require('GraphNode')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -14,25 +14,25 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =             bugpack.require('Class');
-var GraphNode =         bugpack.require('GraphNode');
-var Annotate =          bugpack.require('annotate.Annotate');
-var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
+var Class           = bugpack.require('Class');
+var GraphNode       = bugpack.require('GraphNode');
+var BugMeta         = bugpack.require('bugmeta.BugMeta');
+var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var test = TestAnnotation.test;
+var bugmeta         = BugMeta.context();
+var test            = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
@@ -64,7 +64,7 @@ var graphNodeInstantiationTest = {
             "Assert value was set correctly during instantiation");
     }
 };
-annotate(graphNodeInstantiationTest).with(
+bugmeta.annotate(graphNodeInstantiationTest).with(
     test().name("GraphNode instantiation test")
 );
 
@@ -99,7 +99,7 @@ var graphNodeEqualityTest = {
             "Assert GraphNodes with different values are not equal.");
     }
 };
-annotate(graphNodeEqualityTest).with(
+bugmeta.annotate(graphNodeEqualityTest).with(
     test().name("GraphNode equality test")
 );
 
@@ -128,6 +128,6 @@ var graphNodeHashCodeEqualityTest = {
             "Assert GraphNodes with the same value have equal hash codes");
     }
 };
-annotate(graphNodeHashCodeEqualityTest).with(
+bugmeta.annotate(graphNodeHashCodeEqualityTest).with(
     test().name("GraphNode hash code equality test")
 );

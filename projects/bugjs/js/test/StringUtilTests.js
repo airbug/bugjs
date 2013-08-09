@@ -6,7 +6,7 @@
 
 //@Require('Class')
 //@Require('StringUtil')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -14,25 +14,25 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =             bugpack.require('Class');
-var StringUtil =        bugpack.require('StringUtil');
-var Annotate =          bugpack.require('annotate.Annotate');
-var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
+var Class           = bugpack.require('Class');
+var StringUtil      = bugpack.require('StringUtil');
+var BugMeta         = bugpack.require('bugmeta.BugMeta');
+var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var test = TestAnnotation.test;
+var bugmeta         = BugMeta.context();
+var test            = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
@@ -64,7 +64,7 @@ var stringPadTest = {
             "Assert the string has been padded correctly");
     }
 };
-annotate(stringPadTest).with(
+bugmeta.annotate(stringPadTest).with(
     test().name("String pad test")
 );
 
@@ -93,6 +93,6 @@ var stringTrimTest = {
             "Assert the string has been trimmed correctly");
     }
 };
-annotate(stringTrimTest).with(
+bugmeta.annotate(stringTrimTest).with(
     test().name("String trim test")
 );

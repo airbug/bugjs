@@ -6,7 +6,7 @@
 
 //@Require('Tree')
 //@Require('TreeNode')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -14,25 +14,25 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Annotate =          bugpack.require('annotate.Annotate');
-var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
-var Tree =              bugpack.require('Tree');
-var TreeNode =          bugpack.require('TreeNode');
+var Tree            = bugpack.require('Tree');
+var TreeNode        = bugpack.require('TreeNode');
+var BugMeta         = bugpack.require('bugmeta.BugMeta');
+var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var test = TestAnnotation.test;
+var bugmeta         = BugMeta.context();
+var test            = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
@@ -96,6 +96,6 @@ var treeWalkOrderTest = {
         }
     }
 };
-annotate(treeWalkOrderTest).with(
+bugmeta.annotate(treeWalkOrderTest).with(
     test().name("Tree walk order test")
 );

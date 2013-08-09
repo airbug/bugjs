@@ -6,7 +6,7 @@
 
 //@Require('Class')
 //@Require('EventListener')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -14,25 +14,25 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =             bugpack.require('Class');
-var EventListener =     bugpack.require('EventListener');
-var Annotate =          bugpack.require('annotate.Annotate');
-var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
+var Class           = bugpack.require('Class');
+var EventListener   = bugpack.require('EventListener');
+var BugMeta         = bugpack.require('bugmeta.BugMeta');
+var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var test = TestAnnotation.test;
+var bugmeta         = BugMeta.context();
+var test            = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ var eventListenerInstantiationTest = {
             "Assert EventListener instance extends EventListener ");
     }
 };
-annotate(eventListenerInstantiationTest).with(
+bugmeta.annotate(eventListenerInstantiationTest).with(
     test().name("EventListener instantiation test")
 );
 
@@ -110,7 +110,7 @@ var eventListenerEqualityTest = {
             "Assert EventListeners with different functions and different contexts are not equal.");
     }
 };
-annotate(eventListenerEqualityTest).with(
+bugmeta.annotate(eventListenerEqualityTest).with(
     test().name("EventListener equality test")
 );
 
@@ -140,7 +140,7 @@ var eventListenerHashCodeEqualityTest = {
             "Assert EventListeners with the same function and context have equal hash codes");
     }
 };
-annotate(eventListenerHashCodeEqualityTest).with(
+bugmeta.annotate(eventListenerHashCodeEqualityTest).with(
     test().name("EventListener hash code equality test")
 );
 
@@ -168,7 +168,7 @@ var eventListenerIsOnceTest = {
 
     }
 };
-annotate(eventListenerIsOnceTest).with(
+bugmeta.annotate(eventListenerIsOnceTest).with(
     test().name("EventListener isOnce test")
 );
 

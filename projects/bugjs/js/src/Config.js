@@ -5,6 +5,7 @@
 //@Export('Config')
 
 //@Require('Class')
+//@Require('IObjectable')
 //@Require('Obj')
 //@Require('Properties')
 
@@ -20,13 +21,14 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var Obj         = bugpack.require('Obj');
-var Properties  = bugpack.require('Properties');
+var Class           = bugpack.require('Class');
+var IObjectable     = bugpack.require('IObjectable');
+var Obj             = bugpack.require('Obj');
+var Properties      = bugpack.require('Properties');
 
 
 //-------------------------------------------------------------------------------
-// Declare Class
+// Class
 //-------------------------------------------------------------------------------
 
 var Config = Class.extend(Obj, {
@@ -41,7 +43,7 @@ var Config = Class.extend(Obj, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Properties
         //-------------------------------------------------------------------------------
 
         /**
@@ -49,8 +51,27 @@ var Config = Class.extend(Obj, {
          * @type {Properties}
          */
         this.properties = new Properties(config);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // IObjectable Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {Object}
+     */
+    toObject: function() {
+        return this.properties.getPropertiesObject();
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Interfaces
+//-------------------------------------------------------------------------------
+
+Class.implement(Config, IObjectable);
 
 
 //-------------------------------------------------------------------------------

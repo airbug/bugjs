@@ -23,5 +23,6 @@ npm-debug.log
 # mac OS
 .DS_Store
 
-#bugbox
+#bug
+.bugunit
 .buildbug

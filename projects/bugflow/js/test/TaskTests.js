@@ -6,7 +6,7 @@
 
 //@Require('Class')
 //@Require('bugflow.Task')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -21,17 +21,17 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =             bugpack.require('Class');
-var Task =              bugpack.require('bugflow.Task');
-var Annotate =          bugpack.require('annotate.Annotate');
-var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
+var Class           = bugpack.require('Class');
+var Task            = bugpack.require('bugflow.Task');
+var BugMeta         = bugpack.require('bugmeta.BugMeta');
+var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
+var bugmeta = BugMeta.context();
 var test = TestAnnotation.test;
 
 
@@ -82,7 +82,7 @@ var bugflowTaskExecuteTaskTest = {
         });
     }
 };
-annotate(bugflowTaskExecuteTaskTest).with(
+bugmeta.annotate(bugflowTaskExecuteTaskTest).with(
     test().name("BugFlow task execute test")
 );
 
@@ -117,6 +117,6 @@ var bugflowTaskExecuteTaskWithoutCallbackTest = {
             "Assert task method was executed");
     }
 };
-annotate(bugflowTaskExecuteTaskWithoutCallbackTest).with(
+bugmeta.annotate(bugflowTaskExecuteTaskWithoutCallbackTest).with(
     test().name("BugFlow task execute without callback test")
 );

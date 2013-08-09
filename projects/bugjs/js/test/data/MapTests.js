@@ -7,7 +7,7 @@
 //@Require('Class')
 //@Require('Collection')
 //@Require('Map')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -15,26 +15,26 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =             bugpack.require('Class');
-var Collection =        bugpack.require('Collection');
-var Map =               bugpack.require('Map');
-var Annotate =          bugpack.require('annotate.Annotate');
-var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
+var Class           = bugpack.require('Class');
+var Collection      = bugpack.require('Collection');
+var Map             = bugpack.require('Map');
+var BugMeta         = bugpack.require('bugmeta.BugMeta');
+var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var test = TestAnnotation.test;
+var bugmeta         = BugMeta.context();
+var test            = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ var mapSimplePutContainsValueTest = {
             "Assert containsValue returns false for value that hasn't been added to the map.");
     }
 };
-annotate(mapSimplePutContainsValueTest).with(
+bugmeta.annotate(mapSimplePutContainsValueTest).with(
     test().name("Map - simple put/containsValue test")
 );
 
@@ -100,7 +100,7 @@ var mapSimplePutGetTest = {
             "Assert value mapped to key is correct.");
     }
 };
-annotate(mapSimplePutGetTest).with(
+bugmeta.annotate(mapSimplePutGetTest).with(
     test().name("Map - simple put/get test")
 );
 
@@ -131,7 +131,7 @@ var mapGetKeyCollectionOnEmptyMapTest = {
             "Assert key Collection count is 0");
     }
 };
-annotate(mapGetKeyCollectionOnEmptyMapTest).with(
+bugmeta.annotate(mapGetKeyCollectionOnEmptyMapTest).with(
     test().name("Map - getKeyCollection called on an empty Map test")
 );
 
@@ -177,7 +177,7 @@ var mapGetKeyCollectionTest = {
             "Assert key Collection contains key3");
     }
 };
-annotate(mapGetKeyCollectionTest).with(
+bugmeta.annotate(mapGetKeyCollectionTest).with(
     test().name("Map - getKeyCollection test")
 );
 
@@ -235,7 +235,7 @@ var mapDataTypeKeyTest = {
             "Assert that different plain javascript arrays are treated as different keys.");
     }
 };
-annotate(mapDataTypeKeyTest).with(
+bugmeta.annotate(mapDataTypeKeyTest).with(
     test().name("Map - data type key test")
 );
 
@@ -274,7 +274,7 @@ var mapGetNativeJavascriptObjectNamesOfEmptyMapTest = {
         })
     }
 };
-annotate(mapGetNativeJavascriptObjectNamesOfEmptyMapTest).with(
+bugmeta.annotate(mapGetNativeJavascriptObjectNamesOfEmptyMapTest).with(
     test().name("Map - get() native javascript object names on empty map test")
 );
 
@@ -323,7 +323,7 @@ var mapNativeJavascriptObjectNamesPutGetTest = {
         }
     }
 };
-annotate(mapNativeJavascriptObjectNamesPutGetTest).with(
+bugmeta.annotate(mapNativeJavascriptObjectNamesPutGetTest).with(
     test().name("Map - native javascript object names put/get test")
 );
 

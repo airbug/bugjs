@@ -123,7 +123,7 @@ var MongoManager = Class.extend(Obj, {
      */
     validate: function(attribute, validationFunction, errorMessage){
         this.schema.path(attribute).validate(validationFunction, errorMessage);
-    },
+    }
 });
 
 

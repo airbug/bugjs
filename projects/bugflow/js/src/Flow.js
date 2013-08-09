@@ -140,7 +140,7 @@ var Flow = Class.extend(Obj, {
             throw new Error("Can only error flow once.");
         }
         if (this.hasCompleted()) {
-            throw new Error("Cannot error flow. Flow has already completed.");
+            throw new Error("Cannot error flow. Flow has already completed.\n Caused by " + error);
         }
         this.errorFlow($error(error));
     },

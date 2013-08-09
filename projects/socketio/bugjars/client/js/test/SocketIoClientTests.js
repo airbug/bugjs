@@ -4,7 +4,7 @@
 
 //@TestFile
 
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 //@Require('socketio:client.DummySocketFactory')
 //@Require('socketio:socket.SocketIoClient')
@@ -14,14 +14,14 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Annotate            = bugpack.require('annotate.Annotate');
+var BugMeta             = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation      = bugpack.require('bugunit-annotate.TestAnnotation');
 var DummySocketFactory  = bugpack.require('socketio:client.DummySocketFactory');
 var SocketIoClient      = bugpack.require('socketio:socket.SocketIoClient');
@@ -31,8 +31,8 @@ var SocketIoClient      = bugpack.require('socketio:socket.SocketIoClient');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var test = TestAnnotation.test;
+var bugmeta             = BugMeta.context();
+var test                = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
@@ -61,7 +61,7 @@ var socketIoClientConstructorTest = {
             "Asserts that socketIoClient does not start with the 'connecting' flag as true");
     }
 };
-annotate(socketIoClientConstructorTest).with(
+bugmeta.annotate(socketIoClientConstructorTest).with(
     test().name("SocketIoClient constructor Test")
 );
 
@@ -86,6 +86,6 @@ var socketIoClientConnectTest = {
 
     }
 };
-annotate(socketIoClientConnectTest).with(
+bugmeta.annotate(socketIoClientConnectTest).with(
     test().name("SocketIoClient connect Test")
 );

@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('bugroutes.ICallRoute')
 
 
 //-------------------------------------------------------------------------------
@@ -23,6 +24,7 @@ var bugpack     = require('bugpack').context();
 
 var Class       = bugpack.require('Class');
 var Obj         = bugpack.require('Obj');
+var ICallRoute  = bugpack.require('bugroutes.ICallRoute');
 
 
 //-------------------------------------------------------------------------------
@@ -57,23 +59,17 @@ var BugCallRoute = Class.extend(Obj, {
         this.requestType = requestType;
     },
 
+
+    //-------------------------------------------------------------------------------
+    // ICallRoute Implementation
+    //-------------------------------------------------------------------------------
+
     /**
      * @param {CallRequest} request
-     * @param {CallReponder} responder
+     * @param {CallResponder} responder
      */
     fire: function(request, responder) {
         this.listener(request, responder);
-    },
-
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @return {function(...)}
-     */
-    getListener: function() {
-        return this.listener;
     },
 
     /**
@@ -83,6 +79,13 @@ var BugCallRoute = Class.extend(Obj, {
         return this.requestType;
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Interfaces
+//-------------------------------------------------------------------------------
+
+Class.implement(BugCallRoute, ICallRoute);
 
 
 //-------------------------------------------------------------------------------

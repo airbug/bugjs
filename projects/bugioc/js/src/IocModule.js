@@ -7,6 +7,7 @@
 //@Export('IocModule')
 
 //@Require('Class')
+//@Require('List')
 //@Require('Obj')
 //@Require('Set')
 
@@ -22,9 +23,10 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var Obj =   bugpack.require('Obj');
-var Set =   bugpack.require('Set');
+var Class   = bugpack.require('Class');
+var List    = bugpack.require('List');
+var Obj     = bugpack.require('Obj');
+var Set     = bugpack.require('Set');
 
 
 //-------------------------------------------------------------------------------
@@ -48,39 +50,39 @@ var IocModule = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {Set<IocArg>}
+         * @type {List<IocArg>}
          */
-        this.iocArgSet = new Set();
+        this.iocArgList         = new List();
 
         /**
          * @private
          * @type {IocConfiguration}
          */
-        this.iocConfiguration = null;
+        this.iocConfiguration   = null;
 
         /**
          * @private
          * @type {Set<IocProperty>}
          */
-        this.iocPropertySet = new Set();
+        this.iocPropertySet     = new Set();
 
         /**
          * @private
          * @type {string}
          */
-        this.methodName = methodName;
+        this.methodName         = methodName;
 
         /**
          * @private
          * @type {string}
          */
-        this.name = name;
+        this.name               = name;
 
         /**
          * @private
          * @type {IocModule.Scope}
          */
-        this.scope = scope ? scope : IocModule.Scope.SINGLETON;
+        this.scope              = scope ? scope : IocModule.Scope.SINGLETON;
     },
 
 
@@ -89,11 +91,10 @@ var IocModule = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     *
-     * @return {Set}
+     * @return {List.<IocArg>}
      */
-    getIocArgSet: function() {
-        return this.iocArgSet;
+    getIocArgList: function() {
+        return this.iocArgList;
     },
 
     /**
@@ -174,8 +175,8 @@ var IocModule = Class.extend(Obj, {
      * @param {IocArg} iocArg
      */
     addIocArg: function(iocArg) {
-        if (!this.iocArgSet.contains(iocArg)) {
-            this.iocArgSet.add(iocArg);
+        if (!this.iocArgList.contains(iocArg)) {
+            this.iocArgList.add(iocArg);
         } else {
             throw new Error("Module already contains this IocArg");
         }

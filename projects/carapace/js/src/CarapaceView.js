@@ -17,7 +17,7 @@
 //@Require('List')
 //@Require('Obj')
 //@Require('Proxy')
-//@Require('backbone.Backbone');
+//@Require('backbone.Backbone')
 
 
 //-------------------------------------------------------------------------------

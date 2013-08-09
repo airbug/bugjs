@@ -6,7 +6,7 @@
 
 //@Require('Event')
 //@Require('EventDispatcher')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -21,18 +21,18 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var EventDispatcher =   bugpack.require('EventDispatcher');
-var Event =             bugpack.require('Event');
-var Annotate =          bugpack.require('annotate.Annotate');
-var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
+var EventDispatcher = bugpack.require('EventDispatcher');
+var Event           = bugpack.require('Event');
+var BugMeta         = bugpack.require('bugmeta.BugMeta');
+var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var test = TestAnnotation.test;
+var bugmeta         = BugMeta.context();
+var test            = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
@@ -69,7 +69,7 @@ var eventDispatcherInstantiationTest = {
             "Assert dispatcher target is set to the target passed in during instantiation");
     }
 };
-annotate(eventDispatcherInstantiationTest).with(
+bugmeta.annotate(eventDispatcherInstantiationTest).with(
     test().name("EventDispatcher instantiation test")
 );
 
@@ -119,7 +119,7 @@ var eventDispatcherSimpleAddEventListenerDispatchEventTest = {
         test.assertTrue(this.calledVar, "Assert listener function was called.");
     }
 };
-annotate(eventDispatcherSimpleAddEventListenerDispatchEventTest).with(
+bugmeta.annotate(eventDispatcherSimpleAddEventListenerDispatchEventTest).with(
     test().name("EventDispatcher simple add event listener and dispatch event test")
 );
 
@@ -162,7 +162,7 @@ var eventDispatcherAddAnonymousEventListenerDispatchEventTest = {
         test.assertTrue(this.calledVar, "Assert listener function was called.");
     }
 };
-annotate(eventDispatcherAddAnonymousEventListenerDispatchEventTest).with(
+bugmeta.annotate(eventDispatcherAddAnonymousEventListenerDispatchEventTest).with(
     test().name("EventDispatcher add anonymous event listener and dispatch event test")
 );
 
@@ -209,7 +209,7 @@ var eventDispatcherDispatchEventBubblesFalseTest = {
             "Assert listener function on parent dispatcher was not called when bubbles is false.");
     }
 };
-annotate(eventDispatcherDispatchEventBubblesFalseTest).with(
+bugmeta.annotate(eventDispatcherDispatchEventBubblesFalseTest).with(
     test().name("EventDispatcher dispatch event with bubbles false test")
 );
 
@@ -256,7 +256,7 @@ var eventDispatcherDispatchEventBubblesTrueTest = {
             "Assert listener function on parent dispatcher was called when bubbles is true.");
     }
 };
-annotate(eventDispatcherDispatchEventBubblesTrueTest).with(
+bugmeta.annotate(eventDispatcherDispatchEventBubblesTrueTest).with(
     test().name("EventDispatcher dispatch event with bubbles true test")
 );
 
@@ -305,7 +305,7 @@ var eventDispatcherDispatchEventStopPropagationTest = {
                 "EventDispatcher");
     }
 };
-annotate(eventDispatcherDispatchEventStopPropagationTest).with(
+bugmeta.annotate(eventDispatcherDispatchEventStopPropagationTest).with(
     test().name("EventDispatcher dispatch event stopPropagation test")
 );
 
@@ -348,7 +348,7 @@ var eventDispatcherSimpleAddAndRemoveEventListenerTest = {
             "Assert hasEventListener returns false after removing the event listener.");
     }
 };
-annotate(eventDispatcherSimpleAddAndRemoveEventListenerTest).with(
+bugmeta.annotate(eventDispatcherSimpleAddAndRemoveEventListenerTest).with(
     test().name("EventDispatcher simple add and remove event listener test")
 );
 
@@ -400,6 +400,6 @@ var eventDispatcherOnceOnTest = {
             "Assert that the event dispatcher no longer has the event listener registered");
     }
 };
-annotate(eventDispatcherOnceOnTest).with(
+bugmeta.annotate(eventDispatcherOnceOnTest).with(
     test().name("EventDispatcher #onceOn test")
 );

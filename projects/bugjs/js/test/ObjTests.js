@@ -6,7 +6,7 @@
 
 //@Require('Obj')
 //@Require('TypeUtil')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -21,18 +21,18 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Obj =               bugpack.require('Obj');
-var TypeUtil =          bugpack.require('TypeUtil');
-var Annotate =          bugpack.require('annotate.Annotate');
-var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
+var Obj             = bugpack.require('Obj');
+var TypeUtil        = bugpack.require('TypeUtil');
+var BugMeta         = bugpack.require('bugmeta.BugMeta');
+var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var test = TestAnnotation.test;
+var bugmeta         = BugMeta.context();
+var test            = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
@@ -67,7 +67,7 @@ var objInstantiationTest = {
             "Assert id of both objects are different");
     }
 };
-annotate(objInstantiationTest).with(
+bugmeta.annotate(objInstantiationTest).with(
     test().name("Obj instantiation test")
 );
 
@@ -109,7 +109,7 @@ var objHashCodeTest = {
             "Assert Obj.hashCode and the instantiated object hashCode match");
     }
 };
-annotate(objHashCodeTest).with(
+bugmeta.annotate(objHashCodeTest).with(
     test().name("Obj hashCode test")
 );
 
@@ -158,7 +158,7 @@ var objEqualsTest = {
             "Assert two different Obj instances are not equal");
     }
 };
-annotate(objEqualsTest).with(
+bugmeta.annotate(objEqualsTest).with(
     test().name("Obj equals test")
 );
 
@@ -215,7 +215,7 @@ var objCloneTest = {
         })
     }
 };
-annotate(objCloneTest).with(
+bugmeta.annotate(objCloneTest).with(
     test().name("Obj clone test")
 );
 
@@ -275,7 +275,7 @@ var objForInIterationTest = {
         }
     }
 };
-annotate(objForInIterationTest).with(
+bugmeta.annotate(objForInIterationTest).with(
     test().name("Obj forIn iteration test")
 );
 
@@ -350,6 +350,6 @@ var objForInIterationDontEnumPropertiesTest = {
         Obj.isDontEnumSkipped = this.originalIsDontEnumSkipped;
     }
 };
-annotate(objForInIterationDontEnumPropertiesTest).with(
+bugmeta.annotate(objForInIterationDontEnumPropertiesTest).with(
     test().name("Obj forIn iteration of don't enum properties test")
 );

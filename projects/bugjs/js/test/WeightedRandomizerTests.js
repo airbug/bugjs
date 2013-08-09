@@ -7,7 +7,7 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('WeightedRandomizer')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -15,26 +15,26 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =                 bugpack.require('Class');
-var Obj =                   bugpack.require('Obj');
-var WeightedRandomizer =    bugpack.require('WeightedRandomizer');
-var Annotate =              bugpack.require('annotate.Annotate');
-var TestAnnotation =        bugpack.require('bugunit-annotate.TestAnnotation');
+var Class               = bugpack.require('Class');
+var Obj                 = bugpack.require('Obj');
+var WeightedRandomizer  = bugpack.require('WeightedRandomizer');
+var BugMeta             = bugpack.require('bugmeta.BugMeta');
+var TestAnnotation      = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var test = TestAnnotation.test;
+var bugmeta             = BugMeta.context();
+var test                = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
@@ -82,6 +82,6 @@ var weightedRandomizerGetRandomTest = {
             "Assert getRandom respected the weights. Actual ratio:" + ratio);
     }
 };
-annotate(weightedRandomizerGetRandomTest).with(
+bugmeta.annotate(weightedRandomizerGetRandomTest).with(
     test().name("WeightedRandomizer get random test")
 );

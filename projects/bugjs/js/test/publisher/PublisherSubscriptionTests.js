@@ -5,7 +5,7 @@
 //@TestFile
 
 //@Require('PublisherSubscription')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -13,24 +13,24 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var PublisherSubscription = bugpack.require('PublisherSubscription');
-var Annotate =              bugpack.require('annotate.Annotate');
-var TestAnnotation =        bugpack.require('bugunit-annotate.TestAnnotation');
+var PublisherSubscription   = bugpack.require('PublisherSubscription');
+var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var test = TestAnnotation.test;
+var bugmeta                 = BugMeta.context();
+var test                    = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
@@ -69,7 +69,7 @@ var subscriptionEqualityTest = {
             "Assert subscriptions with the same function, context, and topic are equal");
     }
 };
-annotate(subscriptionEqualityTest).with(
+bugmeta.annotate(subscriptionEqualityTest).with(
     test().name("Subscription equality test")
 );
 
@@ -100,6 +100,6 @@ var subscriptionHashCodeEqualityTest = {
             "Assert subscriptions with the same function, context, and topic have equal hash codes");
     }
 };
-annotate(subscriptionHashCodeEqualityTest).with(
+bugmeta.annotate(subscriptionHashCodeEqualityTest).with(
     test().name("Subscription hash code equality test")
 );

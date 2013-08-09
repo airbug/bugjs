@@ -6,7 +6,7 @@
 
 //@Require('Class')
 //@Require('bugflow.ForEachParallel')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -21,17 +21,17 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =             bugpack.require('Class');
-var ForEachParallel =   bugpack.require('bugflow.ForEachParallel');
-var Annotate =          bugpack.require('annotate.Annotate');
-var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
+var Class               = bugpack.require('Class');
+var ForEachParallel     = bugpack.require('bugflow.ForEachParallel');
+var BugMeta             = bugpack.require('bugmeta.BugMeta');
+var TestAnnotation      = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
+var bugmeta = BugMeta.context();
 var test = TestAnnotation.test;
 
 
@@ -87,6 +87,6 @@ var bugflowExecuteForEachParallelTest = {
         });
     }
 };
-annotate(bugflowExecuteForEachParallelTest).with(
+bugmeta.annotate(bugflowExecuteForEachParallelTest).with(
     test().name("BugFlow ForEachParallel execute test")
 );

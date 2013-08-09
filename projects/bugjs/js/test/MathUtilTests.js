@@ -7,7 +7,7 @@
 //@Require('Class')
 //@Require('MathUtil')
 //@Require('Obj')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -15,26 +15,26 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =             bugpack.require('Class');
-var MathUtil =          bugpack.require('MathUtil');
-var Obj =               bugpack.require('Obj');
-var Annotate =          bugpack.require('annotate.Annotate');
-var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
+var Class           = bugpack.require('Class');
+var MathUtil        = bugpack.require('MathUtil');
+var Obj             = bugpack.require('Obj');
+var BugMeta         = bugpack.require('bugmeta.BugMeta');
+var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var test = TestAnnotation.test;
+var bugmeta         = BugMeta.context();
+var test            = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
@@ -74,6 +74,6 @@ var randomBetweenTest = {
             "Assert random number is either equal to 3 or equal to 4");
     }
 };
-annotate(randomBetweenTest).with(
+bugmeta.annotate(randomBetweenTest).with(
     test().name("Random between test")
 );

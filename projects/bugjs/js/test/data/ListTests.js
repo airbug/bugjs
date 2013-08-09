@@ -7,7 +7,7 @@
 //@Require('Class')
 //@Require('List')
 //@Require('Obj')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -15,26 +15,26 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =             bugpack.require('Class');
-var List =              bugpack.require('List');
-var Obj =               bugpack.require('Obj');
-var Annotate =          bugpack.require('annotate.Annotate');
-var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
+var Class           = bugpack.require('Class');
+var List            = bugpack.require('List');
+var Obj             = bugpack.require('Obj');
+var BugMeta         = bugpack.require('bugmeta.BugMeta');
+var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var test = TestAnnotation.test;
+var bugmeta         = BugMeta.context();
+var test            = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
@@ -75,7 +75,7 @@ var listConstructorTest = {
             "Assert collection accepts a List as an argument at construction time and adds the List values to the new List");
     }
 };
-annotate(listConstructorTest).with(
+bugmeta.annotate(listConstructorTest).with(
     test().name("List constructor test")
 );
 
@@ -118,7 +118,7 @@ var listAddTest = {
             "Assert third item added to the list is at index 2.");
     }
 };
-annotate(listAddTest).with(
+bugmeta.annotate(listAddTest).with(
     test().name("List add test")
 );
 
@@ -154,7 +154,7 @@ var listClearTest = {
             "Assert first item in the list is now value2.");
     }
 };
-annotate(listClearTest).with(
+bugmeta.annotate(listClearTest).with(
     test().name("List clear test")
 );
 
@@ -183,7 +183,7 @@ var listContainsTest = {
             "Assert list contains function reports added value is contained.");
     }
 };
-annotate(listContainsTest).with(
+bugmeta.annotate(listContainsTest).with(
     test().name("List contains test")
 );
 
@@ -236,7 +236,7 @@ var listIndexOfFirstTest = {
             "Assert indexOfFirst item 3 is 2 after adding a duplicate of item 3");
     }
 };
-annotate(listIndexOfFirstTest).with(
+bugmeta.annotate(listIndexOfFirstTest).with(
     test().name("List indexOfFirst test")
 );
 
@@ -289,7 +289,7 @@ var listIndexOfLastTest = {
             "Assert indexOfLast item 3 is 5 after adding a duplicate of item 3");
     }
 };
-annotate(listIndexOfLastTest).with(
+bugmeta.annotate(listIndexOfLastTest).with(
     test().name("List indexOfLast test")
 );
 
@@ -356,7 +356,7 @@ var listRemoveTest = {
             "List count reports 0 after removing item 3 from list.");
     }
 };
-annotate(listRemoveTest).with(
+bugmeta.annotate(listRemoveTest).with(
     test().name("List remove test")
 );
 
@@ -404,7 +404,7 @@ var listRemoveAtTest = {
             "Assert count is 2");
     }
 };
-annotate(listRemoveAtTest).with(
+bugmeta.annotate(listRemoveAtTest).with(
     test().name("List removeAt test")
 );
 
@@ -466,7 +466,7 @@ var listAddEqualObjectsTest = {
             "Assert list count is 2 after adding instance2");
     }
 };
-annotate(listAddEqualObjectsTest).with(
+bugmeta.annotate(listAddEqualObjectsTest).with(
     test().name("List add equal objects test")
 );
 
@@ -518,7 +518,7 @@ var listAddNonEqualObjectsWithSameHashCodesTest = {
             "Assert list does not contain instance2 since instance1 and instance2 are not equal");
     }
 };
-annotate(listAddNonEqualObjectsWithSameHashCodesTest).with(
+bugmeta.annotate(listAddNonEqualObjectsWithSameHashCodesTest).with(
     test().name("List add non equal objects that have the same hashCodes test")
 );
 
@@ -596,6 +596,6 @@ var listRemoveEqualObjectsTest = {
             "Assert list count is 0 after removing instance2");
     }
 };
-annotate(listRemoveEqualObjectsTest).with(
+bugmeta.annotate(listRemoveEqualObjectsTest).with(
     test().name("List add equal objects test")
 );

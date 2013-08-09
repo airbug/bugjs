@@ -6,7 +6,7 @@
 
 //@Require('HashUtil')
 //@Require('TypeValueSetsHelper')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -14,25 +14,25 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var HashUtil =              bugpack.require('HashUtil');
-var Annotate =              bugpack.require('annotate.Annotate');
-var TestAnnotation =        bugpack.require('bugunit-annotate.TestAnnotation');
-var TypeValueSetsHelper =   bugpack.require('tests.TypeValueSetsHelper');
+var HashUtil            = bugpack.require('HashUtil');
+var BugMeta             = bugpack.require('bugmeta.BugMeta');
+var TestAnnotation      = bugpack.require('bugunit-annotate.TestAnnotation');
+var TypeValueSetsHelper = bugpack.require('tests.TypeValueSetsHelper');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var test = TestAnnotation.test;
+var bugmeta             = BugMeta.context();
+var test                = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
@@ -80,6 +80,6 @@ var hashRepeatTest = {
         }
     }
 };
-annotate(hashRepeatTest).with(
+bugmeta.annotate(hashRepeatTest).with(
     test().name("Hash repeat test")
 );

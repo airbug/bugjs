@@ -5,7 +5,7 @@
 //@TestFile
 
 //@Require('Publisher')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -13,24 +13,24 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Publisher =         bugpack.require('Publisher');
-var Annotate =          bugpack.require('annotate.Annotate');
-var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
+var Publisher       = bugpack.require('Publisher');
+var BugMeta         = bugpack.require('bugmeta.BugMeta');
+var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var test = TestAnnotation.test;
+var bugmeta         = BugMeta.context();
+var test            = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
@@ -77,6 +77,6 @@ var publisherSubscribePublishTest = {
         test.assertTrue(this.calledVar, "Assert subscriber function was called.");
     }
 };
-annotate(publisherSubscribePublishTest).with(
+bugmeta.annotate(publisherSubscribePublishTest).with(
     test().name("Publisher subscribe and publish test")
 );

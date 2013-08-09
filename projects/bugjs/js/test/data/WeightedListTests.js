@@ -7,7 +7,7 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('WeightedList')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -15,26 +15,26 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =             bugpack.require('Class');
-var Obj =               bugpack.require('Obj');
-var WeightedList =      bugpack.require('WeightedList');
-var Annotate =          bugpack.require('annotate.Annotate');
-var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
+var Class           = bugpack.require('Class');
+var Obj             = bugpack.require('Obj');
+var WeightedList    = bugpack.require('WeightedList');
+var BugMeta         = bugpack.require('bugmeta.BugMeta');
+var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var test = TestAnnotation.test;
+var bugmeta         = BugMeta.context();
+var test            = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
@@ -80,7 +80,7 @@ var weightedListAddTest = {
             "Assert third item added to the weightedList is at index 2.");
     }
 };
-annotate(weightedListAddTest).with(
+bugmeta.annotate(weightedListAddTest).with(
     test().name("WeightedList add test")
 );
 
@@ -116,7 +116,7 @@ var weightedListClearTest = {
             "Assert first item in the weightedList is now value2.");
     }
 };
-annotate(weightedListClearTest).with(
+bugmeta.annotate(weightedListClearTest).with(
     test().name("WeightedList clear test")
 );
 
@@ -145,7 +145,7 @@ var weightedListContainsTest = {
             "Assert weightedList contains function reports added value is contained.");
     }
 };
-annotate(weightedListContainsTest).with(
+bugmeta.annotate(weightedListContainsTest).with(
     test().name("WeightedList contains test")
 );
 
@@ -198,7 +198,7 @@ var weightedListIndexOfFirstTest = {
             "Assert indexOfFirst item 3 is 2 after adding a duplicate of item 3");
     }
 };
-annotate(weightedListIndexOfFirstTest).with(
+bugmeta.annotate(weightedListIndexOfFirstTest).with(
     test().name("WeightedList indexOfFirst test")
 );
 
@@ -251,7 +251,7 @@ var weightedListIndexOfLastTest = {
             "Assert indexOfLast item 3 is 5 after adding a duplicate of item 3");
     }
 };
-annotate(weightedListIndexOfLastTest).with(
+bugmeta.annotate(weightedListIndexOfLastTest).with(
     test().name("WeightedList indexOfLast test")
 );
 
@@ -318,7 +318,7 @@ var weightedListRemoveTest = {
             "WeightedList count reports 0 after removing item 3 from weightedList.");
     }
 };
-annotate(weightedListRemoveTest).with(
+bugmeta.annotate(weightedListRemoveTest).with(
     test().name("WeightedList remove test")
 );
 
@@ -366,7 +366,7 @@ var weightedListRemoveAtTest = {
             "Assert count is 2");
     }
 };
-annotate(weightedListRemoveAtTest).with(
+bugmeta.annotate(weightedListRemoveAtTest).with(
     test().name("WeightedList removeAt test")
 );
 
@@ -428,7 +428,7 @@ var weightedListAddEqualObjectsTest = {
             "Assert weightedList count is 2 after adding instance2");
     }
 };
-annotate(weightedListAddEqualObjectsTest).with(
+bugmeta.annotate(weightedListAddEqualObjectsTest).with(
     test().name("WeightedList add equal objects test")
 );
 
@@ -480,7 +480,7 @@ var weightedListAddNonEqualObjectsWithSameHashCodesTest = {
             "Assert weightedList does not contain instance2 since instance1 and instance2 are not equal");
     }
 };
-annotate(weightedListAddNonEqualObjectsWithSameHashCodesTest).with(
+bugmeta.annotate(weightedListAddNonEqualObjectsWithSameHashCodesTest).with(
     test().name("WeightedList add non equal objects that have the same hashCodes test")
 );
 
@@ -558,7 +558,7 @@ var weightedListRemoveEqualObjectsTest = {
             "Assert weightedList count is 0 after removing instance2");
     }
 };
-annotate(weightedListRemoveEqualObjectsTest).with(
+bugmeta.annotate(weightedListRemoveEqualObjectsTest).with(
     test().name("WeightedList add equal objects test")
 );
 
@@ -593,6 +593,6 @@ var weightedListGetAtWeightTest = {
         test.assertEqual(this.weightedList.getAtWeight(5), this.value2, "Assert value at weight 5 is value2.");
     }
 };
-annotate(weightedListGetAtWeightTest).with(
+bugmeta.annotate(weightedListGetAtWeightTest).with(
     test().name("WeightedList get at weight test")
 );

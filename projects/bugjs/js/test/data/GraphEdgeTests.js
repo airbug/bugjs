@@ -7,7 +7,7 @@
 //@Require('Class')
 //@Require('GraphEdge')
 //@Require('GraphNode')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -15,26 +15,26 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =             bugpack.require('Class');
-var GraphEdge =         bugpack.require('GraphEdge');
-var GraphNode =         bugpack.require('GraphNode');
-var Annotate =          bugpack.require('annotate.Annotate');
-var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
+var Class           = bugpack.require('Class');
+var GraphEdge       = bugpack.require('GraphEdge');
+var GraphNode       = bugpack.require('GraphNode');
+var BugMeta         = bugpack.require('bugmeta.BugMeta');
+var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var test = TestAnnotation.test;
+var bugmeta         = BugMeta.context();
+var test            = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
@@ -67,7 +67,7 @@ var graphEdgeInstantiationWithGoodArgumentsTest = {
             "Assert toNode was set correct during instantiation");
     }
 };
-annotate(graphEdgeInstantiationWithGoodArgumentsTest).with(
+bugmeta.annotate(graphEdgeInstantiationWithGoodArgumentsTest).with(
     test().name("GraphEdge instantiation test")
 );
 
@@ -114,7 +114,7 @@ var graphEdgeEqualityTest = {
             "Assert GraphEdges with different fromNodes and different toNodes are not equal");
     }
 };
-annotate(graphEdgeEqualityTest).with(
+bugmeta.annotate(graphEdgeEqualityTest).with(
     test().name("GraphEdge equality test")
 );
 
@@ -144,6 +144,6 @@ var graphNodeHashCodeEqualityTest = {
             "Assert GraphNodes with the same value have equal hash codes");
     }
 };
-annotate(graphNodeHashCodeEqualityTest).with(
+bugmeta.annotate(graphNodeHashCodeEqualityTest).with(
     test().name("GraphEdge hash code equality test")
 );

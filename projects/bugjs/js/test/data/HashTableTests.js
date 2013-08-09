@@ -6,7 +6,7 @@
 
 //@Require('HashTable')
 //@Require('TypeUtil')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -14,25 +14,25 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var HashTable =         bugpack.require('HashTable');
-var TypeUtil =          bugpack.require('TypeUtil');
-var Annotate =          bugpack.require('annotate.Annotate');
-var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
+var HashTable       = bugpack.require('HashTable');
+var TypeUtil        = bugpack.require('TypeUtil');
+var BugMeta         = bugpack.require('bugmeta.BugMeta');
+var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var test = TestAnnotation.test;
+var bugmeta         = BugMeta.context();
+var test            = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
@@ -62,7 +62,7 @@ var hashTableInstantiationTest = {
             "Assert HashTable count is 0 after instantiation");
     }
 };
-annotate(hashTableInstantiationTest).with(
+bugmeta.annotate(hashTableInstantiationTest).with(
     test().name("HashTable - instantiation test")
 );
 
@@ -101,7 +101,7 @@ var hashTableGetKeyArrayTest = {
             "Assert key3 is in the key array");
     }
 };
-annotate(hashTableGetKeyArrayTest).with(
+bugmeta.annotate(hashTableGetKeyArrayTest).with(
     test().name("HashTableNode - getKeyArray test")
 );
 
@@ -140,6 +140,6 @@ var hashTableGetValueArrayTest = {
             "Assert value3 is in the value array");
     }
 };
-annotate(hashTableGetValueArrayTest).with(
+bugmeta.annotate(hashTableGetValueArrayTest).with(
     test().name("HashTableNode - getValueArray test")
 );

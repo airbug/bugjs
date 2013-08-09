@@ -5,7 +5,7 @@
 //@TestFile
 
 //@Require('PublisherMessage')
-//@Require('annotate.Annotate')
+//@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -13,24 +13,24 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var PublisherMessage =  bugpack.require('PublisherMessage');
-var Annotate =          bugpack.require('annotate.Annotate');
-var TestAnnotation =    bugpack.require('bugunit-annotate.TestAnnotation');
+var PublisherMessage    = bugpack.require('PublisherMessage');
+var BugMeta             = bugpack.require('bugmeta.BugMeta');
+var TestAnnotation      = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var annotate = Annotate.annotate;
-var test = TestAnnotation.test;
+var bugmeta             = BugMeta.context();
+var test                = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
@@ -64,6 +64,6 @@ var instantiatePublisherMessageTest = {
             "Assert message data was set correctly during instantiation");
     }
 };
-annotate(instantiatePublisherMessageTest).with(
+bugmeta.annotate(instantiatePublisherMessageTest).with(
     test().name("PublisherMessage instantiation test")
 );
