@@ -2,44 +2,49 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('carapace')
+//@Package('buganno')
 
-//@Export('ControllerRoute')
+//@Export('AnnotationRegistry')
 
 //@Require('Class')
-//@Require('Event')
-//@Require('EventDispatcher')
-//@Require('carapace.RoutingRequest')
+//@Require('IObjectable')
+//@Require('List')
+//@Require('Map')
+//@Require('Obj')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =             bugpack.require('Class');
-var Event =             bugpack.require('Event');
-var EventDispatcher =   bugpack.require('EventDispatcher');
-var RoutingRequest =    bugpack.require('carapace.RoutingRequest');
+var Class       = bugpack.require('Class');
+var IObjectable = bugpack.require('IObjectable');
+var List        = bugpack.require('List');
+var Map         = bugpack.require('Map');
+var Obj         = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ControllerRoute = Class.extend(EventDispatcher, {
+var AnnotationRegistry = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(route, controller) {
+    /**
+     * @param {Path} filePath
+     */
+    _constructor: function(filePath) {
 
         this._super();
 
@@ -50,27 +55,21 @@ var ControllerRoute = Class.extend(EventDispatcher, {
 
         /**
          * @private
-         * @type {CarapaceController}
+         * @type {List.<Annotation>}
          */
-        this.controller = controller;
+        this.annotationList     = new List();
 
         /**
          * @private
-         * @type {boolean}
+         * @type {Map.<string, List.<Annotation>>}
          */
-        this.initialized = false;
+        this.annotationTypeMap  = new Map();
 
         /**
          * @private
-         * @type {string}
+         * @type {Path}
          */
-        this.route = route;
-
-        /**
-         * @private
-         * @type {string}
-         */
-        this.routeId = "ControllerRouter" + this.getInternalId();
+        this.filePath           = filePath;
     },
 
 
@@ -79,63 +78,76 @@ var ControllerRoute = Class.extend(EventDispatcher, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {CarapaceController}
+     * @private
+     * @return {List.<Annotation>}
      */
-    getController: function() {
-        return this.controller;
+    getAnnotationList: function() {
+        return this.annotationList;
+    },
+
+    /**
+     * @return {Path}
+     */
+    getFilePath: function() {
+        return this.filePath;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Public Class Methods
+    // IObjectable Implementation
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {CarapaceRouter} router
+     * @return {Object}
      */
-    setupRoute: function(router) {
-        if (!this.initialized) {
-            this.initialized = true;
-            var _this = this;
-            router.route(this.route, this.routeId, function() {
-                var args = Array.prototype.slice.call(arguments, 0);
-                _this.requestRouting(args);
-            });
+    toObject: function() {
+        var annotationRegistryData = {
+            filePath: this.filePath.getAbsolutePath(),
+            annotationList: []
+        };
+        this.annotationList.forEach(function(annotation) {
+            annotationRegistryData.annotationList.push(annotation.toObject());
+        });
+        return annotationRegistryData;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {Annotation} annotation
+     */
+    addAnnotation: function(annotation) {
+        this.annotationList.add(annotation);
+        var annotationTypeList = this.annotationTypeMap.get(annotation.getType());
+        if (!annotationTypeList) {
+            annotationTypeList = new List();
+            this.annotationTypeMap.put(annotation.getType(), annotationTypeList);
         }
+        annotationTypeList.add(annotation);
     },
 
-
-    //-------------------------------------------------------------------------------
-    // Protected Class Methods
-    //-------------------------------------------------------------------------------
-
     /**
-     * @protected
-     * @param {Array.<*>} routingArgs
+     * @param {string} type
+     * @return {List.<Annotation>)
      */
-    requestRouting: function(routingArgs) {
-        var routingRequest = new RoutingRequest(this, routingArgs);
-        this.dispatchEvent(new Event(ControllerRoute.EventType.ROUTING_REQUESTED, {
-            routingRequest: routingRequest
-        }));
+    getAnnotationListByType: function(type) {
+        return this.annotationTypeMap.get(type);
     }
 });
 
 
 //-------------------------------------------------------------------------------
-// Static Variables
+// Interfaces
 //-------------------------------------------------------------------------------
 
-/**
- * @enum {string}
- */
-ControllerRoute.EventType = {
-    ROUTING_REQUESTED: "ControlerRoute:RoutingRequested"
-};
+Class.implement(AnnotationRegistry, IObjectable);
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('carapace.ControllerRoute', ControllerRoute);
+bugpack.export('buganno.AnnotationRegistry', AnnotationRegistry);

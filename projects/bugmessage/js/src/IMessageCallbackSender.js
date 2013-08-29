@@ -4,7 +4,7 @@
 
 //@Package('bugmessage')
 
-//@Export('IMessageSender')
+//@Export('IMessageCallbackSender')
 
 //@Require('Interface')
 
@@ -27,7 +27,7 @@ var Interface   = bugpack.require('Interface');
 // Declare Interface
 //-------------------------------------------------------------------------------
 
-var IMessageSender = Interface.declare({
+var IMessageCallbackSender = Interface.declare({
 
     //-------------------------------------------------------------------------------
     // Interface Methods
@@ -35,8 +35,9 @@ var IMessageSender = Interface.declare({
 
     /**
      * @param {(Message | Object)} message
+     * @param {function(Error, Message)} callback
      */
-    sendMessage: function(message) {}
+    sendMessage: function(message, callback) {}
 });
 
 
@@ -44,4 +45,4 @@ var IMessageSender = Interface.declare({
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugmessage.IMessageSender', IMessageSender);
+bugpack.export('bugmessage.IMessageCallbackSender', IMessageCallbackSender);

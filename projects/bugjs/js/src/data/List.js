@@ -71,11 +71,7 @@ var List = Class.extend(Collection, {
      * @return {Array} Array is in the same order as the list
      */
     getValueArray: function() {
-        var valueArray = [];
-        for (var i = 0, size = this.valueArray.length; i < size; i++) {
-            valueArray.push(this.valueArray[i]);
-        }
-        return valueArray;
+        return Obj.clone(this.valueArray);
     },
 
 

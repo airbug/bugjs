@@ -7,6 +7,7 @@
 //@Export('Message')
 
 //@Require('Class')
+//@Require('IObjectable')
 //@Require('Map')
 //@Require('Obj')
 //@Require('TypeUtil')
@@ -25,10 +26,10 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
+var IObjectable     = bugpack.require('IObjectable');
 var Map             = bugpack.require('Map');
 var Obj             = bugpack.require('Obj');
 var TypeUtil        = bugpack.require('TypeUtil');
-var UuidGenerator   = bugpack.require('UuidGenerator');
 
 
 //-------------------------------------------------------------------------------
@@ -66,12 +67,6 @@ var Message = Class.extend(Obj, {
          * @type {string}
          */
         this.type = TypeUtil.isString(type) ? type : "";
-
-        /**
-         * @private
-         * @type {string}
-         */
-        this.uuid = UuidGenerator.generateUuid();
     },
 
 
@@ -109,13 +104,6 @@ var Message = Class.extend(Obj, {
         return this.type;
     },
 
-    /**
-     * @return {string}
-     */
-    getUuid: function() {
-        return this.uuid;
-    },
-
 
     //-------------------------------------------------------------------------------
     // Class Methods
@@ -134,8 +122,7 @@ var Message = Class.extend(Obj, {
         return {
             data: this.data,
             headerMap: headerMapObject,
-            type: this.type,
-            uuid: this.uuid
+            type: this.type
         };
     }
 });

@@ -2,15 +2,14 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('session')
+//@Package('buganno')
 
-//@Export('Session')
+//@Export('AnnotationRegistryLibrary')
 
 //@Require('Class')
-//@Require('IObjectable')
+//@Require('List')
+//@Require('Map')
 //@Require('Obj')
-//@Require('TypeUtil')
-//@Require('UuidGenerator')
 
 
 //-------------------------------------------------------------------------------
@@ -21,28 +20,29 @@ var bugpack     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var IObjectable     = bugpack.require('IObjectable');
-var Obj             = bugpack.require('Obj');
-var TypeUtil        = bugpack.require('TypeUtil');
-var UuidGenerator   = bugpack.require('UuidGenerator');
+var Class       = bugpack.require('Class');
+var List        = bugpack.require('List');
+var Map         = bugpack.require('Map');
+var Obj         = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Session = Class.extend(Obj, {
-
+var AnnotationRegistryLibrary = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(sessionObject) {
+    /**
+     *
+     */
+    _constructor: function() {
 
         this._super();
 
@@ -53,17 +53,15 @@ var Session = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {string}
+         * @type {List.<AnnotationRegistry>}
          */
-        this.sessionUuid = null;
+        this.annotationRegistryList             = new List();
 
-        if (sessionObject) {
-            if (TypeUtil.isString(sessionObject.sessionUuid)) {
-                this.sessionUuid = sessionObject.sessionUuid;
-            }
-        } else {
-            this.sessionUuid = UuidGenerator.generateUuid();
-        }
+        /**
+         * @private
+         * @type {Map.<string, List.<Annotation>>}
+         */
+        this.filePathToAnnotationRegistryMap    = new Map();
     },
 
 
@@ -72,37 +70,36 @@ var Session = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {Session}
+     * @return {List.<AnnotationRegistry>}
      */
-    getSessionUuid: function() {
-        return this.sessionUuid;
+    getAnnotationRegistryList: function() {
+        return this.annotationRegistryList;
+    },
+
+    /**
+     * @param {Path} filePath
+     */
+    getAnnotationRegistryByFilePath: function(filePath) {
+        return this.filePathToAnnotationRegistryMap.get(filePath);
     },
 
 
     //-------------------------------------------------------------------------------
-    // IObjectable Implementation
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {Object}
+     * @param {AnnotationRegistry} annotationRegistry
      */
-    toObject: function() {
-        return {
-            sessionUuid: this.sessionUuid
-        };
+    addAnnotationRegistry: function(annotationRegistry) {
+        this.annotationRegistryList.add(annotationRegistry);
+        this.filePathToAnnotationRegistryMap.put(annotationRegistry.getFilePath(), annotationRegistry);
     }
 });
 
 
 //-------------------------------------------------------------------------------
-// Interfaces
+// Exports
 //-------------------------------------------------------------------------------
 
-Class.implement(Session, IObjectable);
-
-
-//-------------------------------------------------------------------------------
-// Export
-//-------------------------------------------------------------------------------
-
-bugpack.export('session.Session', Session);
+bugpack.export('buganno.AnnotationRegistryLibrary', AnnotationRegistryLibrary);

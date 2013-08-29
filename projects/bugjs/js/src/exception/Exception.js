@@ -5,6 +5,7 @@
 //@Export('Exception')
 
 //@Require('Class')
+//@Require('IObjectable')
 //@Require('Obj')
 
 
@@ -19,8 +20,9 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var Obj =   bugpack.require('Obj');
+var Class       = bugpack.require('Class');
+var IObjectable = bugpack.require('IObjectable');
+var Obj         = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
@@ -76,7 +78,7 @@ var Exception = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // Public Instance Methods
+    // IObjectable Implementation
     //-------------------------------------------------------------------------------
 
     /**
@@ -89,6 +91,13 @@ var Exception = Class.extend(Obj, {
         }
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Interfaces
+//-------------------------------------------------------------------------------
+
+Class.implement(Exception, IObjectable);
 
 
 //-------------------------------------------------------------------------------

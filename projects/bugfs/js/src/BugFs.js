@@ -591,6 +591,17 @@ BugFs.readFileSync = function(filePath, encoding, resolveSymlink) {
 };
 
 /**
+ * @param {(Path | string)} fromPath
+ * @param {(Path | string)} intoPath
+ * @return {Path}
+ */
+BugFs.relativePath = function(fromPath, intoPath) {
+    fromPath = BugFs.path(fromPath);
+    intoPath = BugFs.path(intoPath);
+    return fromPath.getRelativePath(intoPath);
+};
+
+/**
  * @param {Array.<(string|Path)>} pathArray
  * @return {Path}
  */

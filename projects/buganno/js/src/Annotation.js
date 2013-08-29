@@ -2,15 +2,14 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('session')
+//@Package('buganno')
 
-//@Export('Session')
+//@Export('Annotation')
 
 //@Require('Class')
 //@Require('IObjectable')
+//@Require('List')
 //@Require('Obj')
-//@Require('TypeUtil')
-//@Require('UuidGenerator')
 
 
 //-------------------------------------------------------------------------------
@@ -21,28 +20,26 @@ var bugpack     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var IObjectable     = bugpack.require('IObjectable');
-var Obj             = bugpack.require('Obj');
-var TypeUtil        = bugpack.require('TypeUtil');
-var UuidGenerator   = bugpack.require('UuidGenerator');
+var Class       = bugpack.require('Class');
+var IObjectable = bugpack.require('IObjectable');
+var List        = bugpack.require('List');
+var Obj         = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Session = Class.extend(Obj, {
-
+var Annotation = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(sessionObject) {
+    _constructor: function(type, arguments) {
 
         this._super();
 
@@ -53,17 +50,15 @@ var Session = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {List.<(string | number)>}
+         */
+        this.argumentList = new List(arguments);
+
+        /**
+         * @private
          * @type {string}
          */
-        this.sessionUuid = null;
-
-        if (sessionObject) {
-            if (TypeUtil.isString(sessionObject.sessionUuid)) {
-                this.sessionUuid = sessionObject.sessionUuid;
-            }
-        } else {
-            this.sessionUuid = UuidGenerator.generateUuid();
-        }
+        this.type = type;
     },
 
 
@@ -72,10 +67,18 @@ var Session = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {Session}
+     * @private
+     * @return {List.<(string | number)}
      */
-    getSessionUuid: function() {
-        return this.sessionUuid;
+    getArgumentList: function() {
+        return this.argumentList;
+    },
+
+    /**
+     * @return {string}
+     */
+    getType: function() {
+        return this.type;
     },
 
 
@@ -88,7 +91,8 @@ var Session = Class.extend(Obj, {
      */
     toObject: function() {
         return {
-            sessionUuid: this.sessionUuid
+            arguments: this.argumentList.toArray(),
+            type: this.type
         };
     }
 });
@@ -98,11 +102,11 @@ var Session = Class.extend(Obj, {
 // Interfaces
 //-------------------------------------------------------------------------------
 
-Class.implement(Session, IObjectable);
+Class.implement(Annotation, IObjectable);
 
 
 //-------------------------------------------------------------------------------
-// Export
+// Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('session.Session', Session);
+bugpack.export('buganno.Annotation', Annotation);

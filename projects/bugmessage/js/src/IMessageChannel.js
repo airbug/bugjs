@@ -41,9 +41,8 @@ var IMessageChannel = Interface.extend(IEventPropagator, {
 
     /**
      * @param {Message} message
-     * @param {MessageResponder} messageResponder
      */
-    channelMessage: function(message, messageResponder) {}
+    channelMessage: function(message) {}
 });
 
 

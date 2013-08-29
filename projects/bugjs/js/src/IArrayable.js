@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugmessage')
-
-//@Export('IMessageSender')
+//@Export('IArrayable')
 
 //@Require('Interface')
 
@@ -20,23 +18,23 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Interface   = bugpack.require('Interface');
+var Interface = bugpack.require('Interface');
 
 
 //-------------------------------------------------------------------------------
 // Declare Interface
 //-------------------------------------------------------------------------------
 
-var IMessageSender = Interface.declare({
+var IArrayable = Interface.declare({
 
     //-------------------------------------------------------------------------------
     // Interface Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {(Message | Object)} message
+     * @return {Array}
      */
-    sendMessage: function(message) {}
+    toArray: function() {}
 });
 
 
@@ -44,4 +42,4 @@ var IMessageSender = Interface.declare({
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugmessage.IMessageSender', IMessageSender);
+bugpack.export('IArrayable', IArrayable);

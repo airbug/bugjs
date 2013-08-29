@@ -12,6 +12,7 @@
 //@Require('Class')
 //@Require('CollectionIterator')
 //@Require('HashStore')
+//@Require('IArrayable')
 //@Require('IIterable')
 //@Require('Obj')
 //@Require('TypeUtil')
@@ -31,6 +32,7 @@ var bugpack = require('bugpack').context();
 var Class               = bugpack.require('Class');
 var CollectionIterator  = bugpack.require('CollectionIterator');
 var HashStore           = bugpack.require('HashStore');
+var IArrayable          = bugpack.require('IArrayable');
 var IIterable           = bugpack.require('IIterable');
 var Obj                 = bugpack.require('Obj');
 var TypeUtil            = bugpack.require('TypeUtil');
@@ -99,6 +101,19 @@ var Collection = Class.extend(Obj, {
      */
     getValueCount: function(value) {
         return this.hashStore.getValueCount(value);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // IArrayable Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @override
+     * @return (Array)
+     */
+    toArray: function() {
+        return this.getValueArray();
     },
 
 
@@ -290,6 +305,7 @@ var Collection = Class.extend(Obj, {
 // Interfaces
 //-------------------------------------------------------------------------------
 
+Class.implement(Collection, IArrayable);
 Class.implement(Collection, IIterable);
 
 
