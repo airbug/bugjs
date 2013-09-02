@@ -4,7 +4,7 @@
 
 //@Package('buganno')
 
-//@Export('Annotation')
+//@Export('BugAnnotation')
 
 //@Require('Class')
 //@Require('IObjectable')
@@ -33,7 +33,7 @@ var Obj         = bugpack.require('Obj');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Annotation = Class.extend(Obj, {
+var BugAnnotation = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -102,11 +102,11 @@ var Annotation = Class.extend(Obj, {
 // Interfaces
 //-------------------------------------------------------------------------------
 
-Class.implement(Annotation, IObjectable);
+Class.implement(BugAnnotation, IObjectable);
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('buganno.Annotation', Annotation);
+bugpack.export('buganno.BugAnnotation', BugAnnotation);

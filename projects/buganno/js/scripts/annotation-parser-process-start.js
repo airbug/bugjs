@@ -23,5 +23,5 @@ var AnnotationParserProcess = bugpack.require('buganno.AnnotationParserProcess')
 // Script
 //-------------------------------------------------------------------------------
 
-var annotationParserProcess = new AnnotationParserProcess();
+var annotationParserProcess = new AnnotationParserProcess(process);
 annotationParserProcess.start();

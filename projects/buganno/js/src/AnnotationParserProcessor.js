@@ -10,8 +10,8 @@
 //@Require('List')
 //@Require('Map')
 //@Require('Obj')
-//@Require('buganno.Annotation')
 //@Require('buganno.AnnotationRegistry')
+//@Require('buganno.BugAnnotation')
 //@Require('bugfs.BugFs')
 
 
@@ -32,8 +32,8 @@ var Class               = bugpack.require('Class');
 var List                = bugpack.require('List');
 var Map                 = bugpack.require('Map');
 var Obj                 = bugpack.require('Obj');
-var Annotation          = bugpack.require('buganno.Annotation');
 var AnnotationRegistry  = bugpack.require('buganno.AnnotationRegistry');
+var BugAnnotation       = bugpack.require('buganno.BugAnnotation');
 var BugFs               = bugpack.require('bugfs.BugFs');
 
 
@@ -132,7 +132,7 @@ var AnnotationParserProcessor = Class.extend(Obj, {
             //TODO BRN: This seems pretty fragile. Perhaps there's a way to look up the location of a script by name?
             // OR we can figure out a way to inject code in to a process via string.
 
-            var processPath = BugFs.resolvePaths([__dirname, "../scripts/annotation_parser_process_boot.js"]);
+            var processPath = BugFs.resolvePaths([__dirname, "../scripts/annotation-parser-process-start.js"]);
             var childProcess = child_process.fork(processPath.getAbsolutePath());
             childProcess.on('message', function(message) {
                 _this.handleChildMessage(message);
@@ -168,9 +168,9 @@ var AnnotationParserProcessor = Class.extend(Obj, {
 
             //TODO BRN: This part should be done by BugMarshaller
 
-            annotationRegistry = new AnnotationRegistry(BugFs.path(annotationRegistry.filePath));
+            annotationRegistry = new AnnotationRegistry(BugFs.path(annotationRegistryData.filePath));
             annotationRegistryData.annotationList.forEach(function(annotationData) {
-                var annotation = new Annotation(annotationData.type, annotationData.arguments);
+                var annotation = new BugAnnotation(annotationData.type, annotationData.arguments);
                 annotationRegistry.addAnnotation(annotation);
             });
         } else {

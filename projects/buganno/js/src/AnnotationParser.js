@@ -8,7 +8,7 @@
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('buganno.Annotation')
+//@Require('buganno.BugAnnotation')
 //@Require('buganno.AnnotationRegistry')
 
 
@@ -25,7 +25,7 @@ var bugpack     = require('bugpack').context();
 
 var Class               = bugpack.require('Class');
 var Obj                 = bugpack.require('Obj');
-var Annotation          = bugpack.require('buganno.Annotation');
+var BugAnnotation       = bugpack.require('buganno.BugAnnotation');
 var AnnotationRegistry  = bugpack.require('buganno.AnnotationRegistry');
 
 
@@ -93,7 +93,7 @@ var AnnotationParser = Class.extend(Obj, {
                             var type = results[1];
                             var argumentsString = results[2];
                             var arguments = _this.parseArguments(argumentsString);
-                            var annotation = new Annotation(type, arguments);
+                            var annotation = new BugAnnotation(type, arguments);
                             annotationRegistry.addAnnotation(annotation);
                         }
                     });
