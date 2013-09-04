@@ -327,5 +327,49 @@ bugmeta.annotate(mapNativeJavascriptObjectNamesPutGetTest).with(
     test().name("Map - native javascript object names put/get test")
 );
 
+
+/**
+ *
+ */
+var mapForEachTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.map = new Map();
+        this.keys = [
+            'key1',
+            'key2'
+        ];
+        this.values = [
+            "value1",
+            "value2"
+        ];
+        for (var i = 0, size = this.keys.length; i < size; i++) {
+            this.map.put(this.keys[i], this.values[i]);
+        }
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        var _this = this;
+        var i = -1;
+        this.map.forEach(function(value, key) {
+            i++;
+            test.assertEqual(key, _this.keys[i],
+                "Assert key is correct in forEach iteration");
+            test.assertEqual(value, _this.values[i],
+                "Assert value is correct in forEach iteration");
+        });
+    }
+};
+bugmeta.annotate(mapForEachTest).with(
+    test().name("Map - forEach test")
+);
+
 //TODO BRN: Add a remove test
 

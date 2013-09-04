@@ -5,6 +5,7 @@
 //@TestFile
 
 //@Require('Properties')
+//@Require('TypeUtil')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
@@ -21,6 +22,7 @@ var bugpack         = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Properties      = bugpack.require('Properties');
+var TypeUtil        = bugpack.require('TypeUtil');
 var BugMeta         = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 
@@ -71,4 +73,41 @@ var propertiesInstantiationTest = {
 };
 bugmeta.annotate(propertiesInstantiationTest).with(
     test().name("Properties instantiation test")
+);
+
+
+/**
+ * This tests...
+ */
+var propertiesUpdateTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.testProperties = new Properties({});
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        this.testProperties.updateProperties({
+            someProp: {
+                someArray: [
+                    "."
+                ]
+            }
+        });
+
+        var someArray = this.testProperties.getProperty("someProp.someArray");
+        test.assertTrue(TypeUtil.isArray(someArray),
+            "Assert 'someProp.someArray' is an array");
+        test.assertEqual(someArray[0], ".",
+            "Assert index 0 of someArray is equal to '.'");
+    }
+};
+bugmeta.annotate(propertiesUpdateTest).with(
+    test().name("Properties update test")
 );

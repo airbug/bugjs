@@ -123,8 +123,10 @@ var HashTable = Class.extend(Obj, {
 
         for (var keyHashCode in this.hashTableNodeObject) {
             var hashTableNode = this.hashTableNodeObject[keyHashCode];
-            hashTableNode.getValueArray().forEach(function(value) {
-                func(value);
+            var keyArray = hashTableNode.getKeyArray();
+            hashTableNode.getValueArray().forEach(function(value, index) {
+                var key = keyArray[index];
+                func(value, key);
             });
         }
     },

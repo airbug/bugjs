@@ -10,6 +10,7 @@ var bugpack         = require('bugpack');
 // BugPack
 //-------------------------------------------------------------------------------
 
+var TypeUtil        = bugpack.require('TypeUtil');
 var BugFlow         = bugpack.require('bugflow.BugFlow');
 
 
@@ -41,10 +42,10 @@ var lintbug         = enableModule("lintbug");
 
 buildProperties({
     bugjs: {
-        sourcePaths: [
+        targetPaths: [
             "."
         ],
-        ignorePaths: [
+        ignorePatterns: [
             ".*\\.buildbug$",
             ".*\\.bugunit$",
             ".*\\.git$",
@@ -69,12 +70,16 @@ buildTarget('clean').buildFlow(
 // Local Flow
 //-------------------------------------------------------------------------------
 
+//TEST
+console.log(buildProject.getProperty("bugjs.targetPaths"));
+console.log("TypeUtil.isArray(buildProject.getProperty(\"bugjs.targetPaths\"):" + TypeUtil.isArray(buildProject.getProperty("bugjs.targetPaths")));
+
 buildTarget('local').buildFlow(
     series([
         targetTask('lint', {
             properties: {
-                sourcePaths: buildProject.getProperty("bugjs.sourcePaths"),
-                ignores: buildProject.getProperty("bugjs.ignores"),
+                targetPaths: buildProject.getProperty("bugjs.targetPaths"),
+                ignores: buildProject.getProperty("bugjs.ignorePatterns"),
                 lintTasks: [
                     "fixExportAndRemovePackageAnnotations"
                 ]
@@ -223,3 +228,5 @@ var parseString = function(text) {
     return undefined;
 };
 
+
+console.log("Made it!");

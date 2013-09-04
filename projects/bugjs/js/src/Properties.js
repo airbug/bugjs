@@ -144,7 +144,7 @@ var Properties = Class.extend(Obj, {
      */
     setProperty: function(propertyName, propertyValue) {
         var parts = propertyName.split(".");
-        if (parts.size > 1) {
+        if (parts.length > 1) {
             var subName = null;
             var currentValue = this.propertiesObject;
             var nextValue = null;

@@ -90,20 +90,24 @@ var FileFinder = Class.extend(Obj, {
         var _this = this;
         /** @type {Set.<Path>} */
         var matchingPaths = new Set();
-        $forEachParallel(scanPaths, function(flow, scanPath) {
-            _this.scanPathForMatchingFiles(scanPath, function(error, matchedPaths) {
+        if (TypeUtil.isArray(scanPaths)) {
+            $forEachParallel(scanPaths, function(flow, scanPath) {
+                _this.scanPathForMatchingFiles(scanPath, function(error, matchedPaths) {
+                    if (!error) {
+                        matchingPaths.addAll(matchedPaths);
+                    }
+                    flow.complete(error);
+                });
+            }).execute(function(error) {
                 if (!error) {
-                    matchingPaths.addAll(matchedPaths);
+                    callback(undefined, matchingPaths);
+                } else {
+                    callback(error);
                 }
-                flow.complete(error);
             });
-        }).execute(function(error) {
-            if (!error) {
-                callback(undefined, matchingPaths);
-            } else {
-                callback(error);
-            }
-        });
+        } else {
+            callback(new Error("scanPaths must be an Array and must not be empty"));
+        }
     },
 
 
@@ -168,16 +172,20 @@ var FileFinder = Class.extend(Obj, {
                 });
             }),
             $task(function(flow) {
-                $forEachParallel(scanPaths, function(flow, scanPath) {
-                    _this.scanPathForMatchingFiles(scanPath, function(error, matchingFiles) {
-                        if (!error) {
-                            matchingPaths.addAll(matchingFiles);
-                        }
+                if (scanPaths) {
+                    $forEachParallel(scanPaths, function(flow, scanPath) {
+                        _this.scanPathForMatchingFiles(scanPath, function(error, matchingFiles) {
+                            if (!error) {
+                                matchingPaths.addAll(matchingFiles);
+                            }
+                            flow.complete(error);
+                        })
+                    }).execute(function(error) {
                         flow.complete(error);
-                    })
-                }).execute(function(error) {
-                    flow.complete(error);
-                });
+                    });
+                } else {
+                    flow.complete();
+                }
             })
         ]).execute(function(error) {
             if (!error) {

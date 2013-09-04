@@ -137,7 +137,7 @@ var Flow = Class.extend(Obj, {
      */
     error: function(error) {
         if (this.hasErrored()) {
-            throw new Error("Can only error flow once.");
+            throw new Error("Can only error flow once.\n Caused by " + error);
         }
         if (this.hasCompleted()) {
             throw new Error("Cannot error flow. Flow has already completed.\n Caused by " + error);

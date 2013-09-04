@@ -227,12 +227,31 @@ var List = Class.extend(Collection, {
     },
 
     /**
-     * @param index
-     * @param value
+     * @param {number} index
+     * @param {*} value
      */
     set: function(index, value) {
         this.removeAt(index);
         this.addAt(index, value);
+    },
+
+    /**
+     * @param {number} fromIndex
+     * @param {number} toIndex
+     * @return {List.<*>}
+     */
+    subList: function(fromIndex, toIndex) {
+        if (!TypeUtil.isNumber(toIndex)) {
+            toIndex = this.getCount();
+        }
+        if (fromIndex < 0 || fromIndex > toIndex || toIndex > this.getCount()) {
+            throw new Error("Index out of bounds");
+        }
+        var subList = new List();
+        for (var i = fromIndex; i < toIndex; i++) {
+            subList.add(this.getAt(i));
+        }
+        return subList;
     }
 });
 
