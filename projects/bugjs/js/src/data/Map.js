@@ -77,9 +77,13 @@ var Map = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @param {boolean}
      * @return {*}
      */
-    clone: function() {
+    clone: function(deep) {
+
+        //TODO BRN: Handle "deep" cloning
+
         var cloneMap = new Map();
         cloneMap.putAll(this);
         return cloneMap;

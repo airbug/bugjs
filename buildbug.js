@@ -70,10 +70,6 @@ buildTarget('clean').buildFlow(
 // Local Flow
 //-------------------------------------------------------------------------------
 
-//TEST
-console.log(buildProject.getProperty("bugjs.targetPaths"));
-console.log("TypeUtil.isArray(buildProject.getProperty(\"bugjs.targetPaths\"):" + TypeUtil.isArray(buildProject.getProperty("bugjs.targetPaths")));
-
 buildTarget('local').buildFlow(
     series([
         targetTask('lint', {
@@ -227,6 +223,3 @@ var parseString = function(text) {
     }
     return undefined;
 };
-
-
-console.log("Made it!");
