@@ -9,6 +9,7 @@
 //@Require('Class')
 //@Require('IClone')
 //@Require('IObjectable')
+//@Require('LiteralUtil')
 //@Require('Map')
 //@Require('Obj')
 //@Require('bugdelta.PropertyChange')
@@ -28,6 +29,7 @@ var bugpack             = require('bugpack').context();
 var Class               = bugpack.require('Class');
 var IClone              = bugpack.require('IClone');
 var IObjectable         = bugpack.require('IObjectable');
+var LiteralUtil         = bugpack.require('LiteralUtil');
 var Map                 = bugpack.require('Map');
 var Obj                 = bugpack.require('Obj');
 var PropertyChange      = bugpack.require('bugdelta.PropertyChange');
@@ -117,7 +119,7 @@ var DeltaObject = Class.extend(Obj, {
     toObject: function() {
         var obj = {};
         this.propertyMap.forEach(function(value, key) {
-            obj[key] = value;
+            obj[key] = LiteralUtil.convertToLiteral(value);
         });
         return obj;
     },

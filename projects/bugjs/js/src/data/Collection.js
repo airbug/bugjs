@@ -92,6 +92,9 @@ var Collection = Class.extend(Obj, {
      * @return {Array.<*>}
      */
     getValueArray: function() {
+
+        //NOTE BRN: The getValueArray method of HashStore already creates a new array
+
         return this.hashStore.getValueArray();
     },
 
