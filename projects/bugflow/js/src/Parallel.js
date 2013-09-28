@@ -7,6 +7,7 @@
 //@Export('Parallel')
 
 //@Require('Class')
+//@Require('bugflow.ParallelException')
 //@Require('bugflow.Flow')
 
 
@@ -14,15 +15,16 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var Flow =  bugpack.require('bugflow.Flow');
+var Class               = bugpack.require('Class');
+var Flow                = bugpack.require('bugflow.Flow');
+var ParallelException   = bugpack.require('bugflow.ParallelException');
 
 
 //-------------------------------------------------------------------------------
@@ -46,15 +48,21 @@ var Parallel = Class.extend(Flow, {
 
         /**
          * @private
+         * @type {ParallelException}
+         */
+        this.exception          = null;
+
+        /**
+         * @private
          * @type {Array<Flow>}
          */
-        this.flowArray = flowArray;
+        this.flowArray          = flowArray;
 
         /**
          * @private
          * @type {number}
          */
-        this.numberComplete = 0;
+        this.numberComplete     = 0;
     },
 
 
@@ -82,20 +90,39 @@ var Parallel = Class.extend(Flow, {
 
 
     //-------------------------------------------------------------------------------
+    // Private Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {Throwable} throwable
+     */
+    processThrowable: function(throwable) {
+        if (!this.exception) {
+            this.exception = new ParallelException();
+        }
+        this.exception.addCause(throwable);
+    },
+
+
+    //-------------------------------------------------------------------------------
     // Event Listeners
     //-------------------------------------------------------------------------------
 
     /**
      * @private
-     * @param {Error} error
+     * @param {Throwable} throwable
      */
-    flowCallback: function(error) {
-        if (error) {
-            this.error(error);
-        } else {
-            this.numberComplete++;
-            if (this.numberComplete >= this.flowArray.length) {
+    flowCallback: function(throwable) {
+        this.numberComplete++;
+        if (throwable) {
+            this.processThrowable(throwable);
+        }
+        if (this.numberComplete >= this.flowArray.length) {
+            if (!this.exception) {
                 this.complete();
+            } else {
+                this.error(this.exception);
             }
         }
     }

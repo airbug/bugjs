@@ -2,9 +2,12 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('StringUtil')
+//@Package('bugflow')
 
-//@Require('TypeUtil')
+//@Export('ParallelException')
+
+//@Require('Class')
+//@Require('Exception')
 
 
 //-------------------------------------------------------------------------------
@@ -18,52 +21,31 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var TypeUtil = bugpack.require('TypeUtil');
+var Class       = bugpack.require('Class');
+var Exception   = bugpack.require('Exception');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var StringUtil = {};
+var ParallelException = Class.extend(Exception, {
 
+    //-------------------------------------------------------------------------------
+    // Constructor
+    //-------------------------------------------------------------------------------
 
-//-------------------------------------------------------------------------------
-// Static Methods
-//-------------------------------------------------------------------------------
-
-/**
- * @param {string} value
- * @param {string} pad
- * @param {number} size
- * @return {string}
- */
-StringUtil.pad = function(value, pad, size) {
-    // Ensure string
-    var result = value + "";
-    while (result.length < size) {
-        result = pad + result;
+    /**
+     *
+     */
+    _constructor: function(causes) {
+        this._super("ParallelException", {}, "", causes);
     }
-    return result;
-};
-
-/**
- * @param {string} value
- * @return {string}
- */
-StringUtil.trim = function(value) {
-    var result = "";
-    if (TypeUtil.isFunction(value.trim)) {
-        result = value.trim();
-    } else {
-        result = value.replace(/^\s+|\s+$/g, '');
-    }
-    return result;
-};
+});
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('StringUtil', StringUtil);
+bugpack.export('bugflow.ParallelException', ParallelException);

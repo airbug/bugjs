@@ -7,24 +7,24 @@
 //@Export('ForInParallel')
 
 //@Require('Class')
-//@Require('bugflow.Iteration')
 //@Require('bugflow.IteratorFlow')
+//@Require('bugflow.MappedParallelException')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =         bugpack.require('Class');
-var Iteration =     bugpack.require('bugflow.Iteration');
-var IteratorFlow =  bugpack.require('bugflow.IteratorFlow');
+var Class                       = bugpack.require('Class');
+var IteratorFlow                = bugpack.require('bugflow.IteratorFlow');
+var MappedParallelException     = bugpack.require('bugflow.MappedParallelException');
 
 
 //-------------------------------------------------------------------------------
@@ -50,27 +50,28 @@ var ForInParallel = Class.extend(IteratorFlow, {
 
         /**
          * @private
+         * @type {MappedParallelException}
+         */
+        this.exception                  = null;
+
+        /**
+         * @private
          * @type {boolean}
          */
-        this.iterationCompleted = false;
+        this.iterationCompleted         = false;
 
         /**
          * @private
          * @type {number}
          */
-        this.numberIterationsComplete = 0;
+        this.numberIterationsComplete   = 0;
 
         /**
          * @private
          * @type {number}
          */
-        this.totalIterationCount = 0;
+        this.totalIterationCount        = 0;
     },
-
-
-    //-------------------------------------------------------------------------------
-    // IteratorFlow Extensions
-    //-------------------------------------------------------------------------------
 
 
     //-------------------------------------------------------------------------------
@@ -93,19 +94,20 @@ var ForInParallel = Class.extend(IteratorFlow, {
 
 
     //-------------------------------------------------------------------------------
-    // IteratorFlow Extensions
+    // IteratorFlow Implementation
     //-------------------------------------------------------------------------------
 
     /**
-     *
-     * @param args
+     * @protected
+     * @param {Array.<*>} args
+     * @param {Throwable} throwable
      */
-    executeIteration: function(args) {
-        var _this = this;
-        var iteration = new Iteration(this.getIteratorMethod());
-        iteration.execute(args, function(error) {
-            _this.iterationCallback(error);
-        })
+    iterationCallback: function(args, throwable) {
+        this.numberIterationsComplete++;
+        if (throwable) {
+            this.processThrowable(args, throwable);
+        }
+        this.checkIterationComplete();
     },
 
 
@@ -117,35 +119,27 @@ var ForInParallel = Class.extend(IteratorFlow, {
      * @private
      */
     checkIterationComplete: function() {
-        if (this.iterationCompleted && this.numberIterationsComplete >= this.totalIterationCount && !this.hasErrored()) {
-            this.completeFlow();
+        if (this.iterationCompleted && this.numberIterationsComplete >= this.totalIterationCount) {
+            if (!this.exception) {
+                this.complete();
+            } else {
+                this.error(this.exception);
+            }
         }
     },
 
-
-    //-------------------------------------------------------------------------------
-    // Event Listeners
-    //-------------------------------------------------------------------------------
-
     /**
      * @private
-     * @param {Error} error
+     * @param {Array.<*>} args
+     * @param {Throwable} throwable
      */
-    iterationCallback: function(error) {
-
-        //TODO BRN: Figure out what to do if there is more than one error
-
-        if (error) {
-            if (!this.hasErrored()) {
-                this.error(error);
-            }
-        } else {
-            this.numberIterationsComplete++;
-            this.checkIterationComplete();
+    processThrowable: function(args, throwable) {
+        if (!this.exception) {
+            this.exception = new MappedParallelException();
         }
+        this.exception.putCause(args, throwable);
     }
 });
-
 
 //-------------------------------------------------------------------------------
 // Export

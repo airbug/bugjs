@@ -2,13 +2,11 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugflow')
-
-//@Export('IteratorFlow')
+//@Export('Throwable')
 
 //@Require('Class')
-//@Require('bugflow.Flow')
-//@Require('bugflow.Iteration')
+//@Require('IObjectable')
+//@Require('Obj')
 
 
 //-------------------------------------------------------------------------------
@@ -23,21 +21,28 @@ var bugpack         = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
-var Flow            =  bugpack.require('bugflow.Flow');
-var Iteration       = bugpack.require('bugflow.Iteration');
+var IObjectable     = bugpack.require('IObjectable');
+var Obj             = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var IteratorFlow = Class.extend(Flow, {
+var Throwable = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(data, iteratorMethod) {
+    /**
+     * @param {string} type
+     * @param {*} data
+     * @param {string} message
+     * @param {Array.<Throwable>} causes
+     * @private
+     */
+    _constructor: function(type, data, message, causes) {
 
         this._super();
 
@@ -46,74 +51,118 @@ var IteratorFlow = Class.extend(Flow, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        // TODO BRN: Add support for BugJs data objects that implement the IIterate interface
+        /**
+         * @private
+         * @type {Array.<Throwable>}
+         */
+        this.causes     = causes ? causes : [];
 
         /**
          * @private
          * @type {*}
          */
-        this.data = data;
+        this.data       = data;
 
         /**
          * @private
-         * @type {function(Flow, *)}
+         * @type {string}
          */
-        this.iteratorMethod = iteratorMethod;
+        this.message    = message;
+
+        /**
+         * @private
+         * @type {string}
+         */
+        this.type       = type;
     },
+
 
     //-------------------------------------------------------------------------------
     // Getters and Setters
     //-------------------------------------------------------------------------------
 
     /**
+     * @return {Array.<Throwable>}
+     */
+    getCauses: function() {
+        return this.causes;
+    },
+
+    /**
      * @return {*}
      */
-    getData: function(args) {
+    getData: function() {
         return this.data;
     },
 
     /**
-     * @return {function(Flow, *)}
+     * @param {*} data
      */
-    getIteratorMethod: function() {
-        return this.iteratorMethod;
+    setData: function(data) {
+        this.data = data;
+    },
+
+    /**
+     * @return {string}
+     */
+    getMessage: function() {
+        return this.message;
+    },
+
+    /**
+     * @param {string} message
+     */
+    setMessage: function(message) {
+        this.message = message;
+    },
+
+    /**
+     * @return {string}
+     */
+    getType: function() {
+        return this.type;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Protected Methods
+    // IObjectable Implementation
     //-------------------------------------------------------------------------------
 
     /**
-     * @protected
-     * @param {Array.<*>} args
+     * @return {Object}
      */
-    executeIteration: function(args) {
-        var _this = this;
-        var iteration = new Iteration(this.getIteratorMethod());
-        iteration.execute(args, function(throwable) {
-            _this.iterationCallback(args, throwable);
-        })
+    toObject: function() {
+        return {
+            causes: this.getCauses(),
+            data: this.getData(),
+            message: this.getMessage(),
+            type: this.getType()
+        }
     },
 
 
     //-------------------------------------------------------------------------------
-    // Abstract Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @abstract
-     * @param {Array.<*>} args
-     * @param {Throwable} throwable
+     * @param {Throwable} cause
      */
-    iterationCallback: function(args, throwable) {
-
+    addCause: function(cause) {
+        this.causes.push(cause);
     }
 });
 
 
 //-------------------------------------------------------------------------------
-// Export
+// Interfaces
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugflow.IteratorFlow', IteratorFlow);
+Class.implement(Throwable, IObjectable);
+
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export('Throwable', Throwable);

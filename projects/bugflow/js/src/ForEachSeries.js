@@ -8,7 +8,6 @@
 
 //@Require('Class')
 //@Require('IIterable')
-//@Require('bugflow.Iteration')
 //@Require('bugflow.IteratorFlow')
 //@Require('bugtrace.BugTrace')
 
@@ -26,7 +25,6 @@ var bugpack = require('bugpack').context();
 
 var Class           = bugpack.require('Class');
 var IIterable       = bugpack.require('IIterable');
-var Iteration       = bugpack.require('bugflow.Iteration');
 var IteratorFlow    = bugpack.require('bugflow.IteratorFlow');
 var BugTrace        = bugpack.require('bugtrace.BugTrace');
 
@@ -35,8 +33,8 @@ var BugTrace        = bugpack.require('bugtrace.BugTrace');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var $error = BugTrace.$error;
-var $trace = BugTrace.$trace;
+var $error          = BugTrace.$error;
+var $trace          = BugTrace.$trace;
 
 
 //-------------------------------------------------------------------------------
@@ -61,6 +59,7 @@ var ForEachSeries = Class.extend(IteratorFlow, {
         if (Class.doesImplement(data, IIterable)) {
             throw new Error("ForEachSeries does not support IIterable instances. Use the IterableSeries instead.");
         }
+
         /**
          * @private
          * @type {number}
@@ -89,18 +88,26 @@ var ForEachSeries = Class.extend(IteratorFlow, {
 
 
     //-------------------------------------------------------------------------------
-    // IteratorFlow Extensions
+    // IteratorFlow Implementation
     //-------------------------------------------------------------------------------
 
     /**
-     * @param args
+     * @protected
+     * @param {Array.<*>} args
+     * @param {Throwable} throwable
      */
-    executeIteration: function(args) {
-        var _this = this;
-        var iteration = new Iteration(this.getIteratorMethod());
-        iteration.execute(args, function(error) {
-            _this.iterationCallback(error);
-        })
+    iterationCallback: function(args, throwable) {
+        if (throwable) {
+            if (!this.hasErrored()) {
+                this.error(throwable);
+            }
+        } else {
+            if (this.iteratorIndex >= (this.data.length - 1)) {
+                this.complete();
+            } else {
+                this.next();
+            }
+        }
     },
 
 
@@ -115,29 +122,6 @@ var ForEachSeries = Class.extend(IteratorFlow, {
         this.iteratorIndex++;
         var nextValue = this.data[this.iteratorIndex];
         this.executeIteration([nextValue, this.iteratorIndex]);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Event Listeners
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     * @param {Error} error
-     */
-    iterationCallback: function(error) {
-        if (error) {
-            if (!this.hasErrored()) {
-                this.error(error);
-            }
-        } else {
-            if (this.iteratorIndex >= (this.data.length - 1)) {
-                this.complete();
-            } else {
-                this.next();
-            }
-        }
     }
 });
 

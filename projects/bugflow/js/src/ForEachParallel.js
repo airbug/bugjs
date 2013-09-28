@@ -8,8 +8,8 @@
 
 //@Require('Class')
 //@Require('IIterable')
-//@Require('bugflow.Iteration')
 //@Require('bugflow.IteratorFlow')
+//@Require('bugflow.MappedParallelException')
 //@Require('bugtrace.BugTrace')
 
 
@@ -17,26 +17,26 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var IIterable       = bugpack.require('IIterable');
-var Iteration       = bugpack.require('bugflow.Iteration');
-var IteratorFlow    = bugpack.require('bugflow.IteratorFlow');
-var BugTrace        = bugpack.require('bugtrace.BugTrace');
+var Class                       = bugpack.require('Class');
+var IIterable                   = bugpack.require('IIterable');
+var IteratorFlow                = bugpack.require('bugflow.IteratorFlow');
+var MappedParallelException     = bugpack.require('bugflow.MappedParallelException');
+var BugTrace                    = bugpack.require('bugtrace.BugTrace');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var $error = BugTrace.$error;
-var $trace = BugTrace.$trace;
+var $error                      = BugTrace.$error;
+var $trace                      = BugTrace.$trace;
 
 
 //-------------------------------------------------------------------------------
@@ -64,9 +64,15 @@ var ForEachParallel = Class.extend(IteratorFlow, {
 
         /**
          * @private
+         * @type {MappedParallelException}
+         */
+        this.exception                  = null;
+
+        /**
+         * @private
          * @type {number}
          */
-        this.numberIterationsComplete = 0;
+        this.numberIterationsComplete   = 0;
     },
 
 
@@ -91,44 +97,43 @@ var ForEachParallel = Class.extend(IteratorFlow, {
 
 
     //-------------------------------------------------------------------------------
-    // IteratorFlow Extensions
+    // IteratorFlow Implementation
     //-------------------------------------------------------------------------------
 
     /**
-     *
-     * @param args
+     * @protected
+     * @param {Array.<*>} args
+     * @param {Throwable} throwable
      */
-    executeIteration: function(args) {
-        var _this = this;
-        var iteration = new Iteration(this.getIteratorMethod());
-        iteration.execute(args, function(error) {
-            _this.iterationCallback(error);
-        })
+    iterationCallback: function(args, throwable) {
+        this.numberIterationsComplete++;
+        if (throwable) {
+            this.processThrowable(args, throwable);
+        }
+        if (this.numberIterationsComplete >= this.getData().length) {
+            if (!this.exception) {
+                this.complete();
+            } else {
+                this.error(this.exception);
+            }
+        }
     },
 
 
     //-------------------------------------------------------------------------------
-    // Event Listeners
+    // Private Methods
     //-------------------------------------------------------------------------------
 
     /**
      * @private
-     * @param {Error} error
+     * @param {Array.<*>} args
+     * @param {Throwable} throwable
      */
-    iterationCallback: function(error) {
-
-        //TODO BRN: Figure out what to do if there is more than one error
-
-        if (error) {
-            if (!this.hasErrored()) {
-                this.error(error);
-            }
-        } else {
-            this.numberIterationsComplete++;
-            if (this.numberIterationsComplete >= this.getData().length && !this.hasErrored()) {
-                this.complete();
-            }
+    processThrowable: function(args, throwable) {
+        if (!this.exception) {
+            this.exception = new MappedParallelException();
         }
+        this.exception.putCause(args[0], throwable);
     }
 });
 

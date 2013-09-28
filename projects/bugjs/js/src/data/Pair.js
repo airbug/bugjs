@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('UnorderedPair')
+//@Export('Pair')
 
 //@Require('Class')
 //@Require('IArrayable')

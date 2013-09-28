@@ -56,13 +56,13 @@ var CarapaceContainer = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {Map<string, CarapaceCollection>}
+         * @type {Map.<string, CarapaceCollection>}
          */
         this.collectionMap      = new Map();
 
         /**
          * @private
-         * @type {List<CarapaceContainer>}
+         * @type {List.<CarapaceContainer>}
          */
         this.containerChildList = new List();
 
@@ -80,7 +80,7 @@ var CarapaceContainer = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {Map<CarapaceModel>}
+         * @type {Map.<CarapaceModel>}
          */
         this.modelMap           = new Map();
 
@@ -247,35 +247,35 @@ var CarapaceContainer = Class.extend(Obj, {
 
     /**
      * @protected
+     * @param {string} key
      * @param {CarapaceCollection} collection
      */
-    addCollection: function(collection) {
-        var collectionId = collection.getId();
-        if (!collectionId) {
-            throw new Error("Collection id must be defined!");
+    addCollection: function(key, collection) {
+        if (!key) {
+            throw new Error("key must be defined");
         }
-        if (this.collectionMap.containsKey(collectionId)) {
-            throw new Error("A collection is already present for this id: " + collectionId);
+        if (this.collectionMap.containsKey(key)) {
+            throw new Error("A collection is already present for this key: " + key);
         }
-        this.collectionMap.put(collectionId, collection);
+        this.collectionMap.put(key, collection);
     },
 
     /**
      * @protected
-     * @param {string} collectionId
+     * @param {string} key
      * @return {CarapaceCollection}
      */
-    getCollection: function(collectionId) {
-        return this.collectionMap.get(collectionId);
+    getCollection: function(key) {
+        return this.collectionMap.get(key);
     },
 
     /**
      * @protected
-     * @param {string} collectionId
+     * @param {string} key
      */
-    removeCollection: function(collectionId) {
-        if (this.collectionMap.containsKey(collectionId)) {
-            this.collectionMap.remove(collectionId);
+    removeCollection: function(key) {
+        if (this.collectionMap.containsKey(key)) {
+            this.collectionMap.remove(key);
         }
     },
 
@@ -285,35 +285,35 @@ var CarapaceContainer = Class.extend(Obj, {
 
     /**
      * @protected
+     * @param {string} key
      * @param {CarapaceModel} model
      */
-    addModel: function(model) {
-        var modelId = model.getId();
-        if (!modelId) {
-            throw new Error("Model id must be defined!");
+    addModel: function(key, model) {
+        if (!key) {
+            throw new Error("key must be defined");
         }
-        if (this.modelMap.containsKey(modelId)) {
-            throw new Error("A model is already present for this id: " + modelId);
+        if (this.modelMap.containsKey(key)) {
+            throw new Error("A model is already present for this key: " + key);
         }
-        this.modelMap.put(modelId, model);
+        this.modelMap.put(key, model);
     },
 
     /**
      * @protected
-     * @param {string} modelId
+     * @param {string} key
      * @return {CarapaceModel}
      */
-    getModel: function(modelId) {
-        return this.modelMap.get(modelId);
+    getModel: function(key) {
+        return this.modelMap.get(key);
     },
 
     /**
      * @protected
-     * @param {string} modelId
+     * @param {string} key
      */
-    removeModel: function(modelId) {
-        if (this.modelMap.containsKey(modelId)) {
-            this.modelMap.remove(modelId);
+    removeModel: function(key) {
+        if (this.modelMap.containsKey(key)) {
+            this.modelMap.remove(key);
         }
     },
 
@@ -389,12 +389,14 @@ var CarapaceContainer = Class.extend(Obj, {
         var _this = this;
         this.viewTop.dispose();
         this.viewTop = null;
-        this.collectionMap.forEach(function(collection) {
-            _this.removeCollection(collection.getId());
+        this.collectionMap.getKeyArray().forEach(function(key) {
+            var collection = _this.collectionMap.get(key);
+            _this.removeCollection(key);
             collection.dispose();
         });
-        this.modelMap.forEach(function(model) {
-            _this.removeModel(model.getId());
+        this.modelMap.getKeyArray().forEach(function(key) {
+            var model = _this.modelMap.get(key);
+            _this.removeModel(key);
             model.dispose();
         });
     },

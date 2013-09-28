@@ -45,9 +45,9 @@ var CarapaceModel = Class.adapt(Backbone.Model, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(data, id) {
+    _constructor: function(attributes, options) {
 
-        this._super(data);
+        this._super(attributes, options);
 
         //-------------------------------------------------------------------------------
         // Declare Variables
@@ -72,12 +72,6 @@ var CarapaceModel = Class.adapt(Backbone.Model, {
          * @type {boolean}
          */
         this.disposed = false;
-
-        /**
-         * @private
-         * @type {string}
-         */
-        this.id = id;
     },
 
 
@@ -86,10 +80,10 @@ var CarapaceModel = Class.adapt(Backbone.Model, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {string}
+     * @return {boolean}
      */
-    getId: function() {
-        return this.id;
+    isDisposed: function() {
+        return this.disposed;
     },
 
 
@@ -140,12 +134,13 @@ var CarapaceModel = Class.adapt(Backbone.Model, {
         }
         return this._hashCode;
     }
-
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
 });
+
+
+//-------------------------------------------------------------------------------
+// Interfaces
+//-------------------------------------------------------------------------------
+
 Class.implement(CarapaceModel, IDisposable);
 Class.implement(CarapaceModel, IEquals);
 Class.implement(CarapaceModel, IHashCode);

@@ -54,7 +54,7 @@ LiteralUtil.convertToLiteral = function(value) {
             } else if (Class.doesImplement(value, IArrayable)) {
                 literal = value.toArray();
             } else {
-                throw new Error("Cannot marshal complex object:", value);
+                throw new Error("Cannot convert complex object:", value);
             }
         }
     } else if (TypeUtil.isArray(value)) {
@@ -64,7 +64,9 @@ LiteralUtil.convertToLiteral = function(value) {
             literal.push(LiteralUtil.convertToLiteral(arrayValue));
         }
     } else {
-        //TODO BRN: Any basic types that need to be marshalled?
+
+        //TODO BRN: Any basic types that need to be converted?
+
         literal = value;
     }
     return literal

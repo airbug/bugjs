@@ -12,6 +12,7 @@
 //@Require('LiteralUtil')
 //@Require('Map')
 //@Require('Obj')
+//@Require('bugdelta.IDelta')
 //@Require('bugdelta.PropertyChange')
 
 
@@ -32,6 +33,7 @@ var IObjectable         = bugpack.require('IObjectable');
 var LiteralUtil         = bugpack.require('LiteralUtil');
 var Map                 = bugpack.require('Map');
 var Obj                 = bugpack.require('Obj');
+var IDelta              = bugpack.require('bugdelta.IDelta');
 var PropertyChange      = bugpack.require('bugdelta.PropertyChange');
 
 
@@ -132,7 +134,7 @@ var DeltaObject = Class.extend(Obj, {
     /**
      *
      */
-    commitPropertyChanges: function() {
+    commitChanges: function() {
         var _this = this;
         this.propertyChangeMap.forEach(function(propertyChange) {
             switch (propertyChange.getChangeType()) {
@@ -175,10 +177,14 @@ var DeltaObject = Class.extend(Obj, {
      * @param {string} propertyName
      */
     removeProperty: function(propertyName) {
-        var previousValue = this.propertyMap.get(propertyName);
-        var propertyChange = new PropertyChange(PropertyChange.ChangeTypes.PROPERTY_REMOVED, propertyName,
-            previousValue);
-        this.propertyChangeMap.put(propertyName, propertyChange);
+        if (this.propertyMap.containsKey(propertyName)) {
+            var previousValue = this.propertyMap.get(propertyName);
+            var propertyChange = new PropertyChange(PropertyChange.ChangeTypes.PROPERTY_REMOVED, propertyName,
+                previousValue);
+            this.propertyChangeMap.put(propertyName, propertyChange);
+        } else if (this.propertyChangeMap.containsKey(propertyName)) {
+            this.propertyChangeMap.remove(propertyName);
+        }
     },
 
     /**
@@ -186,10 +192,19 @@ var DeltaObject = Class.extend(Obj, {
      * @param {*} propertyValue
      */
     setProperty: function(propertyName, propertyValue) {
-        var previousValue = this.propertyMap.get(propertyName);
-        var propertyChange = new PropertyChange(PropertyChange.ChangeTypes.PROPERTY_SET, propertyName,
-            previousValue, propertyValue);
-        this.propertyChangeMap.put(propertyName, propertyChange);
+        var previousValue           = this.propertyMap.get(propertyName);
+        var previousPropertyChange  = this.propertyChangeMap.get(propertyName);
+        if (Obj.equals(propertyValue, previousValue)) {
+            if (previousPropertyChange) {
+                this.propertyChangeMap.remove(propertyName);
+            } else {
+                //do nothing
+            }
+        } else {
+            var propertyChange = new PropertyChange(PropertyChange.ChangeTypes.PROPERTY_SET, propertyName,
+                previousValue, propertyValue);
+            this.propertyChangeMap.put(propertyName, propertyChange);
+        }
     }
 });
 
@@ -199,6 +214,7 @@ var DeltaObject = Class.extend(Obj, {
 //-------------------------------------------------------------------------------
 
 Class.implement(DeltaObject, IClone);
+Class.implement(DeltaObject, IDelta);
 Class.implement(DeltaObject, IObjectable);
 
 

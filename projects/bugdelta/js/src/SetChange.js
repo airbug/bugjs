@@ -2,79 +2,101 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('carapace')
+//@Package('bugdelta')
 
-//@Export('CarapaceCollection')
+//@Export('SetChange')
 
 //@Require('Class')
-//@Require('backbone.Backbone')
+//@Require('Obj')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =     bugpack.require('Class');
-var Backbone =  bugpack.require('backbone.Backbone');
+var Class       = bugpack.require('Class');
+var Obj         = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var CarapaceCollection = Class.adapt(Backbone.Collection, {
+var SetChange = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(data) {
+    /**
+     *
+     */
+    _constructor: function(changeType, setValue) {
 
-        this._super(data);
+        this._super();
+
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Properties
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {boolean}
+         * @type {string}
          */
-        this.disposed = false;
+        this.changeType     = changeType;
+
+        /**
+         * @private
+         * @type {*}
+         */
+        this.setValue       = setValue;
     },
 
 
     //-------------------------------------------------------------------------------
-    // IDisposable Implementation
+    // Getters and Setters
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @return {string}
      */
-    dispose: function() {
-        if (!this.disposed) {
-            this.disposed = true;
-            this.unbind();
-            //TODO BRN: Reset and eject any data.
-        }
+    getChangeType: function() {
+        return this.changeType;
+    },
+
+    /**
+     * @return {*}
+     */
+    getSetValue: function() {
+        return this.setValue;
     }
-
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
 });
+
+
+//-------------------------------------------------------------------------------
+// Static Variables
+//-------------------------------------------------------------------------------
+
+/**
+ * @static
+ * @type {Object}
+ */
+SetChange.ChangeTypes = {
+    VALUE_ADDED: "SetChange:ValueAdded",
+    VALUE_REMOVED: "SetChange:ValueRemoved"
+};
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('carapace.CarapaceCollection', CarapaceCollection);
+bugpack.export('bugdelta.SetChange', SetChange);

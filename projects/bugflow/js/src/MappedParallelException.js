@@ -2,106 +2,110 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('Exception')
+//@Package('bugflow')
+
+//@Export('MappedParallelException')
 
 //@Require('Class')
-//@Require('IObjectable')
-//@Require('Obj')
+//@Require('Map')
+//@Require('bugflow.ParallelException')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var IObjectable = bugpack.require('IObjectable');
-var Obj         = bugpack.require('Obj');
+var Class               = bugpack.require('Class');
+var Map                 = bugpack.require('Map');
+var ParallelException   = bugpack.require('bugflow.ParallelException');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Exception = Class.extend(Obj, {
+var MappedParallelException = Class.extend(ParallelException, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(type, data) {
+    /**
+     *
+     */
+    _constructor: function() {
 
-        this._super();
+        this._super("MappedParallelException", {}, "");
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Public Properties
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {*}
+         * @type {Map.<*, Throwable>}
          */
-        this.data = data;
-
-        /**
-         * @private
-         * @type {string}
-         */
-        this.type = type;
+        this.causeMap   = new Map();
     },
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Throwable  Overrides
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {*}
+     * @return {Array<Throwable>}
      */
-    getData: function() {
-        return this.data;
+    getCauses: function() {
+        return this.causeMap.getValueArray();
     },
 
     /**
-     * @return {string}
+     * @return {Map.<*, Throwable>}
      */
-    getType: function() {
-        return this.type;
+    getCauseMap: function() {
+        return this.causeMap;
     },
 
 
     //-------------------------------------------------------------------------------
-    // IObjectable Implementation
+    // IObjectable Extension
     //-------------------------------------------------------------------------------
 
     /**
      * @return {Object}
      */
     toObject: function() {
-        return {
-            type: this.getType(),
-            data: this.getData()
-        }
+        var data = this._super();
+        data.causeMap = this.causeMap.toObject();
+        return data;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {*} key
+     * @param {Throwable} throwable
+     */
+    putCause: function(key, throwable) {
+        this.causeMap.put(key, throwable);
     }
 });
-
-
-//-------------------------------------------------------------------------------
-// Interfaces
-//-------------------------------------------------------------------------------
-
-Class.implement(Exception, IObjectable);
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('Exception', Exception);
+bugpack.export('bugflow.MappedParallelException', MappedParallelException);

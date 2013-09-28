@@ -95,18 +95,26 @@ var IterableSeries = Class.extend(IteratorFlow, {
 
 
     //-------------------------------------------------------------------------------
-    // IteratorFlow Extensions
+    // IteratorFlow Implementation
     //-------------------------------------------------------------------------------
 
     /**
-     * @param args
+     * @protected
+     * @param {Array.<*>} args
+     * @param {Throwable} throwable
      */
-    executeIteration: function(args) {
-        var _this = this;
-        var iteration = new Iteration(this.getIteratorMethod());
-        iteration.execute(args, function(error) {
-            _this.iterationCallback(error);
-        })
+    iterationCallback: function(args, throwable) {
+        if (throwable) {
+            if (!this.hasErrored()) {
+                this.error(throwable);
+            }
+        } else {
+            if (!this.iterator.hasNext()) {
+                this.complete();
+            } else {
+                this.next();
+            }
+        }
     },
 
 
@@ -120,29 +128,6 @@ var IterableSeries = Class.extend(IteratorFlow, {
     next: function() {
         var nextValue = this.iterator.next();
         this.executeIteration([nextValue]);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Event Listeners
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     * @param {Error} error
-     */
-    iterationCallback: function(error) {
-        if (error) {
-            if (!this.hasErrored()) {
-                this.error(error);
-            }
-        } else {
-            if (!this.iterator.hasNext()) {
-                this.complete();
-            } else {
-                this.next();
-            }
-        }
     }
 });
 
