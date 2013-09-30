@@ -66,11 +66,18 @@ var Set = Class.extend(Collection, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @param {boolean} deep
      * @return {Set}
      */
-    clone: function() {
+    clone: function(deep) {
         var cloneSet = new Set();
-        cloneSet.addAll(this);
+        if(deep){
+            this.forEach(function(item){
+                cloneSet.add(Obj.clone(item, true));
+            });
+        } else {
+            cloneSet.addAll(this);
+        }
         return cloneSet;
     },
 

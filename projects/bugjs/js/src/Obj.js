@@ -197,6 +197,7 @@ Obj.hasOwnProperty = Object.prototype.hasOwnProperty;
  * @static
  * @param {Object} value
  * @param {boolean} deep
+ * @return {{*}}
  */
 Obj.clone = function(value, deep) {
     var clone = null;

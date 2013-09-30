@@ -80,11 +80,18 @@ var List = Class.extend(Collection, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @param {boolean} deep
      * @return {List}
      */
-    clone: function() {
+    clone: function(deep) {
         var cloneList = new List();
-        cloneList.addAll(this);
+        if(deep){
+            this.forEach(function(item){
+                cloneList.add(Obj.clone(item, true));
+            });
+        } else {
+            cloneList.addAll(this);
+        }
         return cloneList;
     },
 

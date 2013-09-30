@@ -149,8 +149,9 @@ var Collection = Class.extend(Obj, {
     clone: function(deep) {
         var cloneCollection = new Collection();
         if (deep) {
-            //iterate through all values of "this" collection
-
+            this.forEach(function(item){
+                cloneCollection.add(Obj.clone(item, true));
+            });
         } else {
             cloneCollection.addAll(this);
         }
