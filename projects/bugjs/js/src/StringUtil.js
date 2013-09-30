@@ -51,6 +51,20 @@ StringUtil.pad = function(value, pad, size) {
  * @param {string} value
  * @return {string}
  */
+StringUtil.pluralize = function(string){
+        //TODO also add irregular patterns
+        var irregularPlurals = {};
+        if(irregularPlurals[string]){
+            return irregularPlurals[string]
+        } else {
+            return string + "s";
+        }
+},
+
+/**
+ * @param {string} value
+ * @return {string}
+ */
 StringUtil.trim = function(value) {
     var result = "";
     if (TypeUtil.isFunction(value.trim)) {
