@@ -85,6 +85,13 @@ var ControllerRoute = Class.extend(EventDispatcher, {
         return this.controller;
     },
 
+    /**
+     * @return {String}
+     */
+    getRoute: function() {
+        return this.route;
+    },
+
 
     //-------------------------------------------------------------------------------
     // Public Class Methods
@@ -130,7 +137,7 @@ var ControllerRoute = Class.extend(EventDispatcher, {
  * @enum {string}
  */
 ControllerRoute.EventType = {
-    ROUTING_REQUESTED: "ControlerRoute:RoutingRequested"
+    ROUTING_REQUESTED: "ControllerRoute:RoutingRequested"
 };
 
 
