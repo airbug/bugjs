@@ -2,74 +2,98 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('carapace')
+//@Package('bugdelta')
 
-//@Export('CarapaceCollection')
+//@Export('DeltaDocument')
 
 //@Require('Class')
-//@Require('backbone.Backbone')
+//@Require('Obj')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =     bugpack.require('Class');
-var Backbone =  bugpack.require('backbone.Backbone');
+var Class               = bugpack.require('Class');
+var Obj                 = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var CarapaceCollection = Class.adapt(Backbone.Collection, {
+var DeltaDocument = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(data, options) {
+    /**
+     *
+     */
+    _constructor: function(data) {
 
-        this._super(data, options);
+        this._super();
+
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Properties
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {boolean}
+         * @type {*}
          */
-        this.disposed = false;
+        this.currentData    = data;
+
+        /**
+         * @private
+         * @type {*}
+         */
+        this.previousData   = undefined;
     },
 
 
     //-------------------------------------------------------------------------------
-    // IDisposable Implementation
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {*}
+     */
+    getCurrentData: function() {
+        return this.currentData;
+    },
+
+    /**
+     * @return {*}
+     */
+    getPreviousData: function() {
+        return this.previousData;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
      *
      */
-    dispose: function() {
-        if (!this.disposed) {
-            this.disposed = true;
-            this.unbind();
-            //TODO BRN: Reset and eject any data.
-        }
+    commitChanges: function() {
+        this.previousData = Obj.clone(this.currentData, true);
+    },
+
+    generateChangeList: function() {
+
     }
-
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
 });
 
 
@@ -77,4 +101,4 @@ var CarapaceCollection = Class.adapt(Backbone.Collection, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('carapace.CarapaceCollection', CarapaceCollection);
+bugpack.export('bugdelta.DeltaDocument', DeltaDocument);

@@ -143,11 +143,17 @@ var Collection = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @param {boolean} deep
      * @return {Collection.<*>}
      */
-    clone: function() {
+    clone: function(deep) {
         var cloneCollection = new Collection();
-        cloneCollection.addAll(this);
+        if (deep) {
+            //iterate through all values of "this" collection
+
+        } else {
+            cloneCollection.addAll(this);
+        }
         return cloneCollection;
     },
 
