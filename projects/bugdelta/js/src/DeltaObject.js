@@ -134,7 +134,7 @@ var DeltaObject = Class.extend(Obj, {
     /**
      *
      */
-    commitChanges: function() {
+    commitDelta: function() {
         var _this = this;
         this.propertyChangeMap.forEach(function(propertyChange) {
             switch (propertyChange.getChangeType()) {

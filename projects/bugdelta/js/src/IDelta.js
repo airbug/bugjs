@@ -36,7 +36,12 @@ var IDelta = Interface.declare({
     /**
      *
      */
-    commitChanges: function() {}
+    commitDelta: function() {},
+
+    /**
+     * @return {List.<DeltaChange>}
+     */
+    generateDelta: function() {}
 });
 
 

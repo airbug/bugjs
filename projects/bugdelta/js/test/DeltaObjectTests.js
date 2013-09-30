@@ -50,7 +50,7 @@ var deltaObjectSetPropertyToSameValueTest = {
     setup: function() {
         this.deltaObject = new DeltaObject();
         this.deltaObject.setProperty("test", "value");
-        this.deltaObject.commitChanges();
+        this.deltaObject.commitDelta();
     },
 
 

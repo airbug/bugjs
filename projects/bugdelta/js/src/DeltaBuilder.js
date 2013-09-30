@@ -10,6 +10,7 @@
 //@Require('Obj')
 //@Require('Set')
 //@Require('TypeUtil')
+//@Require('bugdelta.Delta')
 //@Require('bugdelta.DeltaObject')
 //@Require('bugdelta.DeltaSet')
 
@@ -29,6 +30,7 @@ var Class               = bugpack.require('Class');
 var Obj                 = bugpack.require('Obj');
 var Set                 = bugpack.require('Set');
 var TypeUtil            = bugpack.require('TypeUtil');
+var Delta               = bugpack.require('bugdelta.Delta');
 var DeltaObject         = bugpack.require('bugdelta.DeltaObject');
 var DeltaSet            = bugpack.require('bugdelta.DeltaSet');
 
@@ -63,10 +65,12 @@ var DeltaBuilder = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {*} value
-     * @return {IDelta}
+     * @param {*} previousValue
+     * @param {*} currentValue
+     * @return {Delta}
      */
-    buildDelta: function(value) {
+    buildDelta: function(previousValue, currentValue) {
+        var delta = new Delta();
         if (TypeUtil.isObject(value)) {
             if (TypeUtil.toType(value) === "Object") {
                 literal = {};
@@ -81,6 +85,7 @@ var DeltaBuilder = Class.extend(Obj, {
         } else if (TypeUtil.isArray(value)) {
             //TODO BRN: Support arrays
         }
+        return delta;
     }
 });
 

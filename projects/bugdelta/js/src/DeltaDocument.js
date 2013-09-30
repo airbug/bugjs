@@ -8,6 +8,8 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('bugdelta.DeltaBuilder')
+//@Require('bugdelta.IDelta')
 
 
 //-------------------------------------------------------------------------------
@@ -23,6 +25,8 @@ var bugpack             = require('bugpack').context();
 
 var Class               = bugpack.require('Class');
 var Obj                 = bugpack.require('Obj');
+var DeltaBuilder        = bugpack.require('bugdelta.DeltaBuilder');
+var IDelta              = bugpack.require('bugdelta.IDelta');
 
 
 //-------------------------------------------------------------------------------
@@ -52,6 +56,12 @@ var DeltaDocument = Class.extend(Obj, {
          * @type {*}
          */
         this.currentData    = data;
+
+        /**
+         * @private
+         * @type {DeltaBuilder}
+         */
+        this.deltaBuilder   = new DeltaBuilder();
 
         /**
          * @private
@@ -87,14 +97,24 @@ var DeltaDocument = Class.extend(Obj, {
     /**
      *
      */
-    commitChanges: function() {
+    commitDelta: function() {
         this.previousData = Obj.clone(this.currentData, true);
     },
 
-    generateChangeList: function() {
-
+    /**
+     * @return {Delta}
+     */
+    generateDelta: function() {
+        return this.deltaBuilder.buildDelta(this.previousData, this.currentData);
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Interfaces
+//-------------------------------------------------------------------------------
+
+Class.implement(DeltaDocument, IDelta);
 
 
 //-------------------------------------------------------------------------------

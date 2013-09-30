@@ -7,29 +7,29 @@
 //@Export('PropertyChange')
 
 //@Require('Class')
-//@Require('Obj')
+//@Require('bugdelta.DeltaChange')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var Obj         = bugpack.require('Obj');
+var Class           = bugpack.require('Class');
+var DeltaChange     = bugpack.require('bugdelta.DeltaChange');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var PropertyChange = Class.extend(Obj, {
+var PropertyChange = Class.extend(DeltaChange, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -38,20 +38,14 @@ var PropertyChange = Class.extend(Obj, {
     /**
      *
      */
-    _constructor: function(changeType, propertyName, previousValue, propertyValue) {
+    _constructor: function(path, changeType, propertyName, previousValue, propertyValue) {
 
-        this._super();
+        this._super(path, changeType);
 
 
         //-------------------------------------------------------------------------------
         // Properties
         //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {string}
-         */
-        this.changeType     = changeType;
 
         /**
          * @private
@@ -76,13 +70,6 @@ var PropertyChange = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
     // Getters and Setters
     //-------------------------------------------------------------------------------
-
-    /**
-     * @return {string}
-     */
-    getChangeType: function() {
-        return this.changeType;
-    },
 
     /**
      * @return {*}

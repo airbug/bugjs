@@ -4,32 +4,34 @@
 
 //@Package('bugdelta')
 
-//@Export('SetChange')
+//@Export('Delta')
 
 //@Require('Class')
-//@Require('bugdelta.DeltaChange')
+//@Require('Map')
+//@Require('Obj')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var DeltaChange     = bugpack.require('bugdelta.DeltaChange');
+var Class               = bugpack.require('Class');
+var List                = bugpack.require('List');
+var Obj                 = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SetChange = Class.extend(DeltaChange, {
+var Delta = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -38,9 +40,9 @@ var SetChange = Class.extend(DeltaChange, {
     /**
      *
      */
-    _constructor: function(path, changeType, setValue) {
+    _constructor: function() {
 
-        this._super(path, changeType);
+        this._super();
 
 
         //-------------------------------------------------------------------------------
@@ -49,9 +51,9 @@ var SetChange = Class.extend(DeltaChange, {
 
         /**
          * @private
-         * @type {*}
+         * @type {Map.<DeltaChange>}
          */
-        this.setValue       = setValue;
+        this.deltaChangeMap     = new Map();
     },
 
 
@@ -60,30 +62,25 @@ var SetChange = Class.extend(DeltaChange, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {*}
+     * @return {Map.<DeltaChange>}
      */
-    getSetValue: function() {
-        return this.setValue;
+    getDeltaChangeMap: function() {
+        return this.deltaChangeMap;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
+    //-------------------------------------------------------------------------------
+
+    addDeltaChange: function(deltaChange) {
+        this.deltaChangeMap.put(path)
     }
 });
-
-
-//-------------------------------------------------------------------------------
-// Static Variables
-//-------------------------------------------------------------------------------
-
-/**
- * @static
- * @type {Object}
- */
-SetChange.ChangeTypes = {
-    VALUE_ADDED: "SetChange:ValueAdded",
-    VALUE_REMOVED: "SetChange:ValueRemoved"
-};
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugdelta.SetChange', SetChange);
+bugpack.export('bugdelta.Delta', Delta);
