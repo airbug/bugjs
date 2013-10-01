@@ -34,6 +34,26 @@ var StringUtil = {};
 
 /**
  * @param {string} value
+ * @return {string}
+ */
+StringUtil.capitalize = function(string){
+    var strings = string.split(" ");
+    var result;
+    if(strings.map){
+        result = strings.map(function(string, index, array){
+            return string[0].toUpperCase() + string.substring(1);
+        });
+    } else {
+        result = [];
+        strings.forEach(function(string){
+            result.push(string[0].toUpperCase() + string.substring(1));
+        });
+    }
+    return result.join(" ");
+};
+
+/**
+ * @param {string} value
  * @param {string} pad
  * @param {number} size
  * @return {string}
@@ -75,6 +95,25 @@ StringUtil.trim = function(value) {
     return result;
 };
 
+/**
+ * @param {string} value
+ * @return {string}
+ */
+StringUtil.uncapitalize = function(string){
+    var strings = string.split(" ");
+    var result;
+    if(strings.map){
+        result = strings.map(function(string, index, array){
+            return string[0].toLowerCase() + string.substring(1);
+        });
+    } else {
+        result = [];
+        strings.forEach(function(string){
+            result.push(string[0].toLowerCase() + string.substring(1));
+        });
+    }
+    return result.join(" ");
+};
 
 //-------------------------------------------------------------------------------
 // Exports
