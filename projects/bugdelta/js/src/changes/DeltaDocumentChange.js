@@ -4,7 +4,7 @@
 
 //@Package('bugdelta')
 
-//@Export('PropertyChange')
+//@Export('DeltaDocumentChange')
 
 //@Require('Class')
 //@Require('bugdelta.DeltaChange')
@@ -29,7 +29,7 @@ var DeltaChange     = bugpack.require('bugdelta.DeltaChange');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var PropertyChange = Class.extend(DeltaChange, {
+var DeltaDocumentChange = Class.extend(DeltaChange, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -38,9 +38,9 @@ var PropertyChange = Class.extend(DeltaChange, {
     /**
      *
      */
-    _constructor: function(path, changeType, propertyName, previousValue, propertyValue) {
+    _constructor: function(changeType, path, previousData, data) {
 
-        this._super(path, changeType);
+        this._super(changeType, path);
 
 
         //-------------------------------------------------------------------------------
@@ -51,19 +51,13 @@ var PropertyChange = Class.extend(DeltaChange, {
          * @private
          * @type {*}
          */
-        this.previousValue  = previousValue;
-
-        /**
-         * @private
-         * @type {string}
-         */
-        this.propertyName   = propertyName;
+        this.data           = data;
 
         /**
          * @private
          * @type {*}
          */
-        this.propertyValue  = propertyValue;
+        this.previousData   = previousData;
     },
 
 
@@ -74,22 +68,15 @@ var PropertyChange = Class.extend(DeltaChange, {
     /**
      * @return {*}
      */
-    getPreviousValue: function() {
-        return this.previousValue;
-    },
-
-    /**
-     * @return {string}
-     */
-    getPropertyName: function() {
-        return this.propertyName;
+    getData: function() {
+        return this.data;
     },
 
     /**
      * @return {*}
      */
-    getPropertyValue: function() {
-        return this.propertyValue;
+    getPreviousData: function() {
+        return this.previousData;
     }
 });
 
@@ -102,9 +89,8 @@ var PropertyChange = Class.extend(DeltaChange, {
  * @static
  * @type {Object}
  */
-PropertyChange.ChangeTypes = {
-    PROPERTY_REMOVED: "PropertyChange:PropertyRemoved",
-    PROPERTY_SET: "PropertyChange:PropertySet"
+DeltaDocumentChange.ChangeTypes = {
+    DATA_SET: "DeltaDocumentChange:DataSet"
 };
 
 
@@ -112,4 +98,4 @@ PropertyChange.ChangeTypes = {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugdelta.PropertyChange', PropertyChange);
+bugpack.export('bugdelta.DeltaDocumentChange', DeltaDocumentChange);

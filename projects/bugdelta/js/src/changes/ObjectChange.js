@@ -4,34 +4,32 @@
 
 //@Package('bugdelta')
 
-//@Export('Delta')
+//@Export('ObjectChange')
 
 //@Require('Class')
-//@Require('List')
-//@Require('Obj')
+//@Require('bugdelta.DeltaChange')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var List                = bugpack.require('List');
-var Obj                 = bugpack.require('Obj');
+var Class           = bugpack.require('Class');
+var DeltaChange     = bugpack.require('bugdelta.DeltaChange');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Delta = Class.extend(Obj, {
+var ObjectChange = Class.extend(DeltaChange, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -40,9 +38,9 @@ var Delta = Class.extend(Obj, {
     /**
      *
      */
-    _constructor: function() {
+    _constructor: function(changeType, path, propertyName, propertyValue, previousValue) {
 
-        this._super();
+        this._super(changeType, path);
 
 
         //-------------------------------------------------------------------------------
@@ -51,9 +49,21 @@ var Delta = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {List.<DeltaChange>}
+         * @type {*}
          */
-        this.deltaChangeList     = new List();
+        this.previousValue  = previousValue;
+
+        /**
+         * @private
+         * @type {string}
+         */
+        this.propertyName   = propertyName;
+
+        /**
+         * @private
+         * @type {*}
+         */
+        this.propertyValue  = propertyValue;
     },
 
 
@@ -62,28 +72,44 @@ var Delta = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {List.<DeltaChange>}
+     * @return {*}
      */
-    getDeltaChangeList: function() {
-        return this.deltaChangeList;
+    getPreviousValue: function() {
+        return this.previousValue;
     },
 
-
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
+    /**
+     * @return {string}
+     */
+    getPropertyName: function() {
+        return this.propertyName;
+    },
 
     /**
-     * @param {DeltaChange} deltaChange
+     * @return {*}
      */
-    addDeltaChange: function(deltaChange) {
-        this.deltaChangeList.add(deltaChange)
+    getPropertyValue: function() {
+        return this.propertyValue;
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Static Variables
+//-------------------------------------------------------------------------------
+
+/**
+ * @static
+ * @type {Object}
+ */
+ObjectChange.ChangeTypes = {
+    PROPERTY_REMOVED: "ObjectChange:PropertyRemoved",
+    PROPERTY_SET: "ObjectChange:PropertySet"
+};
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugdelta.Delta', Delta);
+bugpack.export('bugdelta.ObjectChange', ObjectChange);

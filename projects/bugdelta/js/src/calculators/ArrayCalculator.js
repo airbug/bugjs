@@ -4,34 +4,36 @@
 
 //@Package('bugdelta')
 
-//@Export('Delta')
+//@Export('ArrayCalculator')
 
 //@Require('Class')
-//@Require('List')
 //@Require('Obj')
+//@Require('Set')
+//@Require('TypeUtil')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
+var bugpack                         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var List                = bugpack.require('List');
-var Obj                 = bugpack.require('Obj');
+var Class                           = bugpack.require('Class');
+var Obj                             = bugpack.require('Obj');
+var Set                             = bugpack.require('Set');
+var TypeUtil                        = bugpack.require('TypeUtil');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Delta = Class.extend(Obj, {
+var ArrayCalculator = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -40,44 +42,29 @@ var Delta = Class.extend(Obj, {
     /**
      *
      */
-    _constructor: function() {
+    _constructor: function(deltaBuilder) {
 
-        this._super();
+        this._super(deltaBuilder);
 
 
         //-------------------------------------------------------------------------------
         // Properties
         //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {List.<DeltaChange>}
-         */
-        this.deltaChangeList     = new List();
     },
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // DeltaCalculator Implementation
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {List.<DeltaChange>}
+     * @param {Delta} delta
+     * @param {string} path
+     * @param {DeltaDocument} currentDocument
+     * @param {DeltaDocument} previousDocument
      */
-    getDeltaChangeList: function() {
-        return this.deltaChangeList;
-    },
+    calculateDelta: function(delta, path, currentDocument, previousDocument) {
 
-
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {DeltaChange} deltaChange
-     */
-    addDeltaChange: function(deltaChange) {
-        this.deltaChangeList.add(deltaChange)
     }
 });
 
@@ -86,4 +73,4 @@ var Delta = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugdelta.Delta', Delta);
+bugpack.export('bugdelta.ArrayCalculator', ArrayCalculator);

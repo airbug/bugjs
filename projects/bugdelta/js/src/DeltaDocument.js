@@ -7,6 +7,7 @@
 //@Export('DeltaDocument')
 
 //@Require('Class')
+//@Require('IClone')
 //@Require('Obj')
 //@Require('bugdelta.DeltaBuilder')
 //@Require('bugdelta.IDelta')
@@ -24,6 +25,7 @@ var bugpack             = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
+var IClone              = bugpack.require('IClone');
 var Obj                 = bugpack.require('Obj');
 var DeltaBuilder        = bugpack.require('bugdelta.DeltaBuilder');
 var IDelta              = bugpack.require('bugdelta.IDelta');
@@ -55,19 +57,19 @@ var DeltaDocument = Class.extend(Obj, {
          * @private
          * @type {*}
          */
-        this.currentData    = data;
+        this.data               = data;
 
         /**
          * @private
          * @type {DeltaBuilder}
          */
-        this.deltaBuilder   = new DeltaBuilder();
+        this.deltaBuilder       = new DeltaBuilder();
 
         /**
          * @private
-         * @type {*}
+         * @type {DeltaDocument}
          */
-        this.previousData   = undefined;
+        this.previousDocument   = undefined;
     },
 
 
@@ -78,15 +80,40 @@ var DeltaDocument = Class.extend(Obj, {
     /**
      * @return {*}
      */
-    getCurrentData: function() {
-        return this.currentData;
+    getData: function() {
+        return this.data;
     },
 
     /**
+     * @param {string} path
+     */
+    getPath: function(path) {
+        var pathParts = path.split(".");
+        var queries = [];
+        pathParts.forEach(function(pathPart) {
+            //if (pathPart)
+            //TODO BRN: Check if pathPart has "[somevalue]"
+        });
+    },
+
+    /**
+     * @return {DeltaDocument}
+     */
+    getPreviousDocument: function() {
+        return this.previousDocument;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // IClone Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {boolean} deep
      * @return {*}
      */
-    getPreviousData: function() {
-        return this.previousData;
+    clone: function(deep) {
+        return new DeltaDocument(Obj.clone(this.getData(), deep));
     },
 
 
@@ -98,14 +125,14 @@ var DeltaDocument = Class.extend(Obj, {
      *
      */
     commitDelta: function() {
-        this.previousData = Obj.clone(this.currentData, true);
+        this.previousDocument = this.clone(true);
     },
 
     /**
      * @return {Delta}
      */
     generateDelta: function() {
-        return this.deltaBuilder.buildDelta(this.previousData, this.currentData);
+        return this.deltaBuilder.buildDelta(this, this.getPreviousDocument());
     }
 });
 
@@ -114,6 +141,7 @@ var DeltaDocument = Class.extend(Obj, {
 // Interfaces
 //-------------------------------------------------------------------------------
 
+Class.implement(DeltaDocument, IClone);
 Class.implement(DeltaDocument, IDelta);
 
 

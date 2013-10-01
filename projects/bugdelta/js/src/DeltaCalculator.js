@@ -4,32 +4,32 @@
 
 //@Package('bugdelta')
 
-//@Export('SetChange')
+//@Export('DeltaCalculator')
 
 //@Require('Class')
-//@Require('bugdelta.DeltaChange')
+//@Require('Obj')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
+var bugpack                         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var DeltaChange     = bugpack.require('bugdelta.DeltaChange');
+var Class                           = bugpack.require('Class');
+var Obj                             = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SetChange = Class.extend(DeltaChange, {
+var DeltaCalculator = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -38,9 +38,9 @@ var SetChange = Class.extend(DeltaChange, {
     /**
      *
      */
-    _constructor: function(path, changeType, setValue) {
+    _constructor: function(deltaBuilder) {
 
-        this._super(path, changeType);
+        this._super();
 
 
         //-------------------------------------------------------------------------------
@@ -49,41 +49,31 @@ var SetChange = Class.extend(DeltaChange, {
 
         /**
          * @private
-         * @type {*}
+         * @type {DeltaBuilder}
          */
-        this.setValue       = setValue;
+        this.deltaBuilder = deltaBuilder;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Abstract Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {*}
+     * @abstract
+     * @param {Delta} delta
+     * @param {string} currentPath
+     * @param {*} currentValue
+     * @param {*} previousValue
      */
-    getSetValue: function() {
-        return this.setValue;
+    calculateDelta: function(delta, currentPath, currentValue, previousValue) {
+        //abstract
     }
 });
-
-
-//-------------------------------------------------------------------------------
-// Static Variables
-//-------------------------------------------------------------------------------
-
-/**
- * @static
- * @type {Object}
- */
-SetChange.ChangeTypes = {
-    VALUE_ADDED: "SetChange:ValueAdded",
-    VALUE_REMOVED: "SetChange:ValueRemoved"
-};
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugdelta.SetChange', SetChange);
+bugpack.export('bugdelta.DeltaCalculator', DeltaCalculator);

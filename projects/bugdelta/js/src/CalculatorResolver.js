@@ -4,11 +4,12 @@
 
 //@Package('bugdelta')
 
-//@Export('Delta')
+//@Export('CalculatorResolver')
 
 //@Require('Class')
-//@Require('List')
+//@Require('Map')
 //@Require('Obj')
+//@Require('TypeUtil')
 
 
 //-------------------------------------------------------------------------------
@@ -23,15 +24,16 @@ var bugpack             = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
-var List                = bugpack.require('List');
+var Map                 = bugpack.require('Map');
 var Obj                 = bugpack.require('Obj');
+var TypeUtil            = bugpack.require('TypeUtil');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Delta = Class.extend(Obj, {
+var CalculatorResolver = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -51,21 +53,9 @@ var Delta = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {List.<DeltaChange>}
+         * @type {Map.<string, DeltaCalculator>}
          */
-        this.deltaChangeList     = new List();
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @return {List.<DeltaChange>}
-     */
-    getDeltaChangeList: function() {
-        return this.deltaChangeList;
+        this.calculatorMap  = new Map();
     },
 
 
@@ -74,10 +64,25 @@ var Delta = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {DeltaChange} deltaChange
+     * @param {string} dataType
+     * @param {DeltaCalculator} calculator
      */
-    addDeltaChange: function(deltaChange) {
-        this.deltaChangeList.add(deltaChange)
+    registerCalculator: function(dataType, calculator) {
+        this.calculatorMap.put(dataType, calculator);
+    },
+
+    /**
+     * @param {*} data
+     * @return {DeltaCalculator}
+     * @throws {Error}
+     */
+    resolve: function(data) {
+        var dataType = TypeUtil.toType(data);
+        if (this.calculatorMap.contains(dataType)) {
+            return this.calculatorMap.get(dataType);
+        } else {
+            throw new Error("No registered calculator for type '" + dataType + "'");
+        }
     }
 });
 
@@ -86,4 +91,4 @@ var Delta = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugdelta.Delta', Delta);
+bugpack.export('bugdelta.CalculatorResolver', CalculatorResolver);

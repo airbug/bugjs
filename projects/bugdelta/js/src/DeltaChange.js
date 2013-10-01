@@ -38,7 +38,7 @@ var DeltaChange = Class.extend(Obj, {
     /**
      *
      */
-    _constructor: function(path, changeType) {
+    _constructor: function(changeType, path) {
 
         this._super();
 
