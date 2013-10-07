@@ -100,7 +100,7 @@ var ObjectChange = Class.extend(DeltaChange, {
 
 /**
  * @static
- * @type {Object}
+ * @enum {string}
  */
 ObjectChange.ChangeTypes = {
     PROPERTY_REMOVED: "ObjectChange:PropertyRemoved",

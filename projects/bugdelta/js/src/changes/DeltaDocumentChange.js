@@ -87,7 +87,7 @@ var DeltaDocumentChange = Class.extend(DeltaChange, {
 
 /**
  * @static
- * @type {Object}
+ * @enum {string}
  */
 DeltaDocumentChange.ChangeTypes = {
     DATA_SET: "DeltaDocumentChange:DataSet"

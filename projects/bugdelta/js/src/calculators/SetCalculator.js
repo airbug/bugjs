@@ -76,13 +76,13 @@ var SetCalculator = Class.extend(DeltaCalculator, {
 
         previousValue.forEach(function(previousItem) {
             if (!currentValue.contains(previousItem)) {
-                delta.addDeltaChange(new SetChange(SetChange.ChangeTypes.VALUE_REMOVED, currentPath,
+                delta.addDeltaChange(new SetChange(SetChange.ChangeTypes.REMOVED_FROM_SET, currentPath,
                     previousItem));
             }
         });
         currentValue.forEach(function(currentItem) {
             if (!previousValue.contains(currentItem)) {
-                delta.addDeltaChange(new SetChange(SetChange.ChangeTypes.VALUE_ADDED, currentPath,
+                delta.addDeltaChange(new SetChange(SetChange.ChangeTypes.ADDED_TO_SET, currentPath,
                     currentItem));
             } else {
                 // TODO BRN: We'll need some way of looking up objects in order to generate deltas for items in a Set

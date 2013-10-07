@@ -74,11 +74,11 @@ var SetChange = Class.extend(DeltaChange, {
 
 /**
  * @static
- * @type {Object}
+ * @enum {string}
  */
 SetChange.ChangeTypes = {
-    VALUE_ADDED: "SetChange:ValueAdded",
-    VALUE_REMOVED: "SetChange:ValueRemoved"
+    ADDED_TO_SET: "SetChange:AddedToSet",
+    REMOVED_FROM_SET: "SetChange:RemovedFromSet"
 };
 
 
