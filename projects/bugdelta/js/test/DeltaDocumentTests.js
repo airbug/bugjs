@@ -5,7 +5,7 @@
 //@TestFile
 
 //@Require('Class')
-//@Require('bugdelta.DeltaObject')
+//@Require('bugdelta.DeltaDocument')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
@@ -22,7 +22,7 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
-var DeltaObject         = bugpack.require('bugdelta.DeltaObject');
+var DeltaDocument       = bugpack.require('bugdelta.DeltaDocument');
 var BugMeta             = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation      = bugpack.require('bugunit-annotate.TestAnnotation');
 
@@ -42,15 +42,14 @@ var test = TestAnnotation.test;
 /**
  *
  */
-var deltaObjectSetPropertyToSameValueTest = {
+var deltaDocumentObjectChangePropertyToSameValueTest = {
 
     // Setup Test
     //-------------------------------------------------------------------------------
 
     setup: function() {
-        this.deltaObject = new DeltaObject();
-        this.deltaObject.setProperty("test", "value");
-        this.deltaObject.commitDelta();
+        this.deltaDocument = new DeltaDocument({test: "value"});
+        this.deltaDocument.commitDelta();
     },
 
 
@@ -58,25 +57,27 @@ var deltaObjectSetPropertyToSameValueTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
-        this.deltaObject.setProperty("test", "value");
-        test.assertTrue(this.deltaObject.getPropertyChangeMap().isEmpty(),
-            "Assert that the DeltaObject's propertyChangeMap is empty after setting the same value on the same property");
+        this.deltaDocument.getData().test = "value";
+        var delta = this.deltaDocument.generateDelta();
+        test.assertTrue(delta.getDeltaChangeList().isEmpty(),
+            "Assert that the Delta's deltaChangeList is empty after setting the same value on the same property in an object");
     }
 };
-bugmeta.annotate(deltaObjectSetPropertyToSameValueTest).with(
-    test().name("DeltaObject - setProperty to same value test")
+bugmeta.annotate(deltaDocumentObjectChangePropertyToSameValueTest).with(
+    test().name("DeltaDocument - set property of object to same value test")
 );
 
 /**
  *
  */
-var deltaObjectSetPropertyRemovePropertyNoChangeTest = {
+var deltaDocumentSetPropertyRemovePropertyOnObjectNoChangeTest = {
 
     // Setup Test
     //-------------------------------------------------------------------------------
 
     setup: function() {
-        this.deltaObject = new DeltaObject();
+        this.deltaDocument = new DeltaDocument({});
+        this.deltaDocument.commitDelta();
     },
 
 
@@ -84,14 +85,13 @@ var deltaObjectSetPropertyRemovePropertyNoChangeTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
-        this.deltaObject.setProperty("test", "value");
-        this.deltaObject.removeProperty("test");
-        test.assertTrue(this.deltaObject.getPropertyChangeMap().isEmpty(),
-            "Assert that the DeltaObject's propertyChangeMap is empty after setting a value and then removing it");
-        test.assertTrue(this.deltaObject.getPropertyMap().isEmpty(),
-            "Assert that the DeltaObject's propertyMap is empty after setting a value and then removing it");
+        this.deltaDocument.getData().test = "value";
+        delete this.deltaDocument.getData().test;
+        var delta = this.deltaDocument.generateDelta();
+        test.assertTrue(delta.getDeltaChangeList().isEmpty(),
+            "Assert that the Delta's deltaChangeList is empty after setting a value and then removing it");
     }
 };
-bugmeta.annotate(deltaObjectSetPropertyRemovePropertyNoChangeTest).with(
-    test().name("DeltaObject - setProperty then removeProperty and assert no change test")
+bugmeta.annotate(deltaDocumentSetPropertyRemovePropertyOnObjectNoChangeTest).with(
+    test().name("DeltaDocument - set property then remove property on an object and assert no change test")
 );

@@ -9,6 +9,7 @@
 //@Require('Class')
 //@Require('IClone')
 //@Require('Obj')
+//@Require('TypeUtil')
 //@Require('bugdelta.DeltaBuilder')
 //@Require('bugdelta.IDelta')
 
@@ -27,6 +28,7 @@ var bugpack             = require('bugpack').context();
 var Class               = bugpack.require('Class');
 var IClone              = bugpack.require('IClone');
 var Obj                 = bugpack.require('Obj');
+var TypeUtil            = bugpack.require('TypeUtil');
 var DeltaBuilder        = bugpack.require('bugdelta.DeltaBuilder');
 var IDelta              = bugpack.require('bugdelta.IDelta');
 
@@ -85,15 +87,38 @@ var DeltaDocument = Class.extend(Obj, {
     },
 
     /**
+     * @param {*} data
+     */
+    setData: function(data) {
+        this.data = data;
+    },
+
+    /**
      * @param {string} path
      */
     getPath: function(path) {
+        var _this = this;
         var pathParts = path.split(".");
-        var queries = [];
+        var target = undefined;
+        var currentData = this.data;
         pathParts.forEach(function(pathPart) {
-            //if (pathPart)
-            //TODO BRN: Check if pathPart has "[somevalue]"
+            if (pathPart === "") {
+                target = currentData;
+            } else {
+                if (TypeUtil.isObject(currentData)) {
+                    if (TypeUtil.toType(currentData) === "Object") {
+                        target = currentData[pathPart];
+                    } else {
+                        throw new Error("Unsupported type in path retrieval");
+                    }
+                } else {
+                    throw new Error("Unsupported type in path retrieval");
+                }
+            }
+
+            //TODO BRN: implement support for "[somevalue]"
         });
+        return target;
     },
 
     /**

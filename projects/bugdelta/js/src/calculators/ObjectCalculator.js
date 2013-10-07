@@ -75,29 +75,28 @@ var ObjectCalculator = Class.extend(DeltaCalculator, {
         }
 
         Obj.forIn(previousValue, function(propertyName, previousPropertyValue) {
-            var propertyPath = (currentPath ? currentPath + ".": "") + propertyName;
             if (!Obj.hasProperty(currentValue, propertyName)) {
-                delta.addDeltaChange(new ObjectChange(ObjectChange.ChangeTypes.PROPERTY_REMOVED, propertyPath,
+                delta.addDeltaChange(new ObjectChange(ObjectChange.ChangeTypes.PROPERTY_REMOVED, currentPath,
                     propertyName, undefined, previousPropertyValue));
             }
         });
         Obj.forIn(currentValue, function(propertyName, currentPropertyValue) {
-            var propertyPath = (currentPath ? currentPath + ".": "") + propertyName;
             if (!Obj.hasProperty(previousValue, propertyName)) {
-                delta.addDeltaChange(new ObjectChange(ObjectChange.ChangeTypes.PROPERTY_SET, propertyPath,
+                delta.addDeltaChange(new ObjectChange(ObjectChange.ChangeTypes.PROPERTY_SET, currentPath,
                     propertyName, currentPropertyValue, undefined));
             } else {
                 var previousPropertyValue = previousValue[propertyName];
                 if (TypeUtil.toType(previousPropertyValue) !== TypeUtil.toType(currentPropertyValue)) {
-                    delta.addDeltaChange(new ObjectChange(ObjectChange.ChangeTypes.PROPERTY_SET, propertyPath,
+                    delta.addDeltaChange(new ObjectChange(ObjectChange.ChangeTypes.PROPERTY_SET, currentPath,
                         propertyName, currentPropertyValue, previousPropertyValue));
                 } else {
                     var deltaCalculator = _this.deltaBuilder.getCalculatorResolver().resolve(currentPropertyValue);
                     if (deltaCalculator) {
+                        var propertyPath = (currentPath ? currentPath + ".": "") + propertyName;
                         deltaCalculator.calculateDelta(delta, propertyPath, currentPropertyValue, previousPropertyValue);
                     } else {
                         if (!Obj.equals(currentPropertyValue, previousPropertyValue)) {
-                            delta.addDeltaChange(new ObjectChange(ObjectChange.ChangeTypes.PROPERTY_SET, propertyPath,
+                            delta.addDeltaChange(new ObjectChange(ObjectChange.ChangeTypes.PROPERTY_SET, currentPath,
                                 propertyName, currentPropertyValue, previousPropertyValue));
                         }
                     }
