@@ -99,6 +99,9 @@ var BugCallClient = Class.extend(EventDispatcher, {
         return this.callManager;
     },
 
+    isConnected: function() {
+        return this.callClient.isConnected();
+    },
 
     //-------------------------------------------------------------------------------
     // Public Instance Methods
