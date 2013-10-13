@@ -5,6 +5,7 @@
 //@TestFile
 
 //@Require('Class')
+//@Require('bugdelta.DeltaBuilder')
 //@Require('bugdelta.DeltaDocument')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
@@ -22,6 +23,7 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
+var DeltaBuilder        = bugpack.require('bugdelta.DeltaBuilder');
 var DeltaDocument       = bugpack.require('bugdelta.DeltaDocument');
 var BugMeta             = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation      = bugpack.require('bugunit-annotate.TestAnnotation');
@@ -50,6 +52,7 @@ var deltaDocumentObjectChangePropertyToSameValueTest = {
     setup: function() {
         this.deltaDocument = new DeltaDocument({test: "value"});
         this.deltaDocument.commitDelta();
+        this.deltaBuilder = new DeltaBuilder();
     },
 
 
@@ -58,7 +61,7 @@ var deltaDocumentObjectChangePropertyToSameValueTest = {
 
     test: function(test) {
         this.deltaDocument.getData().test = "value";
-        var delta = this.deltaDocument.generateDelta();
+        var delta = this.deltaBuilder.generateDelta(this.deltaDocument, this.deltaDocument.getPreviousDocument());
         test.assertTrue(delta.getDeltaChangeList().isEmpty(),
             "Assert that the Delta's deltaChangeList is empty after setting the same value on the same property in an object");
     }
@@ -78,6 +81,7 @@ var deltaDocumentSetPropertyRemovePropertyOnObjectNoChangeTest = {
     setup: function() {
         this.deltaDocument = new DeltaDocument({});
         this.deltaDocument.commitDelta();
+        this.deltaBuilder = new DeltaBuilder();
     },
 
 
@@ -87,7 +91,7 @@ var deltaDocumentSetPropertyRemovePropertyOnObjectNoChangeTest = {
     test: function(test) {
         this.deltaDocument.getData().test = "value";
         delete this.deltaDocument.getData().test;
-        var delta = this.deltaDocument.generateDelta();
+        var delta = this.deltaBuilder.generateDelta(this.deltaDocument, this.deltaDocument.getPreviousDocument());
         test.assertTrue(delta.getDeltaChangeList().isEmpty(),
             "Assert that the Delta's deltaChangeList is empty after setting a value and then removing it");
     }

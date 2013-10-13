@@ -10,8 +10,6 @@
 //@Require('IClone')
 //@Require('Obj')
 //@Require('TypeUtil')
-//@Require('bugdelta.DeltaBuilder')
-//@Require('bugdelta.IDelta')
 
 
 //-------------------------------------------------------------------------------
@@ -29,8 +27,6 @@ var Class               = bugpack.require('Class');
 var IClone              = bugpack.require('IClone');
 var Obj                 = bugpack.require('Obj');
 var TypeUtil            = bugpack.require('TypeUtil');
-var DeltaBuilder        = bugpack.require('bugdelta.DeltaBuilder');
-var IDelta              = bugpack.require('bugdelta.IDelta');
 
 
 //-------------------------------------------------------------------------------
@@ -60,12 +56,6 @@ var DeltaDocument = Class.extend(Obj, {
          * @type {*}
          */
         this.data               = data;
-
-        /**
-         * @private
-         * @type {DeltaBuilder}
-         */
-        this.deltaBuilder       = new DeltaBuilder();
 
         /**
          * @private
@@ -151,13 +141,6 @@ var DeltaDocument = Class.extend(Obj, {
      */
     commitDelta: function() {
         this.previousDocument = this.clone(true);
-    },
-
-    /**
-     * @return {Delta}
-     */
-    generateDelta: function() {
-        return this.deltaBuilder.buildDelta(this, this.getPreviousDocument());
     }
 });
 
@@ -167,7 +150,6 @@ var DeltaDocument = Class.extend(Obj, {
 //-------------------------------------------------------------------------------
 
 Class.implement(DeltaDocument, IClone);
-Class.implement(DeltaDocument, IDelta);
 
 
 //-------------------------------------------------------------------------------
