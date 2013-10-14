@@ -39,6 +39,16 @@ Base._interfaces = [];
 Base._superclass = null;
 
 var BaseStatic = {
+    getBugPackKey: function() {
+
+        //NOTE BRN: Perform this check for backwards compatibility with bugpack <= 0.0.5
+
+        if (this._bugPack) {
+            return this._bugPack.bugPackKey;
+        } else {
+            return this;
+        }
+    },
     getInterfaces: function() {
         return this._interfaces;
     },
@@ -58,18 +68,25 @@ var BasePrototype = {
 
 
 //-------------------------------------------------------------------------------
-// Static Variables
+// Private Static Variables
 //-------------------------------------------------------------------------------
 
+/**
+ * @static
+ * @private
+ * @type {boolean}
+ */
 Class.extending = false;
 
 
 //-------------------------------------------------------------------------------
-// Static Methods
+// Public Static Methods
 //-------------------------------------------------------------------------------
 
 /**
- * Use this to adapt classes built on other extension models to our own model.
+ * @static
+ * @param {*} _class
+ * @param {Object} declaration
  */
 Class.adapt = function(_class, declaration) {
     Base.prototype = _class.prototype;
@@ -89,6 +106,7 @@ Class.adapt = function(_class, declaration) {
 };
 
 /**
+ * @static
  * @param {Object} declaration
  * @return {new:Base}
  */
@@ -99,6 +117,7 @@ Class.declare = function(declaration) {
 };
 
 /**
+ * @static
  * @param {new:Base} _class
  * @param {Object} declaration
  * @return {new:Base}
@@ -139,24 +158,26 @@ Class.extend = function(_class, declaration) {
 };
 
 /**
+ * @static
  * @param {new:Base} _class
  * @param {new:Interface} _interface
  */
 Class.implement = function(_class, _interface) {
     _class.getInterfaces().forEach(function(implementedInterface) {
         if (implementedInterface === _interface) {
-            throw new Error("Interface " + implementedInterface + " has already been implemented by this class");
+            throw new Error("Interface '" + implementedInterface.getBugPackKey() + "' has already been implemented by this class");
         }
     });
     for (var methodName in _interface.prototype) {
         if (!TypeUtil.isFunction(_class.prototype[methodName])) {
-            throw new Error("Class " + _class + " does not implement interface method '" + methodName + "'");
+            throw new Error("Class '" + _class.getBugPackKey() + "' does not implement interface method '" + methodName + "'");
         }
     }
     _class._interfaces.push(_interface);
 };
 
 /**
+ * @static
  * @param {*} value
  * @param {new:Base} _class
  * @return {boolean}
@@ -166,6 +187,7 @@ Class.doesExtend = function(value, _class) {
 };
 
 /**
+ * @static
  * @param {*} value
  * @param {new:Interface} _interface
  * @return {boolean}
@@ -184,6 +206,7 @@ Class.doesImplement = function(value, _interface) {
 };
 
 /**
+ * @static
  * @param {new:Base} _class
  * @param {Object} declaration
  */
