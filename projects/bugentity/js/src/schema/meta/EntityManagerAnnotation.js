@@ -4,44 +4,40 @@
 
 //@Package('bugentity')
 
-//@Export('MongoDataStore')
+//@Export('EntityManagerAnnotation')
 
 //@Require('Class')
-//@Require('Event')
-//@Require('EventDispatcher')
-//@Require('Map')
+//@Require('bugmeta.Annotation')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
-// Bugpack Modules
+// BugPack
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var Event               = bugpack.require('Event');
-var EventDispatcher     = bugpack.require('EventDispatcher');
-var Map                 = bugpack.require('Map');
+var Class           = bugpack.require('Class');
+var Annotation      = bugpack.require('bugmeta.Annotation');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SchemaManager = Class.extend(EventDispatcher, {
+var EntityManagerAnnotation = Class.extend(Annotation, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(entityType) {
 
-        this._super();
+        this._super("EntityManager");
 
 
         //-------------------------------------------------------------------------------
@@ -50,55 +46,34 @@ var SchemaManager = Class.extend(EventDispatcher, {
 
         /**
          * @private
-         * @type {Map.<Class, Schema>}
+         * @type {string}
          */
-        this.classToSchemaMap   = new Map();
+        this.entityType = entityType;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Public Instance Methods
+    // Getters and Setters
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Class} _class
-     * @return {Schema}
+     * @return {string}
      */
-    getSchemaByClass: function(_class) {
-        return this.classToSchemaMap.get(_class);
-    },
-
-    /**
-     * @param {Class} _class
-     * @return {boolean}
-     */
-    hasSchemaForClass: function(_class) {
-        return this.classToSchemaMap.containsKey(_class);
-    },
-
-    /**
-     * @param {Schema} schema
-     */
-    registerSchema: function(schema) {
-        if (!this.hasSchemaForClass(schema.getEntityClass())) {
-            this.classToSchemaMap.put(schema.getEntityClass(), schema);
-            this.dispatchEvent(new Event(SchemaManager.EventTypes.SCHEMA_REGISTERED, {schema: schema}));
-        } else {
-            throw new Error("Schema already registered for class - class:", schema.getEntityClass());
-        }
+    getEntityType: function() {
+        return this.entityType;
     }
 });
 
 
 //-------------------------------------------------------------------------------
-// Static Properties
+// Static Methods
 //-------------------------------------------------------------------------------
 
 /**
- * @enum {string}
+ * @return {EntityManagerAnnotation}
  */
-SchemaManager.EventTypes = {
-    SCHEMA_REGISTERED: "SchemaManager:SchemaRegistered"
+EntityManagerAnnotation.entityManager = function() {
+    return new EntityManagerAnnotation();
 };
 
 
@@ -106,4 +81,4 @@ SchemaManager.EventTypes = {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugentity.SchemaManager', SchemaManager);
+bugpack.export('bugentity.EntityManagerAnnotation', EntityManagerAnnotation);

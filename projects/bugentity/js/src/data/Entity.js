@@ -7,22 +7,32 @@
 //@Export('Entity')
 
 //@Require('Class')
+//@Require('IObjectable')
+//@Require('LiteralUtil')
 //@Require('Obj')
+//@Require('bugdelta.DeltaBuilder')
+//@Require('bugdelta.DeltaDocument')
+//@Require('bugdelta.IDelta')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
-// BugPack
+// Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var Obj         = bugpack.require('Obj');
+var Class           = bugpack.require('Class');
+var IObjectable     = bugpack.require('IObjectable');
+var LiteralUtil     = bugpack.require('LiteralUtil');
+var Obj             = bugpack.require('Obj');
+var DeltaBuilder    = bugpack.require('bugdelta.DeltaBuilder');
+var DeltaDocument   = bugpack.require('bugdelta.DeltaDocument');
+var IDelta          = bugpack.require('bugdelta.IDelta');
 
 
 //-------------------------------------------------------------------------------
@@ -35,38 +45,26 @@ var Entity = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    /**
-     * @constructs
-     * @param {Class} entityClass
-     * @param {Object} instance
-     * @param {Schema} schema
-     */
-    _constructor: function(entityClass, instance, schema) {
+    _constructor: function(data) {
 
         this._super();
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Properties
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {Class}
+         * @type {DeltaBuilder}
          */
-        this.entityClass        = entityClass;
+        this.deltaBuilder           = new DeltaBuilder();
 
         /**
          * @private
-         * @type {*}
+         * @type {DeltaDocument}
          */
-        this.instance           = instance;
-
-        /**
-         * @private
-         * @type {Schema}
-         */
-        this.schema             = schema;
+        this.deltaDocument          = new DeltaDocument(data);
     },
 
 
@@ -75,34 +73,119 @@ var Entity = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {Class}
+     * @return {Date}
      */
-    getEntityClass: function() {
-        return this.entityClass;
+    getCreatedAt: function() {
+        return this.deltaDocument.getData().createdAt;
     },
 
     /**
-     * @return {*}
+     * @param {Date} createdAt
      */
-    getInstance: function() {
-        return this.instance;
+    setCreatedAt: function(createdAt) {
+        this.deltaDocument.getData().createdAt = createdAt;
     },
 
     /**
-     * @return {*}
+     * @return {DeltaDocument}
      */
-    getInstanceId: function() {
-        var idProperty = this.schema.getIdProperty();
-        return this.instance[idProperty.getName()];
+    getDeltaDocument: function() {
+        return this.deltaDocument;
     },
 
     /**
-     * @return {Schema}
+     * @return {string}
      */
-    getSchema: function() {
-        return this.schema;
+    getId: function() {
+        return this.deltaDocument.getData().id;
+    },
+
+    /**
+     * @param {string} id
+     */
+    setId: function(id) {
+        this.deltaDocument.getData().id = id;
+    },
+
+    /**
+     * @return {Date}
+     */
+    getUpdatedAt: function() {
+        return this.deltaDocument.getData().updatedAt;
+    },
+
+    /**
+     * @param {Date} updatedAt
+     */
+    setUpdatedAt: function(updatedAt) {
+        this.deltaDocument.getData().updatedAt = updatedAt;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Obj Extensions
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {*} value
+     * @return {boolean}
+     */
+    equals: function(value) {
+        if (Class.doesExtend(value, Entity)) {
+            return (Obj.equals(value.getId(), this.getId()));
+        }
+        return false;
+    },
+
+    /**
+     * @return {number}
+     */
+    hashCode: function() {
+        if (!this._hashCode) {
+            this._hashCode = Obj.hashCode("[Entity]" + Obj.hashCode(this.getId()));
+        }
+        return this._hashCode;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // IDelta Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     *
+     */
+    commitDelta: function() {
+        this.deltaDocument.commitDelta();
+    },
+
+    /**
+     * @return {Delta}
+     */
+    generateDelta: function() {
+        return this.deltaBuilder.buildDelta(this.deltaDocument, this.deltaDocument.getPreviousDocument());
+    },
+    
+    
+    //-------------------------------------------------------------------------------
+    // IObjectable Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {Object}
+     */
+    toObject: function() {
+        return LiteralUtil.convertToLiteral(this.deltaDocument.getData());
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Interfaces
+//-------------------------------------------------------------------------------
+
+Class.implement(Entity, IDelta);
+Class.implement(Entity, IObjectable);
 
 
 //-------------------------------------------------------------------------------
