@@ -2,77 +2,86 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugioc')
+//@Package('bugentity')
 
-//@Export('ModuleScan')
+//@Export('EntityManagerStore')
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('bugmeta.BugMeta')
+//@Require('Map')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
-// BugPack
+// Bugpack Modules
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
 var Obj                 = bugpack.require('Obj');
-var BugMeta             = bugpack.require('bugmeta.BugMeta');
+var Map                 = bugpack.require('Map');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ModuleScan = Class.extend(Obj, {
+var EntityManagerStore = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    /**
-     * @param {ModuleAnnotationProcessor} processor
-     */
-    _constructor: function(processor) {
+    _constructor: function() {
 
         this._super();
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {ModuleAnnotationProcessor}
+         * @type {Map.<string, EntityManager>}
          */
-        this.processor  = processor;
+        this.entityTypeToEntityManagerMap   = new Map();
     },
 
 
     //-------------------------------------------------------------------------------
-    // Public Class Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @param {string} entityType
+     * @return {EntityManager}
      */
-    scanAll: function() {
-        var _this = this;
-        var bugmeta = BugMeta.context();
-        var noduleAnnotations = bugmeta.getAnnotationsByType("Module");
-        if (noduleAnnotations) {
-            noduleAnnotations.forEach(function(annotation) {
-                _this.processor.process(annotation);
-            });
+    getEntityManagerByEntityType: function(entityType) {
+        return this.entityTypeToEntityManagerMap.get(entityType);
+    },
+
+    /**
+     * @param {string} entityType
+     * @return {boolean}
+     */
+    hasEntityManagerForEntityType: function(entityType) {
+        return this.entityTypeToEntityManagerMap.containsKey(entityType);
+    },
+
+    /**
+     * @param {EntityManager} entityManager
+     */
+    registerEntityManager: function(entityManager) {
+        if (this.hasEntityManagerForEntityType(entityManager.getEntityType())) {
+            throw new Error("EntityManager already registered for entityType - entityType:", entityManager.getEntityType());
         }
+        this.entityTypeToEntityManagerMap.put(entityManager.getEntityType(), entityManager);
     }
 });
 
@@ -81,4 +90,4 @@ var ModuleScan = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugioc.ModuleScan', ModuleScan);
+bugpack.export('bugentity.EntityManagerStore', EntityManagerStore);

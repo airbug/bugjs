@@ -86,12 +86,14 @@ var EntityProcessor = Class.extend(Obj, {
      */
     process: function(entityAnnotation) {
         var entityClass = entityAnnotation.getReference();
-        if (!this.schemaManager.hasSchemaForClass(entityClass)) {
-            var schema = new Schema(entityClass);
+        var entityName  = entityAnnotation.getEntityName();
+        if (!this.schemaManager.hasSchemaForClass(entityClass) && !this.schemaManager.hasSchemaForName(entityName)) {
+            var schema = new Schema(entityClass, entityName);
             var foundId = false;
             entityAnnotation.getProperties().forEach(function(propertyAnnotation) {
-                schema.addProperty(new SchemaProperty(propertyAnnotation.getName(), propertyAnnotation.getType(), {
-                    id: propertyAnnotation.isId(),
+                schema.addProperty(new SchemaProperty(propertyAnnotation.getPropertyName(), propertyAnnotation.getPropertyType(), {
+                    collectionOf: propertyAnnotation.getPropertyCollectionOf(),
+                    id: propertyAnnotation.isPropertyId(),
                     indexed: propertyAnnotation.isIndexed(),
                     unique: propertyAnnotation.isUnique()
                 }));

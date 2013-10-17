@@ -4,11 +4,11 @@
 
 //@Package('bugentity')
 
-//@Export('EntityScan')
+//@Export('EntityManagerScan')
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('bugentity.EntityAnnotation')
+//@Require('bugentity.EntityManagerAnnotation')
 //@Require('bugmeta.BugMeta')
 
 
@@ -16,24 +16,24 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var Obj                 = bugpack.require('Obj');
-var EntityAnnotation    = bugpack.require('bugentity.EntityAnnotation');
-var BugMeta             = bugpack.require('bugmeta.BugMeta');
+var Class                       = bugpack.require('Class');
+var Obj                         = bugpack.require('Obj');
+var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
+var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var EntityScan = Class.extend(Obj, {
+var EntityManagerScan = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Public Class Methods
@@ -41,22 +41,20 @@ var EntityScan = Class.extend(Obj, {
 
     /**
      * @param {Class} _class
-     * @return {EntityAnnotation}
+     * @return {EntityManagerAnnotation}
      */
     scanClass: function(_class) {
-        //TODO BRN: Figure out how to handle child/parent classes
-
         var bugmeta     = BugMeta.context();
         var annotations = bugmeta.getAnnotationsByReference(_class);
-        var entityAnnotation = null;
+        var entityManagerAnnotation = null;
         if (annotations) {
             annotations.forEach(function(annotation) {
-                if (Class.doesExtend(annotation, EntityAnnotation)) {
-                    entityAnnotation = annotation;
+                if (Class.doesExtend(annotation, EntityManagerAnnotation)) {
+                    entityManagerAnnotation = annotation;
                 }
             });
         }
-        return entityAnnotation;
+        return entityManagerAnnotation;
     }
 });
 
@@ -65,4 +63,4 @@ var EntityScan = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugentity.EntityScan', EntityScan);
+bugpack.export('bugentity.EntityManagerScan', EntityManagerScan);

@@ -46,33 +46,45 @@ var PropertyAnnotation = Class.extend(Annotation, {
 
         /**
          * @private
+         * @type {string}
+         */
+        this.propertyCollectionOf       = null;
+
+        /**
+         * @private
          * @type {boolean}
          */
-        this.propertyId         = false;
+        this.propertyId                 = false;
+
+        /**
+         * @private
+         * @type {boolean}
+         */
+        this.propertyIndexed            = false;
 
         /**
          * @private
          * @type {string}
          */
-        this.propertyName       = propertyName;
+        this.propertyName               = propertyName;
 
         /**
          * @private
          * @type {boolean}
          */
-        this.propertyIndexed    = false;
+        this.propertyPopulates          = false;
 
         /**
          * @private
          * @type {string}
          */
-        this.propertyType       = null;
+        this.propertyType               = null;
 
         /**
          * @private
          * @type {boolean}
          */
-        this.propertyUnique     = false;
+        this.propertyUnique             = false;
     },
 
 
@@ -81,38 +93,51 @@ var PropertyAnnotation = Class.extend(Annotation, {
     //-------------------------------------------------------------------------------
 
     /**
-     *
      * @return {string}
      */
-    getName: function() {
-        return this.propertyName;
+    getPropertyCollectionOf: function() {
+        return this.propertyCollectionOf;
     },
 
     /**
      * @return {string}
      */
-    getType: function() {
+    getPropertyName: function() {
+        return this.propertyName;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    getPropertyPopulates: function() {
+        return this.propertyPopulates;
+    },
+
+    /**
+     * @return {string}
+     */
+    getPropertyType: function() {
         return this.propertyType;
     },
 
     /**
      * @return {boolean}
      */
-    isId: function() {
+    isPropertyId: function() {
         return this.propertyId;
     },
 
     /**
      * @return {boolean}
      */
-    isIndexed: function() {
+    isPropertyIndexed: function() {
         return this.propertyIndexed;
     },
 
     /**
      * @return {boolean}
      */
-    isUnique: function() {
+    isPropertyUnique: function() {
         return this.propertyUnique;
     },
 
@@ -120,6 +145,15 @@ var PropertyAnnotation = Class.extend(Annotation, {
     //-------------------------------------------------------------------------------
     // Public Instance Methods
     //-------------------------------------------------------------------------------
+
+    /**
+     * @param {string} propertyCollectionOf
+     * @return {PropertyAnnotation}
+     */
+    collectionOf: function(propertyCollectionOf) {
+        this.propertyCollectionOf = propertyCollectionOf;
+        return this;
+    },
 
     /**
      * @return {PropertyAnnotation}
@@ -134,6 +168,15 @@ var PropertyAnnotation = Class.extend(Annotation, {
      */
     index: function() {
         this.propertyIndexed = true;
+        return this;
+    },
+
+    /**
+     * @param {boolean} populates
+     * @return {PropertyAnnotation}
+     */
+    populates: function(populates) {
+        this.propertyPopulates = populates;
         return this;
     },
 

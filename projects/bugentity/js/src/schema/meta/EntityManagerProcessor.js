@@ -2,40 +2,42 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugioc')
+//@Package('bugentity')
 
-//@Export('Scope')
+//@Export('EntityManagerProcessor')
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('bugentity.EntityManagerScan')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var Obj = bugpack.require('Obj');
+var Class                   = bugpack.require('Class');
+var Obj                     = bugpack.require('Obj');
+var EntityManagerScan       = bugpack.require('bugentity.EntityManagerScan');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Scope = Class.extend(Obj, {
+var EntityManagerProcessor = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(iocContext, iocModule) {
+    _constructor: function(entityManager) {
 
         this._super();
 
@@ -46,60 +48,43 @@ var Scope = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {IocContext}
+         * @type {EntityManager}
          */
-        this.iocContext = iocContext;
-
-        /**
-         * @private
-         * @type {IocModule}
-         */
-        this.iocModule = iocModule;
+        this.entityManager  = entityManager;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Public Class Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {IocModule}
+     * @param {Class} entityManagerClass
      */
-    getIocModule: function() {
-        return this.iocModule;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @abstract
-     * @param {Array.<*>} moduleArgs
-     * @return {*}
-     */
-    generateModule: function(moduleArgs) {
-
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Protected Class Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @protected
-     * @return {*}
-     */
-    createModule: function(moduleArgs) {
-        var _this           = this;
-        var configuration   = this.iocContext.findConfigurationByIocModule(this.iocModule);
-        var moduleMethod    = configuration[this.iocModule.getMethodName()];
-        if (!moduleMethod) {
-            throw new Error("Cannot find module method in configuration that matches '" + this.iocModule.getMethodName() + "'");
+    scanClass: function(entityManagerClass) {
+        var entityManagerScan = new EntityManagerScan();
+        var entityManagerAnnotation = entityManagerScan.scanClass(entityManagerClass);
+        if (entityManagerAnnotation) {
+            this.process(entityManagerAnnotation);
+        } else {
+            throw new Error("Could not find EntityManager annotation for class - class:", entityManagerClass);
         }
-        return = configuration[this.iocModule.getMethodName()].apply(configuration, moduleArgs);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Private Class Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {EntityManagerAnnotation} entityManagerAnnotation
+     */
+    process: function(entityManagerAnnotation) {
+        var entityType          = entityManagerAnnotation.getEntityType();
+        if (entityType) {
+            this.entityManager.setEntityType(entityType);
+        }
     }
 });
 
@@ -108,4 +93,4 @@ var Scope = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugioc.Scope', Scope);
+bugpack.export('bugentity.EntityManagerProcessor', EntityManagerProcessor);

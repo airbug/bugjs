@@ -13,6 +13,9 @@
 //@Require('Set')
 //@Require('bugflow.BugFlow')
 //@Require('bugioc.IConfiguration')
+//@Require('bugioc.IInitializeModule')
+//@Require('bugioc.IPostProcessModule')
+//@Require('bugioc.IPreProcessModule')
 //@Require('bugioc.IocModule')
 //@Require('bugioc.PrototypeScope')
 //@Require('bugioc.SingletonScope')
@@ -22,23 +25,26 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var DependencyGraph = bugpack.require('DependencyGraph');
-var Map             = bugpack.require('Map');
-var Obj             = bugpack.require('Obj');
-var Set             = bugpack.require('Set');
-var BugFlow         = bugpack.require('bugflow.BugFlow');
-var IConfiguration  = bugpack.require('bugioc.IConfiguration');
-var IocModule       = bugpack.require('bugioc.IocModule');
-var PrototypeScope  = bugpack.require('bugioc.PrototypeScope');
-var SingletonScope  = bugpack.require('bugioc.SingletonScope');
+var Class                   = bugpack.require('Class');
+var DependencyGraph         = bugpack.require('DependencyGraph');
+var Map                     = bugpack.require('Map');
+var Obj                     = bugpack.require('Obj');
+var Set                     = bugpack.require('Set');
+var BugFlow                 = bugpack.require('bugflow.BugFlow');
+var IConfiguration          = bugpack.require('bugioc.IConfiguration');
+var IInitializeModule       = bugpack.require('bugioc.IInitializeModule');
+var IPostProcessModule      = bugpack.require('bugioc.IPostProcessModule');
+var IPreProcessModule       = bugpack.require('bugioc.IPreProcessModule');
+var IocModule               = bugpack.require('bugioc.IocModule');
+var PrototypeScope          = bugpack.require('bugioc.PrototypeScope');
+var SingletonScope          = bugpack.require('bugioc.SingletonScope');
 
 
 //-------------------------------------------------------------------------------
@@ -239,9 +245,25 @@ var IocContext = Class.extend(Obj, {
      * @return {*}
      */
     generateModule: function(iocModule) {
-        var scope = this.findScopeByIocModule(iocModule);
-        return scope.generateModule();
+        var _this           = this;
+        var scope           = this.findScopeByIocModule(iocModule);
+        var moduleArgs      = [];
+        var iocArgList      = iocModule.getIocArgList();
+        iocArgList.forEach(function(iocArg) {
+            var refModule = _this.generateModuleByName(iocArg.getRef());
+            moduleArgs.push(refModule);
+        });
+        var module = scope.generateModule(moduleArgs);
+
+
+        var iocPropertySet = this.iocModule.getIocPropertySet();
+        iocPropertySet.forEach(function(iocProperty) {
+            module[iocProperty.getName()] = _this.iocContext.generateModuleByName(iocProperty.getRef());
+        });
+
+        return module;
     },
+
 
     /**
      * @private
@@ -297,7 +319,11 @@ var IocContext = Class.extend(Obj, {
             _this.generateScope(iocModule);
         });
         iocModulesInDependentOrder.forEach(function(iocModule) {
+            if (Class.doesImplement(iocModule, IPostProcessModule)) {
+                iocModule.preProcessModule();
+            }
             _this.generateModule(iocModule);
+
         });
     }
 });

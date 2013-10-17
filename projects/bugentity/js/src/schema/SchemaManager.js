@@ -45,7 +45,7 @@ var SchemaManager = Class.extend(EventDispatcher, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**
@@ -53,11 +53,17 @@ var SchemaManager = Class.extend(EventDispatcher, {
          * @type {Map.<Class, Schema>}
          */
         this.classToSchemaMap   = new Map();
+
+        /**
+         * @private
+         * @type {Map.<string, Schema>}
+         */
+        this.nameToSchemaMap    = new Map();
     },
 
 
     //-------------------------------------------------------------------------------
-    // Public Instance Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -69,6 +75,14 @@ var SchemaManager = Class.extend(EventDispatcher, {
     },
 
     /**
+     * @param {string} name
+     * @return {Schema}
+     */
+    getSchemaByName: function(name) {
+        return this.nameToSchemaMap.get(name);
+    },
+
+    /**
      * @param {Class} _class
      * @return {boolean}
      */
@@ -77,15 +91,26 @@ var SchemaManager = Class.extend(EventDispatcher, {
     },
 
     /**
+     * @param {string} name
+     * @return {boolean}
+     */
+    hasSchemaForName: function(name) {
+        return this.nameToSchemaMap.containsKey(name);
+    },
+
+    /**
      * @param {Schema} schema
      */
     registerSchema: function(schema) {
-        if (!this.hasSchemaForClass(schema.getEntityClass())) {
-            this.classToSchemaMap.put(schema.getEntityClass(), schema);
-            this.dispatchEvent(new Event(SchemaManager.EventTypes.SCHEMA_REGISTERED, {schema: schema}));
-        } else {
+        if (this.hasSchemaForClass(schema.getEntityClass())) {
             throw new Error("Schema already registered for class - class:", schema.getEntityClass());
         }
+        if (this.hasSchemaForName(schema.getEntityName())) {
+            throw new Error("Schema already registered for entity name - name:", schema.getEntityName());
+        }
+        this.classToSchemaMap.put(schema.getEntityClass(), schema);
+        this.nameToSchemaMap.put(schema.getEntityName(), schema);
+        this.dispatchEvent(new Event(SchemaManager.EventTypes.SCHEMA_REGISTERED, {schema: schema}));
     }
 });
 

@@ -48,35 +48,44 @@ var SchemaProperty = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {boolean}
+         * @type {string}
          */
-        this.id         = false;
+        this.collectionOf   = "";
 
         /**
          * @private
          * @type {boolean}
          */
-        this.indexed    = false;
+        this.id             = false;
+
+        /**
+         * @private
+         * @type {boolean}
+         */
+        this.indexed        = false;
 
         /**
          * @private
          * @type {string}
          */
-        this.name       = name;
+        this.name           = name;
 
         /**
          * @private
          * @type {string}
          */
-        this.type       = type;
+        this.type           = type;
 
         /**
          * @private
          * @type {boolean}
          */
-        this.unique     = false;
+        this.unique         = false;
 
         if (options) {
+            if (TypeUtil.isString(options.collectionOf)) {
+                this.collectionOf = options.collectionOf;
+            }
             if (TypeUtil.isBoolean(options.id)) {
                 this.id = options.id;
             }
@@ -93,6 +102,13 @@ var SchemaProperty = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
     // Getters and Setters
     //-------------------------------------------------------------------------------
+
+    /**
+     * @return {string}
+     */
+    getCollectionOf: function() {
+        return this.collectionOf;
+    },
 
     /**
      * @return {string}

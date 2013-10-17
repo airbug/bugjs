@@ -39,7 +39,7 @@ var Schema = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(entityClass) {
+    _constructor: function(entityClass, entityName) {
 
         this._super();
 
@@ -53,6 +53,12 @@ var Schema = Class.extend(Obj, {
          * @type {Class}
          */
         this.entityClass                        = entityClass;
+
+        /**
+         * @private
+         * @type {string}
+         */
+        this.entityName                         = entityName;
 
         /**
          * @private
@@ -83,6 +89,13 @@ var Schema = Class.extend(Obj, {
      */
     getEntityClass: function() {
         return this.entityClass;
+    },
+
+    /**
+     * @return {string}
+     */
+    getEntityName: function() {
+        return this.entityName;
     },
 
     /**

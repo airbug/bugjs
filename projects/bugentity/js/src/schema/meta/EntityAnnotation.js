@@ -35,7 +35,7 @@ var EntityAnnotation = Class.extend(Annotation, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(entityName) {
 
         this._super("Entity");
 
@@ -46,9 +46,15 @@ var EntityAnnotation = Class.extend(Annotation, {
 
         /**
          * @private
+         * @type {string}
+         */
+        this.entityName     = entityName;
+
+        /**
+         * @private
          * @type {Array.<PropertyAnnotation>}
          */
-        this.propertyArray = [];
+        this.entityPropertyArray  = [];
     },
 
 
@@ -57,10 +63,17 @@ var EntityAnnotation = Class.extend(Annotation, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @return {string}
+     */
+    getEntityName: function() {
+        return this.entityName;
+    },
+
+    /**
      * @return {Array.<PropertyAnnotation>}
      */
-    getProperties: function() {
-        return this.propertyArray;
+    getEntityProperties: function() {
+        return this.entityPropertyArray;
     },
 
 
@@ -72,7 +85,7 @@ var EntityAnnotation = Class.extend(Annotation, {
      * @param {Array.<PropertyAnnotation>} propertyArray
      */
     properties: function(propertyArray) {
-        this.propertyArray = propertyArray;
+        this.entityPropertyArray = propertyArray;
         return this;
     }
 });
@@ -83,10 +96,11 @@ var EntityAnnotation = Class.extend(Annotation, {
 //-------------------------------------------------------------------------------
 
 /**
+ * @param {string} entityName
  * @return {EntityAnnotation}
  */
-EntityAnnotation.entity = function() {
-    return new EntityAnnotation();
+EntityAnnotation.entity = function(entityName) {
+    return new EntityAnnotation(entityName);
 };
 
 
