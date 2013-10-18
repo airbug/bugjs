@@ -39,7 +39,7 @@ var IocModule = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(methodName, name, scope) {
+    _constructor: function(name, scope) {
 
         this._super();
 
@@ -56,21 +56,15 @@ var IocModule = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {IocConfiguration}
-         */
-        this.iocConfiguration   = null;
-
-        /**
-         * @private
          * @type {Set<IocProperty>}
          */
         this.iocPropertySet     = new Set();
 
         /**
          * @private
-         * @type {string}
+         * @type {ModuleFactory}
          */
-        this.methodName         = methodName;
+        this.moduleFactory      = undefined;
 
         /**
          * @private
@@ -98,20 +92,6 @@ var IocModule = Class.extend(Obj, {
     },
 
     /**
-     * @retrurn {IocConfiguration}
-     */
-    getIocConfiguration: function() {
-        return this.iocConfiguration;
-    },
-
-    /**
-     * @param {IocConfiguration} iocConfiguration
-     */
-    setIocConfiguration: function(iocConfiguration) {
-        this.iocConfiguration = iocConfiguration;
-    },
-
-    /**
      *
      * @return {Set}
      */
@@ -120,10 +100,17 @@ var IocModule = Class.extend(Obj, {
     },
 
     /**
-     * @return {string}
+     * @return {ModuleFactory}
      */
-    getMethodName: function() {
-        return this.methodName;
+    getModuleFactory: function() {
+        return this.moduleFactory;
+    },
+
+    /**
+     * @param {ModuleFactory} moduleFactory
+     */
+    setModuleFactory: function(moduleFactory) {
+        this.moduleFactory = moduleFactory;
     },
 
     /**

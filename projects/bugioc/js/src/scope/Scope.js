@@ -48,19 +48,26 @@ var Scope = Class.extend(Obj, {
          * @private
          * @type {IocContext}
          */
-        this.iocContext = iocContext;
+        this.iocContext     = iocContext;
 
         /**
          * @private
          * @type {IocModule}
          */
-        this.iocModule = iocModule;
+        this.iocModule      = iocModule;
     },
 
 
     //-------------------------------------------------------------------------------
     // Getters and Setters
     //-------------------------------------------------------------------------------
+
+    /**
+     * @return {IocContext}
+     */
+    getIocContext: function() {
+        return this.iocContext;
+    },
 
     /**
      * @return {IocModule}
@@ -75,31 +82,19 @@ var Scope = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @abstract
-     * @param {Array.<*>} moduleArgs
      * @return {*}
      */
-    generateModule: function(moduleArgs) {
-
+    factoryModule: function() {
+        var moduleFactory = this.iocModule.getModuleFactory();
+        return moduleFactory.factoryModule(this.iocModule);
     },
 
-
-    //-------------------------------------------------------------------------------
-    // Protected Class Methods
-    //-------------------------------------------------------------------------------
-
     /**
-     * @protected
+     * @abstract
      * @return {*}
      */
-    createModule: function(moduleArgs) {
-        var _this           = this;
-        var configuration   = this.iocContext.findConfigurationByIocModule(this.iocModule);
-        var moduleMethod    = configuration[this.iocModule.getMethodName()];
-        if (!moduleMethod) {
-            throw new Error("Cannot find module method in configuration that matches '" + this.iocModule.getMethodName() + "'");
-        }
-        return = configuration[this.iocModule.getMethodName()].apply(configuration, moduleArgs);
+    generateModule: function() {
+
     }
 });
 

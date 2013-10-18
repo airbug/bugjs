@@ -105,7 +105,7 @@ var AutowiredScan = Class.extend(Obj, {
             var _this = this;
             currentConstructor.apply(this, arguments);
             propertyAnnotationArray.forEach(function(propertyAnnotation) {
-                _this[propertyAnnotation.getName()] = _scan.iocContext.generateModuleByName(propertyAnnotation.getRef());
+                _this[propertyAnnotation.getName()] = _scan.iocContext.getModuleByName(propertyAnnotation.getRef());
             });
         };
     }

@@ -61,7 +61,7 @@ var SingletonScope = Class.extend(Scope, {
      */
     generateModule: function() {
         if (!this.singletonModule) {
-            this.singletonModule = this.createModule();
+            this.singletonModule = this.factoryModule();
         }
         return this.singletonModule;
     }

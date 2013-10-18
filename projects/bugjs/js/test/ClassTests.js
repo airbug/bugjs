@@ -45,6 +45,51 @@ var test            = TestAnnotation.test;
 // Declare Tests
 //-------------------------------------------------------------------------------
 
+var classCreateTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function(test) {
+        var _this = this;
+        this.testArgument1 = "value1";
+        this.testArgument2 = "value2";
+        this.NewClass = Class.extend(Obj, {
+            _constructor: function(arg1, arg2) {
+                test.assertEqual(arg1, _this.testArgument1,
+                    "Assert arg1 is equal to testArgument1");
+                test.assertEqual(arg2, _this.testArgument2,
+                    "Assert arg2 is equal to testArgument2");
+            },
+            someTestFunction1: function() {
+
+            },
+            someTestFunction2: function() {
+
+            }
+        });
+        this.instance = this.NewClass.create(this.testArgument1, this.testArgument2);
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        test.assertTrue(TypeUtil.isFunction(this.instance.someTestFunction1),
+            "Assert function added to class is present in class instance");
+        test.assertTrue(TypeUtil.isFunction(this.instance.someTestFunction2),
+            "Assert second function added to class is present in class instance");
+        test.assertTrue(Class.doesExtend(this.instance, Obj),
+            "Assert instance of new class extends base level Object class");
+        test.assertTrue(Class.doesExtend(this.instance, this.NewClass),
+            "Assert instance of new class extends NewClass");
+    }
+};
+bugmeta.annotate(classCreateTest).with(
+    test().name("Class create test")
+);
+
 /**
  *
  */

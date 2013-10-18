@@ -9,8 +9,8 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('Set')
+//@Require('bugioc.ConfigurationModuleFactory')
 //@Require('bugioc.IocArg')
-//@Require('bugioc.IocConfiguration')
 //@Require('bugioc.IocModule')
 //@Require('bugioc.IocProperty')
 //@Require('bugmeta.BugMeta')
@@ -27,14 +27,14 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var Obj                 = bugpack.require('Obj');
-var Set                 = bugpack.require('Set');
-var IocArg              = bugpack.require('bugioc.IocArg');
-var IocConfiguration    = bugpack.require('bugioc.IocConfiguration');
-var IocModule           = bugpack.require('bugioc.IocModule');
-var IocProperty         = bugpack.require('bugioc.IocProperty');
-var BugMeta             = bugpack.require('bugmeta.BugMeta');
+var Class                           = bugpack.require('Class');
+var Obj                             = bugpack.require('Obj');
+var Set                             = bugpack.require('Set');
+var ConfigurationModuleFactory      = bugpack.require('bugioc.ConfigurationModuleFactory');
+var IocArg                          = bugpack.require('bugioc.IocArg');
+var IocModule                       = bugpack.require('bugioc.IocModule');
+var IocProperty                     = bugpack.require('bugioc.IocProperty');
+var BugMeta                         = bugpack.require('bugmeta.BugMeta');
 
 
 //-------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ var ConfigurationAnnotationProcessor = Class.extend(Obj, {
      * @param {ConfigurationAnnotation} configurationAnnotation
      */
     process: function(configurationAnnotation) {
-        this.createIocConfiguration(configurationAnnotation);
+        this.processConfigurationAnnotation(configurationAnnotation);
     },
 
 
@@ -96,25 +96,6 @@ var ConfigurationAnnotationProcessor = Class.extend(Obj, {
      */
     createIocArg: function(argAnnotation) {
         return new IocArg(argAnnotation.getRef());
-    },
-
-    /**
-     * @private
-     * @param {ConfigurationAnnotation} configurationAnnotation
-     */
-    createIocConfiguration: function(configurationAnnotation) {
-        var _this                   = this;
-        if (!this.processedConfigurationAnnotationSet.contains(configurationAnnotation)) {
-            var configurationClass      = configurationAnnotation.getReference();
-            var moduleAnnotationArray   = configurationAnnotation.getModules();
-            var iocConfiguration        = new IocConfiguration(configurationClass);
-            moduleAnnotationArray.forEach(function(moduleAnnotation) {
-                var iocModule = _this.createIocModule(moduleAnnotation);
-                iocConfiguration.addIocModule(iocModule)
-            });
-            this.processedConfigurationAnnotationSet.add(configurationAnnotation);
-            this.iocContext.registerIocConfiguration(iocConfiguration);
-        }
     },
 
     /**
@@ -145,6 +126,28 @@ var ConfigurationAnnotationProcessor = Class.extend(Obj, {
      */
     createIocProperty: function(propertyAnnotation) {
         return new IocProperty(propertyAnnotation.getName(), propertyAnnotation.getRef());
+    },
+
+    /**
+     * @private
+     * @param {ConfigurationAnnotation} configurationAnnotation
+     */
+    processConfigurationAnnotation: function(configurationAnnotation) {
+        var _this                   = this;
+        if (!this.processedConfigurationAnnotationSet.contains(configurationAnnotation)) {
+            var configurationClass      = configurationAnnotation.getReference();
+            var moduleAnnotationArray   = configurationAnnotation.getModules();
+            var configuration           = new configurationClass();
+
+            moduleAnnotationArray.forEach(function(moduleAnnotation) {
+                var iocModule   = _this.createIocModule(moduleAnnotation);
+                var factory     = new ConfigurationModuleFactory(_this.iocContext, iocModule, configuration);
+                iocModule.setModuleFactory(factory);
+                _this.iocContext.registerIocModule(iocModule);
+            });
+            this.processedConfigurationAnnotationSet.add(configurationAnnotation);
+            this.iocContext.registerConfiguration(configuration);
+        }
     }
 });
 

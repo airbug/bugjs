@@ -4,11 +4,10 @@
 
 //@Package('bugioc')
 
-//@Export('PrototypeScope')
+//@Export('IPostProcessModule')
 
-//@Require('Class')
-//@Require('List')
-//@Require('bugioc.Scope')
+//@Require('Interface')
+
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -21,50 +20,23 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var List = bugpack.require('List');
-var Scope = bugpack.require('bugioc.Scope');
+var Interface = bugpack.require('Interface');
 
 
 //-------------------------------------------------------------------------------
-// Declare Class
+// Declare Interface
 //-------------------------------------------------------------------------------
 
-var PrototypeScope = Class.extend(Scope, {
+var IPostProcessModule = Interface.declare({
 
     //-------------------------------------------------------------------------------
-    // Constructor
-    //-------------------------------------------------------------------------------
-
-    _constructor: function(bugIOC, iocModule) {
-
-        this._super(bugIOC, iocModule);
-
-
-        //-------------------------------------------------------------------------------
-        // Declare Variables
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {List<*>}
-         */
-        this.generatedModuleList = new List();
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
+    // Interface Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {*}
+     * @param {function(Error)}
      */
-    generateModule: function() {
-        var module = this.factoryModule();
-        this.generatedModuleList.add(module);
-        return module;
-    }
+    postProcessModule: function(callback) {}
 });
 
 
@@ -72,4 +44,4 @@ var PrototypeScope = Class.extend(Scope, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugioc.PrototypeScope', PrototypeScope);
+bugpack.export('bugioc.IPostProcessModule', IPostProcessModule);

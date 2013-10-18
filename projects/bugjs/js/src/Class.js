@@ -154,6 +154,16 @@ Class.extend = function(_class, declaration) {
     _class.getInterfaces().forEach(function(_interface) {
         newClass._interfaces.push(_interface);
     });
+    newClass.create = (function() {
+        function F(args) {
+            return newClass.apply(this, args);
+        }
+        F.prototype = newClass.prototype;
+
+        return function() {
+            return new F(arguments);
+        }
+    })();
     return newClass;
 };
 
