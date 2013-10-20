@@ -121,10 +121,10 @@ var AnnotationRegistry = Class.extend(Obj, {
      */
     addAnnotation: function(annotation) {
         this.annotationList.add(annotation);
-        var annotationTypeList = this.annotationTypeMap.get(annotation.getType());
+        var annotationTypeList = this.annotationTypeMap.get(annotation.getAnnotationType());
         if (!annotationTypeList) {
             annotationTypeList = new List();
-            this.annotationTypeMap.put(annotation.getType(), annotationTypeList);
+            this.annotationTypeMap.put(annotation.getAnnotationType(), annotationTypeList);
         }
         annotationTypeList.add(annotation);
     },

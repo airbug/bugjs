@@ -98,7 +98,7 @@ var AutowiredScan = Class.extend(Obj, {
      */
     processAutowiredAnnotation: function(autowiredAnnotation) {
         var _scan = this;
-        var autowiredClass = autowiredAnnotation.getReference();
+        var autowiredClass = autowiredAnnotation.getAnnotationReference();
         var propertyAnnotationArray = autowiredAnnotation.getProperties();
         var currentConstructor = autowiredClass.prototype._constructor;
         autowiredClass.prototype._constructor = function() {

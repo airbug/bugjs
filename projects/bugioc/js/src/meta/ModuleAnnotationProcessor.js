@@ -133,7 +133,7 @@ var ModuleAnnotationProcessor = Class.extend(Obj, {
      */
     processModuleAnnotation: function(moduleAnnotation) {
         if (!this.processedModuleAnnotationSet.contains(moduleAnnotation)) {
-            var moduleClass     = moduleAnnotation.getReference();
+            var moduleClass     = moduleAnnotation.getAnnotationReference();
             var iocModule       = this.createIocModule(moduleAnnotation);
             var factory         = new AnnotationModuleFactory(this.iocContext, iocModule, moduleClass);
             iocModule.setModuleFactory(factory);

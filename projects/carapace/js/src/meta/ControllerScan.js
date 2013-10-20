@@ -75,7 +75,7 @@ var ControllerScan = Class.extend(Obj, {
         var controllerAnnotations   = bugmeta.getAnnotationsByType("Controller");
         if (controllerAnnotations) {
             controllerAnnotations.forEach(function(annotation) {
-                var controllerClass = annotation.getReference();
+                var controllerClass = annotation.getAnnotationReference();
                 var controllerRoute = annotation.getRoute();
                 _this.createController(controllerClass, controllerRoute);
             });

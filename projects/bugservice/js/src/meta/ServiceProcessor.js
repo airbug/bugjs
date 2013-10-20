@@ -93,7 +93,7 @@ var ServiceProcessor = Class.extend(Obj, {
     process: function(serviceAnnotationList) {
         var _this = this;
         serviceAnnotationList.forEach(function(serviceAnnotation) {
-            var serviceClass = serviceAnnotation.getReference();
+            var serviceClass = serviceAnnotation.getAnnotationReference();
             //TODO BRN: How do we generate the service here? Seems like we need to reach in to the application context.
             var service =
 

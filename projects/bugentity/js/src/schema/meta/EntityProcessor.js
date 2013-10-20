@@ -66,7 +66,7 @@ var EntityProcessor = Class.extend(Obj, {
      * @param {EntityAnnotation} entityAnnotation
      */
     process: function(entityAnnotation) {
-        var entityClass = entityAnnotation.getReference();
+        var entityClass = entityAnnotation.getAnnotationReference();
         var entityName  = entityAnnotation.getEntityName();
         if (!this.schemaManager.hasSchemaForClass(entityClass) && !this.schemaManager.hasSchemaForName(entityName)) {
             var schema = new Schema(entityClass, entityName);

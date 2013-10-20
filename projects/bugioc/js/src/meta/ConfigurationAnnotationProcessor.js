@@ -82,7 +82,7 @@ var ConfigurationAnnotationProcessor = Class.extend(ModuleAnnotationProcessor, {
     processConfigurationAnnotation: function(configurationAnnotation) {
         var _this                   = this;
         if (!this.processedConfigurationAnnotationSet.contains(configurationAnnotation)) {
-            var configurationClass      = configurationAnnotation.getReference();
+            var configurationClass      = configurationAnnotation.getAnnotationReference();
             var moduleAnnotationArray   = configurationAnnotation.getModules();
             var configuration           = new configurationClass();
 

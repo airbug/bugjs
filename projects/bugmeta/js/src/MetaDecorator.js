@@ -71,7 +71,7 @@ var MetaDecorator = Class.extend(Obj, {
         for (var i = 0, size = arguments.length; i < size; i++) {
             var annotation = arguments[i];
             if (Class.doesExtend(annotation, Annotation)) {
-                annotation.setReference(this.reference);
+                annotation.setAnnotationReference(this.reference);
                 this.metaContext.addAnnotation(annotation);
             } else {
                 throw new Error("annotation does not extend the Annotation class")

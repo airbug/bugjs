@@ -7,7 +7,6 @@
 //@Export('Annotation')
 
 //@Require('Class')
-//@Require('List')
 //@Require('Obj')
 
 
@@ -23,7 +22,6 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class = bugpack.require('Class');
-var List =  bugpack.require('List');
 var Obj =   bugpack.require('Obj');
 
 
@@ -37,7 +35,7 @@ var Annotation = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(type) {
+    _constructor: function(annotationType) {
 
         this._super();
 
@@ -48,21 +46,15 @@ var Annotation = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {List<*>}
-         */
-        this.paramList = new List();
-
-        /**
-         * @private
          * @type {*}
          */
-        this.reference = null;
+        this.annotationReference    = null;
 
         /**
          * @private
          * @type {string}
          */
-        this.type = type;
+        this.annotationType         = annotationType;
     },
 
 
@@ -73,45 +65,22 @@ var Annotation = Class.extend(Obj, {
     /**
      * @return {*}
      */
-    getReference: function() {
-        return this.reference;
+    getAnnotationReference: function() {
+        return this.annotationReference;
     },
 
     /**
-     * @param {*} reference
+     * @param {*} annotationReference
      */
-    setReference: function(reference) {
-        this.reference = reference;
+    setAnnotationReference: function(annotationReference) {
+        this.annotationReference = annotationReference;
     },
 
     /**
      * @return {string}
      */
-    getType: function() {
-        return this.type;
-    },
-
-    /**
-     * @return {List<*>}
-     */
-    getParamList: function() {
-        return this.paramList;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {...*}
-     */
-    params: function() {
-        for (var i = 0, size = arguments.length; i < size; i++) {
-            var param = arguments[i];
-            this.paramList.add(param);
-        }
-        return this;
+    getAnnotationType: function() {
+        return this.annotationType;
     }
 });
 

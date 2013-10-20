@@ -88,16 +88,16 @@ var MetaContext = Class.extend(Obj, {
      * @param {Annotation} annotation
      */
     addAnnotation: function(annotation) {
-        var annotationTypeList = this.annotationMap.get(annotation.getType());
+        var annotationTypeList = this.annotationMap.get(annotation.getAnnotationType());
         if (!annotationTypeList) {
             annotationTypeList = new List();
-            this.annotationMap.put(annotation.getType(), annotationTypeList);
+            this.annotationMap.put(annotation.getAnnotationType(), annotationTypeList);
         }
         annotationTypeList.add(annotation);
-        var annotationReferenceList = this.referenceToAnnotationListMap.get(annotation.getReference());
+        var annotationReferenceList = this.referenceToAnnotationListMap.get(annotation.getAnnotationReference());
         if (!annotationReferenceList) {
             annotationReferenceList = new List();
-            this.referenceToAnnotationListMap.put(annotation.getReference(), annotationReferenceList);
+            this.referenceToAnnotationListMap.put(annotation.getAnnotationReference(), annotationReferenceList);
         }
         this.processAnnotation(annotation);
     },
@@ -123,7 +123,7 @@ var MetaContext = Class.extend(Obj, {
      * @param {Annotation} annotation
      */
     processAnnotation: function(annotation) {
-        var annotationProcessorTypeList = this.annotationProcessorMap.get(annotation.getType());
+        var annotationProcessorTypeList = this.annotationProcessorMap.get(annotation.getAnnotationType());
         if (annotationProcessorTypeList) {
             annotationProcessorTypeList.forEach(function(annotationProcessor) {
                 annotationProcessor.processAnnotation(annotation);

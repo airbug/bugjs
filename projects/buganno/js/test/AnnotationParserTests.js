@@ -70,7 +70,7 @@ var annotationParserParseTest = {
                     "Assert that annotation list has 1 annotation");
                 if (annotationList.getCount() >= 1) {
                     var annotation = annotationList.getAt(0);
-                    test.assertEqual(annotation.getType(), "Test",
+                    test.assertEqual(annotation.getAnnotationType(), "Test",
                         "Assert annotation type is 'Test'");
                     test.assertEqual(annotation.getArgumentList().getAt(0), "param",
                         "Assert that annotation has single argument 'param'");
