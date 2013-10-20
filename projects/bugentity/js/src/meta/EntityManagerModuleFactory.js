@@ -84,4 +84,4 @@ var EntityManagerModuleFactory = Class.extend(ModuleFactory, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugioc.EntityManagerModuleFactory', EntityManagerModuleFactory);
+bugpack.export('bugentity.EntityManagerModuleFactory', EntityManagerModuleFactory);
