@@ -52,6 +52,9 @@ var SingletonScope          = bugpack.require('bugioc.SingletonScope');
 //-------------------------------------------------------------------------------
 
 var $iterableParallel       = BugFlow.$iterableParallel;
+var $iterableSeries         = BugFlow.$iterableSeries;
+var $series                 = BugFlow.$series;
+var $task                   = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
@@ -78,6 +81,12 @@ var IocContext = Class.extend(Obj, {
          * @type {DependencyGraph}
          */
         this.dependencyGraph                = new DependencyGraph();
+
+        /**
+         * @private
+         * @type {Set.<IInitializeModule}
+         */
+        this.initializingModuleSet          = new Set();
 
         /**
          * @private
@@ -136,7 +145,19 @@ var IocContext = Class.extend(Obj, {
      * @param {function(Error)} callback
      */
     initialize: function(callback) {
-        this.initializeConfigurations(callback);
+        var _this = this;
+        $series([
+            $task(function(flow) {
+                _this.initializeModules(function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.initializeConfigurations(function(throwable) {
+                    flow.complete(throwable);
+                });
+            })
+        ]).execute(callback);
     },
 
     /**
@@ -220,7 +241,7 @@ var IocContext = Class.extend(Obj, {
      */
     factoryScope: function(iocModule) {
         var scope = null;
-        switch(iocModule.getScope()) {
+        switch (iocModule.getScope()) {
             case IocModule.Scope.PROTOTYPE:
                 scope = new PrototypeScope(this, iocModule);
                 break;
@@ -287,12 +308,26 @@ var IocContext = Class.extend(Obj, {
 
     /**
      * @private
-     * @param {function(Error)} callback
+     * @param {function(Throwable)} callback
      */
     initializeConfigurations: function(callback) {
         $iterableParallel(this.registeredConfigurationSet, function(flow, configuration) {
             configuration.initializeConfiguration(function(error) {
                 flow.complete(error);
+            });
+        }).execute(callback);
+    },
+
+    /**
+     * @private
+     * @param {function(Throwable)} callback
+     */
+    initializeModules: function(callback) {
+        var _this = this;
+        $iterableSeries(this.initializingModuleSet.clone(), function(flow, module) {
+            module.initializeModule(function(throwable) {
+                _this.initializingModuleSet.remove(module);
+                flow.complete(throwable);
             });
         }).execute(callback);
     },
@@ -329,6 +364,9 @@ var IocContext = Class.extend(Obj, {
         this.wireModuleProperties(iocModule, module);
         if (Class.doesImplement(module, IPostProcessModule)) {
             module.postProcessModule();
+        }
+        if (Class.doesImplement(module, IInitializeModule)) {
+            this.initializingModuleSet.add(module);
         }
     },
 

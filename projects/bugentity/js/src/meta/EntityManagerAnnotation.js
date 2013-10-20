@@ -7,37 +7,37 @@
 //@Export('EntityManagerAnnotation')
 
 //@Require('Class')
-//@Require('bugmeta.Annotation')
+//@Require('bugioc.ModuleAnnotation')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var Annotation      = bugpack.require('bugmeta.Annotation');
+var Class               = bugpack.require('Class');
+var ModuleAnnotation    = bugpack.require('bugioc.ModuleAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var EntityManagerAnnotation = Class.extend(Annotation, {
+var EntityManagerAnnotation = Class.extend(ModuleAnnotation, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(entityType) {
+    _constructor: function(moduleName) {
 
-        this._super("EntityManager");
+        this._super(moduleName, "EntityManager");
 
 
         //-------------------------------------------------------------------------------
@@ -48,7 +48,7 @@ var EntityManagerAnnotation = Class.extend(Annotation, {
          * @private
          * @type {string}
          */
-        this.entityType = entityType;
+        this.entityType     = "";
     },
 
 
@@ -61,6 +61,20 @@ var EntityManagerAnnotation = Class.extend(Annotation, {
      */
     getEntityType: function() {
         return this.entityType;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {string} entityType
+     * @return {EntityManagerAnnotation}
+     */
+    ofType: function(entityType) {
+        this.entityType = entityType;
+        return this;
     }
 });
 

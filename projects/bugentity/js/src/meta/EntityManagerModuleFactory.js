@@ -4,19 +4,17 @@
 
 //@Package('bugentity')
 
-//@Export('EntityScan')
+//@Export('EntityManagerModuleFactory')
 
 //@Require('Class')
-//@Require('Obj')
-//@Require('bugentity.EntityAnnotation')
-//@Require('bugmeta.BugMeta')
+//@Require('bugioc.ModuleFactory')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -24,28 +22,28 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
-var Obj                 = bugpack.require('Obj');
-var EntityAnnotation    = bugpack.require('bugentity.EntityAnnotation');
-var BugMeta             = bugpack.require('bugmeta.BugMeta');
+var ModuleFactory       = bugpack.require('bugioc.ModuleFactory');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var EntityScan = Class.extend(Obj, {
-
+var EntityManagerModuleFactory = Class.extend(ModuleFactory, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {EntityProcessor} processor
+     * @param {IocContext} iocContext
+     * @param {IocModule} iocModule
+     * @param {Class} entityManagerClass
+     * @param {string} entityType
      */
-    _constructor: function(processor) {
+    _constructor: function(iocContext, iocModule, entityManagerClass, entityType) {
 
-        this._super();
+        this._super(iocContext, iocModule);
 
 
         //-------------------------------------------------------------------------------
@@ -54,48 +52,30 @@ var EntityScan = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {EntityProcessor}
+         * @type {Class}
          */
-        this.processor = processor;
+        this.entityManagerClass     = entityManagerClass;
+
+        /**
+         * @private
+         * @type {string}
+         */
+        this.entityType             = entityType;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Public Methods
+    // ModuleFactory Implementation
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @return {*}
      */
-    scanAll: function() {
-        var _this       = this;
-        var bugmeta     = BugMeta.context();
-        var entityAnnotations = bugmeta.getAnnotationsByType("Entity");
-        if (entityAnnotations) {
-            entityAnnotations.forEach(function(annotation) {
-                _this.processor.process(annotation);
-            });
-        }
-    },
-
-    /**
-     * @param {Class} _class
-     * @return {EntityAnnotation}
-     */
-    scanClass: function(_class) {
-        //TODO BRN: Figure out how to handle child/parent classes
-
-        var bugmeta     = BugMeta.context();
-        var annotations = bugmeta.getAnnotationsByReference(_class);
-        var entityAnnotation = null;
-        if (annotations) {
-            annotations.forEach(function(annotation) {
-                if (Class.doesExtend(annotation, EntityAnnotation)) {
-                    entityAnnotation = annotation;
-                }
-            });
-        }
-        return entityAnnotation;
+    factoryModule: function() {
+        var moduleArgs      = this.buildModuleArgs();
+        var entityManager   = this.entityManagerClass.create(moduleArgs);
+        entityManager.setEntityType(this.entityType);
+        return entityManager;
     }
 });
 
@@ -104,4 +84,4 @@ var EntityScan = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugentity.EntityScan', EntityScan);
+bugpack.export('bugioc.EntityManagerModuleFactory', EntityManagerModuleFactory);

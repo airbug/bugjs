@@ -10,6 +10,11 @@
 //@Require('Event')
 //@Require('EventDispatcher')
 //@Require('Map')
+//@Require('bugentity.EntityProcessor')
+//@Require('bugentity.EntityScan')
+//@Require('bugioc.IInitializeModule')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
@@ -27,6 +32,19 @@ var Class               = bugpack.require('Class');
 var Event               = bugpack.require('Event');
 var EventDispatcher     = bugpack.require('EventDispatcher');
 var Map                 = bugpack.require('Map');
+var EntityProcessor     = bugpack.require('bugentity.EntityProcessor');
+var EntityScan          = bugpack.require('bugentity.EntityScan');
+var IInitializeModule   = bugpack.require('bugioc.IInitializeModule');
+var ModuleAnnotation    = bugpack.require('bugioc.ModuleAnnotation');
+var BugMeta             = bugpack.require('bugmeta.BugMeta');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var bugmeta              = BugMeta.context();
+var module               = ModuleAnnotation.module;
 
 
 //-------------------------------------------------------------------------------
@@ -59,6 +77,20 @@ var SchemaManager = Class.extend(EventDispatcher, {
          * @type {Map.<string, Schema>}
          */
         this.nameToSchemaMap    = new Map();
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // IInitializeModule Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {function(Throwable)} callback
+     */
+    initializeModule: function(callback) {
+        var entityScan = new EntityScan(new EntityProcessor(this));
+        entityScan.scanAll();
+        callback();
     },
 
 
@@ -113,6 +145,22 @@ var SchemaManager = Class.extend(EventDispatcher, {
         this.dispatchEvent(new Event(SchemaManager.EventTypes.SCHEMA_REGISTERED, {schema: schema}));
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Interfaces
+//-------------------------------------------------------------------------------
+
+Class.implement(SchemaManager, IInitializeModule);
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(SchemaManager).with(
+    module("schemaManager")
+);
 
 
 //-------------------------------------------------------------------------------

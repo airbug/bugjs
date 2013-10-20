@@ -35,9 +35,10 @@ var ModuleAnnotation = Class.extend(Annotation, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(moduleMethodName) {
+    _constructor: function(moduleName, annotationType) {
 
-        this._super("Module");
+        annotationType = annotationType ? annotationType : "Module";
+        this._super(annotationType);
 
 
         //-------------------------------------------------------------------------------
@@ -48,31 +49,25 @@ var ModuleAnnotation = Class.extend(Annotation, {
          * @private
          * @type {Array<ArgAnnotation>}
          */
-        this.moduleArgs = [];
+        this.moduleArgs         = [];
 
         /**
          * @private
          * @type {string}
          */
-        this.moduleMethodName = moduleMethodName;
-
-        /**
-         * @private
-         * @type {string}
-         */
-        this.moduleName = moduleMethodName;
+        this.moduleName         = moduleName;
 
         /**
          * @private
          * @type {Array<PropertyAnnotation>}
          */
-        this.moduleProperties = [];
+        this.moduleProperties   = [];
 
         /**
          * @private
          * @type {ModuleAnnotation.Scope}
          */
-        this.moduleScope = null;
+        this.moduleScope        = null;
     },
 
 
@@ -85,13 +80,6 @@ var ModuleAnnotation = Class.extend(Annotation, {
      */
     getArgs: function() {
         return this.moduleArgs;
-    },
-
-    /**
-     * @return {string}
-     */
-    getMethodName: function() {
-        return this.moduleMethodName;
     },
 
     /**

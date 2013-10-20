@@ -36,25 +36,62 @@ var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 var EntityManagerScan = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
-    // Public Class Methods
+    // Constructor
     //-------------------------------------------------------------------------------
 
     /**
+     * @param {EntityManagerAnnotationProcessor} processor
+     */
+    _constructor: function(processor) {
+
+        this._super();
+
+
+        //-------------------------------------------------------------------------------
+        // Declare Variables
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {EntityManagerAnnotationProcessor}
+         */
+        this.processor = processor;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     *
+     */
+    scanAll: function() {
+        var _this       = this;
+        var bugmeta     = BugMeta.context();
+        var entityManagerAnnotations = bugmeta.getAnnotationsByType("EntityManager");
+        if (entityManagerAnnotations) {
+            entityManagerAnnotations.forEach(function(annotation) {
+                _this.processor.process(annotation);
+            });
+        }
+    },
+
+    /**
      * @param {Class} _class
-     * @return {EntityManagerAnnotation}
      */
     scanClass: function(_class) {
+        var _this       = this;
         var bugmeta     = BugMeta.context();
         var annotations = bugmeta.getAnnotationsByReference(_class);
         var entityManagerAnnotation = null;
         if (annotations) {
             annotations.forEach(function(annotation) {
                 if (Class.doesExtend(annotation, EntityManagerAnnotation)) {
-                    entityManagerAnnotation = annotation;
+                    _this.processor.process(annotation);
                 }
             });
         }
-        return entityManagerAnnotation;
     }
 });
 

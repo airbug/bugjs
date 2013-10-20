@@ -14,8 +14,8 @@
 //@Require('bugdelta.DeltaDocumentChange')
 //@Require('bugdelta.ObjectChange')
 //@Require('bugdelta.SetChange')
-//@Require('bugentity.EntityManagerProcessor')
 //@Require('bugflow.BugFlow')
+//@Require('bugioc.IInitializeModule')
 
 
 //-------------------------------------------------------------------------------
@@ -37,8 +37,8 @@ var TypeUtil                = bugpack.require('TypeUtil');
 var DeltaDocumentChange     = bugpack.require('bugdelta.DeltaDocumentChange');
 var ObjectChange            = bugpack.require('bugdelta.ObjectChange');
 var SetChange               = bugpack.require('bugdelta.SetChange');
-var EntityManagerProcessor  = bupgack.require('bugentity.EntityManagerProcessor');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
+var IInitializeModule       = bugpack.require('bugioc.IInitializeModule');
 
 
 //-------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ var EntityManager = Class.extend(Obj, {
          * @private
          * @type {MongoManager}
          */
-        this.dataStore              = null;
+        this.dataStore              = undefined;
 
         /**
          * @private
@@ -93,7 +93,7 @@ var EntityManager = Class.extend(Obj, {
          * @private
          * @type {string}
          */
-        this.entityType             = null;
+        this.entityType             = undefined;
 
         /**
          * @private
@@ -106,8 +106,6 @@ var EntityManager = Class.extend(Obj, {
          * @type {SchemaManager}
          */
         this.schemaManager          = schemaManager;
-
-        this.initialize();
     },
 
 
@@ -199,28 +197,29 @@ var EntityManager = Class.extend(Obj, {
                 var propertyOptions     = options[property];
                 if (propertyOptions) {
                     if (schemaProperty.getPopulates()) {
-                        var returnedProperty    = propertyOptions.getter.call(entity);
+                        var getterProperty    = propertyOptions.getter.call(entity);
                         var manager             = undefined;
                         var retriever           = undefined;
                         switch (schemaProperty.getType()) {
                             case "Set":
                                 var idSet               = propertyOptions.idGetter.call(entity);
-                                var returnedEntitySet   = returnedProperty;
+                                var getterEntitySet     = getterProperty;
                                 var lookupIdSet         = idSet.clone();
-                                retriever               = "retriever" + schemaProperty.getMeta().
+                                manager                 = _this.entityManagerStore.getEntityManagerByEntityType(schemaProperty.collectionOf());
+                                retriever               = manager["retrieve" + schemaProperty.collectionOf()];
 
-                                returnedEntitySet.clone().forEach(function(returnedEntity) {
-                                    if (idSet.contains(returnedEntity.getId())) {
-                                        lookupIdSet.remove(returnedEntity.getId());
+                                getterEntitySet.clone().forEach(function(getterEntity) {
+                                    if (idSet.contains(getterEntity.getId())) {
+                                        lookupIdSet.remove(getterEntity.getId());
                                     } else {
-                                        returnedEntitySet.remove(returnedEntity);
+                                        getterEntitySet.remove(getterEntity);
                                     }
                                 });
 
-                                $iterableParallel(lookupIdSet, function(flow, entId) {
-                                    propertyKeys.retriever.call(propertyKeys.manager, entId, function(throwable, returnEnt) {
+                                $iterableParallel(lookupIdSet, function(flow, entityId) {
+                                    retriever.call(manager, entityId, function(throwable, retrievedEntity) {
                                         if (!throwable) {
-                                            entitySet.add(returnEnt);
+                                            getterEntitySet.add(retrievedEntity);
                                         }
                                         flow.complete(throwable);
                                     });
@@ -229,13 +228,14 @@ var EntityManager = Class.extend(Obj, {
                                 });
                                 break;
                             default:
-                                manager = _this.schemaManager.getSchemaBy
-                                var id  = propertyOptions.idGetter.call(entity);
-                                if (id) {
-                                    if (!returnedProperty || returnedProperty.getId() !== id) {
-                                        propertyKeys.retriever.call(propertyKeys.manager, id, function(throwable, retrievedEntity) {
+                                var getterId    = propertyOptions.idGetter.call(entity);
+                                manager         = _this.entityManagerStore.getEntityManagerByEntityType(schemaProperty.getType());
+                                retriever       = manager["retrieve" + schemaProperty.getType()];
+                                if (getterId) {
+                                    if (!getterProperty || getterProperty.getId() !== getterId) {
+                                        retriever.call(manager, getterId, function(throwable, retrievedEntity) {
                                             if (!throwable) {
-                                                propertyKeys.setter.call(entity, retrievedEntity);
+                                                propertyOptions.setter.call(entity, retrievedEntity);
                                             }
                                             flow.complete(throwable);
                                         })
@@ -386,29 +386,15 @@ var EntityManager = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // Private Methods
+    // IInitializeModule Implementation
     //-------------------------------------------------------------------------------
 
     /**
-     * @private
+     *
      */
-    initialize: function() {
-
-        // TODO BRN: We shouldn't process the annotations here. Instead we should have an outside scanner that looks
-        // for EntityManager annotations and automatically instantiates those managers. Have to figure out how to
-        // get ahold of those managers again though so that we can inject them in to the service classes.
-
-        this.processAnnotations();
+    initializeModule: function() {
         this.dataStore = this.mongoDataStore.generateManager(this.entityType);
         this.entityManagerStore.registerEntityManager(this);
-    },
-
-    /**
-     * @private
-     */
-    processAnnotations: function() {
-        var entityManagerProcessor = new EntityManagerProcessor(this);
-        entityManagerProcessor.scanClass(EntityManager);
     }
 });
 

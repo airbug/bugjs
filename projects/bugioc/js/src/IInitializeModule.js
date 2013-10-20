@@ -34,7 +34,7 @@ var IInitializeModule = Interface.declare({
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {function(Error)}
+     * @param {function(Throwable)}
      */
     initializeModule: function(callback) {}
 });

@@ -9,22 +9,34 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('Map')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
+var bugpack                     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var Obj                 = bugpack.require('Obj');
-var Map                 = bugpack.require('Map');
+var Class                       = bugpack.require('Class');
+var Obj                         = bugpack.require('Obj');
+var Map                         = bugpack.require('Map');
+var ModuleAnnotation            = bugpack.require('bugioc.ModuleAnnotation');
+var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var bugmeta                     = BugMeta.context();
+var module                      = ModuleAnnotation.module;
 
 
 //-------------------------------------------------------------------------------
@@ -84,6 +96,15 @@ var EntityManagerStore = Class.extend(Obj, {
         this.entityTypeToEntityManagerMap.put(entityManager.getEntityType(), entityManager);
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(EntityManagerStore).with(
+    module("entityManagerStore")
+);
 
 
 //-------------------------------------------------------------------------------

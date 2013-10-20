@@ -4,42 +4,47 @@
 
 //@Package('bugentity')
 
-//@Export('EntityManagerProcessor')
+//@Export('EntityManagerAnnotationProcessor')
 
 //@Require('Class')
-//@Require('Obj')
-//@Require('bugentity.EntityManagerScan')
+//@Require('Set')
+//@Require('bugentity.EntityManagerModuleFactory');
+//@Require('bugioc.ModuleAnnotationProcessor')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack                 = require('bugpack').context();
+var bugpack = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                   = bugpack.require('Class');
-var Obj                     = bugpack.require('Obj');
-var EntityManagerScan       = bugpack.require('bugentity.EntityManagerScan');
+var Class                           = bugpack.require('Class');
+var Set                             = bugpack.require('Set');
+var EntityManagerModuleFactory      = bugpack.require('bugentity.EntityManagerModuleFactory');
+var ModuleAnnotationProcessor       = bugpack.require('bugioc.ModuleAnnotationProcessor');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var EntityManagerProcessor = Class.extend(Obj, {
+var EntityManagerAnnotationProcessor = Class.extend(EntityManagerModuleFactory, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(entityManager) {
+    /**
+     * @param {IocContext} iocContext
+     */
+    _constructor: function(iocContext) {
 
-        this._super();
+        this._super(iocContext);
 
 
         //-------------------------------------------------------------------------------
@@ -48,27 +53,21 @@ var EntityManagerProcessor = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {EntityManager}
+         * @type {Set.<EntityManagerAnnotation>}
          */
-        this.entityManager  = entityManager;
+        this.processedEntityManagerAnnotationSet   = new Set();
     },
 
 
     //-------------------------------------------------------------------------------
-    // Public Class Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Class} entityManagerClass
+     * @param {EntityManagerAnnotation} entityManagerAnnotation
      */
-    scanClass: function(entityManagerClass) {
-        var entityManagerScan = new EntityManagerScan();
-        var entityManagerAnnotation = entityManagerScan.scanClass(entityManagerClass);
-        if (entityManagerAnnotation) {
-            this.process(entityManagerAnnotation);
-        } else {
-            throw new Error("Could not find EntityManager annotation for class - class:", entityManagerClass);
-        }
+    process: function(entityManagerAnnotation) {
+        this.processEntityManagerAnnotation(entityManagerAnnotation);
     },
 
 
@@ -80,10 +79,15 @@ var EntityManagerProcessor = Class.extend(Obj, {
      * @private
      * @param {EntityManagerAnnotation} entityManagerAnnotation
      */
-    process: function(entityManagerAnnotation) {
-        var entityType          = entityManagerAnnotation.getEntityType();
-        if (entityType) {
-            this.entityManager.setEntityType(entityType);
+    processEntityManagerAnnotation: function(entityManagerAnnotation) {
+        if (!this.processedEntityManagerAnnotationSet.contains(entityManagerAnnotation)) {
+            var entityManagerClass      = entityManagerAnnotation.getReference();
+            var iocModule               = this.createIocModule(entityManagerAnnotation);
+            var factory                 = new EntityManagerModuleFactory(this.iocContext, iocModule, entityManagerClass,
+                                            entityManagerAnnotation.getEntityType());
+            iocModule.setModuleFactory(factory);
+            this.iocContext.registerIocModule(iocModule);
+            this.processedEntityManagerAnnotationSet.add(entityManagerAnnotation);
         }
     }
 });
@@ -93,4 +97,4 @@ var EntityManagerProcessor = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugentity.EntityManagerProcessor', EntityManagerProcessor);
+bugpack.export('bugentity.EntityManagerAnnotationProcessor', EntityManagerAnnotationProcessor);

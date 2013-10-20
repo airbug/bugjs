@@ -13,7 +13,6 @@
 //@Require('bugioc.IocArg')
 //@Require('bugioc.IocModule')
 //@Require('bugioc.IocProperty')
-//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
@@ -34,7 +33,6 @@ var AnnotationModuleFactory         = bugpack.require('bugioc.AnnotationModuleFa
 var IocArg                          = bugpack.require('bugioc.IocArg');
 var IocModule                       = bugpack.require('bugioc.IocModule');
 var IocProperty                     = bugpack.require('bugioc.IocProperty');
-var BugMeta                         = bugpack.require('bugmeta.BugMeta');
 
 
 //-------------------------------------------------------------------------------

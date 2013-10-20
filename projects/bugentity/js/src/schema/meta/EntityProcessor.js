@@ -63,25 +63,6 @@ var EntityProcessor = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Class} entityClass
-     */
-    scanClass: function(entityClass) {
-        var entityScan = new EntityScan();
-        var entityAnnotation = entityScan.scanClass(entityClass);
-        if (entityAnnotation) {
-            this.process(entityAnnotation);
-        } else {
-            throw new Error("Could not find Entity annotation for class - class:", entityClass);
-        }
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Private Class Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
      * @param {EntityAnnotation} entityAnnotation
      */
     process: function(entityAnnotation) {
