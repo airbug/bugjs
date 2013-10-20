@@ -13,6 +13,7 @@
 //@Require('bugdelta.ArrayCalculator')
 //@Require('bugdelta.CalculatorResolver')
 //@Require('bugdelta.Delta')
+//@Require('bugdelta.DeltaDocument')
 //@Require('bugdelta.DeltaDocumentCalculator')
 //@Require('bugdelta.ObjectCalculator')
 //@Require('bugdelta.SetCalculator')
@@ -36,6 +37,7 @@ var TypeUtil                        = bugpack.require('TypeUtil');
 var ArrayCalculator                 = bugpack.require('bugdelta.ArrayCalculator');
 var CalculatorResolver              = bugpack.require('bugdelta.CalculatorResolver');
 var Delta                           = bugpack.require('bugdelta.Delta');
+var DeltaDocument                   = bugpack.require('bugdelta.DeltaDocument');
 var DeltaDocumentCalculator         = bugpack.require('bugdelta.DeltaDocumentCalculator');
 var ObjectCalculator                = bugpack.require('bugdelta.ObjectCalculator');
 var SetCalculator                   = bugpack.require('bugdelta.SetCalculator');
@@ -96,7 +98,7 @@ var DeltaBuilder = Class.extend(Obj, {
      */
     buildDelta: function(currentDocument, previousDocument) {
         var delta = new Delta();
-        var deltaCalculator = this.calculatorResolver.resolve(currentDocument);
+        var deltaCalculator = this.calculatorResolver.resolveCalculator(currentDocument);
         deltaCalculator.calculateDelta(delta, "", currentDocument, previousDocument);
         return delta;
     },
@@ -110,10 +112,10 @@ var DeltaBuilder = Class.extend(Obj, {
      * @private
      */
     initialize: function() {
-        this.calculatorResolver.registerCalculator("Array", new ArrayCalculator(this));
-        this.calculatorResolver.registerCalculator("DeltaDocument", new DeltaDocumentCalculator(this));
-        this.calculatorResolver.registerCalculator("Object", new ObjectCalculator(this));
-        this.calculatorResolver.registerCalculator("Set", new SetCalculator(this));
+        this.calculatorResolver.registerCalculatorForDataType("array", new ArrayCalculator(this));
+        this.calculatorResolver.registerCalculatorForDataType("object", new ObjectCalculator(this));
+        this.calculatorResolver.registerCalculatorForClass(DeltaDocument, new DeltaDocumentCalculator(this));
+        this.calculatorResolver.registerCalculatorForClass(Set, new SetCalculator(this));
     }
 });
 

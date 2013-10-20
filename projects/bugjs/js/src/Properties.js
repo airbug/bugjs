@@ -44,8 +44,8 @@ var Properties = Class.extend(Obj, {
         // Declare Variables
         //-------------------------------------------------------------------------------
 
-        if (!TypeUtil.isObject(propertiesObject) || !TypeUtil.toType(propertiesObject) === "Object") {
-            throw new Error("propertiesObject must be a generic object");
+        if (!TypeUtil.isObject(propertiesObject)) {
+            throw new Error("propertiesObject must be an object");
         }
 
         /**
@@ -91,7 +91,7 @@ var Properties = Class.extend(Obj, {
         var propertyValue = this.propertiesObject;
         for (var i = 0, size = parts.length; i < size; i++) {
             var part = parts[i];
-            if (TypeUtil.isObject(propertyValue) && TypeUtil.toType(propertyValue) === "Object") {
+            if (TypeUtil.isObject(propertyValue)) {
                 propertyValue = propertyValue[part];
             } else {
                 return undefined;
@@ -126,8 +126,7 @@ var Properties = Class.extend(Obj, {
      */
     updateProperty: function(propertyName, propertyValue) {
         var currentValue = this.getProperty(propertyName);
-        if (TypeUtil.isObject(currentValue) && TypeUtil.toType(currentValue) === "Object" &&
-            TypeUtil.isObject(propertyValue) && TypeUtil.toType(propertyValue) === "Object") {
+        if (TypeUtil.isObject(currentValue) && TypeUtil.isObject(propertyValue)) {
             for (var name in propertyValue) {
                 var subValue = propertyValue[name];
                 var subName = propertyName + "." + name;
@@ -154,7 +153,7 @@ var Properties = Class.extend(Obj, {
                     currentValue[subName] = propertyValue;
                 } else {
                     nextValue = currentValue[subName];
-                    if (!(TypeUtil.isObject(nextValue) && TypeUtil.toType(nextValue) === "Object")) {
+                    if (!(TypeUtil.isObject(nextValue))) {
                         nextValue = currentValue[subName] = {};
                     }
                     currentValue = nextValue;

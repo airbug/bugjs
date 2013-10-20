@@ -96,7 +96,7 @@ TypeUtil.isUndefined = function(value) {
  * @return {string}
  */
 TypeUtil.toType = function(value) {
-    return Object.prototype.toString.call(value).match(/\s([a-zA-Z]+)/)[1];
+    return Object.prototype.toString.call(value).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
 };
 
 

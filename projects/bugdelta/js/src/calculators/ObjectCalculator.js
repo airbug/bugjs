@@ -67,10 +67,10 @@ var ObjectCalculator = Class.extend(DeltaCalculator, {
      */
     calculateDelta: function(delta, currentPath, currentValue, previousValue) {
         var _this = this;
-        if (!currentValue || TypeUtil.toType(currentValue) !== "Object") {
+        if (!currentValue || !TypeUtil.isObject(currentValue)) {
             throw new Error("ObjectCalculator expects currentValue to be an Object");
         }
-        if (!previousValue || TypeUtil.toType(previousValue) !== "Object") {
+        if (!previousValue || !TypeUtil.isObject(previousValue)) {
             throw new Error("ObjectCalculator expects previousValue to be an Object");
         }
 
@@ -89,8 +89,11 @@ var ObjectCalculator = Class.extend(DeltaCalculator, {
                 if (TypeUtil.toType(previousPropertyValue) !== TypeUtil.toType(currentPropertyValue)) {
                     delta.addDeltaChange(new ObjectChange(ObjectChange.ChangeTypes.PROPERTY_SET, currentPath,
                         propertyName, currentPropertyValue, previousPropertyValue));
+                } else if (TypeUtil.isObject(currentPropertyValue) && TypeUtil.isFunction(currentPropertyValue.getClass) && !Class.doesExtend(previousPropertyValue, currentPropertyValue.getClass())) {
+                    delta.addDeltaChange(new ObjectChange(ObjectChange.ChangeTypes.PROPERTY_SET, currentPath,
+                        propertyName, currentPropertyValue, previousPropertyValue));
                 } else {
-                    var deltaCalculator = _this.deltaBuilder.getCalculatorResolver().resolve(currentPropertyValue);
+                    var deltaCalculator = _this.deltaBuilder.getCalculatorResolver().resolveCalculator(currentPropertyValue);
                     if (deltaCalculator) {
                         var propertyPath = (currentPath ? currentPath + ".": "") + propertyName;
                         deltaCalculator.calculateDelta(delta, propertyPath, currentPropertyValue, previousPropertyValue);

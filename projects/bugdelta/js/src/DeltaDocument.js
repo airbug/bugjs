@@ -96,11 +96,7 @@ var DeltaDocument = Class.extend(Obj, {
                 target = currentData;
             } else {
                 if (TypeUtil.isObject(currentData)) {
-                    if (TypeUtil.toType(currentData) === "Object") {
-                        target = currentData[pathPart];
-                    } else {
-                        throw new Error("Unsupported type in path retrieval");
-                    }
+                    target = currentData[pathPart];
                 } else {
                     throw new Error("Unsupported type in path retrieval");
                 }

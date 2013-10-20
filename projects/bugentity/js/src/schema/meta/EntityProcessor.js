@@ -70,28 +70,28 @@ var EntityProcessor = Class.extend(Obj, {
         var entityName  = entityAnnotation.getEntityName();
         if (!this.schemaManager.hasSchemaForClass(entityClass) && !this.schemaManager.hasSchemaForName(entityName)) {
             var schema = new Schema(entityClass, entityName);
-            var foundId = false;
-            entityAnnotation.getProperties().forEach(function(propertyAnnotation) {
+            //var foundId = false;
+            entityAnnotation.getEntityProperties().forEach(function(propertyAnnotation) {
                 schema.addProperty(new SchemaProperty(propertyAnnotation.getPropertyName(), propertyAnnotation.getPropertyType(), {
                     collectionOf: propertyAnnotation.getPropertyCollectionOf(),
                     id: propertyAnnotation.isPropertyId(),
-                    indexed: propertyAnnotation.isIndexed(),
-                    unique: propertyAnnotation.isUnique()
+                    indexed: propertyAnnotation.isPropertyIndexed(),
+                    unique: propertyAnnotation.isPropertyUnique()
                 }));
 
-                if (propertyAnnotation.isId()) {
+                /*if (propertyAnnotation.isPropertyId()) {
                     if (!foundId) {
                         foundId = true;
                     } else {
                         throw new Error("Schema already has an id");
                     }
-                }
+                }*/
             });
 
-            if (foundId === false) {
+            /*if (foundId === false) {
                 throw new Error("No properties in Schema were labeled as an 'id'. One and only one property must " +
                     "be labeled as an 'id'")
-            }
+            }*/
             this.schemaManager.registerSchema(schema);
         }
     }

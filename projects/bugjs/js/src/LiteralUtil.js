@@ -43,19 +43,17 @@ var LiteralUtil = {};
 LiteralUtil.convertToLiteral = function(value) {
     var literal = undefined;
     if (TypeUtil.isObject(value)) {
-        if (TypeUtil.toType(value) === "Object") {
+        if (Class.doesImplement(value, IObjectable)) {
+            literal = value.toObject();
+        } else if (Class.doesImplement(value, IArrayable)) {
+            literal = value.toArray();
+        } else {
             literal = {};
             Obj.forIn(value, function(propertyName, propertyValue) {
-                literal[propertyName] = LiteralUtil.convertToLiteral(propertyValue);
+                if (!TypeUtil.isFunction(propertyValue)) {
+                    literal[propertyName] = LiteralUtil.convertToLiteral(propertyValue);
+                }
             });
-        } else {
-            if (Class.doesImplement(value, IObjectable)) {
-                literal = value.toObject();
-            } else if (Class.doesImplement(value, IArrayable)) {
-                literal = value.toArray();
-            } else {
-                throw new Error("Cannot convert complex object:", value);
-            }
         }
     } else if (TypeUtil.isArray(value)) {
         literal = [];

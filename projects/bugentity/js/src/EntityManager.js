@@ -390,11 +390,12 @@ var EntityManager = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @param {function(Throwable)}
      */
-    initializeModule: function() {
+    initializeModule: function(callback) {
         this.dataStore = this.mongoDataStore.generateManager(this.entityType);
         this.entityManagerStore.registerEntityManager(this);
+        callback();
     }
 });
 

@@ -202,7 +202,9 @@ Obj.hasOwnProperty = Object.prototype.hasOwnProperty;
 Obj.clone = function(value, deep) {
     var clone = null;
     if (TypeUtil.isObject(value)) {
-        if (TypeUtil.toType(value) === "Object") {
+        if (Class.doesImplement(value, IClone)) {
+            clone = value.clone(deep);
+        } else {
             clone = {};
             Obj.forIn(value, function(propertyName, propertyValue) {
                 if (deep) {
@@ -211,12 +213,6 @@ Obj.clone = function(value, deep) {
                     clone[propertyName] = propertyValue;
                 }
             });
-        } else if (Class.doesImplement(value, IClone)) {
-            clone = value.clone(deep);
-        } else {
-            // The value is not a generic object and does not implement the IClone interface. What do we do here?
-            // NOTE BRN: Leaving this blank for now since an undefined is easier to diagnose then a clone function not
-            // returning an actual clone.
         }
     } else if (TypeUtil.isArray(value)) {
         clone = [];

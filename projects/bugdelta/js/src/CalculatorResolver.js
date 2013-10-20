@@ -53,9 +53,15 @@ var CalculatorResolver = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {Map.<Class, DeltaCalculator>}
+         */
+        this.classCalculatorMap     = new Map();
+
+        /**
+         * @private
          * @type {Map.<string, DeltaCalculator>}
          */
-        this.calculatorMap  = new Map();
+        this.dataTypeCalculatorMap  = new Map();
     },
 
 
@@ -64,25 +70,38 @@ var CalculatorResolver = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {string} dataType
+     * @param {Class} _class
      * @param {DeltaCalculator} calculator
      */
-    registerCalculator: function(dataType, calculator) {
-        this.calculatorMap.put(dataType, calculator);
+    registerCalculatorForClass: function(_class, calculator) {
+        this.classCalculatorMap.put(_class, calculator);
     },
 
     /**
-     * @param {*} data
-     * @return {DeltaCalculator}
-     * @throws {Error}
+     * @param {string} dataType
+     * @param {DeltaCalculator} calculator
      */
-    resolve: function(data) {
-        var dataType = TypeUtil.toType(data);
-        if (this.calculatorMap.contains(dataType)) {
-            return this.calculatorMap.get(dataType);
+    registerCalculatorForDataType: function(dataType, calculator) {
+        this.dataTypeCalculatorMap.put(dataType, calculator);
+    },
+
+    /**
+     * @param {*} value
+     * @return {DeltaCalculator}
+     */
+    resolveCalculator: function(value) {
+        if (TypeUtil.isObject(value) && TypeUtil.isFunction(value.getClass)) {
+            var _class = value.getClass();
+            if (this.classCalculatorMap.containsKey(_class)) {
+                return this.classCalculatorMap.get(_class);
+            }
         } else {
-            throw new Error("No registered calculator for type '" + dataType + "'");
+            var dataType = TypeUtil.toType(value);
+            if (this.dataTypeCalculatorMap.containsKey(dataType)) {
+                return this.dataTypeCalculatorMap.get(dataType);
+            }
         }
+        return undefined;
     }
 });
 

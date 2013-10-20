@@ -4,35 +4,37 @@
 
 //@TestFile
 
-//@Require('Tree')
-//@Require('TreeNode')
+//@Require('Set')
+//@Require('TypeUtil')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
+//@Require('tests.TypeValueSetsHelper')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var TypeUtil            = bugpack.require('TypeUtil');
-var BugMeta             = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation      = bugpack.require('bugunit-annotate.TestAnnotation');
-var TypeValueSetsHelper = bugpack.require('tests.TypeValueSetsHelper');
+var Set                     = bugpack.require('Set');
+var TypeUtil                = bugpack.require('TypeUtil');
+var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
+var TypeValueSetsHelper     = bugpack.require('tests.TypeValueSetsHelper');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var bugmeta             = BugMeta.context();
-var test                = TestAnnotation.test;
+var bugmeta                 = BugMeta.context();
+var test                    = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
@@ -98,3 +100,42 @@ var TypeUtilTests = {
         }
     }
 };
+
+
+/**
+ *
+ */
+var typeUtilToTypeTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.testBoolean    = false;
+        this.testNumber     = 123;
+        this.testString     = "test";
+        this.testSet        = new Set();
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        test.assertEqual(TypeUtil.toType(this.testBoolean), "boolean",
+            "Assert toType returns 'boolean' for boolean");
+        test.assertEqual(TypeUtil.toType(this.testNumber), "number",
+            "Assert toType returns 'number' for number");
+        test.assertEqual(TypeUtil.toType(this.testString), "string",
+            "Assert toType returns 'string' for string");
+
+        //NOTE BRN: All class instances should return as 'object' types
+
+        test.assertEqual(TypeUtil.toType(this.testSet), "object",
+            "Assert toType returns 'object' for Set instance");
+    }
+
+};
+bugmeta.annotate(typeUtilToTypeTest).with(
+    test().name("TypeUtil - toType Test")
+);
