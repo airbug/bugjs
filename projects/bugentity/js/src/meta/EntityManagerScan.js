@@ -72,11 +72,6 @@ var EntityManagerScan = Class.extend(Obj, {
         var entityManagerAnnotations = bugmeta.getAnnotationsByType("EntityManager");
         if (entityManagerAnnotations) {
             entityManagerAnnotations.forEach(function(annotation) {
-
-                //TEST
-                console.log("EntityManager annotation");
-                console.log(annotation);
-
                 _this.processor.process(annotation);
             });
         }

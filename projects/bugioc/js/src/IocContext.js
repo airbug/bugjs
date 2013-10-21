@@ -191,6 +191,7 @@ var IocContext = Class.extend(Obj, {
             }
             this.registeredIocModuleSet.add(iocModule);
             this.moduleNameToIocModuleMap.put(iocModule.getName(), iocModule);
+            console.log("IocModule registered - name:" + iocModule.getName());
         }
     },
 
