@@ -108,7 +108,7 @@ var IocContext = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {List.<IConfiguration>}
+         * @type {List.<*>}
          */
         this.registeredConfigurationSet     = new Set();
 
@@ -169,15 +169,11 @@ var IocContext = Class.extend(Obj, {
     },
 
     /**
-     * @param {IConfiguration} configuration
+     * @param {*} configuration
      */
     registerConfiguration: function(configuration) {
         if (!this.registeredConfigurationSet.contains(configuration)) {
-            if (Class.doesImplement(configuration, IConfiguration)) {
-                this.registeredConfigurationSet.add(configuration);
-            } else {
-                throw new Error("Configuration must implement IConfiguration");
-            }
+            this.registeredConfigurationSet.add(configuration);
         }
     },
 
@@ -313,9 +309,13 @@ var IocContext = Class.extend(Obj, {
      */
     initializeConfigurations: function(callback) {
         $iterableParallel(this.registeredConfigurationSet, function(flow, configuration) {
-            configuration.initializeConfiguration(function(error) {
-                flow.complete(error);
-            });
+            if (Class.doesImplement(configuration, IConfiguration)) {
+                configuration.initializeConfiguration(function(error) {
+                    flow.complete(error);
+                });
+            } else {
+                flow.complete();
+            }
         }).execute(callback);
     },
 

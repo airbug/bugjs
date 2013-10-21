@@ -38,7 +38,7 @@ var ConfigurationModuleFactory = Class.extend(ModuleFactory, {
     /**
      * @param {IocContext} iocContext
      * @param {IocModule} iocModule
-     * @param {IConfiguration} configuration
+     * @param {*} configuration
      */
     _constructor: function(iocContext, iocModule, configuration) {
 
@@ -51,7 +51,7 @@ var ConfigurationModuleFactory = Class.extend(ModuleFactory, {
 
         /**
          * @private
-         * @type {IConfiguration}
+         * @type {*}
          */
         this.configuration = configuration;
     },

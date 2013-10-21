@@ -8,6 +8,16 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('acemodes.CCpp')
+//@Require('acemodes.CSharp')
+//@Require('acemodes.Css')
+//@Require('acemodes.Html')
+//@Require('acemodes.Java')
+//@Require('acemodes.Javascript')
+//@Require('acemodes.ObjectiveC')
+//@Require('acemodes.Php')
+//@Require('acemodes.Python')
+//@Require('acemodes.Ruby')
 
 
 //-------------------------------------------------------------------------------
@@ -46,8 +56,10 @@ var AceModes    = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
+     *
      */
     _constructor: function() {
+
         this._super();
 
 
@@ -79,9 +91,8 @@ var AceModes    = Class.extend(Obj, {
         this.python     = python;
 
         this.ruby       = ruby;
+    },
 
-
-    }
 
     //-------------------------------------------------------------------------------
     // Instance Methods
@@ -106,13 +117,15 @@ var AceModes    = Class.extend(Obj, {
         this.python.load();
         this.ruby.load();
     }
-};
+});
+
 
 //-------------------------------------------------------------------------------
-// Private Class Variables
+// Private Static Properties
 //-------------------------------------------------------------------------------
 
 /**
+ * @static
  * @private
  * @type {ace.AceModes}
  */
@@ -120,11 +133,10 @@ AceModes.instance = null;
 
 
 //-------------------------------------------------------------------------------
-// Private Class Methods
+// Public Static Methods
 //-------------------------------------------------------------------------------
 
 /**
- * @private
  * @return {BugTrace}
  */
 AceModes.getInstance = function() {
@@ -137,7 +149,8 @@ AceModes.getInstance = function() {
 AceModes.loadAll = function(){
     var aceModes = AceModes.getInstance();
     aceModes.loadAll();
-}
+};
+
 
 //-------------------------------------------------------------------------------
 // Exports
