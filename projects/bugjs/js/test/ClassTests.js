@@ -68,7 +68,7 @@ var classCreateTest = {
 
             }
         });
-        this.instance = this.NewClass.create(this.testArgument1, this.testArgument2);
+        this.instance = this.NewClass.create([this.testArgument1, this.testArgument2]);
     },
 
 

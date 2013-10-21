@@ -160,8 +160,8 @@ Class.extend = function(_class, declaration) {
         }
         F.prototype = newClass.prototype;
 
-        return function() {
-            return new F(arguments);
+        return function(args) {
+            return new F(args);
         }
     })();
     return newClass;
