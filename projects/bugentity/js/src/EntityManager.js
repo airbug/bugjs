@@ -288,8 +288,8 @@ var EntityManager = Class.extend(Obj, {
             delete options.unsetters.updatedAt;
         }
 
-        delta.getDeltaChangeList().forEach(function(deltaChange){
-            switch (deltaChange.getType()) {
+        delta.getDeltaChangeList().forEach(function(deltaChange) {
+            switch (deltaChange.getChangeType()) {
                 case DeltaDocumentChange.ChangeTypes.DATA_SET:
                     var setters            = deltaChange.getData();
                     for(var opt in options.unsetters){
@@ -365,7 +365,7 @@ var EntityManager = Class.extend(Obj, {
     retrieveEach: function(ids, callback) {
         var _this = this;
         this.dataStore.where("_id").in(ids).lean(true).exec(function(throwable, results) {
-            if(!throwable){
+            if (!throwable) {
                 var newMap = new Map();
                 results.forEach(function(result) {
                     var entityObject = _this["generate" + _this.entityType](result);
