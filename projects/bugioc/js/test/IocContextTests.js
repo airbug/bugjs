@@ -5,7 +5,7 @@
 //@TestFile
 
 //@Require('bugmeta.BugMeta')
-//@Require('bugioc.BugIoc')
+//@Require('bugioc.IocContext')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -21,7 +21,7 @@ var bugpack         = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var BugMeta         = bugpack.require('bugmeta.BugMeta');
-var BugIoc          = bugpack.require('bugioc.BugIoc');
+var IocContext      = bugpack.require('bugioc.IocContext');
 var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
@@ -39,9 +39,9 @@ var test            = TestAnnotation.test;
 
 /**
  * This tests
- * 1) that the callback for process() is called
+ * 1) that the callback for initialize() is called when there are no configs
  */
-var bugIocProcessTest = {
+var bugIocContextInitializeWithNoConfigurationsTest = {
 
     async: true,
 
@@ -50,7 +50,7 @@ var bugIocProcessTest = {
     //-------------------------------------------------------------------------------
 
     setup: function() {
-        this.bugIoc = new BugIoc();
+        this.iocContext = new IocContext();
     },
 
 
@@ -58,13 +58,13 @@ var bugIocProcessTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
-        this.bugIoc.process(function() {
+        this.iocContext.initialize(function() {
             test.assertTrue(true,
-                "Assert BugIoc.process() callback was successfully called");
+                "Assert iocContext.initialize() callback was successfully called when there's no configs");
             test.complete();
         })
     }
 };
-bugmeta.annotate(bugIocProcessTest).with(
-    test().name("BugIoc - process() test")
+bugmeta.annotate(bugIocContextInitializeWithNoConfigurationsTest).with(
+    test().name("IocContext - initialize() with no configurations test")
 );

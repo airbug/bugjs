@@ -93,24 +93,23 @@ var ModuleAnnotationProcessor = Class.extend(Obj, {
      * @return {IocArg}
      */
     createIocArg: function(argAnnotation) {
-        return new IocArg(argAnnotation.getRef());
+        return new IocArg(argAnnotation.getArgRef());
     },
 
     /**
      * @private
      * @param {ModuleAnnotation} moduleAnnotation
-     * @param {ModuleFactory} moduleFactory
      * @return {IocModule}
      */
-    createIocModule: function(moduleAnnotation, moduleFactory) {
+    createIocModule: function(moduleAnnotation) {
         var _this = this;
-        var iocModule = new IocModule(moduleAnnotation.getName(), moduleAnnotation.getScope(), moduleFactory);
-        var argAnnotationArray = moduleAnnotation.getArgs();
+        var iocModule = new IocModule(moduleAnnotation.getModuleName(), moduleAnnotation.getModuleScope());
+        var argAnnotationArray = moduleAnnotation.getModuleArgs();
         argAnnotationArray.forEach(function(argAnnotation) {
             var iocArg = _this.createIocArg(argAnnotation);
             iocModule.addIocArg(iocArg);
         });
-        var propertyAnnotationArray = moduleAnnotation.getProperties();
+        var propertyAnnotationArray = moduleAnnotation.getModuleProperties();
         propertyAnnotationArray.forEach(function(propertyAnnotation) {
             var iocProperty = _this.createIocProperty(propertyAnnotation);
             iocModule.addIocProperty(iocProperty);
@@ -124,7 +123,7 @@ var ModuleAnnotationProcessor = Class.extend(Obj, {
      * @return {IocProperty}
      */
     createIocProperty: function(propertyAnnotation) {
-        return new IocProperty(propertyAnnotation.getName(), propertyAnnotation.getRef());
+        return new IocProperty(propertyAnnotation.getPropertyName(), propertyAnnotation.getPropertyRef());
     },
 
     /**

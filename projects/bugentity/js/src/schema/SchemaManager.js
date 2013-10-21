@@ -5,6 +5,7 @@
 //@Package('bugentity')
 
 //@Export('SchemaManager')
+//@Autoload
 
 //@Require('Class')
 //@Require('Event')

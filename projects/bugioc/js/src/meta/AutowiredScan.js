@@ -94,18 +94,18 @@ var AutowiredScan = Class.extend(Obj, {
 
     /**
      * @private
-     * @param {Annotation} autowiredAnnotation
+     * @param {AutowiredAnnotation} autowiredAnnotation
      */
     processAutowiredAnnotation: function(autowiredAnnotation) {
         var _scan = this;
         var autowiredClass = autowiredAnnotation.getAnnotationReference();
-        var propertyAnnotationArray = autowiredAnnotation.getProperties();
+        var propertyAnnotationArray = autowiredAnnotation.getAutowiredProperties();
         var currentConstructor = autowiredClass.prototype._constructor;
         autowiredClass.prototype._constructor = function() {
             var _this = this;
             currentConstructor.apply(this, arguments);
             propertyAnnotationArray.forEach(function(propertyAnnotation) {
-                _this[propertyAnnotation.getName()] = _scan.iocContext.getModuleByName(propertyAnnotation.getRef());
+                _this[propertyAnnotation.getPropertyName()] = _scan.iocContext.getModuleByName(propertyAnnotation.getPropertyRef());
             });
         };
     }

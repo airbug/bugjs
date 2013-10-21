@@ -84,10 +84,11 @@ var EntityManagerAnnotation = Class.extend(ModuleAnnotation, {
 //-------------------------------------------------------------------------------
 
 /**
+ * @param {string} moduleName
  * @return {EntityManagerAnnotation}
  */
-EntityManagerAnnotation.entityManager = function() {
-    return new EntityManagerAnnotation();
+EntityManagerAnnotation.entityManager = function(moduleName) {
+    return new EntityManagerAnnotation(moduleName);
 };
 
 

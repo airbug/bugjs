@@ -142,7 +142,7 @@ var IocContext = Class.extend(Obj, {
     },
 
     /**
-     * @param {function(Error)} callback
+     * @param {function(Throwable)} callback
      */
     initialize: function(callback) {
         var _this = this;

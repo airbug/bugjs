@@ -14,15 +14,15 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var Annotation = bugpack.require('bugmeta.Annotation');
+var Class           = bugpack.require('Class');
+var Annotation      = bugpack.require('bugmeta.Annotation');
 
 
 //-------------------------------------------------------------------------------
@@ -48,13 +48,13 @@ var PropertyAnnotation = Class.extend(Annotation, {
          * @private
          * @type {string}
          */
-        this.propertyName = propertyName;
+        this.propertyName   = propertyName;
 
         /**
          * @private
          * @type {string}
          */
-        this.propertyRef = null;
+        this.propertyRef    = null;
     },
 
 
@@ -63,17 +63,16 @@ var PropertyAnnotation = Class.extend(Annotation, {
     //-------------------------------------------------------------------------------
 
     /**
-     *
      * @return {string}
      */
-    getName: function() {
+    getPropertyName: function() {
         return this.propertyName;
     },
 
     /**
      * @return {string}
      */
-    getRef: function() {
+    getPropertyRef: function() {
         return this.propertyRef;
     },
 

@@ -5,6 +5,7 @@
 //@Package('bugentity')
 
 //@Export('EntityManagerStore')
+//@Autoload
 
 //@Require('Class')
 //@Require('Obj')

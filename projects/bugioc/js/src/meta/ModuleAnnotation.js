@@ -14,15 +14,15 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var Annotation = bugpack.require('bugmeta.Annotation');
+var Class           = bugpack.require('Class');
+var Annotation      = bugpack.require('bugmeta.Annotation');
 
 
 //-------------------------------------------------------------------------------
@@ -47,7 +47,7 @@ var ModuleAnnotation = Class.extend(Annotation, {
 
         /**
          * @private
-         * @type {Array<ArgAnnotation>}
+         * @type {Array.<ArgAnnotation>}
          */
         this.moduleArgs         = [];
 
@@ -59,7 +59,7 @@ var ModuleAnnotation = Class.extend(Annotation, {
 
         /**
          * @private
-         * @type {Array<PropertyAnnotation>}
+         * @type {Array.<PropertyAnnotation>}
          */
         this.moduleProperties   = [];
 
@@ -76,30 +76,30 @@ var ModuleAnnotation = Class.extend(Annotation, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {Array<ArgAnnotation>}
+     * @return {Array.<ArgAnnotation>}
      */
-    getArgs: function() {
+    getModuleArgs: function() {
         return this.moduleArgs;
     },
 
     /**
      * @return {string}
      */
-    getName: function() {
+    getModuleName: function() {
         return this.moduleName;
     },
 
     /**
-     * @return {Array<PropertyAnnotation>}
+     * @return {Array.<PropertyAnnotation>}
      */
-    getProperties: function() {
+    getModuleProperties: function() {
         return this.moduleProperties;
     },
 
     /**
      * @return {ModuleAnnotation.Scope}
      */
-    getScope: function() {
+    getModuleScope: function() {
         return this.moduleScope;
     },
 
@@ -109,7 +109,7 @@ var ModuleAnnotation = Class.extend(Annotation, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Array<ArgAnnotation>} moduleArgs
+     * @param {Array.<ArgAnnotation>} moduleArgs
      */
     args: function(moduleArgs) {
         this.moduleArgs = moduleArgs;
@@ -125,7 +125,7 @@ var ModuleAnnotation = Class.extend(Annotation, {
     },
 
     /**
-     * @param {Array<PropertyAnnotation>} moduleProperties
+     * @param {Array.<PropertyAnnotation>} moduleProperties
      */
     properties: function(moduleProperties) {
         this.moduleProperties = moduleProperties;
@@ -147,11 +147,11 @@ var ModuleAnnotation = Class.extend(Annotation, {
 //-------------------------------------------------------------------------------
 
 /**
- * @param {string} moduleMethodName
+ * @param {string} moduleName
  * @return {ModuleAnnotation}
  */
-ModuleAnnotation.module = function(moduleMethodName) {
-    return new ModuleAnnotation(moduleMethodName);
+ModuleAnnotation.module = function(moduleName) {
+    return new ModuleAnnotation(moduleName);
 };
 
 

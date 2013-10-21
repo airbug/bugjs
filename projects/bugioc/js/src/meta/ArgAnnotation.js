@@ -14,15 +14,15 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =         bugpack.require('Class');
-var Annotation =    bugpack.require('bugmeta.Annotation');
+var Class           = bugpack.require('Class');
+var Annotation      = bugpack.require('bugmeta.Annotation');
 
 
 //-------------------------------------------------------------------------------
@@ -59,7 +59,7 @@ var ArgAnnotation = Class.extend(Annotation, {
     /**
      * @return {string}
      */
-    getRef: function() {
+    getArgRef: function() {
         return this.argRef;
     },
 
@@ -83,6 +83,7 @@ var ArgAnnotation = Class.extend(Annotation, {
 //-------------------------------------------------------------------------------
 
 /**
+ * @static
  * @return {ArgAnnotation}
  */
 ArgAnnotation.arg = function() {

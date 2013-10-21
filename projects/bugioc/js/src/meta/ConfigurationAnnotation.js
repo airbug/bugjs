@@ -14,15 +14,15 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =         bugpack.require('Class');
-var Annotation =    bugpack.require('bugmeta.Annotation');
+var Class           = bugpack.require('Class');
+var Annotation      = bugpack.require('bugmeta.Annotation');
 
 
 //-------------------------------------------------------------------------------
@@ -46,9 +46,9 @@ var ConfigurationAnnotation = Class.extend(Annotation, {
 
         /**
          * @private
-         * @type {Array<ModuleAnnotation>}
+         * @type {Array.<ModuleAnnotation>}
          */
-        this.moduleArray = [];
+        this.configurationModuleArray = [];
     },
 
 
@@ -57,10 +57,10 @@ var ConfigurationAnnotation = Class.extend(Annotation, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {Array<ModuleAnnotation>}
+     * @return {Array.<ModuleAnnotation>}
      */
-    getModules: function() {
-        return this.moduleArray;
+    getConfigurationModules: function() {
+        return this.configurationModuleArray;
     },
 
 
@@ -69,10 +69,10 @@ var ConfigurationAnnotation = Class.extend(Annotation, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Array<ModuleAnnotation>} moduleArray
+     * @param {Array.<ModuleAnnotation>} configurationModuleArray
      */
-    modules: function(moduleArray) {
-        this.moduleArray = moduleArray;
+    modules: function(configurationModuleArray) {
+        this.configurationModuleArray = configurationModuleArray;
         return this;
     }
 });

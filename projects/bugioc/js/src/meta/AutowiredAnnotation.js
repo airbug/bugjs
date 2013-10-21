@@ -14,15 +14,15 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =         bugpack.require('Class');
-var Annotation =    bugpack.require('bugmeta.Annotation');
+var Class           = bugpack.require('Class');
+var Annotation      = bugpack.require('bugmeta.Annotation');
 
 
 //-------------------------------------------------------------------------------
@@ -46,9 +46,9 @@ var AutowiredAnnotation = Class.extend(Annotation, {
 
         /**
          * @private
-         * @type {Array<PropertyAnnotation>}
+         * @type {Array.<PropertyAnnotation>}
          */
-        this.propertyArray = [];
+        this.autowiredPropertyArray = [];
     },
 
 
@@ -57,10 +57,10 @@ var AutowiredAnnotation = Class.extend(Annotation, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {Array<PropertyAnnotation>}
+     * @return {Array.<PropertyAnnotation>}
      */
-    getProperties: function() {
-        return this.propertyArray;
+    getAutowiredProperties: function() {
+        return this.autowiredPropertyArray;
     },
 
 
@@ -69,10 +69,10 @@ var AutowiredAnnotation = Class.extend(Annotation, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Array<PropertyAnnotation>} propertyArray
+     * @param {Array.<PropertyAnnotation>} autowiredPropertyArray
      */
-    properties: function(propertyArray) {
-        this.propertyArray = propertyArray;
+    properties: function(autowiredPropertyArray) {
+        this.autowiredPropertyArray = autowiredPropertyArray;
         return this;
     }
 });
@@ -83,6 +83,7 @@ var AutowiredAnnotation = Class.extend(Annotation, {
 //-------------------------------------------------------------------------------
 
 /**
+ * @static
  * @return {ConfigurationAnnotation}
  */
 AutowiredAnnotation.autowired = function() {

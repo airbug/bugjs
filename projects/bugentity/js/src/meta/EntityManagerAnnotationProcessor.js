@@ -33,7 +33,7 @@ var ModuleAnnotationProcessor       = bugpack.require('bugioc.ModuleAnnotationPr
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var EntityManagerAnnotationProcessor = Class.extend(EntityManagerModuleFactory, {
+var EntityManagerAnnotationProcessor = Class.extend(ModuleAnnotationProcessor, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -64,6 +64,7 @@ var EntityManagerAnnotationProcessor = Class.extend(EntityManagerModuleFactory, 
     //-------------------------------------------------------------------------------
 
     /**
+     * @override
      * @param {EntityManagerAnnotation} entityManagerAnnotation
      */
     process: function(entityManagerAnnotation) {
