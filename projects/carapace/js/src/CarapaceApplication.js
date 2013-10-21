@@ -7,7 +7,7 @@
 //@Export('CarapaceApplication')
 
 //@Require('Class')
-//@Require('Obj')
+//@Require('EventDispatcher')
 //@Require('Set')
 //@Require('backbone.Backbone')
 //@Require('carapace.CarapaceController')
@@ -19,7 +19,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -27,7 +27,7 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                   = bugpack.require('Class');
-var Obj                     = bugpack.require('Obj');
+var EventDispatcher         = bugpack.require('EventDispatcher');
 var Set                     = bugpack.require('Set');
 var Backbone                = bugpack.require('backbone.Backbone');
 var ControllerRoute         = bugpack.require('carapace.ControllerRoute');
@@ -38,7 +38,7 @@ var RoutingRequest          = bugpack.require('carapace.RoutingRequest');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var CarapaceApplication = Class.extend(Obj, {
+var CarapaceApplication = Class.extend(EventDispatcher, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -205,6 +205,7 @@ var CarapaceApplication = Class.extend(Obj, {
     listenToRoutingRequest: function(routingRequest) {
         routingRequest.addEventListener(RoutingRequest.EventType.PROCESSED,
             this.hearRoutingRequestProcessedEvent, this);
+        routingRequest.addEventPropagator(this);
     },
 
     /**
@@ -214,6 +215,7 @@ var CarapaceApplication = Class.extend(Obj, {
     stopListeningToRoutingRequest: function(routingRequest) {
         routingRequest.removeEventListener(RoutingRequest.EventType.PROCESSED,
             this.hearRoutingRequestProcessedEvent, this);
+        routingRequest.removeEventPropagator(this);
     },
 
 
