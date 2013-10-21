@@ -4,34 +4,34 @@
 
 //@Package('bugioc')
 
-//@Export('AutowiredScan')
+//@Export('AutowiredAnnotationProcessor')
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('bugmeta.BugMeta')
+//@Require('Set')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var Obj         = bugpack.require('Obj');
-var BugMeta     = bugpack.require('bugmeta.BugMeta');
+var Class               = bugpack.require('Class');
+var Obj                 = bugpack.require('Obj');
+var Set                 = bugpack.require('Set');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var AutowiredScan = Class.extend(Obj, {
+var AutowiredAnnotationProcessor = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -53,38 +53,25 @@ var AutowiredScan = Class.extend(Obj, {
          * @private
          * @type {IocContext}
          */
-        this.iocContext = iocContext;
+        this.iocContext                         = iocContext;
 
         /**
          * @private
-         * @type {boolean}
+         * @type {}
          */
-        this.scanning = false;
+        this.processedAutowiredAnnotationSet    = new Set();
     },
 
 
     //-------------------------------------------------------------------------------
-    // Public Class Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @param {AutowiredAnnotation} autowiredAnnotation
      */
-    scan: function() {
-        var _this = this;
-        if (!this.scanning) {
-            this.scanning = true;
-            var bugmeta                 = BugMeta.context();
-            var autowiredAnnotations    = bugmeta.getAnnotationsByType("Autowired");
-            if (autowiredAnnotations) {
-                autowiredAnnotations.forEach(function(annotation) {
-                    _this.processAutowiredAnnotation(annotation);
-                });
-            }
-            bugmeta.registerAnnotationProcessor("Autowired", function(annotation) {
-                _this.processAutowiredAnnotation(annotation);
-            });
-        }
+    process: function(autowiredAnnotation) {
+        this.processAutowiredAnnotation(autowiredAnnotation);
     },
 
 
@@ -97,17 +84,19 @@ var AutowiredScan = Class.extend(Obj, {
      * @param {AutowiredAnnotation} autowiredAnnotation
      */
     processAutowiredAnnotation: function(autowiredAnnotation) {
-        var _scan = this;
-        var autowiredClass = autowiredAnnotation.getAnnotationReference();
-        var propertyAnnotationArray = autowiredAnnotation.getAutowiredProperties();
-        var currentConstructor = autowiredClass.prototype._constructor;
-        autowiredClass.prototype._constructor = function() {
-            var _this = this;
-            currentConstructor.apply(this, arguments);
-            propertyAnnotationArray.forEach(function(propertyAnnotation) {
-                _this[propertyAnnotation.getPropertyName()] = _scan.iocContext.getModuleByName(propertyAnnotation.getPropertyRef());
-            });
-        };
+        var _this                   = this;
+        if (!this.processedAutowiredAnnotationSet.contains(autowiredAnnotation)) {
+            var autowiredClass          = autowiredAnnotation.getAnnotationReference();
+            var propertyAnnotationArray = autowiredAnnotation.getAutowiredProperties();
+            var currentConstructor      = autowiredClass.prototype._constructor;
+            autowiredClass.prototype._constructor = function() {
+                var instance = this;
+                currentConstructor.apply(this, arguments);
+                propertyAnnotationArray.forEach(function(propertyAnnotation) {
+                    instance[propertyAnnotation.getPropertyName()] = _this.iocContext.getModuleByName(propertyAnnotation.getPropertyRef());
+                });
+            };
+        }
     }
 });
 
@@ -116,4 +105,4 @@ var AutowiredScan = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugioc.AutowiredScan', AutowiredScan);
+bugpack.export('bugioc.AutowiredAnnotationProcessor', AutowiredAnnotationProcessor);
