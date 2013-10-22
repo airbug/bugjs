@@ -8,9 +8,9 @@
 
 //@Require('Class')
 //@Require('EventDispatcher')
+//@Require('Set')
 //@Require('TypeUtil')
 //@Require('UuidGenerator')
-//@Require('bugcall.BugCallRequestEvent')
 //@Require('bugcall.CallClientEvent')
 //@Require('bugcall.CallManager')
 //@Require('bugcall.CallManagerEvent')
@@ -22,23 +22,23 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                   = bugpack.require('Class');
-var EventDispatcher         = bugpack.require('EventDispatcher');
-var TypeUtil                = bugpack.require('TypeUtil');
-var UuidGenerator           = bugpack.require('UuidGenerator');
-var BugCallRequestEvent     = bugpack.require('bugcall.BugCallRequestEvent');
-var CallClientEvent         = bugpack.require('bugcall.CallClientEvent');
-var CallManager             = bugpack.require('bugcall.CallManager');
-var CallManagerEvent        = bugpack.require('bugcall.CallManagerEvent');
-var CallResponder           = bugpack.require('bugcall.CallResponder');
-var CallResponseHandler     = bugpack.require('bugcall.CallResponseHandler');
+var Class                       = bugpack.require('Class');
+var EventDispatcher             = bugpack.require('EventDispatcher');
+var Set                         = bugpack.require('Set');
+var TypeUtil                    = bugpack.require('TypeUtil');
+var UuidGenerator               = bugpack.require('UuidGenerator');
+var CallClientEvent             = bugpack.require('bugcall.CallClientEvent');
+var CallManager                 = bugpack.require('bugcall.CallManager');
+var CallManagerEvent            = bugpack.require('bugcall.CallManagerEvent');
+var CallResponder               = bugpack.require('bugcall.CallResponder');
+var CallResponseHandler         = bugpack.require('bugcall.CallResponseHandler');
 
 
 //-------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ var BugCallClient = Class.extend(EventDispatcher, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(callClient, callManager) {
+    _constructor: function(callClient, callManager, requestProcessor) {
 
         this._super();
 
@@ -63,19 +63,26 @@ var BugCallClient = Class.extend(EventDispatcher, {
          * @private
          * @type {CallClient}
          */
-        this.callClient     = callClient;
+        this.callClient                     = callClient;
 
         /**
          * @private
          * @type {CallManager}
          */
-        this.callManager    = callManager;
+        this.callManager                    = callManager;
 
         /**
          * @private
          * @type {string}
          */
-        this.callUuid       = UuidGenerator.generateUuid();
+        this.callUuid                       = UuidGenerator.generateUuid();
+
+        /**
+         * @private
+         * @type {BugCallRequestProcessor}
+         */
+        this.requestProcessor               = requestProcessor;
+
 
         this.initialize();
     },
@@ -99,12 +106,16 @@ var BugCallClient = Class.extend(EventDispatcher, {
         return this.callManager;
     },
 
+    /**
+     * @return {boolean}
+     */
     isConnected: function() {
         return this.callClient.isConnected();
     },
 
+
     //-------------------------------------------------------------------------------
-    // Public Instance Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -143,7 +154,7 @@ var BugCallClient = Class.extend(EventDispatcher, {
 
 
     //-------------------------------------------------------------------------------
-    // Private Instance Methods
+    // Private Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -175,7 +186,7 @@ var BugCallClient = Class.extend(EventDispatcher, {
      * @private
      * @param {CallConnection} callConnection
      */
-    processConnectionClosed: function(callConnection) {
+    handleConnectionClosed: function(callConnection) {
         this.callManager.closeCall();
     },
 
@@ -183,7 +194,7 @@ var BugCallClient = Class.extend(EventDispatcher, {
      * @private
      * @param {CallConnection} callConnection
      */
-    processConnectionFailed: function(callConnection) {
+    handleConnectionFailed: function(callConnection) {
         this.callManager.failCall();
     },
 
@@ -191,7 +202,7 @@ var BugCallClient = Class.extend(EventDispatcher, {
      * @private
      * @param {CallConnection} callConnection
      */
-    processConnectionOpened: function(callConnection) {
+    handleConnectionOpened: function(callConnection) {
         this.callManager.openCall(callConnection);
     },
 
@@ -199,18 +210,17 @@ var BugCallClient = Class.extend(EventDispatcher, {
      * @private
      * @param {IncomingRequest} incomingRequest
      */
-    processIncomingRequest: function(incomingRequest) {
+    handleIncomingRequest: function(incomingRequest) {
         var callResponder = new CallResponder(this.callManager, incomingRequest);
-        this.dispatchEvent(new BugCallRequestEvent(BugCallRequestEvent.REQUEST, {
-            request: incomingRequest,
-            responder: callResponder
-        }));
+        this.requestProcessor.processRequest(incomingRequest, callResponder, function(throwable) {
+            //TODO BRN: Any last minute handling we need to do?
+        });
     },
 
     /**
      * @private
      */
-    processRetryFailed: function() {
+    handleRetryFailed: function() {
         this.callManager.failCall();
     },
 
@@ -226,9 +236,9 @@ var BugCallClient = Class.extend(EventDispatcher, {
     hearCallClientConnectionClosed: function(event) {
         var callConnection = event.getData().callConnection;
         if (event.getData().failed) {
-            this.processConnectionFailed(callConnection);
+            this.handleConnectionFailed(callConnection);
         } else {
-            this.processConnectionClosed(callConnection);
+            this.handleConnectionClosed(callConnection);
         }
     },
 
@@ -238,7 +248,7 @@ var BugCallClient = Class.extend(EventDispatcher, {
      */
     hearCallClientConnectionOpened: function(event) {
         var callConnection = event.getData().callConnection;
-        this.processConnectionOpened(callConnection);
+        this.handleConnectionOpened(callConnection);
     },
 
     /**
@@ -246,7 +256,7 @@ var BugCallClient = Class.extend(EventDispatcher, {
      * @param {CallClientEvent} event
      */
     hearCallClientRetryFailed: function(event) {
-        this.processRetryFailed();
+        this.handleRetryFailed();
     },
 
     /**
@@ -255,7 +265,7 @@ var BugCallClient = Class.extend(EventDispatcher, {
      */
     hearCallManagerIncomingRequest: function(event) {
         var incomingRequest = event.getData().incomingRequest;
-        this.processIncomingRequest(incomingRequest);
+        this.handleIncomingRequest(incomingRequest);
     }
 });
 

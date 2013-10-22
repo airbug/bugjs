@@ -4,10 +4,9 @@
 
 //@Package('bugcall')
 
-//@Export('BugCallRequestEvent')
+//@Export('IProcessRequest')
 
-//@Require('Class')
-//@Require('Event')
+//@Require('Interface')
 
 
 //-------------------------------------------------------------------------------
@@ -21,30 +20,30 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class   = bugpack.require('Class');
-var Event   = bugpack.require('Event');
+var Interface = bugpack.require('Interface');
 
 
 //-------------------------------------------------------------------------------
-// Declare Class
+// Declare Interface
 //-------------------------------------------------------------------------------
 
-var BugCallRequestEvent = Class.extend(Event, {});
+var IProcessRequest = Interface.declare({
 
+    //-------------------------------------------------------------------------------
+    // Interface Methods
+    //-------------------------------------------------------------------------------
 
-//-------------------------------------------------------------------------------
-// Static Variables
-//-------------------------------------------------------------------------------
-
-/**
- * @static
- * @const {string}
- */
-BugCallRequestEvent.REQUEST = "BugCallRequestEvent:Request";
+    /**
+     * @param {IncomingRequest} request
+     * @param {CallResponder} responder
+     * @param {function(Throwable)}  callback
+     */
+    processRequest: function(request, responder, callback) {}
+});
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugcall.BugCallRequestEvent', BugCallRequestEvent);
+bugpack.export('bugcall.IProcessRequest', IProcessRequest);

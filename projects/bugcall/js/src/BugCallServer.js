@@ -9,7 +9,7 @@
 //@Require('Class')
 //@Require('EventDispatcher')
 //@Require('Map')
-//@Require('bugcall.BugCallRequestEvent')
+//@Require('Set')
 //@Require('bugcall.CallEvent')
 //@Require('bugcall.CallConnection')
 //@Require('bugcall.CallManager')
@@ -23,24 +23,24 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var EventDispatcher     = bugpack.require('EventDispatcher');
-var Map                 = bugpack.require('Map');
-var BugCallRequestEvent = bugpack.require('bugcall.BugCallRequestEvent');
-var CallEvent           = bugpack.require('bugcall.CallEvent');
-var CallConnection      = bugpack.require('bugcall.CallConnection');
-var CallManager         = bugpack.require('bugcall.CallManager');
-var CallManagerEvent    = bugpack.require('bugcall.CallManagerEvent');
-var CallResponder       = bugpack.require('bugcall.CallResponder');
-var CallResponseHandler = bugpack.require('bugcall.CallResponseHandler');
-var CallServer          = bugpack.require('bugcall.CallServer');
+var Class                       = bugpack.require('Class');
+var EventDispatcher             = bugpack.require('EventDispatcher');
+var Map                         = bugpack.require('Map');
+var Set                         = bugpack.require('Set');
+var CallEvent                   = bugpack.require('bugcall.CallEvent');
+var CallConnection              = bugpack.require('bugcall.CallConnection');
+var CallManager                 = bugpack.require('bugcall.CallManager');
+var CallManagerEvent            = bugpack.require('bugcall.CallManagerEvent');
+var CallResponder               = bugpack.require('bugcall.CallResponder');
+var CallResponseHandler         = bugpack.require('bugcall.CallResponseHandler');
+var CallServer                  = bugpack.require('bugcall.CallServer');
 
 
 //-------------------------------------------------------------------------------
@@ -57,7 +57,7 @@ var BugCallServer = Class.extend(EventDispatcher, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(callServer) {
+    _constructor: function(callServer, requestProcessor) {
 
         this._super();
 
@@ -85,15 +85,22 @@ var BugCallServer = Class.extend(EventDispatcher, {
 
         /**
          * @private
-         * @type {Map.<string, Set.<CallManager>>}
-         */
-        this.sessionSidToCallManagerSetMap  = new Map();
-
-        /**
-         * @private
          * @type {boolean}
          */
         this.initialized                    = false;
+
+        /**
+         * @private
+         * @type {BugCallRequestProcessor}
+         */
+        this.requestProcessor               = requestProcessor;
+
+        //TODO BRN: This doesn't seem to be used. I think we can get rid of this map and track this relation else where
+        /**
+         * @private
+         * @type {Map.<string, Set.<CallManager>>}
+         */
+        this.sessionSidToCallManagerSetMap  = new Map();
 
         this.initialize();
     },
@@ -135,7 +142,7 @@ var BugCallServer = Class.extend(EventDispatcher, {
 
 
     //-------------------------------------------------------------------------------
-    // Public Instance Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -202,7 +209,7 @@ var BugCallServer = Class.extend(EventDispatcher, {
      * @private
      * @param {CallConnection} callConnection
      */
-    processConnectionClosed: function(callConnection) {
+    handleConnectionClosed: function(callConnection) {
         var callManager = this.callConnectionToCallManagerMap.get(callConnection);
         this.removeCallManager(callManager);
         this.callConnectionToCallManagerMap.remove(callConnection);
@@ -213,7 +220,7 @@ var BugCallServer = Class.extend(EventDispatcher, {
      * @private
      * @param {CallConnection} callConnection
      */
-    processConnectionEstablished: function(callConnection) {
+    handleConnectionEstablished: function(callConnection) {
         //TODO BRN: This is where we will use the callConnection's handshake data to look up a previous CallManager
         // that belonged to the same connection id. If it doesn't exist, then we create a new CallManager
 
@@ -241,7 +248,7 @@ var BugCallServer = Class.extend(EventDispatcher, {
      * @private
      * @param {CallConnection} callConnection
      */
-    processConnectionFailed: function(callConnection) {
+    handleConnectionFailed: function(callConnection) {
 
         //TODO BRN: For now we assume that there is no way to reconnect for this Call
 
@@ -255,13 +262,13 @@ var BugCallServer = Class.extend(EventDispatcher, {
      * @private
      * @param {IncomingRequest} incomingRequest
      */
-    processIncomingRequest: function(incomingRequest) {
+    handleIncomingRequest: function(incomingRequest) {
+        var _this           = this;
         var callManager     = incomingRequest.getCallManager();
         var callResponder   = new CallResponder(callManager, incomingRequest);
-        this.dispatchEvent(new BugCallRequestEvent(BugCallRequestEvent.REQUEST, {
-            request: incomingRequest,
-            responder: callResponder
-        }));
+        this.requestProcessor.processRequest(incomingRequest, callResponder, function(throwable) {
+            //TODO BRN: Any last minute handling we need to do?
+        });
     },
 
 
@@ -276,9 +283,9 @@ var BugCallServer = Class.extend(EventDispatcher, {
     hearServerConnectionClosed: function(event) {
         var callConnection = event.getData().callConnection;
         if (event.getData().failed) {
-            this.processConnectionFailed(callConnection);
+            this.handleConnectionFailed(callConnection);
         } else {
-            this.processConnectionClosed(callConnection);
+            this.handleConnectionClosed(callConnection);
         }
     },
 
@@ -288,7 +295,7 @@ var BugCallServer = Class.extend(EventDispatcher, {
      */
     hearServerConnectionEstablished: function(event) {
         var callConnection = event.getData().callConnection;
-        this.processConnectionEstablished(callConnection);
+        this.handleConnectionEstablished(callConnection);
     },
 
     /**
@@ -298,16 +305,9 @@ var BugCallServer = Class.extend(EventDispatcher, {
     hearCallManagerIncomingRequest: function(event) {
         var incomingRequest = event.getData().incomingRequest;
         console.log("BugCallServer IncomingRequest Type:", incomingRequest.getType());
-        this.processIncomingRequest(incomingRequest);
+        this.handleIncomingRequest(incomingRequest);
     }
 });
-
-
-//-------------------------------------------------------------------------------
-// Events
-//-------------------------------------------------------------------------------
-
-//BugCallRequestEvent.REQUEST
 
 
 //-------------------------------------------------------------------------------
