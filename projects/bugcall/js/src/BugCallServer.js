@@ -145,6 +145,14 @@ var BugCallServer = Class.extend(EventDispatcher, {
     // Public Methods
     //-------------------------------------------------------------------------------
 
+    registerRequestPreProcessor: function(preprocessor){
+        this.requestProcessor.registerRequestPreProcessor(preprocessor);
+    },
+
+    registerRequestProcessor: function(processor){
+        this.requestProcessor.registerRequestProcessor(processor);
+    },
+
     /**
      * @param {} callConnection
      */

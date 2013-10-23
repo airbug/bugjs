@@ -10,8 +10,9 @@
 //@Require('Map')
 //@Require('Obj')
 //@Require('TypeUtil')
-//@Require('bugroutes.BugCallRoute')
 //@Require('bugcall.BugCallRequestEvent')
+//@Require('bugcall.IProcessRequest')
+//@Require('bugroutes.BugCallRoute')
 
 
 //-------------------------------------------------------------------------------
@@ -29,8 +30,9 @@ var Class               = bugpack.require('Class');
 var Map                 = bugpack.require('Map');
 var Obj                 = bugpack.require('Obj');
 var TypeUtil            = bugpack.require('TypeUtil');
-var BugCallRoute        = bugpack.require('bugroutes.BugCallRoute');
 var BugCallRequestEvent = bugpack.require('bugcall.BugCallRequestEvent');
+var IProcessRequest     = bugpack.require('bugcall.IProcessRequest');
+var BugCallRoute        = bugpack.require('bugroutes.BugCallRoute');
 
 
 //-------------------------------------------------------------------------------
@@ -45,7 +47,7 @@ var BugCallRouter = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {EventDispatcher} bugCallRequestEventDispatcher
+     * @param {?EventDispatcher} bugCallRequestEventDispatcher
      */
     _constructor: function(bugCallRequestEventDispatcher){
 
@@ -79,7 +81,7 @@ var BugCallRouter = Class.extend(Obj, {
      */
     initialize: function(callback){
         if(!callback || typeof callback !== 'function') var callback = function(){};
-        this.bugCallRequestEventDispatcher.on(BugCallRequestEvent.REQUEST, this.handleRequest, this);
+        if(this.bugCallRequestEventDispatcher) this.bugCallRequestEventDispatcher.on(BugCallRequestEvent.REQUEST, this.handleRequest, this);
         callback();
     },
 
@@ -128,6 +130,27 @@ var BugCallRouter = Class.extend(Obj, {
         return this.bugCallRequestEventDispatcher;
     },
 
+    //-------------------------------------------------------------------------------
+    // IProcess Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {IncomingRequest} request
+     * @param {CallResponder} responder
+     * @param {function(Throwable)}  callback
+     */
+    processRequest: function(request, responder, callback) {
+        console.log("Inside BugCallRouter#processRequest");
+        var requestType     = request.getType();
+        var bugCallRoute    = this.routesMap.get(requestType);
+        console.log("requestType:", requestType);
+        if(bugCallRoute) {
+            bugCallRoute.fire(request, responder);
+            callback();
+        } else {
+            callback(new Error("Bugroute '" + requestType + "' does not exist"));
+        }
+    },
 
     //-------------------------------------------------------------------------------
     // Event Listeners
@@ -148,6 +171,8 @@ var BugCallRouter = Class.extend(Obj, {
         if(bugCallRoute) bugCallRoute.fire(request, responder);
     }
 });
+
+Class.implement(BugCallRouter, IProcessRequest);
 
 //-------------------------------------------------------------------------------
 // Exports

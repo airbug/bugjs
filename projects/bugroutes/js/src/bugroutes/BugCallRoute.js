@@ -50,13 +50,13 @@ var BugCallRoute = Class.extend(Obj, {
          * @private
          * @type {function(...)}
          */
-        this.listener = listener;
+        this.listener       = listener;
 
         /**
          * @private
          * @type {string}
          */
-        this.requestType = requestType;
+        this.requestType    = requestType;
     },
 
 
