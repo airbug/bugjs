@@ -130,6 +130,7 @@ var CallServer = Class.extend(EventDispatcher, {
      * @param {CallConnection} callConnection
      */
     dispatchConnectionEstablished: function(callConnection) {
+        console.log("Inside CallServer#dispatchConnectionEstablished");
         this.dispatchEvent(new Event(CallServer.EventTypes.CONNECTION_ESTABLISHED, {
             callConnection: callConnection
         }));
@@ -156,6 +157,7 @@ var CallServer = Class.extend(EventDispatcher, {
      * @param {Event} event
      */
     hearManagerConnection: function(event) {
+        console.log("Inside CallServer#hearManagerConnection");
         var socketConnection = event.getData().socketConnection;
         var callConnection = new CallServerConnection(socketConnection);
         this.addCallConnection(callConnection);

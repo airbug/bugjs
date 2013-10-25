@@ -91,6 +91,7 @@ var CallRequest = Class.extend(Obj, {
      * @return {string}
      */
     getUuid: function() {
+        console.log("Inside CallRequest#getUuid");
         return this.uuid
     },
 
@@ -100,6 +101,7 @@ var CallRequest = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     toObject: function() {
+        console.log("Inside CallRequest#toObject");
         return {
             uuid: this.getUuid(),
             type: this.getType(),

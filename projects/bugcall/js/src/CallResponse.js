@@ -104,6 +104,7 @@ var CallResponse = Class.extend(Obj, {
      * @return {string}
      */
     getUuid: function() {
+        console.log("Inside CallResponse#getUuid")
         return this.uuid;
     },
 

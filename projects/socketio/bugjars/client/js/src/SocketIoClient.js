@@ -129,13 +129,13 @@ var SocketIoClient = Class.extend(EventDispatcher, {
         }
     },
 
+    //TODO SUNG
+    disconnect: function() {
+        this.socketConnection.disconnect();
+    },
 
-    //-------------------------------------------------------------------------------
-    // Private Instance Methods
-    //-------------------------------------------------------------------------------
 
     /**
-     * @private
      * @param {string} querystring
      */
     createSocket: function(querystring) {
@@ -163,23 +163,27 @@ var SocketIoClient = Class.extend(EventDispatcher, {
             host += "?" + querystring
         }
         this.socketConnection = this.socketFactory.createSocketConnection(host, options);
-        this.socketConnection.addEventListener('connect', this.hearSocketConnect, this);
-        this.socketConnection.addEventListener('connect_error', this.hearSocketConnectError, this);
-        this.socketConnection.addEventListener('connecting', this.hearSocketConnecting, this);
-        this.socketConnection.addEventListener('disconnect', this.hearSocketDisconnect, this);
-        this.socketConnection.addEventListener('error', this.hearSocketError, this);
-        this.socketConnection.addEventListener('reconnect', this.hearSocketReconnect, this);
-        this.socketConnection.addEventListener('reconnecting', this.hearSocketReconnecting, this);
-        this.socketConnection.addEventListener('reconnect_failed', this.hearSocketReconnectFailed, this);
+        console.log("socketConnection created:", this.socketConnection);
+        this.socketConnection.addEventListener('connect',           this.hearSocketConnect,         this);
+        this.socketConnection.addEventListener('connect_error',     this.hearSocketConnectError,    this);
+        this.socketConnection.addEventListener('connecting',        this.hearSocketConnecting,      this);
+        this.socketConnection.addEventListener('disconnect',        this.hearSocketDisconnect,      this);
+        this.socketConnection.addEventListener('error',             this.hearSocketError,           this);
+        this.socketConnection.addEventListener('reconnect',         this.hearSocketReconnect,       this);
+        this.socketConnection.addEventListener('reconnecting',      this.hearSocketReconnecting,    this);
+        this.socketConnection.addEventListener('reconnect_failed',  this.hearSocketReconnectFailed, this);
     },
 
     /**
      * @private
      */
     destroySocket: function() {
-        this.socketConnection.removeAllListeners();
         this.socketConnection = null;
     },
+
+    //-------------------------------------------------------------------------------
+    // Private Instance Methods
+    //-------------------------------------------------------------------------------
 
     /**
      * @private

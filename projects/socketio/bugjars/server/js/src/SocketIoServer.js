@@ -27,18 +27,11 @@ var io              = require('socket.io');
 var Class           = bugpack.require('Class');
 var EventDispatcher = bugpack.require('EventDispatcher');
 var Proxy           = bugpack.require('Proxy');
-var BugFlow         = bugpack.require('bugflow.BugFlow');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
-
-var $forInParallel      = BugFlow.$forInParallel;
-var $if                 = BugFlow.$if;
-var $series             = BugFlow.$series;
-var $parallel           = BugFlow.$parallel;
-var $task               = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
@@ -105,7 +98,6 @@ var SocketIoServer = Class.extend(EventDispatcher, {
         this.ioServer.set('match origin protocol', this.config.getMatchOriginProtocol()); //NOTE: Only necessary for use with wss, WebSocket Secure protocol
         this.ioServer.set('resource', this.config.getResource()); //NOTE: forward slash is required here unlike client setting
         this.ioServer.set('transports', this.config.getTransports());
-
         callback();
     }
 });

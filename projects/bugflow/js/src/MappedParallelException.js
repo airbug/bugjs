@@ -85,8 +85,14 @@ var MappedParallelException = Class.extend(ParallelException, {
      */
     toObject: function() {
         var data = this._super();
-        data.causeMap = this.causeMap.toObject();
+        data.causeMap   = this.causeMap;
         return data;
+    },
+
+    toString: function() {
+        var data = this._super();
+        data = data + "\n causeMap:" + this.causeMap.toString();
+        return data
     },
 
 

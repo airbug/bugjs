@@ -91,6 +91,8 @@ var EventReceiver = Class.extend(EventPropagator, {
      * @param {?boolean=} once (optional)
      */
     addEventListener: function(eventType, listenerFunction, listenerContext, once) {
+        console.log("EventListener Added:", eventType);
+
         var eventTypeListenerList = this.eventTypeListenerMap.get(eventType);
         if (!eventTypeListenerList) {
             eventTypeListenerList = new List();

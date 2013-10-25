@@ -188,27 +188,37 @@ var EntityManager = Class.extend(Obj, {
      * @param {function(Throwable)} callback
      */
     populate: function(entity, options, properties, callback) {
+        console.log("Inside EntityManager#populate");
         var _this               = this;
         var schema              = this.schemaManager.getSchemaByClass(entity.getClass());
         $forEachParallel(properties, function(flow, property) {
+            console.log("Inside EntityManager#populate forEachParallel");
             if (schema.hasProperty(property)) {
                 /** @type {SchemaProperty} */
                 var schemaProperty      = schema.getPropertyByName(property);
+                var schemaPropertyType  = schemaProperty.getType();
                 var propertyOptions     = options[property];
                 if (propertyOptions) {
-                    if (schemaProperty.getPopulates()) {
-                        var getterProperty    = propertyOptions.getter.call(entity);
+                    console.log("Inside propertyOptions if");
+                    // SUNG @BRN What getPopulates for? Is there a new method for this?
+                    // console.log("schemaProperty.getPopulates():", schemaProperty.getPopulates());
+                    // if (schemaProperty.getPopulates()) {
+                        console.log("Inside schemaProperty.getPopulates() if");
+                        var getterProperty      = propertyOptions.getter.call(entity);
                         var manager             = undefined;
                         var retriever           = undefined;
+                        console.log("right before switch statement");
                         switch (schemaProperty.getType()) {
                             case "Set":
+                                console.log("Inside Set case switch");
                                 var idSet               = propertyOptions.idGetter.call(entity);
                                 var getterEntitySet     = getterProperty;
                                 var lookupIdSet         = idSet.clone();
-                                manager                 = _this.entityManagerStore.getEntityManagerByEntityType(schemaProperty.collectionOf());
-                                retriever               = manager["retrieve" + schemaProperty.collectionOf()];
+                                manager                 = _this.entityManagerStore.getEntityManagerByEntityType(schemaProperty.getCollectionOf());
+                                retriever               = manager["retrieve" + schemaProperty.getCollectionOf()];
 
-                                getterEntitySet.clone().forEach(function(getterEntity) {
+                                var getterEntitySetClone = getterEntitySet.clone();
+                                getterEntitySetClone.forEach(function(getterEntity) {
                                     if (idSet.contains(getterEntity.getId())) {
                                         lookupIdSet.remove(getterEntity.getId());
                                     } else {
@@ -218,6 +228,7 @@ var EntityManager = Class.extend(Obj, {
 
                                 $iterableParallel(lookupIdSet, function(flow, entityId) {
                                     retriever.call(manager, entityId, function(throwable, retrievedEntity) {
+                                        if(throwable) console.log("Set retriever throwable:", throwable);
                                         if (!throwable) {
                                             getterEntitySet.add(retrievedEntity);
                                         }
@@ -234,6 +245,7 @@ var EntityManager = Class.extend(Obj, {
                                 if (getterId) {
                                     if (!getterProperty || getterProperty.getId() !== getterId) {
                                         retriever.call(manager, getterId, function(throwable, retrievedEntity) {
+                                            if(throwable) console.log("default retriever throwable:", throwable);
                                             if (!throwable) {
                                                 propertyOptions.setter.call(entity, retrievedEntity);
                                             }
@@ -247,16 +259,20 @@ var EntityManager = Class.extend(Obj, {
                                 }
                                 break;
                         }
-                    } else {
-                        flow.error(new Error("Property '" + property + "' is not marked with 'populates'"));
-                    }
+                    // } else {
+                    //     // SUNG @BRN Same question as above. What is this? How do you mark with populates?
+                    //     flow.error(new Error("Property '" + property + "' is not marked with 'populates'"));
+                    // }
                 } else {
                     flow.error(new Error("Cannot find options for property '" + property + "'"));
                 }
             } else {
                 flow.error(new Error("Unknown property '" + property + "'"));
             }
-        }).execute(callback);
+        }).execute(function(throwable){
+            if(throwable) console.log(throwable.toString());
+            callback(throwable);
+        });
     },
 
     /**

@@ -21,8 +21,8 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =             bugpack.require('Class');
-var EventDispatcher =   bugpack.require('EventDispatcher');
+var Class               = bugpack.require('Class');
+var EventDispatcher     = bugpack.require('EventDispatcher');
 
 
 //-------------------------------------------------------------------------------
@@ -48,43 +48,43 @@ var RoutingRequest = Class.extend(EventDispatcher, {
          * @private
          * @type {Array<*>}
          */
-        this.args = args;
+        this.args               = args;
 
         /**
          * @private
          * @type {?string}
          */
-        this.forwardFragment = null;
+        this.forwardFragment    = null;
 
         /**
          * @private
          * @type {Object}}
          */
-        this.forwardOptions = null;
+        this.forwardOptions     = null;
 
         /**
          * @private
          * @type {boolean}
          */
-        this.processed = false;
+        this.processed          = false;
 
         /**
          * @private
          * @type {RoutingRequest.RejectedReason}
          */
-        this.rejectedReason = null;
+        this.rejectedReason     = null;
 
         /**
          * @private
          * @type {RoutingRequest.Result}
          */
-        this.result = null;
+        this.result             = null;
 
         /**
          * @private
          * @type {ControllerRoute}
          */
-        this.route = route;
+        this.route              = route;
     },
 
 

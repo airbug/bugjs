@@ -65,6 +65,12 @@ var CallClient = Class.extend(EventDispatcher, {
          * @private
          * @type {boolean}
          */
+        this.closing    = false;
+
+        /**
+         * @private
+         * @type {boolean}
+         */
         this.connected = false;
 
         /**
@@ -110,6 +116,10 @@ var CallClient = Class.extend(EventDispatcher, {
     //-------------------------------------------------------------------------------
     // Getters and Setters
     //-------------------------------------------------------------------------------
+
+    isClosing: function() {
+        return this.closing;
+    },
 
     /**
      * @return {CallConnection}
@@ -168,7 +178,6 @@ var CallClient = Class.extend(EventDispatcher, {
         }
     },
 
-
     //-------------------------------------------------------------------------------
     // Private Instance Methods
     //-------------------------------------------------------------------------------
@@ -176,10 +185,15 @@ var CallClient = Class.extend(EventDispatcher, {
     /**
      * @private
      */
-    createConnection: function() {
+    createConnection: function(querystring) {
+        console.log("Inside CallClient#createConnection");
         if (!this.callConnection) {
-            var socketIoConnection = this.socketIoClient.getConnection();
-            this.callConnection = new CallClientConnection(socketIoConnection);
+            console.log("CallClient creating connection");
+            console.log("socketIoClient:", this.socketIoClient);
+            var socketIoConnection  = this.socketIoClient.connect(querystring);
+            console.log("socketIoConnection:", socketIoConnection);
+            this.callConnection     = new CallClientConnection(socketIoConnection);
+            console.log("callConnection:", this.callConnection);
             this.callConnection.addEventListener(CallConnection.EventTypes.CLOSED, this.hearConnectionClosed, this);
         } else {
             throw new Error("connection already created!");
@@ -191,8 +205,12 @@ var CallClient = Class.extend(EventDispatcher, {
      */
     destroyConnection: function() {
         if (this.callConnection) {
+            // this.socketIoClient.disconnect();
             this.callConnection.removeAllListeners();
             this.callConnection = null;
+            this.connected      = false;
+            this.connecting     = false;
+            this.disconnecting  = false;
         }
     },
 
@@ -226,7 +244,9 @@ var CallClient = Class.extend(EventDispatcher, {
      * @private
      */
     doCloseConnection: function() {
-        this.callConnection.close();
+        this.disconnecting = true;
+        // this.socketIoClient.disconnect();
+        this.callConnection.disconect();
     },
 
     /**
@@ -245,6 +265,7 @@ var CallClient = Class.extend(EventDispatcher, {
         this.destroyConnection();
         this.connected = false;
         this.connecting = false;
+        this.disconnecting = false;
     },
 
     /**
@@ -277,6 +298,9 @@ var CallClient = Class.extend(EventDispatcher, {
      * @private
      */
     initialize: function() {
+        console.log("xoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxox");
+        console.log("CallClient#initialize");
+        console.log("socketIoClient:", this.socketIoClient);
         if (!this.isInitialized()) {
             this.initialized = true;
             this.socketIoClient.addEventListener(SocketIoClient.EventTypes.CONNECTION, this.hearClientConnection, this);

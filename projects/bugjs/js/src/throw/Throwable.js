@@ -163,6 +163,15 @@ var Throwable = Class.extend(Obj, {
         }
     },
 
+    toString: function() {
+        return "{" +
+            "causes:"   + this.getCauses().join(",\n") + "," +
+            "data:"     + this.getData() + "\n" +
+            "message:"  + this.getMessage() + "\n" +
+            "type:"     + this.getType() + "\n" +
+            "}";
+    },
+
 
     //-------------------------------------------------------------------------------
     // Public Methods

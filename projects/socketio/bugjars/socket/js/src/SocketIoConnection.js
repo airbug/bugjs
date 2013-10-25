@@ -134,11 +134,28 @@ var SocketIoConnection = Class.extend(EventReceiver, {
     // Public Instance Methods
     //-------------------------------------------------------------------------------
 
+    //TODO
+    /**
+     *
+     */
+    connect: function() {
+        if(!this.isConnected()){
+            this.socket.connect();
+        }
+    },
+
+    //TODO
     /**
      *
      */
     disconnect: function() {
-        this.socket.disconnect();
+        if(this.isConnected()){
+            this.socket.disconnect();
+        }
+    },
+
+    destroyConnection: function() {
+        this.socket = null;
     },
 
     /**
@@ -259,7 +276,7 @@ var SocketIoConnection = Class.extend(EventReceiver, {
      */
     hearDisconnect: function(event) {
         this.connected = false;
-        this.deinitialize();
+        // this.deinitialize();
     },
 
     /**
@@ -267,7 +284,7 @@ var SocketIoConnection = Class.extend(EventReceiver, {
      * @param {NodeJsEvent} event
      */
     hearTerminate: function(event) {
-        this.disconnect();
+        this.disconnect(); //TODO
     }
 });
 

@@ -148,12 +148,9 @@ var CallConnection = Class.extend(EventDispatcher, {
     /**
      *
      */
-    close: function() {
-        if (!this.closing) {
-            this.changeStateClosing();
-            this.doClose();
-        }
-    },
+     disconnect: function() {
+        this.doDisconnect();
+     },
 
     /**
      * @param {CallRequest} callRequest
@@ -212,6 +209,26 @@ var CallConnection = Class.extend(EventDispatcher, {
         }
     },
 
+    //TODO
+    clearConnection: function() {
+        if(this.socketConnection) this.socketConnection = null;
+    },
+
+    //TODO
+    doDisconnect: function(){
+        //TODO
+        if(this.socketConnection){
+            this.socketConnection.disconnect();
+        }
+    },
+
+    //TODO
+    doClose: function() {
+        //
+        //
+        this.closed = true;
+    },
+
     /**
      * @private
      */
@@ -236,8 +253,8 @@ var CallConnection = Class.extend(EventDispatcher, {
      * @protected
      */
     doInitialize: function() {
-        console.log("**********************************************************************");
         console.log("CallConnection#doInitialize");
+        console.log("socketConnection:", socketConnection);
         this.socketConnection.addEventListener(SocketIoConnection.EventTypes.DISCONNECT, this.hearDisconnect, this);
         this.socketConnection.addEventListener("callRequest",   this.hearCallRequest,   this);
         this.socketConnection.addEventListener("callResponse",  this.hearCallResponse,  this);

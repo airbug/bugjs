@@ -62,13 +62,13 @@ var DualMap = Class.extend(Obj, {
          * @private
          * @type {HashTable}
          */
-        this.keyValueHashTable = new HashTable();
+        this.keyValueHashTable              = new HashTable();
 
         /**
          * @private
          * @type {HashTable}
          */
-        this.valueKeyCollectionHashTable = new HashTable();
+        this.valueKeyCollectionHashTable    = new HashTable();
     },
 
 
@@ -106,8 +106,8 @@ var DualMap = Class.extend(Obj, {
      *
      */
     clear: function() {
-        this.keyValueHashTable = new HashTable();
-        this.valueKeyCollectionHashTable = new HashTable();
+        this.keyValueHashTable              = new HashTable();
+        this.valueKeyCollectionHashTable    = new HashTable();
     },
 
     /**

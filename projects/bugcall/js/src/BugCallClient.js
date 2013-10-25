@@ -131,15 +131,31 @@ var BugCallClient = Class.extend(EventDispatcher, {
     },
 
     /**
+     *
+     */
+    createConnection: function(querystring) {
+        console.log("BugCallClient opening connection");
+        this.callClient.openConnection(querystring);
+    },
+
+    /**
+     *
+     */
+    destroyConnection: function() {
+        this.callClient.destroyConnection();
+    },
+
+    /**
      * @param {*} data
      */
-    openConnection: function(data) {
-        if (!this.callClient.isConnected() && !this.callClient.isConnecting()) {
-            this.doOpenConnection(data);
-        } else {
-            throw new Error("BugCallClient is already connected");
-        }
-    },
+    // openConnection: function(data) {
+    //     console.log("Inside BugCallClient#openConnection")
+    //     if (!this.callClient.isConnected() && !this.callClient.isConnecting()) {
+    //         this.doOpenConnection(data);
+    //     } else {
+    //         throw new Error("BugCallClient is already connected");
+    //     }
+    // },
 
     /**
      * @param {string} requestType
@@ -148,6 +164,8 @@ var BugCallClient = Class.extend(EventDispatcher, {
      */
     request: function(requestType, requestData, requestCallback) {
         var callRequest = this.callManager.request(requestType, requestData);
+        console.log("Inside BugCallClient#request");
+        console.log("requestType:", requestType, "requestData", requestData);
         var callResponseHandler = new CallResponseHandler(requestCallback);
         this.callManager.sendRequest(callRequest, callResponseHandler);
     },

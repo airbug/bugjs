@@ -126,6 +126,7 @@ var Handshaker = Class.extend(Obj, {
                 flow.complete(error);
             });
         }).execute(function(error) {
+            console.log("Finished shaking");
             callback(error, !authorizations.contains(false));
         });
     }

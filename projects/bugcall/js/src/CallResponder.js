@@ -51,13 +51,13 @@ var CallResponder = Class.extend(Obj, {
          * @private
          * @type {CallManager}
          */
-        this.callManager = callManager;
+        this.callManager        = callManager;
 
         /**
          * @private
          * @type {IncomingRequest}
          */
-        this.incomingRequest = incomingRequest;
+        this.incomingRequest    = incomingRequest;
     },
 
 
@@ -71,6 +71,7 @@ var CallResponder = Class.extend(Obj, {
      * @return {CallResponse}
      */
     response: function(responseType, responseData) {
+        console.log("Inside CallResponder#response");
         return new CallResponse(responseType, responseData, this.incomingRequest.getUuid());
     },
 
