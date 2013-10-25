@@ -9,6 +9,7 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('Proxy')
+//@Require('StackTraceUtil')
 //@Require('StringUtil')
 //@Require('Tree')
 //@Require('TreeNode')
@@ -18,19 +19,20 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =         bugpack.require('Class');
-var Obj =           bugpack.require('Obj');
-var Proxy =         bugpack.require('Proxy');
-var StringUtil =    bugpack.require('StringUtil');
-var Tree =          bugpack.require('Tree');
-var TreeNode =      bugpack.require('TreeNode');
+var Class               = bugpack.require('Class');
+var Obj                 = bugpack.require('Obj');
+var Proxy               = bugpack.require('Proxy');
+var StackTraceUtil      = bugpack.require('StackTraceUtil');
+var StringUtil          = bugpack.require('StringUtil');
+var Tree                = bugpack.require('Tree');
+var TreeNode            = bugpack.require('TreeNode');
 
 
 //-------------------------------------------------------------------------------
@@ -109,7 +111,7 @@ var BugTrace = Class.extend(Obj, {
         if (!error.bugTraced) {
             error.bugTraced = true;
             if (!error.stack) {
-                error.stack = this.generateStackTrace();
+                error.stack = StackTraceUtil.generateStackTrace();
             }
     
             var currentStack = error.stack.split("\n");
@@ -140,7 +142,7 @@ var BugTrace = Class.extend(Obj, {
      */
     $trace: function(callback) {
         var _this = this;
-        var stack = this.generateStackTrace();
+        var stack = StackTraceUtil.generateStackTrace();
         var newNode = this.addTraceNode(stack);
 
         if (callback.aCallback) {
@@ -169,7 +171,7 @@ var BugTrace = Class.extend(Obj, {
     $traceWithError: function(callback) {
     
         var _this = this;
-        var stack = this.generateStackTrace();
+        var stack = StackTraceUtil.generateStackTrace();
         var newNode = this.addTraceNode(stack);
 
         if (callback.aCallback) {
@@ -244,72 +246,6 @@ var BugTrace = Class.extend(Obj, {
         } catch (e) {
             return e;
         }
-    },
-
-    /**
-     * Open source code taken from http://www.eriwen.com/javascript/js-stack-trace/
-     * @private
-     * @return {Array.<string>}
-     */
-    generateStackTrace: function() {
-        var callstack = [];
-        var isCallstackPopulated = false;
-        var error = new Error();
-        if (error.stack) { //Firefox & nodejs
-            callstack = error.stack.split('\n');
-            callstack.shift();
-            isCallstackPopulated = true;
-        } else if (window.opera && error.message) { //Opera
-            var lines = error.message.split('\n');
-            for (var i = 0, len = lines.length; i < len; i++) {
-                if (lines[i].match(/^\s*[A-Za-z0-9\-_\$]+\(/)) {
-                    var entry = lines[i];
-                    //Append next line also since it has the file info
-                    if (lines[i+1]) {
-                        entry += ' at ' + lines[i+1];
-                        i++;
-                    }
-                    callstack.push(entry);
-                }
-            }
-            //Remove call to printStackTrace()
-            callstack.shift();
-            isCallstackPopulated = true;
-        } else {
-            var exception = this.createException();
-            if (exception.stack) {
-                callstack = exception.stack.split('\n');
-                callstack.shift();
-                callstack.shift();
-                isCallstackPopulated = true;
-            }
-        }
-        if (!isCallstackPopulated) { //IE
-            callstack = this.generateStackFromCaller();
-        }
-        return callstack.join("\n");
-    },
-
-    /**
-     * @private
-     * @return {Array.<string>}
-     */
-    generateStackFromCaller: function() {
-        var callstack = [];
-        try {
-            var currentFunction = arguments.callee.caller;
-            while (currentFunction) {
-                var fn = currentFunction.toString();
-                var fname = fn.substring(0, fn.indexOf("{")) || 'anonymous';
-                fname = StringUtil.trim(fname);
-                callstack.push(fname);
-                currentFunction = currentFunction.caller;
-            }
-        } catch(error) {
-            //TODO BRN: Verify this error is from strict mode
-            console.log("Cannot create strack trace in strict mode");
-        }
-        return callstack;
     }
 });
 

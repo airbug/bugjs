@@ -7,6 +7,7 @@
 //@Require('Class')
 //@Require('IObjectable')
 //@Require('Obj')
+//@Require('StackTraceUtil')
 
 
 //-------------------------------------------------------------------------------
@@ -23,6 +24,7 @@ var bugpack         = require('bugpack').context();
 var Class           = bugpack.require('Class');
 var IObjectable     = bugpack.require('IObjectable');
 var Obj             = bugpack.require('Obj');
+var StackTraceUtil  = bugpack.require('StackTraceUtil');
 
 
 //-------------------------------------------------------------------------------
@@ -55,25 +57,39 @@ var Throwable = Class.extend(Obj, {
          * @private
          * @type {Array.<Throwable>}
          */
-        this.causes     = causes ? causes : [];
+        this.causes             = causes ? causes : [];
 
         /**
          * @private
          * @type {*}
          */
-        this.data       = data;
+        this.data               = data;
 
         /**
          * @private
          * @type {string}
          */
-        this.message    = message;
+        this.message            = message;
 
         /**
          * @private
          * @type {string}
          */
-        this.type       = type;
+        this.primaryStack       = undefined;
+
+        /**
+         * @private
+         * @type {string}
+         */
+        this.stack              = undefined;
+
+        /**
+         * @private
+         * @type {string}
+         */
+        this.type               = type;
+
+        this.buildStackTrace();
     },
 
 
@@ -119,6 +135,13 @@ var Throwable = Class.extend(Obj, {
     /**
      * @return {string}
      */
+    getStack: function() {
+        return this.stack;
+    },
+
+    /**
+     * @return {string}
+     */
     getType: function() {
         return this.type;
     },
@@ -150,6 +173,31 @@ var Throwable = Class.extend(Obj, {
      */
     addCause: function(cause) {
         this.causes.push(cause);
+        this.buildStackTrace();
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Private Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     */
+    buildStackTrace: function() {
+        var _this = this;
+        if (this.primaryStack) {
+            this.primaryStack = StackTraceUtil.generateStackTrace();
+        }
+        var stack = this.primaryStack;
+        stack += "\n\n";
+        stack += this.type + " was caused by " + this.causes.length + " exceptions:\n";
+        var count = 0;
+        this.causes.forEach(function(cause) {
+            count++;
+            stack += _this.type + " cause " + count + ":\n";
+        });
+        this.stack = stack;
     }
 });
 
