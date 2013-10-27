@@ -38,8 +38,9 @@ var ParallelException = Class.extend(Exception, {
     /**
      *
      */
-    _constructor: function(causes) {
-        this._super("ParallelException", {}, "", causes);
+    _constructor: function(type, data, message, causes) {
+        type = type ? type : "ParallelException";
+        this._super(type, data, message, causes);
     }
 });
 

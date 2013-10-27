@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('Map')
+//@Require('StackTraceUtil')
 //@Require('bugflow.ParallelException')
 
 
@@ -24,6 +25,7 @@ var bugpack             = require('bugpack').context();
 
 var Class               = bugpack.require('Class');
 var Map                 = bugpack.require('Map');
+var StackTraceUtil      = bugpack.require('StackTraceUtil');
 var ParallelException   = bugpack.require('bugflow.ParallelException');
 
 
@@ -40,13 +42,10 @@ var MappedParallelException = Class.extend(ParallelException, {
     /**
      *
      */
-    _constructor: function() {
-
-        this._super("MappedParallelException", {}, "");
-
+    _constructor: function(type, data, message) {
 
         //-------------------------------------------------------------------------------
-        // Public Properties
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**
@@ -54,6 +53,9 @@ var MappedParallelException = Class.extend(ParallelException, {
          * @type {Map.<*, Throwable>}
          */
         this.causeMap   = new Map();
+
+        type = type ? type : "MappedParallelException";
+        this._super(type, data, message);
     },
 
 
@@ -106,6 +108,33 @@ var MappedParallelException = Class.extend(ParallelException, {
      */
     putCause: function(key, throwable) {
         this.causeMap.put(key, throwable);
+        this.buildStackTrace();
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Private Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @override
+     * @private
+     */
+    buildStackTrace: function() {
+        var _this = this;
+        if (this.primaryStack) {
+            this.primaryStack = StackTraceUtil.generateStackTrace();
+        }
+        var stack = this.primaryStack;
+        stack += "\n\n";
+        stack += this.type + " was caused by " + this.causeMap.getCount() + " exceptions:\n";
+        var count = 0;
+        this.causeMap.forEach(function(cause, key) {
+            count++;
+            stack += _this.type + " cause mapped to '" + key + "':\n";
+            stack += cause.stack;
+        });
+        this.stack = stack;
     }
 });
 

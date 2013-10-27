@@ -205,6 +205,7 @@ var Throwable = Class.extend(Obj, {
         this.causes.forEach(function(cause) {
             count++;
             stack += _this.type + " cause " + count + ":\n";
+            stack += cause.stack;
         });
         this.stack = stack;
     }
