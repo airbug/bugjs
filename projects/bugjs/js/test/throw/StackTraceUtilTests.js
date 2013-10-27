@@ -5,8 +5,8 @@
 //@TestFile
 
 //@Require('Class')
+//@Require('StackTraceUtil')
 //@Require('bugmeta.BugMeta')
-//@Require('bugtrace.BugTrace')
 //@Require('bugunit-annotate.TestAnnotation')
 
 
@@ -22,8 +22,8 @@ var bugpack         = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
+var StackTraceUtil  = bugpack.require('StackTraceUtil');
 var BugMeta         = bugpack.require('bugmeta.BugMeta');
-var BugTrace        = bugpack.require('bugtrace.BugTrace');
 var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 
 
@@ -42,13 +42,15 @@ var test            = TestAnnotation.test;
 /**
  *
  */
-var createExceptionTest = {
+var generateStackFromCallerTest = {
+
+    async: true,
 
     // Setup Test
     //-------------------------------------------------------------------------------
 
     setup: function() {
-        this.bugTrace = new BugTrace();
+
     },
 
 
@@ -56,12 +58,23 @@ var createExceptionTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
+        function testFunction() {
+            var stackTraceArray = StackTraceUtil.generateStackFromCaller();
+            console.log("stackTraceArray:", stackTraceArray);
 
-        var error = this.bugTrace.createException();
-        var isError = error instanceof Error;
-        test.assertTrue(isError, "Assert createException returns an error");
+            test.assertEqual(stackTraceArray[0], "function testFunction()",
+                "Assert that the 0 index function is 'testFunction'");
+            test.assertEqual(stackTraceArray[1], "function ()",
+                "Assert that the 1 index function is anonymous function");
+            test.assertEqual(stackTraceArray[2], "function listOnTimeout()",
+                "Assert that the 2 index function is 'listOnTimeout'");
+        }
+        setTimeout(function() {
+            testFunction();
+            test.complete();
+        }, 0);
     }
 };
-bugmeta.annotate(createExceptionTest).with(
-    test().name("BugTrace: createException test")
+bugmeta.annotate(generateStackFromCallerTest).with(
+    test().name("Generate stack trace from caller test")
 );
