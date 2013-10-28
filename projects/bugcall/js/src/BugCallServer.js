@@ -116,7 +116,6 @@ var BugCallServer = Class.extend(EventDispatcher, {
      */
     getCallManagerForCallUuid: function(callUuid) {
         console.log("Inside BugCallServer#getCallManagerForCallUuid");
-        console.log("callUuidToCallManagerMap:", this.callUuidToCallManagerMap);
         return this.callUuidToCallManagerMap.get(callUuid);
     },
 
@@ -126,7 +125,6 @@ var BugCallServer = Class.extend(EventDispatcher, {
      */
     getCallManagerSetForSessionSid: function(sessionSid){
         console.log("Inside BugCallServer#getCallManagerSetForSessionSid");
-        console.log("sessionSidToCallManagerSetMap:", this.sessionSidToCallManagerSetMap);
         return this.sessionSidToCallManagerSetMap.get(sessionSid);
     },
 
@@ -188,7 +186,6 @@ var BugCallServer = Class.extend(EventDispatcher, {
      * @return {CallManager}
      */
     createCallManager: function(callConnection, callUuid) {
-        //NOTE: SUNG BUGBUG? callManager should also be passed in a callConnection. Fixed!!!
         var callManager = new CallManager(callConnection, callUuid);
         this.callUuidToCallManagerMap.put(callUuid, callManager);
         callManager.addEventListener(CallManagerEvent.INCOMING_REQUEST, this.hearCallManagerIncomingRequest, this);
@@ -236,6 +233,7 @@ var BugCallServer = Class.extend(EventDispatcher, {
      * @param {CallConnection} callConnection
      */
     handleConnectionEstablished: function(callConnection) {
+        console.log("Inside BugCallServer#handleConnectionEstablished");
         //TODO BRN: This is where we will use the callConnection's handshake data to look up a previous CallManager
         // that belonged to the same connection id. If it doesn't exist, then we create a new CallManager
 
@@ -246,6 +244,7 @@ var BugCallServer = Class.extend(EventDispatcher, {
         var callManagerSet  = this.sessionSidToCallManagerSetMap.get(sessionSid);
 
         if (!callManager) {
+            console.log("Inside BugCallServer#handleConnectionEstablished creating CallManager");
             callManager = this.createCallManager(callConnection, callUuid);
         }
         this.callConnectionToCallManagerMap.put(callConnection, callManager);
@@ -257,8 +256,6 @@ var BugCallServer = Class.extend(EventDispatcher, {
         }
 
         callManager.openCall(callConnection);
-        console.log("Dispatching CallEvent.OPEN");
-        this.dispatchEvent(CallEvent.OPEN, {callManager: callManager});
     },
 
     /**
@@ -270,8 +267,6 @@ var BugCallServer = Class.extend(EventDispatcher, {
         //TODO BRN: For now we assume that there is no way to reconnect for this Call
 
         var callManager = this.callConnectionToCallManagerMap.get(callConnection);
-        console.log("Dispatching CallEvent.CLOSED");
-        this.dispatchEvent(CallEvent.CLOSED, {callManager: callManager});
         this.removeCallManager(callManager);
         this.callConnectionToCallManagerMap.remove(callConnection);
         callManager.failCall();

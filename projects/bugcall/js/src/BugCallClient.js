@@ -131,11 +131,11 @@ var BugCallClient = Class.extend(EventDispatcher, {
     },
 
     /**
-     *
+     * @param {string} querystring
      */
     createConnection: function(querystring) {
         console.log("BugCallClient opening connection");
-        this.callClient.openConnection(querystring);
+        this.doOpenConnection(querystring);
     },
 
     /**

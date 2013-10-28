@@ -254,7 +254,6 @@ var CallConnection = Class.extend(EventDispatcher, {
      */
     doInitialize: function() {
         console.log("CallConnection#doInitialize");
-        console.log("socketConnection:", socketConnection);
         this.socketConnection.addEventListener(SocketIoConnection.EventTypes.DISCONNECT, this.hearDisconnect, this);
         this.socketConnection.addEventListener("callRequest",   this.hearCallRequest,   this);
         this.socketConnection.addEventListener("callResponse",  this.hearCallResponse,  this);

@@ -65,8 +65,8 @@ var Entity = Class.extend(Obj, {
          * @type {DeltaDocument}
          */
         this.deltaDocument          = new DeltaDocument(data);
-    },
 
+    },
 
     //-------------------------------------------------------------------------------
     // Getters and Setters
@@ -97,14 +97,23 @@ var Entity = Class.extend(Obj, {
      * @return {string}
      */
     getId: function() {
-        return this.deltaDocument.getData().id;
+        var data = this.deltaDocument.getData();
+        if(data.id){
+            return data.id;
+        } else if (data._id){
+            return data._id;
+        } else {
+            return undefined;
+        }
     },
 
     /**
      * @param {string} id
      */
     setId: function(id) {
-        this.deltaDocument.getData().id = id;
+        var data    = this.deltaDocument.getData();
+        data.id     = id;
+        data._id    = id;
     },
 
     /**

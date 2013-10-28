@@ -87,6 +87,7 @@ var SocketIoManager = Class.extend(EventDispatcher, {
      * @private
      */
     initialize: function() {
+        console.log("Inside SocketIoManager#initialize");
         var _this = this;
         this.ioManager.on("connection", function(socket) {
             console.log("Inside SocketIoManager ioManager.on 'connection' callback");
@@ -95,6 +96,7 @@ var SocketIoManager = Class.extend(EventDispatcher, {
             console.log("socketConnection:");
             if(socketConnection) console.log("true");
             if(!socketConnection) console.log("false");
+
 
             _this.dispatchEvent(new Event(SocketIoManager.EventTypes.CONNECTION, {
                 socketConnection: socketConnection

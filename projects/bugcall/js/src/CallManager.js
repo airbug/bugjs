@@ -176,6 +176,7 @@ var CallManager = Class.extend(EventDispatcher, {
         console.log("Inside CallManager#sendOutgoingRequest");
         console.log("OutgoingRequest:", outgoingRequest);
         console.log("Has connection?:", this.hasConnection());
+        if(this.callConnection) console.log("Yes it has a callconnection");
         if (!this.outgoingRequestMap.containsValue(outgoingRequest)) {
             this.outgoingRequestMap.put(outgoingRequest.getUuid(), outgoingRequest);
             if (this.hasConnection()) {
@@ -247,7 +248,7 @@ var CallManager = Class.extend(EventDispatcher, {
      *
      */
     initializeConnection: function(){
-        console.log("CallManager initializing");
+        console.log("CallManager#initializeConnection");
         if(this.hasConnection()){
             this.callConnection.addEventListener(CallConnection.EventTypes.REQUEST,     this.hearCallConnectionRequest, this);
             this.callConnection.addEventListener(CallConnection.EventTypes.RESPONSE,    this.hearCallConnectionResponse, this);
@@ -306,7 +307,8 @@ var CallManager = Class.extend(EventDispatcher, {
      * @param {CallConnection} callConnection
      */
     openCall: function(callConnection) {
-        this.updateConnection(callConnection);
+        console.log("Inside CallManager#openCall");
+        // this.updateConnection(callConnection);
         this.dispatchCallOpened();
     },
 
@@ -342,6 +344,7 @@ var CallManager = Class.extend(EventDispatcher, {
      * @param {boolean} failed
      */
     dispatchCallClosed: function(failed) {
+        console.log("Dispatching CallEvent.CLOSED");
         this.dispatchEvent(new CallEvent(CallEvent.CLOSED, {
             callManager: this,
             failed: failed
@@ -352,6 +355,7 @@ var CallManager = Class.extend(EventDispatcher, {
      * @private
      */
     dispatchCallOpened: function() {
+        console.log("Dispatching CallEvent.OPENED");
         this.dispatchEvent(new CallEvent(CallEvent.OPENED, {
             callManager: this
         }));
