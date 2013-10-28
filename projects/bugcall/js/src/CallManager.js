@@ -308,7 +308,7 @@ var CallManager = Class.extend(EventDispatcher, {
      */
     openCall: function(callConnection) {
         console.log("Inside CallManager#openCall");
-        // this.updateConnection(callConnection);
+        this.updateConnection(callConnection);
         this.dispatchCallOpened();
     },
 
