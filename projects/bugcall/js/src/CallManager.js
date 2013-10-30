@@ -57,7 +57,10 @@ var CallManager = Class.extend(EventDispatcher, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(callConnection, callUuid) {
+    /**
+     * @param {?string} callUuid
+     */
+    _constructor: function(callUuid) {
 
         this._super();
 
@@ -69,7 +72,7 @@ var CallManager = Class.extend(EventDispatcher, {
          * @private
          * @type {CallConnection}
          */
-        this.callConnection                     = callConnection;
+        this.callConnection                     = null;
 
         /**
          * @private

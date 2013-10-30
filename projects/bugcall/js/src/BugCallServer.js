@@ -185,8 +185,8 @@ var BugCallServer = Class.extend(EventDispatcher, {
      * @param {string} callUuid
      * @return {CallManager}
      */
-    createCallManager: function(callConnection, callUuid) {
-        var callManager = new CallManager(callConnection, callUuid);
+    createCallManager: function(callUuid) {
+        var callManager = new CallManager(callUuid);
         this.callUuidToCallManagerMap.put(callUuid, callManager);
         callManager.addEventListener(CallManagerEvent.INCOMING_REQUEST, this.hearCallManagerIncomingRequest, this);
         callManager.addEventPropagator(this);
@@ -238,14 +238,14 @@ var BugCallServer = Class.extend(EventDispatcher, {
         // that belonged to the same connection id. If it doesn't exist, then we create a new CallManager
 
         var handshake       = callConnection.getHandshake();
-        var callUuid        = callConnection.getHandshake().query.callUuid;
+        var callUuid        = callConnection.getHandshake().query.callUuid; //NOTE this is where the callUuid from the query is used
         var callManager     = this.getCallManagerForCallUuid(callUuid);
         var sessionSid      = handshake.session.sid;
         var callManagerSet  = this.sessionSidToCallManagerSetMap.get(sessionSid);
 
         if (!callManager) {
             console.log("Inside BugCallServer#handleConnectionEstablished creating CallManager");
-            callManager = this.createCallManager(callConnection, callUuid);
+            callManager = this.createCallManager(callUuid);
         }
         this.callConnectionToCallManagerMap.put(callConnection, callManager);
 
