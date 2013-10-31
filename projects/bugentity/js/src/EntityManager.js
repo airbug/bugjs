@@ -16,6 +16,7 @@
 //@Require('bugdelta.SetChange')
 //@Require('bugflow.BugFlow')
 //@Require('bugioc.IInitializeModule')
+//@Require('mongo.MongoUpdateChanges')
 
 
 //-------------------------------------------------------------------------------
@@ -39,6 +40,7 @@ var ObjectChange            = bugpack.require('bugdelta.ObjectChange');
 var SetChange               = bugpack.require('bugdelta.SetChange');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
 var IInitializeModule       = bugpack.require('bugioc.IInitializeModule');
+var MongoUpdateChanges      = bugpack.require('mongo.MongoUpdateChanges');
 
 
 //-------------------------------------------------------------------------------
@@ -283,17 +285,15 @@ var EntityManager = Class.extend(Obj, {
      * @param {function(Throwable, Entity)} callback
      */
     update: function(entity, options, callback){
-        var dataStore   = this.dataStore;
-        var delta       = entity.generateDelta();
-        var id          = entity.getId();
-        var updates     = {
-            $set: {},
-            $unset: {},
-            $addToSet: {},
-            $pull: {}
-        };
+        var dataStore       = this.dataStore;
+        var delta           = entity.generateDelta();
+        var id              = entity.getId();
+        var updateChanges   = new MongoUpdateChanges();
 
         if (TypeUtil.isFunction(options)) {
+            //TEST
+            console.log("options is a function!");
+
             callback = options;
             options  = {
                 unsetters: entity.toObject()
@@ -308,51 +308,57 @@ var EntityManager = Class.extend(Obj, {
             switch (deltaChange.getChangeType()) {
                 case DeltaDocumentChange.ChangeTypes.DATA_SET:
                     var setters            = deltaChange.getData();
-                    for(var opt in options.unsetters){
-                        updates.$unset[opt] = "";
+                    for(var opt in setters) {
+                        updateChanges.putSetChange(opt, setters[opt]);
                     }
-                    for(var opt in setters){
-                        updates.$set[opt] = setters[opt];
+                    for(var opt in options.unsetters) {
+                        if (!updateChanges.containsSetChange(opt)) {
+                            updateChanges.addUnsetChange(opt);
+                        }
                     }
                     break;
                 case ObjectChange.ChangeTypes.PROPERTY_REMOVED:
-                    var propertyName    = deltaChange.getPropertyName();
-                    updates.$unset[propertyName] = "";
+                    var key = "";
+                    if (deltaChange.getPath()) {
+                        key += path + ".";
+                    }
+                    key += deltaChange.getPropertyName();
+                    updateChanges.addUnsetChange(key);
                     break;
                 case ObjectChange.ChangeTypes.PROPERTY_SET:
-                    var propertyName    = deltaChange.getPropertyName();
+                    var key = "";
+                    if (deltaChange.getPath()) {
+                        key += path + ".";
+                    }
+                    key += deltaChange.getPropertyName();
                     var propertyValue   = deltaChange.getPropertyValue();
-                    updates.$set[propertyName] = propertyValue;
+                    updateChanges.putSetChange(key, propertyValue);
                     break;
                 case SetChange.ChangeTypes.ADDED_TO_SET:
                     var path            = deltaChange.getPath(); //TODO Parse Path
                     var setValue        = deltaChange.getSetValue();
-                    if(updates.$addToSet[path]){
-                        updates.$addToSet[path].$each.push(setValue);
-                    } else {
-                        updates.$addToSet[path] = {$each: [setValue]};
-                    }
+                    updateChanges.putAddToSetChange(path, setValue);
                     break;
                 case SetChange.ChangeTypes.REMOVED_FROM_SET:
                     var path            = deltaChange.getPath(); //TODO Parse Path
                     var setValue        = deltaChange.getSetValue();
-                    if(updates.$pull[path]){
-                        updates.$pull[path].$each.push(setValue);
-                    } else {
-                        updates.$pull[path] = {$each: [setValue]};
-                    }
+                    updateChanges.putPullChange(path, setValue);
                     break;
             }
         });
 
+        var updateObject = updateChanges.buildUpdateObject();
         //TEST
-        console.log("EntityManager update - id:", id, " updates:", updates);
+        console.log("EntityManager update - id:", id, " updateObject:", updateObject);
 
-        dataStore.findByIdAndUpdate(id, updates, function(error, dbObject) {
-            if (!error) {
-                callback(null, entity);
+        dataStore.findByIdAndUpdate(id, updateObject, function(throwable, dbObject) {
+            //TEST
+            console.log("findByIdAndUpdate COMPLETE - throwable:", throwable, " dbObject:", dbObject);
+
+            if (!throwable) {
+                callback(undefined, entity);
             } else {
-                callback(error, entity);
+                callback(throwable, entity);
             }
         });
     },
@@ -398,7 +404,7 @@ var EntityManager = Class.extend(Obj, {
                 });
                 callback(undefined, newMap);
             } else {
-                callback(throwable, null);
+                callback(throwable);
             }
         });
     },

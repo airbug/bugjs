@@ -64,7 +64,7 @@ var Entity = Class.extend(Obj, {
          * @private
          * @type {DeltaDocument}
          */
-        this.deltaDocument          = new DeltaDocument(data);
+        this.deltaDocument          = new DeltaDocument(data || {});
 
     },
 
@@ -98,9 +98,9 @@ var Entity = Class.extend(Obj, {
      */
     getId: function() {
         var data = this.deltaDocument.getData();
-        if(data.id){
+        if (data.id) {
             return data.id;
-        } else if (data._id){
+        } else if (data._id) {
             return data._id;
         } else {
             return undefined;
@@ -112,8 +112,12 @@ var Entity = Class.extend(Obj, {
      */
     setId: function(id) {
         var data    = this.deltaDocument.getData();
-        data.id     = id;
-        data._id    = id;
+        if (!data.id && !data._id) {
+            data.id     = id;
+            data._id    = id;
+        } else {
+            throw new Error("id is already set! Cannot change id after it's been set.");
+        }
     },
 
     /**
