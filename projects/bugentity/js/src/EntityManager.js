@@ -286,9 +286,7 @@ var EntityManager = Class.extend(Obj, {
      */
     update: function(entity, options, callback){
         var dataStore       = this.dataStore;
-        var delta           = entity.generateDelta();
         var id              = entity.getId();
-        var updateChanges   = new MongoUpdateChanges();
 
         if (TypeUtil.isFunction(options)) {
             //TEST
@@ -304,50 +302,7 @@ var EntityManager = Class.extend(Obj, {
             delete options.unsetters.updatedAt;
         }
 
-        delta.getDeltaChangeList().forEach(function(deltaChange) {
-            switch (deltaChange.getChangeType()) {
-                case DeltaDocumentChange.ChangeTypes.DATA_SET:
-                    var setters            = deltaChange.getData();
-                    for(var opt in setters) {
-                        updateChanges.putSetChange(opt, setters[opt]);
-                    }
-                    for(var opt in options.unsetters) {
-                        if (!updateChanges.containsSetChange(opt)) {
-                            updateChanges.addUnsetChange(opt);
-                        }
-                    }
-                    break;
-                case ObjectChange.ChangeTypes.PROPERTY_REMOVED:
-                    var key = "";
-                    if (deltaChange.getPath()) {
-                        key += path + ".";
-                    }
-                    key += deltaChange.getPropertyName();
-                    updateChanges.addUnsetChange(key);
-                    break;
-                case ObjectChange.ChangeTypes.PROPERTY_SET:
-                    var key = "";
-                    if (deltaChange.getPath()) {
-                        key += path + ".";
-                    }
-                    key += deltaChange.getPropertyName();
-                    var propertyValue   = deltaChange.getPropertyValue();
-                    updateChanges.putSetChange(key, propertyValue);
-                    break;
-                case SetChange.ChangeTypes.ADDED_TO_SET:
-                    var path            = deltaChange.getPath(); //TODO Parse Path
-                    var setValue        = deltaChange.getSetValue();
-                    updateChanges.putAddToSetChange(path, setValue);
-                    break;
-                case SetChange.ChangeTypes.REMOVED_FROM_SET:
-                    var path            = deltaChange.getPath(); //TODO Parse Path
-                    var setValue        = deltaChange.getSetValue();
-                    updateChanges.putPullChange(path, setValue);
-                    break;
-            }
-        });
-
-        var updateObject = updateChanges.buildUpdateObject();
+        var updateObject = this.buildUpdateObject(entity, options);
         //TEST
         console.log("EntityManager update - id:", id, " updateObject:", updateObject);
 
@@ -421,6 +376,65 @@ var EntityManager = Class.extend(Obj, {
         this.dataStore = this.mongoDataStore.generateManager(this.entityType);
         this.entityManagerStore.registerEntityManager(this);
         callback();
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Private Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {Entity} entity
+     * @param {} options
+     */
+    buildUpdateObject: function(entity, options) {
+        var delta           = entity.generateDelta();
+        var updateChanges   = new MongoUpdateChanges();
+        delta.getDeltaChangeList().forEach(function(deltaChange) {
+            switch (deltaChange.getChangeType()) {
+                case DeltaDocumentChange.ChangeTypes.DATA_SET:
+                    var setters            = deltaChange.getData();
+                    for(var opt in setters) {
+                        updateChanges.putSetChange(opt, setters[opt]);
+                    }
+                    for(var opt in options.unsetters) {
+                        if (!updateChanges.containsSetChange(opt)) {
+                            updateChanges.addUnsetChange(opt);
+                        }
+                    }
+                    break;
+                case ObjectChange.ChangeTypes.PROPERTY_REMOVED:
+                    var key = "";
+                    if (deltaChange.getPath()) {
+                        key += deltaChange.getPath() + ".";
+                    }
+                    key += deltaChange.getPropertyName();
+                    updateChanges.addUnsetChange(key);
+                    break;
+                case ObjectChange.ChangeTypes.PROPERTY_SET:
+                    var key = "";
+                    if (deltaChange.getPath()) {
+                        key += deltaChange.getPath() + ".";
+                    }
+                    key += deltaChange.getPropertyName();
+                    var propertyValue   = deltaChange.getPropertyValue();
+                    updateChanges.putSetChange(key, propertyValue);
+                    break;
+                case SetChange.ChangeTypes.ADDED_TO_SET:
+                    var path            = deltaChange.getPath(); //TODO Parse Path
+                    var setValue        = deltaChange.getSetValue();
+                    updateChanges.putAddToSetChange(path, setValue);
+                    break;
+                case SetChange.ChangeTypes.REMOVED_FROM_SET:
+                    var path            = deltaChange.getPath(); //TODO Parse Path
+                    var setValue        = deltaChange.getSetValue();
+                    updateChanges.putPullChange(path, setValue);
+                    break;
+            }
+        });
+
+        return updateChanges.buildUpdateObject();
     }
 });
 
