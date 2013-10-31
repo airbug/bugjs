@@ -345,6 +345,9 @@ var EntityManager = Class.extend(Obj, {
             }
         });
 
+        //TEST
+        console.log("EntityManager update - id:", id, " updates:", updates);
+
         dataStore.findByIdAndUpdate(id, updates, function(error, dbObject) {
             if (!error) {
                 callback(null, entity);

@@ -38,7 +38,7 @@ var DeltaDocumentChange = Class.extend(DeltaChange, {
     /**
      *
      */
-    _constructor: function(changeType, path, previousData, data) {
+    _constructor: function(changeType, path, data, previousData) {
 
         this._super(changeType, path);
 
