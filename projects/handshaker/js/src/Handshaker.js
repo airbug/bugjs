@@ -7,6 +7,7 @@
 //@Export('Handshaker')
 
 //@Require('Class')
+//@Require('List')
 //@Require('Obj')
 //@Require('Set')
 //@Require('TypeUtil')
@@ -25,6 +26,7 @@ var bugpack             = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
+var List                = bugpack.require('List');
 var Obj                 = bugpack.require('Obj');
 var Set                 = bugpack.require('Set');
 var TypeUtil            = bugpack.require('TypeUtil');
@@ -119,7 +121,7 @@ var Handshaker = Class.extend(Obj, {
      * @param {function(error, authorized)} callback
      */
     shake: function(handshakeData, callback){
-        var authorizations = new Set();
+        var authorizations = new List();
         $iterableSeries(this.hands, function(flow, hand) {
             hand.shakeIt(handshakeData, function(error, authorized) {
                 authorizations.add(authorized);
