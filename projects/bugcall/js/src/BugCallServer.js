@@ -240,7 +240,7 @@ var BugCallServer = Class.extend(EventDispatcher, {
         var handshake       = callConnection.getHandshake();
         var callUuid        = callConnection.getHandshake().query.callUuid; //NOTE this is where the callUuid from the query is used
         var callManager     = this.getCallManagerForCallUuid(callUuid);
-        var sessionSid      = handshake.session.sid;
+        var sessionSid      = handshake.sessionId;
         var callManagerSet  = this.sessionSidToCallManagerSetMap.get(sessionSid);
 
         if (!callManager) {
