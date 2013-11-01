@@ -68,8 +68,8 @@ var BugCallRoute = Class.extend(Obj, {
      * @param {CallRequest} request
      * @param {CallResponder} responder
      */
-    fire: function(request, responder) {
-        this.listener(request, responder);
+    fire: function(request, responder, callback) {
+        this.listener(request, responder, callback);
     },
 
     /**
