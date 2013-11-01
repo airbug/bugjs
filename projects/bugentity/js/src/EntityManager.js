@@ -9,6 +9,7 @@
 //@Require('Class')
 //@Require('Map')
 //@Require('Obj')
+//@Require('Set')
 //@Require('StringUtil')
 //@Require('TypeUtil')
 //@Require('bugdelta.DeltaDocumentChange')
@@ -33,6 +34,7 @@ var bugpack                 = require('bugpack').context();
 var Class                   = bugpack.require('Class');
 var Map                     = bugpack.require('Map');
 var Obj                     = bugpack.require('Obj');
+var Set                     = bugpack.require('Set');
 var StringUtil              = bugpack.require('StringUtil');
 var TypeUtil                = bugpack.require('TypeUtil');
 var DeltaDocumentChange     = bugpack.require('bugdelta.DeltaDocumentChange');
@@ -180,7 +182,6 @@ var EntityManager = Class.extend(Obj, {
      *      propertySchemas: {
      *          *propertyName*: {
      *              idGetter:   function(),
-     *              idSetter:   function(),
      *              getter:     function(),
      *              setter:     function()
      *          }
@@ -206,44 +207,61 @@ var EntityManager = Class.extend(Obj, {
                     // console.log("schemaProperty.getPopulates():", schemaProperty.getPopulates());
                     // if (schemaProperty.getPopulates()) {
                         console.log("Inside schemaProperty.getPopulates() if");
-                        var getterProperty      = propertyOptions.getter.call(entity);
                         var manager             = undefined;
                         var retriever           = undefined;
                         console.log("right before switch statement");
                         switch (schemaProperty.getType()) {
                             case "Set":
                                 console.log("Inside Set case switch");
-                                var idSet               = propertyOptions.idGetter.call(entity);
-                                var getterEntitySet     = getterProperty;
-                                var lookupIdSet         = idSet.clone();
+                                var idData              = propertyOptions.idGetter.call(entity);
                                 manager                 = _this.entityManagerStore.getEntityManagerByEntityType(schemaProperty.getCollectionOf());
-                                retriever               = manager["retrieve" + schemaProperty.getCollectionOf()];
-
-                                var getterEntitySetClone = getterEntitySet.clone();
-                                getterEntitySetClone.forEach(function(getterEntity) {
-                                    if (idSet.contains(getterEntity.getId())) {
-                                        lookupIdSet.remove(getterEntity.getId());
-                                    } else {
-                                        getterEntitySet.remove(getterEntity);
-                                    }
-                                });
-
-                                $iterableParallel(lookupIdSet, function(flow, entityId) {
-                                    retriever.call(manager, entityId, function(throwable, retrievedEntity) {
-                                        if(throwable) console.log("Set retriever throwable:", throwable);
-                                        if (!throwable) {
-                                            getterEntitySet.add(retrievedEntity);
+                                if (propertyOptions.retriever) {
+                                    retriever = manager[propertyOptions.retriever];
+                                } else {
+                                    retriever = manager["retrieve" + schemaProperty.getCollectionOf()];
+                                }
+                                if (Class.doesExtend(idData, Set)) {
+                                    var getterEntitySet     = propertyOptions.getter.call(entity);
+                                    var lookupIdSet         = Obj.clone(idData);
+                                    var getterEntitySetClone = getterEntitySet.clone();
+                                    getterEntitySetClone.forEach(function(getterEntity) {
+                                        if (idData.contains(getterEntity.getId())) {
+                                            lookupIdSet.remove(getterEntity.getId());
+                                        } else {
+                                            getterEntitySet.remove(getterEntity);
                                         }
+                                    });
+
+                                    $iterableParallel(lookupIdSet, function(flow, entityId) {
+                                        retriever.call(manager, entityId, function(throwable, retrievedEntity) {
+                                            if(throwable) console.log("Set retriever throwable:", throwable);
+                                            if (!throwable) {
+                                                getterEntitySet.add(retrievedEntity);
+                                            }
+                                            flow.complete(throwable);
+                                        });
+                                    }).execute(function(throwable) {
                                         flow.complete(throwable);
                                     });
-                                }).execute(function(throwable) {
-                                    flow.complete(throwable);
-                                });
+                                } else {
+                                    var setter = propertyOptions.setter;
+                                    retriever.call(manager, idData, function(throwable, retrievedData) {
+                                        if (!throwable) {
+                                            setter.call(entity, retrievedData);
+                                        }
+                                        flow.complete(throwable)
+                                    });
+                                }
                                 break;
                             default:
-                                var getterId    = propertyOptions.idGetter.call(entity);
-                                manager         = _this.entityManagerStore.getEntityManagerByEntityType(schemaProperty.getType());
-                                retriever       = manager["retrieve" + schemaProperty.getType()];
+                                var getterProperty  = propertyOptions.getter.call(entity);
+                                var getterId        = propertyOptions.idGetter.call(entity);
+                                manager             = _this.entityManagerStore.getEntityManagerByEntityType(schemaProperty.getType());
+                                if (propertyOptions.retriever) {
+                                    retriever = manager[propertyOptions.retriever];
+                                } else {
+                                    retriever = manager["retrieve" + schemaProperty.getType()];
+                                }
                                 if (getterId) {
                                     if (!getterProperty || getterProperty.getId() !== getterId) {
                                         retriever.call(manager, getterId, function(throwable, retrievedEntity) {
