@@ -148,9 +148,9 @@ var CallConnection = Class.extend(EventDispatcher, {
     /**
      *
      */
-     disconnect: function() {
+    disconnect: function() {
         this.doDisconnect();
-     },
+    },
 
     /**
      * @param {CallRequest} callRequest
@@ -214,10 +214,12 @@ var CallConnection = Class.extend(EventDispatcher, {
         if(this.socketConnection) this.socketConnection = null;
     },
 
-    //TODO
-    doDisconnect: function(){
-        //TODO
-        if(this.socketConnection){
+    /**
+     * @private
+     */
+    doDisconnect: function() {
+        if (this.socketConnection) {
+            this.changeStateClosing();
             this.socketConnection.disconnect();
         }
     },

@@ -131,31 +131,15 @@ var BugCallClient = Class.extend(EventDispatcher, {
     },
 
     /**
-     * @param {string} querystring
-     */
-    createConnection: function(querystring) {
-        console.log("BugCallClient opening connection");
-        this.doOpenConnection(querystring);
-    },
-
-    /**
-     *
-     */
-    destroyConnection: function() {
-        this.callClient.destroyConnection();
-    },
-
-    /**
      * @param {*} data
      */
-    // openConnection: function(data) {
-    //     console.log("Inside BugCallClient#openConnection")
-    //     if (!this.callClient.isConnected() && !this.callClient.isConnecting()) {
-    //         this.doOpenConnection(data);
-    //     } else {
-    //         throw new Error("BugCallClient is already connected");
-    //     }
-    // },
+    openConnection: function(data) {
+        if (!this.callClient.isConnected() && !this.callClient.isConnecting()) {
+            this.doOpenConnection(data);
+        } else {
+            throw new Error("BugCallClient is already connected");
+        }
+    },
 
     /**
      * @param {string} requestType
@@ -174,6 +158,14 @@ var BugCallClient = Class.extend(EventDispatcher, {
     //-------------------------------------------------------------------------------
     // Private Methods
     //-------------------------------------------------------------------------------
+
+    /**
+     * @param {string} querystring
+     */
+    createConnection: function(querystring) {
+        console.log("BugCallClient opening connection");
+        this.doOpenConnection(querystring);
+    },
 
     /**
      * @private
