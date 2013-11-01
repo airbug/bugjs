@@ -127,6 +127,7 @@ var SocketIoClient = Class.extend(EventDispatcher, {
                 throw new Error("SocketIoClient already has a connection. Something went wrong!");
             }
         }
+        return this.socketConnection;
     },
 
     //TODO SUNG
