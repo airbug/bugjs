@@ -150,7 +150,7 @@ var EntityManager = Class.extend(Obj, {
                 entity.setId(dbObject.id);
                 callback(undefined, entity);
             } else {
-                callback(throwable, entity);
+                callback(throwable);
             }
         });
     },

@@ -132,6 +132,7 @@ var MappedParallelException = Class.extend(ParallelException, {
         this.causeMap.forEach(function(cause, key) {
             count++;
             stack += _this.type + " cause mapped to '" + key + "':\n";
+            stack += cause.message + "\n";
             stack += cause.stack;
         });
         this.stack = stack;
