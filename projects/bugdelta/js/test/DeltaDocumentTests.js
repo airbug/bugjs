@@ -45,6 +45,35 @@ var test = TestAnnotation.test;
 // Declare Tests
 //-------------------------------------------------------------------------------
 
+var deltaDocumentGetPathTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function(test){
+        this.dataObject     = {
+            test: {
+                propertyOne: "propertyOneValue",
+                nestedTest: {propertyTwo: "propertyTwoValue"}
+            }
+        };
+        this.deltaDocument  = new DeltaDocument(this.dataObject);
+    },
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test){
+        test.assertEqual(this.deltaDocument.getPath("test"), this.dataObject.test,
+            "Assert deltaDocument#getPath properly returns the value of a simple path");
+        test.assertEqual(this.deltaDocument.getPath("test.nestedTest"), this.dataObject.test.nestedTest,
+            "Assert deltaDocument#getPath properly returns the value of a complex path");
+    }
+};
+bugmeta.annotate(deltaDocumentGetPathTest).with(
+    test().name("DeltaDocument #getPath Test")
+);
+
 /**
  *
  */
