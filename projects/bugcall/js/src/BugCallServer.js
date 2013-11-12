@@ -95,13 +95,6 @@ var BugCallServer = Class.extend(EventDispatcher, {
          */
         this.requestProcessor               = requestProcessor;
 
-        //TODO BRN: This doesn't seem to be used. I think we can get rid of this map and track this relation else where
-        /**
-         * @private
-         * @type {Map.<string, Set.<CallManager>>}
-         */
-        this.sessionSidToCallManagerSetMap  = new Map();
-
         this.initialize();
     },
 
@@ -117,15 +110,6 @@ var BugCallServer = Class.extend(EventDispatcher, {
     getCallManagerForCallUuid: function(callUuid) {
         console.log("Inside BugCallServer#getCallManagerForCallUuid");
         return this.callUuidToCallManagerMap.get(callUuid);
-    },
-
-    /**
-     * @param {string} callUuid
-     * @return {Set.<CallManager>}
-     */
-    getCallManagerSetForSessionSid: function(sessionSid){
-        console.log("Inside BugCallServer#getCallManagerSetForSessionSid");
-        return this.sessionSidToCallManagerSetMap.get(sessionSid);
     },
 
     /**
@@ -181,16 +165,30 @@ var BugCallServer = Class.extend(EventDispatcher, {
 
     /**
      * @private
-     * @param {CallConnection} callConnection
+     * @param {CallManager} callManager
+     */
+    addCallManager: function(callManager) {
+        this.callUuidToCallManagerMap.put(callManager.getCallUuid(), callManager);
+        callManager.addEventListener(CallManagerEvent.INCOMING_REQUEST, this.hearCallManagerIncomingRequest, this);
+        callManager.addEventPropagator(this);
+    },
+
+    /**
+     * @private
      * @param {string} callUuid
      * @return {CallManager}
      */
     createCallManager: function(callUuid) {
-        var callManager = new CallManager(callUuid);
-        this.callUuidToCallManagerMap.put(callUuid, callManager);
-        callManager.addEventListener(CallManagerEvent.INCOMING_REQUEST, this.hearCallManagerIncomingRequest, this);
-        callManager.addEventPropagator(this);
-        return callManager;
+        return new CallManager(callUuid);
+    },
+
+    /**
+     * @private
+     * @param {CallConnection} callConnection
+     * @param {CallManager} callManager
+     */
+    mapCallConnectionToCallManager: function(callConnection, callManager) {
+        this.callConnectionToCallManagerMap.put(callConnection, callManager);
     },
 
     /**
@@ -221,11 +219,9 @@ var BugCallServer = Class.extend(EventDispatcher, {
     handleConnectionClosed: function(callConnection) {
         console.log("Inside BugCallServer#handleConnectionClosed");
         var callManager = this.callConnectionToCallManagerMap.get(callConnection);
-        console.log("Dispatching CallEvent.CLOSED");
-        this.dispatchEvent(CallEvent.CLOSED, {callManager: callManager});
+        callManager.closeCall();
         this.removeCallManager(callManager);
         this.callConnectionToCallManagerMap.remove(callConnection);
-        callManager.closeCall();
     },
 
     /**
@@ -237,24 +233,15 @@ var BugCallServer = Class.extend(EventDispatcher, {
         //TODO BRN: This is where we will use the callConnection's handshake data to look up a previous CallManager
         // that belonged to the same connection id. If it doesn't exist, then we create a new CallManager
 
-        var handshake       = callConnection.getHandshake();
+        /** @type {string}*/
         var callUuid        = callConnection.getHandshake().query.callUuid; //NOTE this is where the callUuid from the query is used
+        /** @type {CallManager} */
         var callManager     = this.getCallManagerForCallUuid(callUuid);
-        var sessionSid      = handshake.sessionId;
-        var callManagerSet  = this.sessionSidToCallManagerSetMap.get(sessionSid);
-
         if (!callManager) {
-            console.log("Inside BugCallServer#handleConnectionEstablished creating CallManager");
             callManager = this.createCallManager(callUuid);
+            this.addCallManager(callManager);
         }
-        this.callConnectionToCallManagerMap.put(callConnection, callManager);
-
-        if (callManagerSet) {
-            callManagerSet.add(callManager);
-        } else {
-            this.sessionSidToCallManagerSetMap.put(sessionSid, new Set([callManager]));
-        }
-
+        this.mapCallConnectionToCallManager(callConnection, callManager);
         callManager.openCall(callConnection);
     },
 
@@ -267,9 +254,9 @@ var BugCallServer = Class.extend(EventDispatcher, {
         //TODO BRN: For now we assume that there is no way to reconnect for this Call
 
         var callManager = this.callConnectionToCallManagerMap.get(callConnection);
+        callManager.failCall();
         this.removeCallManager(callManager);
         this.callConnectionToCallManagerMap.remove(callConnection);
-        callManager.failCall();
     },
 
     /**
