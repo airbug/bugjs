@@ -15,6 +15,7 @@
 
 //@Require('Class')
 //@Require('Collection')
+//@Require('Obj')
 
 
 //-------------------------------------------------------------------------------
@@ -28,8 +29,9 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =         bugpack.require('Class');
-var Collection =    bugpack.require('Collection');
+var Class           = bugpack.require('Class');
+var Collection      = bugpack.require('Collection');
+var Obj             = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
