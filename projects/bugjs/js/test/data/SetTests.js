@@ -43,6 +43,105 @@ var test            = TestAnnotation.test;
 
 /**
  * This tests
+ * 1) Instantiate a simple Set
+ */
+var setInstantiationTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.testSet = new Set();
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        test.assertTrue(this.testSet.isEmpty(),
+            "Assert that the Set is empty");
+        test.assertTrue(Class.doesExtend(this.testSet, Set),
+            "Assert that the testSet extends Set");
+    }
+};
+bugmeta.annotate(setInstantiationTest).with(
+    test().name("Set instantiation test")
+);
+
+/**
+ * This tests
+ * 1) creates a shallow clone of the Set
+ */
+var setShallowCloneTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.testSet = new Set();
+        this.testObject = {};
+        this.testSet.add(this.testObject);
+        this.testSetClone = this.testSet.clone();
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        test.assertTrue(this.testSet.contains(this.testObject),
+            "Assert that the Set contains the testObject");
+        test.assertTrue(this.testSetClone.contains(this.testObject),
+            "Assert that the cloned Set contains the testObject");
+    }
+};
+bugmeta.annotate(setShallowCloneTest).with(
+    test().name("Set shallow clone test")
+);
+
+/**
+ * This tests
+ * 1) creates a deep clone of the Set
+ */
+var setDeepCloneTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.testSet = new Set();
+        this.testObject = {
+            key: "value"
+        };
+        this.testSet.add(this.testObject);
+        this.testSetClone = this.testSet.clone(true);
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        var testObjectClone = this.testSetClone.toArray()[0];
+        test.assertTrue(this.testSet.contains(this.testObject),
+            "Assert that the Set contains the testObject");
+        test.assertFalse(this.testSet.contains(testObjectClone),
+            "Assert that the Set does not contain the cloned object");
+        test.assertTrue(this.testSetClone.contains(testObjectClone),
+            "Assert that the cloned Set contains the testObjectClone");
+        test.assertFalse(this.testSetClone.contains(this.testObject),
+            "Assert that the cloned Set contains the testObjectClone");
+        test.assertEqual(testObjectClone.key, "value",
+            "Assert that the cloned object has key:'value'");
+    }
+};
+bugmeta.annotate(setDeepCloneTest).with(
+    test().name("Set deep clone test")
+);
+
+/**
+ * This tests
  * 1) Adding as simple string to a set
  * 2) Adding a second simple string to a set
  */
