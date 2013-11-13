@@ -47,6 +47,8 @@ LiteralUtil.convertToLiteral = function(value) {
             literal = value.toObject();
         } else if (Class.doesImplement(value, IArrayable)) {
             literal = value.toArray();
+        } else if (Class.doesExtend(value, Date)) {
+            literal = value;
         } else {
             literal = {};
             Obj.forIn(value, function(propertyName, propertyValue) {

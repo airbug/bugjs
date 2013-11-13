@@ -7,6 +7,7 @@
 //@Export('EntityManager')
 
 //@Require('Class')
+//@Require('LiteralUtil')
 //@Require('Map')
 //@Require('Obj')
 //@Require('Set')
@@ -32,6 +33,7 @@ var bugpack                 = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                   = bugpack.require('Class');
+var LiteralUtil             = bugpack.require('LiteralUtil');
 var Map                     = bugpack.require('Map');
 var Obj                     = bugpack.require('Obj');
 var Set                     = bugpack.require('Set');
@@ -414,7 +416,7 @@ var EntityManager = Class.extend(Obj, {
                 case DeltaDocumentChange.ChangeTypes.DATA_SET:
                     var setters            = deltaChange.getData();
                     for(var opt in setters) {
-                        updateChanges.putSetChange(opt, setters[opt]);
+                        updateChanges.putSetChange(opt, LiteralUtil.convertToLiteral(setters[opt]));
                     }
                     for(var opt in options.unsetters) {
                         if (!updateChanges.containsSetChange(opt)) {
@@ -436,7 +438,7 @@ var EntityManager = Class.extend(Obj, {
                         key += deltaChange.getPath() + ".";
                     }
                     key += deltaChange.getPropertyName();
-                    var propertyValue   = deltaChange.getPropertyValue();
+                    var propertyValue   = LiteralUtil.convertToLiteral(deltaChange.getPropertyValue());
                     updateChanges.putSetChange(key, propertyValue);
                     break;
                 case SetChange.ChangeTypes.ADDED_TO_SET:
