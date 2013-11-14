@@ -14,6 +14,7 @@
 //@Require('Collection')
 //@Require('HashTable')
 //@Require('Obj')
+//@Require('TypeUtil')
 
 
 //-------------------------------------------------------------------------------
@@ -31,6 +32,7 @@ var Class           = bugpack.require('Class');
 var Collection      = bugpack.require('Collection');
 var HashTable       = bugpack.require('HashTable');
 var Obj             = bugpack.require('Obj');
+var TypeUtil        = bugpack.require('TypeUtil');
 
 
 //-------------------------------------------------------------------------------
@@ -203,6 +205,19 @@ var Map = Class.extend(Obj, {
      */
     remove: function(key) {
         return this.hashTable.remove(key);
+    },
+
+    toObject: function() {
+        var _this   = this;
+        var object  = {};
+        var keys    = this.getKeyArray();
+        keys.forEach(function(key){
+            if(!TypeUtil.isString(key) && key.toString){
+                key = key.toString(); //NOTE: These keys may not be unique.
+            }
+            object[key] = _this.get(key);
+        });
+        return object;
     }
 });
 
