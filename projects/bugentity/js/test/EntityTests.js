@@ -4,6 +4,7 @@
 
 //@TestFile
 
+//@Require('TypeUtil')
 //@Require('bugentity.Entity')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
@@ -21,6 +22,7 @@ var bugpack                 = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
+var TypeUtil                = bugpack.require('TypeUtil');
 var Entity                  = bugpack.require('bugentity.Entity');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
@@ -104,4 +106,44 @@ var entitySetIdTest = {
 };
 bugmeta.annotate(entitySetIdTest).with(
     test().name("Entity - #setId Test")
+);
+
+
+var entityGetIdTest = {
+
+    //-------------------------------------------------------------------------------
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function(test) {
+        var _this = this;
+        this.testObjectId = {
+            toString: function() {
+                return _this.testId;
+            }
+        };
+        this.testId     = "testId";
+        this.testEntity = new Entity();
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        var _this = this;
+        test.assertEqual(this.testEntity.getId(), undefined,
+            "Assert Entity.id is not set");
+        this.testEntity.setId(this.testObjectId);
+
+        var returnedId = this.testEntity.getId();
+        test.assertTrue(TypeUtil.isString(returnedId),
+            "Assert id was returned as a String type");
+        test.assertEqual(returnedId, this.testId,
+            "Assert the correct id was returned");
+    }
+};
+bugmeta.annotate(entityGetIdTest).with(
+    test().name("Entity - #getId Test")
 );
