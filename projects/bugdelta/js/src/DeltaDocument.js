@@ -138,6 +138,10 @@ var DeltaDocument = Class.extend(Obj, {
      */
     commitDelta: function() {
         this.previousDocument = this.clone(true);
+    },
+
+    toObject: function() {
+        return this.data;
     }
 });
 
