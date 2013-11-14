@@ -10,6 +10,7 @@
 //@Require('IObjectable')
 //@Require('LiteralUtil')
 //@Require('Obj')
+//@Require('TypeUtil')
 //@Require('bugdelta.DeltaBuilder')
 //@Require('bugdelta.DeltaDocument')
 //@Require('bugdelta.IDelta')
@@ -30,6 +31,7 @@ var Class           = bugpack.require('Class');
 var IObjectable     = bugpack.require('IObjectable');
 var LiteralUtil     = bugpack.require('LiteralUtil');
 var Obj             = bugpack.require('Obj');
+var TypeUtil        = bugpack.require('TypeUtil');
 var DeltaBuilder    = bugpack.require('bugdelta.DeltaBuilder');
 var DeltaDocument   = bugpack.require('bugdelta.DeltaDocument');
 var IDelta          = bugpack.require('bugdelta.IDelta');
@@ -97,14 +99,22 @@ var Entity = Class.extend(Obj, {
      * @return {string}
      */
     getId: function() {
-        var data = this.deltaDocument.getData();
+        var data    = this.deltaDocument.getData();
+        var id      = undefined;
         if (data.id) {
-            return data.id;
+            id = data.id;
         } else if (data._id) {
-            return data._id;
+            id = data._id;
         } else {
             return undefined;
         }
+
+        //NOTE BRN: Conversion for mongoose
+
+        if (!TypeUtil.isString(id)) {
+            id = id.toString();
+        }
+        return id;
     },
 
     /**

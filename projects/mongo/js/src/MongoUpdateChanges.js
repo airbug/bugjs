@@ -167,10 +167,27 @@ var MongoUpdateChanges = Class.extend(Obj, {
         if (key === "id" || key === "_id") return;
 
         if (!this.unsetChangeSet.contains(key)) {
+            value = this.convertValue(value);
             this.setChangeMap.put(key, value);
         } else {
             throw new Error("Cannot 'set' and 'unset' the same key");
         }
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Private Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {*} value
+     */
+    convertValue: function(value) {
+        if (Class.doesExtend(value, Set)) {
+           return value.toArray();
+        }
+        return value;
     }
 });
 
