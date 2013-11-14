@@ -85,6 +85,15 @@ var MongoDataStore = Class.extend(Obj, {
             manager     = new MongoManager(model, schema);
         }
         return manager;
+    },
+
+    /**
+     * @param {string} name
+     * @return {*}
+     */
+    getSchemaForName: function(name) {
+        var model   = this.mongoose.model(name);
+        return model.schema;
     }
 });
 

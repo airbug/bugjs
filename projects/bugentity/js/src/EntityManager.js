@@ -145,9 +145,10 @@ var EntityManager = Class.extend(Obj, {
             entity.setCreatedAt(new Date());
             entity.setUpdatedAt(new Date());
         }
-        this.dataStore.create(entity.toObject(), function(throwable, dbObject) {
+        var dbObject = this.convertEntityToDbObject(entity);
+        this.dataStore.create(dbObject, function(throwable, dbObject) {
             if (!throwable) {
-                entity.setId(dbObject.id);
+                entity.setId(dbObject._id.toString());
                 callback(undefined, entity);
             } else {
                 callback(throwable);
@@ -203,9 +204,8 @@ var EntityManager = Class.extend(Obj, {
                 var propertyOptions     = options[property];
                 if (propertyOptions) {
                     console.log("Inside propertyOptions if");
-                    // SUNG @BRN What getPopulates for? Is there a new method for this?
-                    // console.log("schemaProperty.getPopulates():", schemaProperty.getPopulates());
-                    // if (schemaProperty.getPopulates()) {
+
+                    if (schemaProperty.isPopulates()) {
                         console.log("Inside schemaProperty.getPopulates() if");
                         var manager             = undefined;
                         var retriever           = undefined;
@@ -279,10 +279,9 @@ var EntityManager = Class.extend(Obj, {
                                 }
                                 break;
                         }
-                    // } else {
-                    //     // SUNG @BRN Same question as above. What is this? How do you mark with populates?
-                    //     flow.error(new Error("Property '" + property + "' is not marked with 'populates'"));
-                    // }
+                    } else {
+                        flow.error(new Error("Property '" + property + "' is not marked with 'populates'"));
+                    }
                 } else {
                     flow.error(new Error("Cannot find options for property '" + property + "'"));
                 }
@@ -297,30 +296,12 @@ var EntityManager = Class.extend(Obj, {
 
     /**
      * @param {Entity} entity
-     * @param {{
-     *      unsetters: {*}
-     * }=} options
      * @param {function(Throwable, Entity)} callback
      */
-    update: function(entity, options, callback){
+    update: function(entity, callback){
         var dataStore       = this.dataStore;
         var id              = entity.getId();
-
-        if (TypeUtil.isFunction(options)) {
-            //TEST
-            console.log("options is a function!");
-
-            callback = options;
-            options  = {
-                unsetters: entity.toObject()
-            };
-            delete options.unsetters.id;
-            delete options.unsetters._id;
-            delete options.unsetters.createdAt;
-            delete options.unsetters.updatedAt;
-        }
-
-        var updateObject = this.buildUpdateObject(entity, options);
+        var updateObject    = this.buildUpdateObject(entity);
         //TEST
         console.log("EntityManager update - id:", id, " updateObject:", updateObject);
 
@@ -342,11 +323,11 @@ var EntityManager = Class.extend(Obj, {
      */
     retrieve: function(id, callback){
         var _this = this;
-        this.dataStore.findById(id).lean(true).exec(function(throwable, dbJson) {
+        this.dataStore.findById(id).lean(true).exec(function(throwable, dbObject) {
             if (!throwable) {
                 var entityObject = null;
-                if (dbJson) {
-                    entityObject = _this["generate" + _this.entityType](dbJson);
+                if (dbObject) {
+                    entityObject = _this.convertDbObjectToEntity(dbObject);
                     entityObject.commitDelta();
                 }
                 callback(undefined, entityObject);
@@ -362,11 +343,11 @@ var EntityManager = Class.extend(Obj, {
      */
     retrieveEach: function(ids, callback) {
         var _this = this;
-        this.dataStore.where("_id").in(ids).lean(true).exec(function(throwable, results) {
+        this.dataStore.where("_id").in(ids).lean(true).exec(function(throwable, dbObjects) {
             if (!throwable) {
                 var newMap = new Map();
-                results.forEach(function(result) {
-                    var entityObject = _this["generate" + _this.entityType](result);
+                dbObjects.forEach(function(dbObject) {
+                    var entityObject = _this.convertDbObjectToEntity(dbObject);
                     entityObject.commitDelta();
                     newMap.put(entityObject.getId(), entityObject);
                 });
@@ -404,23 +385,19 @@ var EntityManager = Class.extend(Obj, {
     /**
      * @private
      * @param {Entity} entity
-     * @param {} options
      */
-    buildUpdateObject: function(entity, options) {
+    buildUpdateObject: function(entity) {
+        var _this           = this;
         var delta           = entity.generateDelta();
         var updateChanges   = new MongoUpdateChanges();
+        var entitySchema    = this.schemaManager.getSchemaByClass(entity.getClass());
         delta.getDeltaChangeList().forEach(function(deltaChange) {
             switch (deltaChange.getChangeType()) {
                 case DeltaDocumentChange.ChangeTypes.DATA_SET:
-                    var setters            = deltaChange.getData();
-                    for(var opt in setters) {
-                        updateChanges.putSetChange(opt, setters[opt]);
-                    }
-                    for(var opt in options.unsetters) {
-                        if (!updateChanges.containsSetChange(opt)) {
-                            updateChanges.addUnsetChange(opt);
-                        }
-                    }
+                    var dbObject = _this.convertDataObjectToDbObject(deltaChange.getData(), entitySchema);
+                    Obj.forIn(dbObject, function(name, value) {
+                        updateChanges.putSetChange(name, value);
+                    });
                     break;
                 case ObjectChange.ChangeTypes.PROPERTY_REMOVED:
                     var key = "";
@@ -437,6 +414,10 @@ var EntityManager = Class.extend(Obj, {
                     }
                     key += deltaChange.getPropertyName();
                     var propertyValue   = deltaChange.getPropertyValue();
+                    var schemaProperty  = entitySchema.getPropertyByName(key);
+                    if (schemaProperty) {
+                        propertyValue = _this.convertDataProperty(propertyValue, schemaProperty);
+                    }
                     updateChanges.putSetChange(key, propertyValue);
                     break;
                 case SetChange.ChangeTypes.ADDED_TO_SET:
@@ -453,6 +434,141 @@ var EntityManager = Class.extend(Obj, {
         });
 
         return updateChanges.buildUpdateObject();
+    },
+
+    /**
+     * @private
+     * @param {Object} dbObject
+     * @return {Entity}
+     */
+    convertDbObjectToEntity: function(dbObject) {
+        var entityType      = this.entityType;
+        var entitySchema    = this.schemaManager.getSchemaByName(entityType);
+        var dataObject = this.convertDbObjectToDataObject(dbObject, entitySchema);
+        return this["generate" + this.entityType](dataObject);
+    },
+
+    /**
+     * @private
+     * @param {Object} dbObject
+     * @param {Schema} entitySchema
+     * @return {Object}
+     */
+    convertDbObjectToDataObject: function(dbObject, entitySchema) {
+        var _this           = this;
+        var dataObject      = {};
+        entitySchema.getPropertyList().forEach(function(schemaProperty) {
+            if (schemaProperty.isStored()) {
+                var propertyName    = schemaProperty.getName();
+                var propertyValue   = dbObject[propertyName];
+
+                //TODO BRN: need some sort of mapping to do this in a non hacky way
+
+                if (schemaProperty.isPrimaryId() && propertyName === "id") {
+                    propertyValue = dbObject._id;
+                }
+                dataObject[propertyName] = _this.convertDbProperty(propertyValue, schemaProperty);
+            }
+        });
+        return dataObject;
+    },
+
+    /**
+     * @private
+     * @param {*} propertyValue
+     * @param {SchemaProperty} schemaProperty
+     */
+    convertDbProperty: function(propertyValue, schemaProperty) {
+        var propertyType    = schemaProperty.getType();
+        if (schemaProperty.isPrimaryId()) {
+            return propertyValue.toString();
+        } else {
+            switch (propertyType) {
+                case "Set":
+                    var valuesSet = new Set();
+                    if (schemaProperty.isId()) {
+                        propertyValue.forEach(function(value) {
+                            if (value) {
+                                valuesSet.add(value.toString());
+                            } else {
+                                valuesSet.add(value);
+                            }
+                        });
+                    } else {
+                        valuesSet.addAll(propertyValue);
+                    }
+                    return valuesSet;
+                    break;
+                default:
+                    if (schemaProperty.isId()) {
+                        if (propertyValue) {
+                            return propertyValue.toString();
+                        } else {
+                            return propertyValue
+                        }
+                    } else {
+                        return propertyValue;
+                    }
+            }
+        }
+    },
+
+    /**
+     * @private
+     * @param {Entity} entity
+     * @return {Object}
+     */
+    convertEntityToDbObject: function(entity) {
+        var data        = entity.getDeltaDocument().getData();
+        var schema      = this.schemaManager.getSchemaByClass(entity.getClass());
+        return this.convertDataObjectToDbObject(data, schema);
+    },
+
+    /**
+     * @private
+     * @param {Object} dataObject
+     * @param {Schema} schema
+     * @return {Object}
+     */
+    convertDataObjectToDbObject: function(dataObject, schema) {
+        var _this       = this;
+        var dbObject    = {};
+        schema.getPropertyList().forEach(function(schemaProperty) {
+            if (schemaProperty.isStored() && !schemaProperty.isPrimaryId()) {
+                var propertyName        = schemaProperty.getName();
+                var propertyValue       = dataObject[propertyName];
+                if (!TypeUtil.isUndefined(propertyValue)) {
+                    dbObject[propertyName]  = _this.convertDataProperty(propertyValue, schemaProperty);
+                }
+            }
+        });
+        return dbObject
+    },
+
+    /**
+     * @private
+     * @param {*} propertyValue
+     * @param {SchemaProperty} schemaProperty
+     * @return {*}
+     */
+    convertDataProperty: function(propertyValue, schemaProperty) {
+        var propertyType    = schemaProperty.getType();
+        switch (propertyType) {
+            case "Set":
+                if (propertyValue) {
+                    return propertyValue.toArray();
+                } else {
+                    return [];
+                }
+                break;
+            default:
+                if (this.schemaManager.hasSchemaForName(propertyType)) {
+                    var entitySchema = this.schemaManager.getSchemaByName(propertyType);
+                    return this.convertDataObjectToDbObject(propertyValue, entitySchema);
+                } else {
+                    return propertyValue;
+                }
+        }
     }
 });
 

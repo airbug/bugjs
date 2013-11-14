@@ -100,21 +100,13 @@ var Entity = Class.extend(Obj, {
      */
     getId: function() {
         var data    = this.deltaDocument.getData();
-        var id      = undefined;
         if (data.id) {
-            id = data.id;
+            return data.id;
         } else if (data._id) {
-            id = data._id;
+            return data._id;
         } else {
             return undefined;
         }
-
-        //NOTE BRN: Conversion for mongoose
-
-        if (!TypeUtil.isString(id)) {
-            id = id.toString();
-        }
-        return id;
     },
 
     /**
@@ -188,8 +180,8 @@ var Entity = Class.extend(Obj, {
     generateDelta: function() {
         return this.deltaBuilder.buildDelta(this.deltaDocument, this.deltaDocument.getPreviousDocument());
     },
-    
-    
+
+
     //-------------------------------------------------------------------------------
     // IObjectable Implementation
     //-------------------------------------------------------------------------------

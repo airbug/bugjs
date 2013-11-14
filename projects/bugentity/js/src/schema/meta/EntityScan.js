@@ -80,22 +80,18 @@ var EntityScan = Class.extend(Obj, {
 
     /**
      * @param {Class} _class
-     * @return {EntityAnnotation}
      */
     scanClass: function(_class) {
-        //TODO BRN: Figure out how to handle child/parent classes
-
+        var _this       = this;
         var bugmeta     = BugMeta.context();
         var annotations = bugmeta.getAnnotationsByReference(_class);
-        var entityAnnotation = null;
         if (annotations) {
             annotations.forEach(function(annotation) {
                 if (Class.doesExtend(annotation, EntityAnnotation)) {
-                    entityAnnotation = annotation;
+                    _this.processor.process(annotation);
                 }
             });
         }
-        return entityAnnotation;
     }
 });
 

@@ -66,9 +66,27 @@ var SchemaProperty = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {boolean}
+         */
+        this.populates      = false;
+
+        /**
+         * @private
+         * @type {boolean}
+         */
+        this.primaryId      = false;
+
+        /**
+         * @private
          * @type {string}
          */
         this.name           = name;
+
+        /**
+         * @private
+         * @type {boolean}
+         */
+        this.stored         = true;
 
         /**
          * @private
@@ -91,6 +109,15 @@ var SchemaProperty = Class.extend(Obj, {
             }
             if (TypeUtil.isBoolean(options.indexed)) {
                 this.indexed = options.indexed;
+            }
+            if (TypeUtil.isBoolean(options.populates)) {
+                this.populates = options.populates;
+            }
+            if (TypeUtil.isBoolean(options.primaryId)) {
+                this.primaryId = options.primaryId;
+            }
+            if (TypeUtil.isBoolean(options.stored)) {
+                this.stored = options.stored;
             }
             if (TypeUtil.isBoolean(options.unique)) {
                 this.unique = options.unique;
@@ -136,6 +163,27 @@ var SchemaProperty = Class.extend(Obj, {
      */
     isIndexed: function() {
         return this.indexed;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    isPopulates: function() {
+        return this.populates;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    isPrimaryId: function() {
+        return this.primaryId;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    isStored: function() {
+        return this.stored;
     },
 
     /**

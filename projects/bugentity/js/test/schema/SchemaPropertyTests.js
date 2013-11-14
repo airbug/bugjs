@@ -4,10 +4,6 @@
 
 //@TestFile
 
-//@Require('bugentity.Entity')
-//@Require('bugentity.EntityManager')
-//@Require('bugentity.Schema')
-//@Require('bugentity.SchemaManager')
 //@Require('bugentity.SchemaProperty')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
@@ -25,10 +21,6 @@ var bugpack                 = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Entity                  = bugpack.require('bugentity.Entity');
-var EntityManager           = bugpack.require('bugentity.EntityManager');
-var Schema                  = bugpack.require('bugentity.Schema');
-var SchemaManager           = bugpack.require('bugentity.SchemaManager');
 var SchemaProperty          = bugpack.require('bugentity.SchemaProperty');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
@@ -47,35 +39,24 @@ var test                    = TestAnnotation.test;
 // Declare Tests
 //-------------------------------------------------------------------------------
 
-var entityManagerBuildUpdateTest = {
+var schemaPropertyInstantiationTest = {
 
     //-------------------------------------------------------------------------------
     // Setup Test
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        this.testId         = "testId";
-        this.testCreatedAt  = new Date();
-        this.testUpdatedAt  = new Date();
-        this.testData       = {
-            key: "value"
+        this.testName       = "testName";
+        this.testType       = "testType";
+        this.testOptions    = {
+            collectionOf: "testCollectionOf",
+            id: true,
+            indexed: true,
+            populates: true,
+            stored: true,
+            unique: true
         };
-        this.testSchema = new Schema(Entity, "Entity");
-        this.testSchema.addProperty(new SchemaProperty("id", "string", {
-            primaryId: true
-        }));
-        this.testSchema.addProperty(new SchemaProperty("createdAt", "date", {}));
-        this.testSchema.addProperty(new SchemaProperty("updatedAt", "date", {}));
-        this.testSchema.addProperty(new SchemaProperty("data", "object", {}));
-        this.testSchemaManager = new SchemaManager();
-        this.testSchemaManager.registerSchema(this.testSchema);
-        this.testEntity = new Entity({
-            id: this.testId,
-            createdAt: this.testCreatedAt,
-            updatedAt: this.testUpdatedAt,
-            data: this.testData
-        });
-        this.testEntityManager = new EntityManager({}, this.testSchemaManager, {});
+        this.testSchemaProperty = new SchemaProperty(this.testName, this.testType, this.testOptions);
     },
 
 
@@ -84,13 +65,24 @@ var entityManagerBuildUpdateTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
-        this.testEntity.commitDelta();
-        this.testEntity.getDeltaDocument().getData().data.key = "newValue";
-        var updateObject = this.testEntityManager.buildUpdateObject(this.testEntity, {});
-        test.assertEqual(updateObject.$set["data.key"], "newValue",
-            "Assert $set key and value are correct");
+        test.assertEqual(this.testSchemaProperty.getCollectionOf(), this.testOptions.collectionOf,
+            "Assert SchemaProperty.collectionOf was set correctly");
+        test.assertEqual(this.testSchemaProperty.getName(), this.testName,
+            "Assert SchemaProperty.name was set correctly");
+        test.assertEqual(this.testSchemaProperty.getType(), this.testType,
+            "Assert SchemaProperty.type was set correctly");
+        test.assertEqual(this.testSchemaProperty.isId(), this.testOptions.id,
+            "Assert SchemaProperty.id was set correctly");
+        test.assertEqual(this.testSchemaProperty.isIndexed(), this.testOptions.indexed,
+            "Assert SchemaProperty.indexed was set correctly");
+        test.assertEqual(this.testSchemaProperty.isPopulates(), this.testOptions.populates,
+            "Assert SchemaProperty.populates was set correctly");
+        test.assertEqual(this.testSchemaProperty.isStored(), this.testOptions.stored,
+            "Assert SchemaProperty.stored was set correctly");
+        test.assertEqual(this.testSchemaProperty.isUnique(), this.testOptions.unique,
+            "Assert SchemaProperty.unique was set correctly");
     }
 };
-bugmeta.annotate(entityManagerBuildUpdateTest).with(
-    test().name("EntityManager - #buildUpdate Test")
+bugmeta.annotate(schemaPropertyInstantiationTest).with(
+    test().name("SchemaProperty - instantiation Test")
 );

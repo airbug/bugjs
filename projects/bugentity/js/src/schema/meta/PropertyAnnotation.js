@@ -76,6 +76,18 @@ var PropertyAnnotation = Class.extend(Annotation, {
 
         /**
          * @private
+         * @type {boolean}
+         */
+        this.propertyPrimaryId          = false;
+
+        /**
+         * @private
+         * @type {boolean}
+         */
+        this.propertyStored             = true;
+
+        /**
+         * @private
          * @type {string}
          */
         this.propertyType               = null;
@@ -137,6 +149,20 @@ var PropertyAnnotation = Class.extend(Annotation, {
     /**
      * @return {boolean}
      */
+    isPropertyPrimaryId: function() {
+        return this.propertyPrimaryId;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    isPropertyStored: function() {
+        return this.propertyStored;
+    },
+
+    /**
+     * @return {boolean}
+     */
     isPropertyUnique: function() {
         return this.propertyUnique;
     },
@@ -177,6 +203,23 @@ var PropertyAnnotation = Class.extend(Annotation, {
      */
     populates: function(populates) {
         this.propertyPopulates = populates;
+        return this;
+    },
+
+    /**
+     * @return {PropertyAnnotation}
+     */
+    primaryId: function() {
+        this.propertyPrimaryId = true;
+        return this;
+    },
+
+    /**
+     * @param {boolean} stored
+     * @return {PropertyAnnotation}
+     */
+    stored: function(stored) {
+        this.propertyStored = stored;
         return this;
     },
 
