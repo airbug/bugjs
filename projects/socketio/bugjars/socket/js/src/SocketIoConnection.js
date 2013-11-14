@@ -254,7 +254,8 @@ var SocketIoConnection = Class.extend(EventReceiver, {
      * @param {SocketIoEmit} socketIoEmit
      */
     processEmit: function(socketIoEmit) {
-        this.socket.emit(socketIoEmit.getName(), socketIoEmit.getData(), socketIoEmit.getCallback());
+        this.socket.emit(socketIoEmit.getName(), socketIoEmit.getData());
+        socketIoEmit.getCallback()();
     },
 
 

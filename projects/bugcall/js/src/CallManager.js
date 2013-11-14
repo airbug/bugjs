@@ -11,6 +11,7 @@
 //@Require('Map')
 //@Require('Queue')
 //@Require('Set')
+//@Require('TypeUtil')
 //@Require('bugcall.CallConnection')
 //@Require('bugcall.CallEvent')
 //@Require('bugcall.CallManagerEvent')
@@ -37,6 +38,7 @@ var EventDispatcher         = bugpack.require('EventDispatcher');
 var Map                     = bugpack.require('Map');
 var Queue                   = bugpack.require('Queue');
 var Set                     = bugpack.require('Set');
+var TypeUtil                = bugpack.require('TypeUtil');
 var CallConnection          = bugpack.require('bugcall.CallConnection');
 var CallEvent               = bugpack.require('bugcall.CallEvent');
 var CallManagerEvent        = bugpack.require('bugcall.CallManagerEvent');
@@ -169,6 +171,7 @@ var CallManager = Class.extend(EventDispatcher, {
      * @return {CallRequest}
      */
     request: function(requestType, requestData) {
+        console.log("CallManager#request requestType:", requestType, "requestData:", requestData);
         return new CallRequest(requestType, requestData);
     },
 
@@ -177,9 +180,7 @@ var CallManager = Class.extend(EventDispatcher, {
      */
     sendOutgoingRequest: function(outgoingRequest) {
         console.log("Inside CallManager#sendOutgoingRequest");
-        console.log("OutgoingRequest:", outgoingRequest);
         console.log("Has connection?:", this.hasConnection());
-        if(this.callConnection) console.log("Yes it has a callconnection");
         if (!this.outgoingRequestMap.containsValue(outgoingRequest)) {
             this.outgoingRequestMap.put(outgoingRequest.getUuid(), outgoingRequest);
             if (this.hasConnection()) {
@@ -197,7 +198,7 @@ var CallManager = Class.extend(EventDispatcher, {
      * @param {CallResponseHandler} callResponseHandler
      */
     sendRequest: function(callRequest, callResponseHandler) {
-        console.log("Inside CallManager#sendRequest");
+        console.log("Inside CallManager#sendRequest requestType:", callRequest.getType());
         var outgoingRequest = new OutgoingRequest(callRequest);
         this.requestUuidToResponseHandlerMap.put(callRequest.getUuid(), callResponseHandler);
         this.sendOutgoingRequest(outgoingRequest);
@@ -212,7 +213,7 @@ var CallManager = Class.extend(EventDispatcher, {
         var requestUuid     = outgoingResponse.getRequestUuid();
         var responseUuid    = outgoingResponse.getUuid();
         if (this.incomingRequestMap.containsKey(requestUuid)) {
-            this.responseUuidToResponseCallbackMap.put(requestUuid, callback);
+            if(TypeUtil.isFunction(callback)) this.responseUuidToResponseCallbackMap.put(responseUuid, callback);
             if (this.hasConnection()) {
                 this.doSendOutgoingResponse(outgoingResponse);
             } else {
@@ -412,6 +413,7 @@ var CallManager = Class.extend(EventDispatcher, {
      * @param {OutgoingResponse} outgoingResponse
      */
     doSendOutgoingResponse: function(outgoingResponse) {
+        console.log("CallManager#doSendOutgoingResponse");
         var _this = this;
         this.callConnection.sendResponse(outgoingResponse.getCallResponse(), function(data) {
             //TEST
@@ -424,7 +426,7 @@ var CallManager = Class.extend(EventDispatcher, {
 
             //TODO BRN: Figure out if there's any error that can occur to pass in here...
 
-            callback();
+            if(callback) callback();
         });
     },
 
