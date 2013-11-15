@@ -69,7 +69,7 @@ var CarapaceView = Class.adapt(Backbone.View, {
          */
         this._internalId = undefined;
 
-        IdGenerator.injectId(this);
+        IdGenerator.ensureId(this);
 
         /**
          * @private
@@ -370,7 +370,6 @@ var CarapaceView = Class.adapt(Backbone.View, {
     renderModelAttribute: function(attributeName, attributeValue) {
 
     },
-
 
     //TODO BRN: We should improve the Proxy util to handle these cases.
     //-------------------------------------------------------------------------------

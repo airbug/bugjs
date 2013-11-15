@@ -19,7 +19,9 @@ var bugpack = require('bugpack').context();
 // NOTE BRN: We don't use the base level Class system here because our low level Object class depends on this class
 // and Class depends on Object. Thus, if this class depends on Class it creates s circular dependency.
 
-
+/**
+ *
+ */
 var IdGenerator = {};
 
 
@@ -27,12 +29,22 @@ var IdGenerator = {};
 // Static Methods
 //-------------------------------------------------------------------------------
 
+/**
+ * @type {number}
+ */
 IdGenerator.lastId = 0;
 
+/**
+ * @private
+ */
 IdGenerator.generateId = function() {
     return IdGenerator.lastId++;
 };
 
+/**
+ * @private
+ */
+//NOTE: Use IdGenerator.ensureId
 IdGenerator.injectId = function(obj) {
     if (obj !== null && obj !== undefined) {
         if (!obj._internalId) {
@@ -48,6 +60,9 @@ IdGenerator.injectId = function(obj) {
     }
 };
 
+/**
+ *
+ */
 IdGenerator.ensureId = function(obj) {
     if (obj !== null && obj !== undefined) {
         if (!obj._internalId) {

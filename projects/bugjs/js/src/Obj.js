@@ -66,7 +66,7 @@ var Obj = Class.declare({
          */
         this._internalId = undefined;
 
-        IdGenerator.injectId(this);
+        IdGenerator.ensureId(this);
     },
 
 

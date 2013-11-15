@@ -4,6 +4,8 @@
 
 //@TestFile
 
+//@Require('IdGenerator')
+//@Require('Class')
 //@Require('Obj')
 //@Require('TypeUtil')
 //@Require('bugmeta.BugMeta')
@@ -21,6 +23,8 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
+var Class           = bugpack.require('Class');
+var IdGenerator     = bugpack.require('IdGenerator');
 var Obj             = bugpack.require('Obj');
 var TypeUtil        = bugpack.require('TypeUtil');
 var BugMeta         = bugpack.require('bugmeta.BugMeta');
@@ -63,6 +67,10 @@ var objInstantiationTest = {
             "Assert object1's class is Obj");
         test.assertEqual(this.testObject2.getClass(), Obj,
             "Assert object2's class is Obj");
+        test.assertTrue(this.testObject1.getInternalId(),
+            "Assert object1's internalId is defined");
+        test.assertTrue(this.testObject2.getInternalId(),
+            "Assert object2's internalId is defined");
         test.assertNotEqual(this.testObject1.getInternalId(), this.testObject2.getInternalId(),
             "Assert id of both objects are different");
     }
@@ -352,4 +360,37 @@ var objForInIterationDontEnumPropertiesTest = {
 };
 bugmeta.annotate(objForInIterationDontEnumPropertiesTest).with(
     test().name("Obj forIn iteration of don't enum properties test")
+);
+
+var objEnsureInternalIdTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function(test) {
+        var _this = this;
+
+        this.NewClass = Class.extend(Obj, {
+            _constructor: function() {
+
+                IdGenerator.ensureId(this);
+                this._super();
+            }
+        });
+
+        this.testFunction = function() {
+            new _this.NewClass();
+        }
+    },
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        test.assertNotThrows(this.testFunction,
+            "Assert no error is thrown when the _internalId has already been set");
+    }
+};
+bugmeta.annotate(objEnsureInternalIdTest).with(
+    test().name("Obj internalId already defined test")
 );

@@ -59,7 +59,7 @@ var CarapaceModel = Class.adapt(Backbone.Model, {
          */
         this._internalId = undefined;
 
-        IdGenerator.injectId(this);
+        IdGenerator.ensureId(this);
 
         /**
          * @private
