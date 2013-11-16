@@ -138,17 +138,56 @@ var EntityManager = Class.extend(Obj, {
 
     /**
      * @param {Entity} entity
+     * @param {{*}} options
+     * @param {Array.<string>} dependencies
      * @param {function(Throwable, Entity)} callback
      */
-    create: function(entity, callback){
+    create: function(entity, options, dependencies, callback){
+        var _this = this;
         if (!entity.getCreatedAt()) {
             entity.setCreatedAt(new Date());
             entity.setUpdatedAt(new Date());
         }
         var dbObject = this.convertEntityToDbObject(entity);
-        this.dataStore.create(dbObject, function(throwable, dbObject) {
-            if (!throwable) {
-                entity.setId(dbObject._id.toString());
+
+        $series([
+            $task(function(flow){
+                _this.dataStore.create(dbObject, function(throwable, dbObject) {
+                    if (!throwable) {
+                        entity.setId(dbObject._id.toString());
+                    }
+                    flow.complete(throwable);
+                });
+            }),
+            $forEachParallel(dependencies, function(flow, dependency){
+                var dependencyOptions = options[dependency];
+                if(dependencyOptions){
+                    var schema              = _this.schemaManager.getSchemaByClass(entity.getClass());
+                    var schemaProperty      = schema.getPropertyByName(dependency);
+                    if(schemaProperty){
+                        var schemaPropertyType  = schemaProperty.getType();
+                        var manager             = _this.entityManagerStore.getEntityManagerByEntityType(schemaPropertyType);
+                        var data                = {};
+                        data[dependencyOptions.ownerIdProperty] = entity.getId();
+                        var generatedDependency = manager["generate" + schemaPropertyType](data);
+                        manager["create" + schemaPropertyType](generatedDependency, function(throwable, returnedDependency){
+                            var idSetter    = dependencyOptions.idSetter;
+                            var setter      = dependencyOptions.setter;
+                            var ownerProperty = dependencyOptions.ownerProperty;
+                            if(idSetter) idSetter.call(entity, generatedDependency.getId());
+                            if(setter) setter.call(entity, generatedDependency);
+                            if(ownerProperty) generatedDependency["set" + StringUtil.capitalize(ownerProperty)](entity);
+                            flow.complete(throwable);
+                        });
+                    } else {
+                        flow.error(new Error("Unknown dependency '" + dependency + "'"));
+                    }
+                } else {
+                    flow.error(new Error("Cannot find options for dependency '" + dependency + "'"));
+                }
+            })
+        ]).execute(function(throwable){
+            if(!throwable){
                 callback(undefined, entity);
             } else {
                 callback(throwable);
@@ -224,6 +263,7 @@ var EntityManager = Class.extend(Obj, {
                                     var getterEntitySet     = propertyOptions.getter.call(entity);
                                     var lookupIdSet         = Obj.clone(idData);
                                     var getterEntitySetClone = getterEntitySet.clone();
+
                                     getterEntitySetClone.forEach(function(getterEntity) {
                                         if (idData.contains(getterEntity.getId())) {
                                             lookupIdSet.remove(getterEntity.getId());
@@ -234,7 +274,6 @@ var EntityManager = Class.extend(Obj, {
 
                                     $iterableParallel(lookupIdSet, function(flow, entityId) {
                                         retriever.call(manager, entityId, function(throwable, retrievedEntity) {
-                                            if(throwable) console.log("Set retriever throwable:", throwable);
                                             if (!throwable) {
                                                 getterEntitySet.add(retrievedEntity);
                                             }
@@ -249,6 +288,7 @@ var EntityManager = Class.extend(Obj, {
                                         if (!throwable) {
                                             setter.call(entity, retrievedData);
                                         }
+                                        if(throwable) console.log("retriever throwable:", throwable);
                                         flow.complete(throwable)
                                     });
                                 }
@@ -289,6 +329,7 @@ var EntityManager = Class.extend(Obj, {
                 flow.error(new Error("Unknown property '" + property + "'"));
             }
         }).execute(function(throwable){
+            console.log("End of EntityManager#populate");
             if(throwable) console.log(throwable.toString());
             callback(throwable);
         });
@@ -302,6 +343,7 @@ var EntityManager = Class.extend(Obj, {
         var dataStore       = this.dataStore;
         var id              = entity.getId();
         var updateObject    = this.buildUpdateObject(entity);
+
         //TEST
         console.log("EntityManager update - id:", id, " updateObject:", updateObject);
 
@@ -342,6 +384,7 @@ var EntityManager = Class.extend(Obj, {
      * @param {function(Throwable, Map.<string, Entity>)} callback
      */
     retrieveEach: function(ids, callback) {
+        console.log("EntityManager#retrieveEach");
         var _this = this;
         this.dataStore.where("_id").in(ids).lean(true).exec(function(throwable, dbObjects) {
             if (!throwable) {
