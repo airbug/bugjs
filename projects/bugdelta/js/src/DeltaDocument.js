@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('IClone')
+//@Require('IObjectable')
 //@Require('Obj')
 //@Require('TypeUtil')
 
@@ -25,6 +26,7 @@ var bugpack             = require('bugpack').context();
 
 var Class               = bugpack.require('Class');
 var IClone              = bugpack.require('IClone');
+var IObjectable         = bugpack.require('IObjectable');
 var Obj                 = bugpack.require('Obj');
 var TypeUtil            = bugpack.require('TypeUtil');
 
@@ -145,6 +147,7 @@ var DeltaDocument = Class.extend(Obj, {
     }
 });
 
+Class.implement(DeltaDocument, IObjectable);
 
 //-------------------------------------------------------------------------------
 // Exports

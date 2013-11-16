@@ -13,6 +13,7 @@
 //@Require('Class')
 //@Require('Collection')
 //@Require('HashTable')
+//@Require('IObjectable')
 //@Require('Obj')
 //@Require('TypeUtil')
 
@@ -31,6 +32,7 @@ var bugpack         = require('bugpack').context();
 var Class           = bugpack.require('Class');
 var Collection      = bugpack.require('Collection');
 var HashTable       = bugpack.require('HashTable');
+var IObjectable     = bugpack.require('IObjectable');
 var Obj             = bugpack.require('Obj');
 var TypeUtil        = bugpack.require('TypeUtil');
 
@@ -221,6 +223,7 @@ var Map = Class.extend(Obj, {
     }
 });
 
+Class.implement(Map, IObjectable);
 
 //-------------------------------------------------------------------------------
 // Exports
