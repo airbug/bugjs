@@ -67,6 +67,10 @@ var BugCallRouter = Class.extend(Obj, {
     // Public Instance Methods
     //-------------------------------------------------------------------------------
 
+    getRoutes: function() {
+        return this.routesMap.getValueArray();
+    },
+
     /**
      * @param {BugCallRoute} route
      */
@@ -120,10 +124,10 @@ var BugCallRouter = Class.extend(Obj, {
         var requestType     = request.getType();
         var bugCallRoute    = this.routesMap.get(requestType);
         console.log("requestType:", requestType);
-        console.log("callback:", callback);
         if(bugCallRoute) {
             bugCallRoute.fire(request, responder, callback);
         } else {
+            console.log("Error Bugroute", requestType, "does not exist");
             callback(new Error("Bugroute '" + requestType + "' does not exist"));
         }
     }
