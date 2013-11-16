@@ -391,8 +391,10 @@ var CarapaceContainer = Class.extend(Obj, {
         this.viewTop = null;
         this.collectionMap.getKeyArray().forEach(function(key) {
             var collection = _this.collectionMap.get(key);
-            _this.removeCollection(key);
-            collection.dispose();
+            if(collection){
+                _this.removeCollection(key);
+                collection.dispose();
+            }
         });
         this.modelMap.getKeyArray().forEach(function(key) {
             var model = _this.modelMap.get(key);
