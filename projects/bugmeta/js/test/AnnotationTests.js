@@ -61,6 +61,6 @@ var annotationInstantiationTest = {
             "Assert #getAnnotationReference returns null");
     }
 };
-bugmeta.mark(annotationInstantiationTest).with(
+bugmeta.annotate(annotationInstantiationTest).with(
     test().name("Annotation - instantiation Test")
 );

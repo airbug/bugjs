@@ -7,11 +7,13 @@
 //@Export('Handshaker')
 
 //@Require('Class')
+//@Require('Collection')
 //@Require('List')
 //@Require('Obj')
 //@Require('Set')
 //@Require('TypeUtil')
 //@Require('bugflow.BugFlow')
+//@Require('handshaker.IHand')
 
 
 //-------------------------------------------------------------------------------
@@ -26,11 +28,13 @@ var bugpack             = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
+var Collection          = bugpack.require('Collection');
 var List                = bugpack.require('List');
 var Obj                 = bugpack.require('Obj');
 var Set                 = bugpack.require('Set');
 var TypeUtil            = bugpack.require('TypeUtil');
 var BugFlow             = bugpack.require('bugflow.BugFlow');
+var IHand               = bugpack.require('handshaker.IHand');
 
 
 //-------------------------------------------------------------------------------
@@ -66,7 +70,11 @@ var Handshaker = Class.extend(Obj, {
          * @private
          * @type {Set.<IHand>}
          */
-        this.hands = new Set(hands);
+        this.hands = new Set();
+
+        if (hands) {
+            this.addHands(hands);
+        }
     },
 
 
@@ -77,33 +85,46 @@ var Handshaker = Class.extend(Obj, {
     /**
      * @param {IHand} hand
      */
-    addHand: function(hand){
-        this.hands.add(hand);
+    addHand: function(hand) {
+        if (Class.doesImplement(hand, IHand)) {
+            this.hands.add(hand);
+        } else {
+            throw new Error("parameter 'hand' must implement IHand interface");
+        }
     },
 
     /**
-     * @param {Array.<IHand> | ...IHand} hands
+     * @param {(Array.<IHand> | Collection.<IHand> | ...IHand)} hands
      */
-    addHands: function(hands){
-        if (TypeUtil.isArray(hands)) {
-            this.hands.addAll(hands);
-        } else {
-            this.hands.addAll(Array.prototype.slice.call(arguments));
+    addHands: function(hands) {
+        var _this = this;
+        if (!Class.doesExtend(hands, Collection) && !TypeUtil.isArray(hands)) {
+            hands = this.hands.addAll(Array.prototype.slice.call(arguments));
         }
+        hands.forEach(function(hand) {
+            _this.addHand(hand);
+        });
+    },
+
+    /**
+     * @returns {number}
+     */
+    getHandCount: function() {
+        return this.hands.getCount();
     },
 
     /**
      * @param {IHand} hand
      * @return {boolean}
      */
-    hasHand: function(hand){
+    hasHand: function(hand) {
         return this.hands.contains(hand);
     },
 
     /**
      * @param {IHand} hand
      */
-    removeHand: function(hand){
+    removeHand: function(hand) {
         this.hands.remove(hand);
     },
 
@@ -118,18 +139,23 @@ var Handshaker = Class.extend(Obj, {
      *  , url: request.url           // <String> the entrance path of the request
      *  , query: data.query          // <Object> the result of url.parse().query or a empty object
      * } handshakeData
-     * @param {function(error, authorized)} callback
+     * @param {function(Throwable, boolean)} callback
      */
-    shake: function(handshakeData, callback){
+    shake: function(handshakeData, callback) {
         var authorizations = new List();
         $iterableSeries(this.hands, function(flow, hand) {
-            hand.shakeIt(handshakeData, function(error, authorized) {
-                authorizations.add(authorized);
-                flow.complete(error);
+            hand.shakeIt(handshakeData, function(throwable, authorized) {
+                if (!throwable) {
+                    authorizations.add(authorized);
+                }
+                flow.complete(throwable);
             });
-        }).execute(function(error) {
-            console.log("Finished shaking");
-            callback(error, !authorizations.contains(false));
+        }).execute(function(throwable) {
+            if (!throwable) {
+                callback(undefined, !authorizations.contains(false));
+            } else {
+                callback(throwable, false);
+            }
         });
     }
 });
