@@ -31,6 +31,10 @@ var BugMeta             = bugpack.require('bugmeta.BugMeta');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ * @extends {Obj}
+ */
 var ConfigurationScan = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
@@ -38,6 +42,7 @@ var ConfigurationScan = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @constructs
      * @param {ConfigurationAnnotationProcessor} processor
      */
     _constructor: function(processor) {

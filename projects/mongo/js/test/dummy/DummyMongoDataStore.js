@@ -2,104 +2,96 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugsync')
+//@Package('mongo')
 
-//@Export('SyncObject')
+//@Export('DummyMongoDataStore')
 
 //@Require('Class')
-//@Require('Event')
-//@Require('EventDispatcher')
+//@Require('Map')
+//@Require('Obj')
+//@Require('mongo.DummyMongoManager')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
-// BugPack
+// Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var Event           = bugpack.require('Event');
-var EventDispatcher = bugpack.require('EventDispatcher');
+var Class               = bugpack.require('Class');
+var Map                 = bugpack.require('Map');
+var Obj                 = bugpack.require('Obj');
+var DummyMongoManager   = bugpack.require('mongo.DummyMongoManager');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SyncObject = Class.extend(EventDispatcher, {
+var DummyMongoDataStore = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(syncObject) {
+    _constructor: function() {
 
         this._super();
 
+
         //-------------------------------------------------------------------------------
-        // Properties
+        // Declare Variables
         //-------------------------------------------------------------------------------
 
-        this.syncObject = syncObject;
+        /**
+         * @private
+         * @type {Map.<Class, DummyMongoManager>}
+         */
+        this.managerMap     = new Map();
     },
 
+
     //-------------------------------------------------------------------------------
-    // Instance Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {string} prop
+     * @param {string} url
+     */
+    connect: function(url) {
+        //do nothing
+    },
+
+    /**
+     * @param {string} modelName
+     * @return {MongoManager}
+     */
+    generateManager: function(modelName) {
+        var manager = this.managerMap.get(modelName);
+        if (!manager) {
+            manager     = new DummyMongoManager(modelName);
+        }
+        return manager;
+    },
+
+    /**
+     * @param {string} name
      * @return {*}
      */
-    get: function(prop) {
-        return this.syncObject[prop];
-    },
-
-    /**
-     * @param {string} prop
-     */
-    remove: function(prop) {
-        delete this.syncObject[prop];
-    },
-
-    /**
-     * @param {string} prop
-     * @param {*} value
-     */
-    set: function(prop, value) {
-        this.syncObject[prop] = value;
-    },
-
-    /**
-     *
-     * @param syncObject
-     */
-    setSyncObject: function(syncObject) {
-        this.syncObject = syncObject;
-        this.dispatchEvent(new Event(SyncObject.EventTypes.CHANGED));
+    getSchemaForName: function(name) {
+        var model   = this.mongoose.model(name);
+        return model.schema;
     }
 });
-
-
-//-------------------------------------------------------------------------------
-// Static Properties
-//-------------------------------------------------------------------------------
-
-/**
- * @enum {string}
- */
-SyncObject.EventTypes = {
-    CHANGED: "changed"
-};
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugsync.SyncObject', SyncObject);
+bugpack.export('mongo.DummyMongoDataStore', DummyMongoDataStore);

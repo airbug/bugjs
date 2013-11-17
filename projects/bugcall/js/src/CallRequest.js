@@ -41,6 +41,11 @@ var CallRequest = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
+    /**
+     * @constructs
+     * @param {string} type
+     * @param {*} data
+     */
     _constructor: function(type, data) {
 
         this._super();
@@ -91,7 +96,6 @@ var CallRequest = Class.extend(Obj, {
      * @return {string}
      */
     getUuid: function() {
-        console.log("Inside CallRequest#getUuid");
         return this.uuid
     },
 
