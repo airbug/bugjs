@@ -46,7 +46,7 @@ var ConfigurationModuleFactory = Class.extend(ModuleFactory, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

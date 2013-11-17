@@ -42,7 +42,7 @@ var BugControl = Class.extend(Obj, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         // TODO BRN: Add support for BugJs data objects that implement the IIterate interface

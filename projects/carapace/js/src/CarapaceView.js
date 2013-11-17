@@ -60,7 +60,7 @@ var CarapaceView = Class.adapt(Backbone.View, {
         //this._super(options);
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

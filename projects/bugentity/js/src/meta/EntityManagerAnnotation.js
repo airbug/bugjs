@@ -41,7 +41,7 @@ var EntityManagerAnnotation = Class.extend(ModuleAnnotation, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

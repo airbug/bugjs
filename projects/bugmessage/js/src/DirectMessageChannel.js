@@ -39,7 +39,7 @@ var DirectMessageChannel = Class.extend(AbstractMessageChannel, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

@@ -48,7 +48,7 @@ var ConfigurationAnnotationProcessor = Class.extend(ModuleAnnotationProcessor, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

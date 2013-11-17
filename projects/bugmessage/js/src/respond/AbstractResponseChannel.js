@@ -44,7 +44,7 @@ var AbstractResponseChannel = Class.extend(EventPropagator, {
         this._super();
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

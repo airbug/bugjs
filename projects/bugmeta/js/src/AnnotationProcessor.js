@@ -41,7 +41,7 @@ var AnnotationProcessor = Class.extend(Obj, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         this.processorFunction = processorFunction;

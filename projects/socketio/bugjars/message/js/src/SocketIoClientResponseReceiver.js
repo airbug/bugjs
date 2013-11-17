@@ -47,7 +47,7 @@ var SocketIoClientResponseReceiver = Class.extend(AbstractResponseReceiver, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

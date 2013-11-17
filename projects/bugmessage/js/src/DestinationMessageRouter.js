@@ -47,7 +47,7 @@ var DestinationMessageRouter = Class.extend(AbstractMessageRouter, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

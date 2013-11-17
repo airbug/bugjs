@@ -44,7 +44,7 @@ var DestinationRoute = Class.extend(EventDispatcher, {
         this._super();
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

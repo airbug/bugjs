@@ -41,7 +41,7 @@ var PublisherSubscription = Class.extend(Obj, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         if (oneTimeDelivery === undefined) {

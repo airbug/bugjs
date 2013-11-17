@@ -41,7 +41,7 @@ var CallbackMessageReceiver = Class.extend(AbstractMessageReceiver, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

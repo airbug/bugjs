@@ -46,7 +46,7 @@ var AnnotationModuleFactory = Class.extend(ModuleFactory, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

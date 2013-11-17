@@ -48,7 +48,7 @@ var MessagePublisher = Class.extend(MessageChannel, {
         this._super();
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

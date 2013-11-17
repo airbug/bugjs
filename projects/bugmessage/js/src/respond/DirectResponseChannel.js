@@ -39,7 +39,7 @@ var DirectResponseChannel = Class.extend(AbstractResponseChannel, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

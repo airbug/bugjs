@@ -52,7 +52,7 @@ var SocketIoClientChannel = Class.extend(AbstractMessageChannel, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

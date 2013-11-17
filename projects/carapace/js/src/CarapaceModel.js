@@ -50,7 +50,7 @@ var CarapaceModel = Class.adapt(Backbone.Model, {
         this._super(attributes, options);
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

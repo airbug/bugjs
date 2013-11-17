@@ -43,7 +43,7 @@ var BroadcasterMessageChannel = Class.extend(AbstractMessageChannel, {
         this._super();
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

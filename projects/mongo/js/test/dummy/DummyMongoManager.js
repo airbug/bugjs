@@ -41,7 +41,7 @@ var DummyMongoManager = Class.extend(Obj, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         Proxy.proxy(this, this.model, [

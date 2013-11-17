@@ -45,7 +45,7 @@ var CallServerConnection = Class.extend(CallConnection, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
 

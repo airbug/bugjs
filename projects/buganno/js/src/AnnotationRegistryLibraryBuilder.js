@@ -61,7 +61,7 @@ var AnnotationRegistryLibraryBuilder = Class.extend(Obj, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

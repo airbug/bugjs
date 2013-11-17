@@ -43,7 +43,7 @@ var AbstractMessageRouter = Class.extend(AbstractMessageReceiver, {
         this._super();
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

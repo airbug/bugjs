@@ -43,7 +43,7 @@ var ForInParallel = Class.extend(IteratorFlow, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         // TODO BRN: Add support for BugJs data objects that implement the IIterate interface

@@ -43,7 +43,7 @@ var IteratorFlow = Class.extend(Flow, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         // TODO BRN: Add support for BugJs data objects that implement the IIterate interface

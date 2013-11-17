@@ -42,7 +42,7 @@ var CallbackResponseChannel = Class.extend(AbstractResponseChannel, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

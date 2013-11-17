@@ -41,7 +41,7 @@ var Properties = Class.extend(Obj, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         if (!TypeUtil.isObject(propertiesObject)) {

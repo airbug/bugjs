@@ -40,7 +40,7 @@ var CarapaceCollection = Class.adapt(Backbone.Collection, {
         this._super(data, options);
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

@@ -47,7 +47,7 @@ var EntityManagerModuleFactory = Class.extend(ModuleFactory, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**

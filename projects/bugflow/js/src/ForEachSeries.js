@@ -53,7 +53,7 @@ var ForEachSeries = Class.extend(IteratorFlow, {
 
 
         //-------------------------------------------------------------------------------
-        // Declare Variables
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         if (Class.doesImplement(data, IIterable)) {
