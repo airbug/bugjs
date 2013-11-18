@@ -128,10 +128,6 @@ var DummyMongoManager = Class.extend(Obj, {
     create: function(dbObject, callback) {
         var dbObjectClone = Obj.clone(dbObject);
         dbObjectClone._id = this.generateId();
-
-        //TEST
-        console.log("TEST create - dbObjectClone._id:", dbObjectClone._id);
-
         this.dataObject[dbObjectClone._id.toString()] = dbObjectClone;
         callback(undefined, dbObjectClone);
     },
@@ -152,9 +148,6 @@ var DummyMongoManager = Class.extend(Obj, {
      * @returns {DummyFindByIdQuery}
      */
     findById: function(id, callback) {
-        //TEST
-        console.log("TEST findById - id:", id);
-
         var query = new DummyFindByIdQuery(this, id);
         if (callback) {
             query.exec(callback);
@@ -173,10 +166,6 @@ var DummyMongoManager = Class.extend(Obj, {
      * @return {DummyFindByIdAndUpdateQuery}
      */
     findByIdAndUpdate: function(id, updateObject, callback) {
-        //TEST
-        console.log("TEST findByIdAndUpdate - id:", id);
-
-
         var query = new DummyFindByIdAndUpdateQuery(this, id, updateObject);
         if (callback) {
             query.exec(callback);

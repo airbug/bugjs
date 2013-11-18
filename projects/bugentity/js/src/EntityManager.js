@@ -343,14 +343,7 @@ var EntityManager = Class.extend(Obj, {
         var dataStore       = this.dataStore;
         var id              = entity.getId();
         var updateObject    = this.buildUpdateObject(entity);
-
-        //TEST
-        console.log("EntityManager update - id:", id, " updateObject:", updateObject);
-
         dataStore.findByIdAndUpdate(id, updateObject, function(throwable, dbObject) {
-            //TEST
-            console.log("findByIdAndUpdate COMPLETE - throwable:", throwable, " dbObject:", dbObject);
-
             if (!throwable) {
                 callback(undefined, entity);
             } else {
