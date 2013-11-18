@@ -56,7 +56,7 @@ var Obj = Class.declare({
          * @private
          * @type {?number}
          */
-        this._hashCode = undefined;
+        this._hashCode      = undefined;
 
         // NOTE BRN: This value is set during the call to IdGenerator.injectId(). We just put this here for clarity's sake.
 
@@ -64,9 +64,15 @@ var Obj = Class.declare({
          * @private
          * @type {?number}
          */
-        this._internalId = undefined;
+        this._internalId    = undefined;
 
         IdGenerator.ensureId(this);
+        Object.defineProperty(this, "_hashCode", {
+            value : undefined,
+            writable : true,
+            enumerable : false,
+            configurable : false
+        });
     },
 
 
@@ -259,8 +265,8 @@ Obj.equals = function(value1, value2) {
  *
  * @static
  * @param {Object} object
- * @param {function(*)} func
- * @param {Object} context
+ * @param {function(string, *)} func
+ * @param {Object=} context
  */
 Obj.forIn = function(object, func, context) {
     if (!func || (func && !func.call)) {
