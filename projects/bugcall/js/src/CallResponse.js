@@ -7,6 +7,7 @@
 //@Export('CallResponse')
 
 //@Require('Class')
+//@Require('IObjectable')
 //@Require('Obj')
 //@Require('UuidGenerator')
 
@@ -23,6 +24,7 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
+var IObjectable     = bugpack.require('IObjectable');
 var Obj             = bugpack.require('Obj');
 var UuidGenerator   = bugpack.require('UuidGenerator');
 
@@ -41,6 +43,12 @@ var CallResponse = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
+    /**
+     * @constructs
+     * @param {string} type
+     * @param {*} data
+     * @param {string} requestUuid
+     */
     _constructor: function(type, data, requestUuid) {
 
         this._super();
@@ -53,25 +61,25 @@ var CallResponse = Class.extend(Obj, {
          * @private
          * @type {*}
          */
-        this.data = data;
+        this.data           = data;
 
         /**
          * @private
          * @type {string}
          */
-        this.requestUuid = requestUuid;
+        this.requestUuid    = requestUuid;
 
         /**
          * @private
          * @type {string}
          */
-        this.type = type;
+        this.type           = type;
 
         /**
          * @private
          * @type {string}
          */
-        this.uuid = UuidGenerator.generateUuid();
+        this.uuid           = UuidGenerator.generateUuid();
     },
 
 
@@ -104,7 +112,6 @@ var CallResponse = Class.extend(Obj, {
      * @return {string}
      */
     getUuid: function() {
-        console.log("Inside CallResponse#getUuid")
         return this.uuid;
     },
 
@@ -125,6 +132,13 @@ var CallResponse = Class.extend(Obj, {
         }
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Interfaces
+//-------------------------------------------------------------------------------
+
+Class.implement(CallResponse, IObjectable);
 
 
 //-------------------------------------------------------------------------------
