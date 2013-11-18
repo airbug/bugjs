@@ -11,13 +11,13 @@
 //@Require('EventDispatcher')
 //@Require('HashUtil')
 //@Require('IdGenerator')
-//@Require('IDisposable')
 //@Require('IEquals')
 //@Require('IHashCode')
 //@Require('List')
 //@Require('Obj')
 //@Require('Proxy')
 //@Require('backbone.Backbone')
+//@Require('carapace.IDisposable')
 
 
 //-------------------------------------------------------------------------------
@@ -36,13 +36,13 @@ var Event           = bugpack.require('Event');
 var EventDispatcher = bugpack.require('EventDispatcher');
 var HashUtil        = bugpack.require('HashUtil');
 var IdGenerator     = bugpack.require('IdGenerator');
-var IDisposable     = bugpack.require('IDisposable');
 var IEquals         = bugpack.require('IEquals');
 var IHashCode       = bugpack.require('IHashCode');
 var List            = bugpack.require('List');
 var Obj             = bugpack.require('Obj');
 var Proxy           = bugpack.require('Proxy');
 var Backbone        = bugpack.require('backbone.Backbone');
+var IDisposable     = bugpack.require('carapace.IDisposable');
 
 
 //-------------------------------------------------------------------------------
@@ -417,6 +417,12 @@ var CarapaceView = Class.adapt(Backbone.View, {
         this.renderView();
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Interfaces
+//-------------------------------------------------------------------------------
+
 Class.implement(CarapaceView, IDisposable);
 Class.implement(CarapaceView, IEquals);
 Class.implement(CarapaceView, IHashCode);

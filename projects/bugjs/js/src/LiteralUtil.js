@@ -40,6 +40,11 @@ var LiteralUtil = {};
 // Static Methods
 //-------------------------------------------------------------------------------
 
+/**
+ * @static
+ * @param {*} value
+ * @returns {*}
+ */
 LiteralUtil.convertToLiteral = function(value) {
     var literal = undefined;
     if (TypeUtil.isObject(value)) {

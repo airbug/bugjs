@@ -9,17 +9,17 @@
 //@Require('Class')
 //@Require('HashUtil')
 //@Require('IdGenerator')
-//@Require('IDisposable')
 //@Require('IEquals')
 //@Require('IHashCode')
 //@Require('backbone.Backbone')
+//@Require('carapace.IDisposable')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -29,10 +29,10 @@ var bugpack = require('bugpack').context();
 var Class       = bugpack.require('Class');
 var HashUtil    = bugpack.require('HashUtil');
 var IdGenerator = bugpack.require('IdGenerator');
-var IDisposable = bugpack.require('IDisposable');
 var IEquals     = bugpack.require('IEquals');
 var IHashCode   = bugpack.require('IHashCode');
 var Backbone    = bugpack.require('backbone.Backbone');
+var IDisposable = bugpack.require('carapace.IDisposable');
 
 
 //-------------------------------------------------------------------------------

@@ -2,12 +2,11 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('Disposable')
+//@Package('carapace')
 
-//@Require('Class')
-//@Require('IDisposable')
-//@Require('IEquals')
-//@Require('Obj')
+//@Export('IDisposable')
+
+//@Require('Interface')
 
 
 //-------------------------------------------------------------------------------
@@ -21,48 +20,28 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =         bugpack.require('Class');
-var IDisposable =   bugpack.require('IDisposable');
-var IEquals =       bugpack.require('IEquals');
-var Obj =           bugpack.require('Obj');
+var Interface = bugpack.require('Interface');
 
 
 //-------------------------------------------------------------------------------
-// Declare Class
+// Declare Interface
 //-------------------------------------------------------------------------------
 
-var Disposable = Class.extend(Obj, {
+var IDisposable = Interface.declare({
 
     //-------------------------------------------------------------------------------
-    // Constructor
-    //-------------------------------------------------------------------------------
-
-    _constructor: function() {
-
-        this._super();
-
-        //-------------------------------------------------------------------------------
-        // Private Properties
-        //-------------------------------------------------------------------------------
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // IDisposable Implementation
+    // Interface Methods
     //-------------------------------------------------------------------------------
 
     /**
      *
      */
-    dispose: function() {
-
-    }
+    dispose: function() {}
 });
-Class.implement(Disposable, IDisposable);
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('Disposable', Disposable);
+bugpack.export('carapace.IDisposable', IDisposable);
