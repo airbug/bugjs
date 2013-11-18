@@ -39,6 +39,7 @@ var BugMeta = Class.extend(Obj, {});
 //-------------------------------------------------------------------------------
 
 /**
+ * @static
  * @private
  * @type {MetaContext}
  */
@@ -50,6 +51,7 @@ BugMeta.metaContext = null;
 //-------------------------------------------------------------------------------
 
 /**
+ * @static
  * @return {MetaContext}
  */
 BugMeta.context = function() {
@@ -58,6 +60,7 @@ BugMeta.context = function() {
     }
     return BugMeta.metaContext;
 };
+
 
 //-------------------------------------------------------------------------------
 // Exports
