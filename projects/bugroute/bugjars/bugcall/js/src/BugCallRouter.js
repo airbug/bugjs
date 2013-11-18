@@ -65,7 +65,7 @@ var BugCallRouter = Class.extend(Obj, {
          * @private
          * @type {Map.<string, ICallRoute>}
          */
-        this.routesMap      = new Map();
+        this.routeMap      = new Map();
     },
 
 
@@ -76,8 +76,15 @@ var BugCallRouter = Class.extend(Obj, {
     /**
      * @returns {Array.<ICallRoute>}
      */
-    getRoutes: function() {
-        return this.routesMap.getValueArray();
+    getRouteArray: function() {
+        return this.routeMap.getValueArray();
+    },
+
+    /**
+     * @returns {Map.<string, ICallRoute>}
+     */
+    getRouteMap: function() {
+        return this.routeMap;
     },
 
 
@@ -90,10 +97,10 @@ var BugCallRouter = Class.extend(Obj, {
      */
     add: function(route) {
         var requestType = route.getRequestType();
-        if (!this.routesMap.containsKey(requestType)) {
-            this.routesMap.put(requestType, route);
+        if (!this.routeMap.containsKey(requestType)) {
+            this.routeMap.put(requestType, route);
         } else {
-            throw new Error("The bugCallRoute '" + requestType + "' already exists in the routesMap");
+            throw new Error("The bugCallRoute '" + requestType + "' already exists in the routeMap");
         }
     },
 
@@ -131,7 +138,7 @@ var BugCallRouter = Class.extend(Obj, {
      */
     processRequest: function(request, responder, callback) {
         var requestType     = request.getType();
-        var bugCallRoute    = this.routesMap.get(requestType);
+        var bugCallRoute    = this.routeMap.get(requestType);
         if (bugCallRoute) {
             bugCallRoute.route(request, responder, callback);
         } else {

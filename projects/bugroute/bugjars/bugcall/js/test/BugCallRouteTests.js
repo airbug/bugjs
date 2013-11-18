@@ -91,7 +91,7 @@ var bugCallRouteRouteTest = {
                 "Assert callback received by listener is testCallback");
         };
         this.testListenerSpy        = spyOnFunction(this.testListener);
-        this.testBugCallRoute       = new BugCallRoute(this.testRequestType, this.testListener);
+        this.testBugCallRoute       = new BugCallRoute(this.testRequestType, this.testListenerSpy);
     },
 
 

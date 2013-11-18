@@ -29,12 +29,20 @@ var TypeUtil    = bugpack.require('TypeUtil');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ * @extends {Obj}
+ */
 var Properties = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
+    /**
+     * @constructs
+     * @param {Object=} propertiesObject
+     */
     _constructor: function(propertiesObject) {
 
         this._super();
@@ -44,6 +52,9 @@ var Properties = Class.extend(Obj, {
         // Private Properties
         //-------------------------------------------------------------------------------
 
+        if (TypeUtil.isUndefined(propertiesObject) || TypeUtil.isNull(propertiesObject)) {
+            propertiesObject = {};
+        }
         if (!TypeUtil.isObject(propertiesObject)) {
             throw new Error("propertiesObject must be an object");
         }

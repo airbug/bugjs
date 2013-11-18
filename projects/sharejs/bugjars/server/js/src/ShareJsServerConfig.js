@@ -29,6 +29,10 @@ var Config          = bugpack.require('Config');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ * @extends {Config}
+ */
 var ShareJsServerConfig = Class.extend(Config, {
 
     //-------------------------------------------------------------------------------
@@ -39,7 +43,7 @@ var ShareJsServerConfig = Class.extend(Config, {
      * @return {Object}
      */
     getSockJs: function() {
-        return this.properties.getProperty("sockjs");
+        return this.getProperties().getProperty("sockjs");
     },
 
     /**
@@ -47,21 +51,21 @@ var ShareJsServerConfig = Class.extend(Config, {
      * @param {Object} sockJs
      */
     setSockJs: function(sockJs) {
-        this.properties.setProperty("sockjs", sockJs);
+        this.getProperties().setProperty("sockjs", sockJs);
     },
 
     /**
      * @return {Object}
      */
     getDb: function() {
-        return this.properties.getProperty("db");
+        return this.getProperties().getProperty("db");
     },
 
     /**
      * @param {Object} db
      */
     setDb: function(db) {
-        this.properties.setProperty("db", db);
+        this.getProperties().setProperty("db", db);
     }
 });
 

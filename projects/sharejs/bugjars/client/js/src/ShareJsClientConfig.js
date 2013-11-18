@@ -29,6 +29,10 @@ var Config          = bugpack.require('Config');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ * @extends {Config}
+ */
 var ShareJsClientConfig = Class.extend(Config, {
 
     //-------------------------------------------------------------------------------
@@ -39,28 +43,28 @@ var ShareJsClientConfig = Class.extend(Config, {
      * @return {Object}
      */
     getAuthentication: function() {
-        return this.properties.getProperty("authentication");
+        return this.getProperties().getProperty("authentication");
     },
 
     /**
      * @param {Object} authentication
      */
     setAuthentication: function(authentication) {
-        this.properties.setProperty("authentication", authentication);
+        this.getProperties().setProperty("authentication", authentication);
     },
 
     /**
      * @return {string}
      */
     getOrigin: function() {
-        return this.properties.getProperty("origin");
+        return this.getProperties().getProperty("origin");
     },
 
     /**
      * @param {string} origin
      */
     setOrigin: function(origin) {
-        this.properties.setProperty("origin", origin);
+        this.getProperties().setProperty("origin", origin);
     }
 });
 

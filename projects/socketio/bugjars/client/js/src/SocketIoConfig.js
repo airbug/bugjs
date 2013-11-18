@@ -29,6 +29,10 @@ var Config          = bugpack.require('Config');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ * @extends {Config}
+ */
 var SocketIoConfig = Class.extend(Config, {
 
     //-------------------------------------------------------------------------------
@@ -39,42 +43,42 @@ var SocketIoConfig = Class.extend(Config, {
      * @return {string}
      */
     getHost: function() {
-        return this.properties.getProperty("host");
+        return this.getProperties().getProperty("host");
     },
 
     /**
      * @param {string} host
      */
     setHost: function(host) {
-        this.properties.setProperty("host", host);
+        this.getProperties().setProperty("host", host);
     },
 
     /**
      * @return {number}
      */
     getPort: function() {
-        return this.properties.getProperty("port");
+        return this.getProperties().getProperty("port");
     },
 
     /**
      * @param {number} port
      */
     setPort: function(port) {
-        this.properties.setProperty("port", port);
+        this.getProperties().setProperty("port", port);
     },
 
     /**
      * @return {string}
      */
     getResource: function() {
-        return this.properties.getProperty("resource");
+        return this.getProperties().getProperty("resource");
     },
 
     /**
      * @param {string} resource
      */
     setResource: function(resource) {
-        this.properties.setProperty("resource", resource);
+        this.getProperties().setProperty("resource", resource);
     }
 });
 

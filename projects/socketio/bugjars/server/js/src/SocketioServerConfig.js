@@ -15,7 +15,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -31,6 +31,10 @@ var TypeUtil    = bugpack.require('TypeUtil');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ * @extends {Config}
+ */
 var SocketIoServerConfig = Class.extend(Config, {
 
     //-------------------------------------------------------------------------------
@@ -41,21 +45,21 @@ var SocketIoServerConfig = Class.extend(Config, {
      * @return {boolean}
      */
     getMatchOriginProtocol: function() {
-        return this.properties.getProperty("matchOriginProtocol");
+        return this.getProperties().getProperty("matchOriginProtocol");
     },
 
     /**
      * @param {boolean} matchOriginProtocol
      */
     setMatchOriginProtocol: function(matchOriginProtocol) {
-        this.properties.setProperty("matchOriginProtocol", matchOriginProtocol);
+        this.getProperties().setProperty("matchOriginProtocol", matchOriginProtocol);
     },
 
     /**
      * @return {string}
      */
     getResource: function() {
-        var resource = this.properties.getProperty("resource");
+        var resource = this.getProperties().getProperty("resource");
         if (!TypeUtil.isString(resource)) {
             resource = "/socket.io"
         }
@@ -66,14 +70,14 @@ var SocketIoServerConfig = Class.extend(Config, {
      * @param {string} resource
      */
     setResource: function(resource) {
-        this.properties.setProperty("resource", resource);
+        this.getProperties().setProperty("resource", resource);
     },
 
     /**
      * @return {Array.<string>}
      */
     getTransports: function() {
-        var transports = this.properties.getProperty("transports");
+        var transports = this.getProperties().getProperty("transports");
         if (!TypeUtil.isArray(transports)) {
             transports = [
                 'websocket',
@@ -90,7 +94,7 @@ var SocketIoServerConfig = Class.extend(Config, {
      * @param {Array.<string>} transports
      */
     setTransports: function(transports) {
-        this.properties.setProperty("transports", transports);
+        this.getProperties().setProperty("transports", transports);
     }
 });
 

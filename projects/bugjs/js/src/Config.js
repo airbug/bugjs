@@ -14,7 +14,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -31,12 +31,21 @@ var Properties      = bugpack.require('Properties');
 // Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ * @extends {Obj}
+ * @implements {IObjectable}
+ */
 var Config = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
+    /**
+     * @constructs
+     * @param {Object} config
+     */
     _constructor: function(config) {
 
         this._super();
@@ -51,6 +60,18 @@ var Config = Class.extend(Obj, {
          * @type {Properties}
          */
         this.properties = new Properties(config);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {Properties}
+     */
+    getProperties: function() {
+        return this.properties;
     },
 
 
