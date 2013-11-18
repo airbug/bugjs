@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugroutes')
+//@Package('bugroute:socketio')
 
 //@Export('SocketRouter')
 
@@ -37,6 +37,10 @@ var SocketIoConnection  = bugpack.require('socketio:socket.SocketIoConnection');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ * @extends {Obj}
+ */
 var SocketRouter = Class.extend(Obj, {
 
 
@@ -45,9 +49,10 @@ var SocketRouter = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @constructs
      * @param {SocketIoManager} ioManager
      */
-    _constructor: function(ioManager){
+    _constructor: function(ioManager) {
 
         this._super();
 
@@ -58,24 +63,24 @@ var SocketRouter = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {}
+         * @type {SocketIoManager}
          */
         this.ioManager = ioManager;
 
         /**
          * @private
-         * @type {Map.<}
+         * @type {Map.<string, SocketRoute>}
          */
         this.routesMap = new Map();
     },
 
 
     //-------------------------------------------------------------------------------
-    // Public Instance Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {function(error)} callback
+     * @param {function(Throwable)} callback
      */
     initialize: function(callback){
         if(!callback || typeof callback !== 'function') var callback = function(){};
@@ -88,13 +93,13 @@ var SocketRouter = Class.extend(Obj, {
             socketConnection.on(SocketIoConnection.EventTypes.MESSAGE, this.handleConnectionMessage, this);
         });
 
-        callback();
+        callback(undefined);
     },
 
     /**
      * @param {SocketRoute} route
      */
-    add: function(route){
+    add: function(route) {
         var messageType = route.getMessageType();
         if (!this.routesMap.containsKey(messageType)) {
             this.routesMap.put(messageType, route);
@@ -106,7 +111,7 @@ var SocketRouter = Class.extend(Obj, {
     /**
      * @param {Array.<SocketRoute>} routes
      */
-    addAll: function(routes){
+    addAll: function(routes) {
         var _this = this;
         if (TypeUtil.isArray(routes)) {
             routes.forEach(function(route) {
@@ -119,7 +124,7 @@ var SocketRouter = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // Event Listener
+    // Event Listeners
     //-------------------------------------------------------------------------------
 
     /**
@@ -153,4 +158,4 @@ var SocketRouter = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugroutes.SocketRouter', SocketRouter);
+bugpack.export('bugroute:socketio.SocketRouter', SocketRouter);

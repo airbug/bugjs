@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugroutes')
+//@Package('bugroute:socketio')
 
 //@Export('SocketRoute')
 
@@ -29,13 +29,22 @@ var Obj         = bugpack.require('Obj');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ * @extends {Obj}
+ */
 var SocketRoute = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(messageType, listener){
+    /**
+     * @constructs
+     * @param {string} messageType
+     * @param {function(SocketIoConnection, Object, function(Throwable))} listener
+     */
+    _constructor: function(messageType, listener) {
 
         this._super();
 
@@ -46,7 +55,7 @@ var SocketRoute = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {function(...)}
+         * @type {function(SocketIoConnection, Object, function(Throwable))}
          */
         this.listener       = listener;
 
@@ -57,13 +66,6 @@ var SocketRoute = Class.extend(Obj, {
         this.messageType    = messageType;
     },
 
-    /**
-     * @param {SocketIoConnection | socket} socket
-     * @param {{*}} data
-     */
-    fire: function(socket, data) {
-        this.listener(socket, data);
-    },
 
     //-------------------------------------------------------------------------------
     // Getters and Setters
@@ -85,15 +87,16 @@ var SocketRoute = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // Public Instance Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
      * @param {SocketIoConnection} socket
      * @param {Object} message
+     * @param {function(Throwable)} callback
      */
-    route: function(socket, message) {
-        this.listener.call(null, socket, message);
+    route: function(socket, message, callback) {
+        this.listener.call(null, socket, message, callback);
     }
 });
 
@@ -102,4 +105,4 @@ var SocketRoute = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugroutes.SocketRoute', SocketRoute);
+bugpack.export('bugroute:socketio.SocketRoute', SocketRoute);

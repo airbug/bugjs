@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugroutes')
+//@Package('bugroute:bugcall')
 
 //@Export('ICallRoute')
 
@@ -27,6 +27,9 @@ var Interface = bugpack.require('Interface');
 // Interface
 //-------------------------------------------------------------------------------
 
+/**
+ * @interface
+ */
 var ICallRoute = Interface.declare({
 
     //-------------------------------------------------------------------------------
@@ -36,8 +39,9 @@ var ICallRoute = Interface.declare({
     /**
      * @param {CallRequest} request
      * @param {CallResponder} responder
+     * @param {function(CallRequest, CallResponder, function(Throwable))} callback
      */
-    fire: function(request, responder) {},
+    route: function(request, responder, callback) {},
 
     /**
      * @return {string}
@@ -50,4 +54,4 @@ var ICallRoute = Interface.declare({
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugroutes.ICallRoute', ICallRoute);
+bugpack.export('bugroute:bugcall.ICallRoute', ICallRoute);

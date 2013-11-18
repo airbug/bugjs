@@ -47,7 +47,7 @@ var annotationInstantiationTest = {
 
     setup: function(test) {
         this.testAnnotationType     = "testAnnotationType";
-        this.testAnnotation         = new TestAnnotation(this.testAnnotationType);
+        this.testAnnotation         = new Annotation(this.testAnnotationType);
     },
 
     //-------------------------------------------------------------------------------

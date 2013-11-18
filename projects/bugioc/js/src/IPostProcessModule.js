@@ -34,7 +34,7 @@ var IPostProcessModule = Interface.declare({
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {function(Error)}
+     * @param {function(Throwable)} callback
      */
     postProcessModule: function(callback) {}
 });

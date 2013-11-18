@@ -27,6 +27,9 @@ var Interface = bugpack.require('Interface');
 // Declare Interface
 //-------------------------------------------------------------------------------
 
+/**
+ * @interface
+ */
 var IProcessRequest = Interface.declare({
 
     //-------------------------------------------------------------------------------

@@ -33,12 +33,12 @@ var IHand = Interface.declare({
      * @param {{
      *    headers: Object,
      *    time: Date,
-     *  , address: Object,
-     *  , xdomain: boolean,
-     *  , secure: boolean,
-     *  , issued: number,
-     *  , url: string,
-     *  , query: Object
+     *    address: Object,
+     *    xdomain: boolean,
+     *    secure: boolean,
+     *    issued: number,
+     *    url: string,
+     *    query: Object
      * }} handshakeData
      * @param {function(Throwable, boolean)} callback
      */

@@ -2,13 +2,13 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugroutes')
+//@Package('bugroute:bugcall')
 
 //@Export('BugCallRoute')
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('bugroutes.ICallRoute')
+//@Require('bugroute:bugcall.ICallRoute')
 
 
 //-------------------------------------------------------------------------------
@@ -24,20 +24,30 @@ var bugpack     = require('bugpack').context();
 
 var Class       = bugpack.require('Class');
 var Obj         = bugpack.require('Obj');
-var ICallRoute  = bugpack.require('bugroutes.ICallRoute');
+var ICallRoute  = bugpack.require('bugroute:bugcall.ICallRoute');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ * @extends {Obj}
+ * @implements {ICallRoute}
+ */
 var BugCallRoute = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(requestType, listener){
+    /**
+     * @constructs
+     * @param {string} requestType
+     * @param {function(CallRequest, CallResponder, function(Throwable))} listener
+     */
+    _constructor: function(requestType, listener) {
 
         this._super();
 
@@ -48,7 +58,7 @@ var BugCallRoute = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {function(...)}
+         * @type {function(CallRequest, CallResponder, function(Throwable))} listener
          */
         this.listener       = listener;
 
@@ -61,22 +71,35 @@ var BugCallRoute = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // ICallRoute Implementation
+    // Getters and Setters
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {CallRequest} request
-     * @param {CallResponder} responder
+     * @returns {function(CallRequest, CallResponder, function(Throwable))}
      */
-    fire: function(request, responder, callback) {
-        this.listener(request, responder, callback);
+    getListener: function() {
+        return this.listener;
     },
+
+
+    //-------------------------------------------------------------------------------
+    // ICallRoute Implementation
+    //-------------------------------------------------------------------------------
 
     /**
      * @return {string}
      */
     getRequestType: function() {
         return this.requestType;
+    },
+
+    /**
+     * @param {CallRequest} request
+     * @param {CallResponder} responder
+     * @param {function(Throwable)} callback
+     */
+    route: function(request, responder, callback) {
+        this.listener.call(null, request, responder, callback);
     }
 });
 
@@ -92,4 +115,4 @@ Class.implement(BugCallRoute, ICallRoute);
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugroutes.BugCallRoute', BugCallRoute);
+bugpack.export('bugroute:bugcall.BugCallRoute', BugCallRoute);

@@ -9,7 +9,7 @@
 //@Require('Class')
 //@Require('Exception')
 //@Require('Obj')
-//@Require('bugroutes.ICallRoute')
+//@Require('bugroute:bugcall.ICallRoute')
 //@Require('bugservice.ServiceContext')
 
 
@@ -17,7 +17,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -27,7 +27,7 @@ var bugpack     = require('bugpack').context();
 var Class           = bugpack.require('Class');
 var Exception       = bugpack.require('Exception');
 var Obj             = bugpack.require('Obj');
-var ICallRoute      = bugpack.require('bugroutes.ICallRoute');
+var ICallRoute      = bugpack.require('bugroute:bugcall.ICallRoute');
 var ServiceContext  = bugpack.require('bugservice.ServiceContext');
 
 
@@ -104,7 +104,7 @@ var ServiceRoute = Class.extend(Obj, {
      * @param {CallRequest} request
      * @param {CallResponder} responder
      */
-    fire: function(request, responder) {
+    route: function(request, responder) {
         var _this = this;
         var data            = request.getData();
         var serviceContext  = this.factoryServiceContext(request.getCallManager());

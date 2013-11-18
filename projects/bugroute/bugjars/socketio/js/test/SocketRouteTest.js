@@ -5,8 +5,8 @@
 //@TestFile
 
 //@Require('bugmeta.BugMeta')
+//@Require('bugroute:socketio.SocketRoute')
 //@Require('bugunit-annotate.TestAnnotation')
-//@Require('bugroutes.SocketRoute')
 
 
 //-------------------------------------------------------------------------------
@@ -21,8 +21,9 @@ var bugpack             = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var BugMeta             = bugpack.require('bugmeta.BugMeta');
-var SocketRoute         = bugpack.require('bugroutes.SocketRoute');
+var SocketRoute         = bugpack.require('bugroute:socketio.SocketRoute');
 var TestAnnotation      = bugpack.require('bugunit-annotate.TestAnnotation');
+
 
 //-------------------------------------------------------------------------------
 // Simplify References
@@ -36,7 +37,7 @@ var test                = TestAnnotation.test;
 // Declare Tests
 //-------------------------------------------------------------------------------
 
-var constructorTest = {
+var socketRouteInstantiationTest = {
     
     //-------------------------------------------------------------------------------
     // Setup Test
@@ -63,7 +64,7 @@ var constructorTest = {
             "Asserts that the socketRoute's listener is assigned properly on construction");
     }
 };
-bugmeta.annotate(constructorTest).with(
-    test().name("SocketRoute ._constructor Test")
+bugmeta.annotate(socketRouteInstantiationTest).with(
+    test().name("SocketRoute - instantiation Test")
 );
 

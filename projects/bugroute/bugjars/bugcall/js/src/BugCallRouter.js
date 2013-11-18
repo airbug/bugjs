@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugroutes')
+//@Package('bugroute:bugcall')
 
 //@Export('BugCallRouter')
 
@@ -11,7 +11,7 @@
 //@Require('Obj')
 //@Require('TypeUtil')
 //@Require('bugcall.IProcessRequest')
-//@Require('bugroutes.BugCallRoute')
+//@Require('bugroute:bugcall.BugCallRoute')
 
 
 //-------------------------------------------------------------------------------
@@ -30,13 +30,18 @@ var Map                 = bugpack.require('Map');
 var Obj                 = bugpack.require('Obj');
 var TypeUtil            = bugpack.require('TypeUtil');
 var IProcessRequest     = bugpack.require('bugcall.IProcessRequest');
-var BugCallRoute        = bugpack.require('bugroutes.BugCallRoute');
+var BugCallRoute        = bugpack.require('bugroute:bugcall.BugCallRoute');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ * @extends {Obj}
+ * @implements {IProcessRequest}
+ */
 var BugCallRouter = Class.extend(Obj, {
 
 
@@ -45,6 +50,7 @@ var BugCallRouter = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @constructs
      */
     _constructor: function(){
 
@@ -57,22 +63,30 @@ var BugCallRouter = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {Map.<}
+         * @type {Map.<string, ICallRoute>}
          */
-        this.routesMap                      = new Map();
+        this.routesMap      = new Map();
     },
 
 
     //-------------------------------------------------------------------------------
-    // Public Instance Methods
+    // Getters and Setters
     //-------------------------------------------------------------------------------
 
+    /**
+     * @returns {Array.<ICallRoute>}
+     */
     getRoutes: function() {
         return this.routesMap.getValueArray();
     },
 
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
+    //-------------------------------------------------------------------------------
+
     /**
-     * @param {BugCallRoute} route
+     * @param {ICallRoute} route
      */
     add: function(route) {
         var requestType = route.getRequestType();
@@ -84,9 +98,9 @@ var BugCallRouter = Class.extend(Obj, {
     },
 
     /**
-     * @param {(Array.<BugCallRoute> | {*})} routes
+     * @param {(Array.<ICallRoute> | {})} routes
      */
-    addAll: function(routes){
+    addAll: function(routes) {
         var _this = this;
         if (TypeUtil.isArray(routes)) {
             routes.forEach(function(route) {
@@ -105,38 +119,38 @@ var BugCallRouter = Class.extend(Obj, {
         }
     },
 
-    //-------------------------------------------------------------------------------
-    // Getters
-    //-------------------------------------------------------------------------------
-
 
     //-------------------------------------------------------------------------------
-    // IProcess Implementation
+    // IProcessRequest Implementation
     //-------------------------------------------------------------------------------
 
     /**
      * @param {IncomingRequest} request
      * @param {CallResponder} responder
-     * @param {function(Throwable)}  callback
+     * @param {function(Throwable)} callback
      */
     processRequest: function(request, responder, callback) {
-        console.log("Inside BugCallRouter#processRequest");
         var requestType     = request.getType();
         var bugCallRoute    = this.routesMap.get(requestType);
-        console.log("requestType:", requestType);
-        if(bugCallRoute) {
-            bugCallRoute.fire(request, responder, callback);
+        if (bugCallRoute) {
+            bugCallRoute.route(request, responder, callback);
         } else {
-            console.log("Error Bugroute", requestType, "does not exist");
-            callback(new Error("Bugroute '" + requestType + "' does not exist"));
+            console.log("Error route '", requestType, "' does not exist");
+            callback(new Error("Route '" + requestType + "' does not exist"));
         }
     }
 });
 
+
+//-------------------------------------------------------------------------------
+// Interfaces
+//-------------------------------------------------------------------------------
+
 Class.implement(BugCallRouter, IProcessRequest);
+
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugroutes.BugCallRouter', BugCallRouter);
+bugpack.export('bugroute:bugcall.BugCallRouter', BugCallRouter);

@@ -34,7 +34,7 @@ var IPreProcessModule = Interface.declare({
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {function(Error)}
+     * @param {function(Throwable)} callback
      */
     preProcessModule: function(callback) {}
 });
