@@ -4,12 +4,10 @@
 
 //@Package('mongo')
 
-//@Export('DummyMongoDataStore')
+//@Export('DummyMongoQuery')
 
 //@Require('Class')
-//@Require('Map')
 //@Require('Obj')
-//@Require('mongo.DummyMongoManager')
 
 
 //-------------------------------------------------------------------------------
@@ -24,9 +22,7 @@ var bugpack             = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
-var Map                 = bugpack.require('Map');
 var Obj                 = bugpack.require('Obj');
-var DummyMongoManager   = bugpack.require('mongo.DummyMongoManager');
 
 
 //-------------------------------------------------------------------------------
@@ -37,7 +33,7 @@ var DummyMongoManager   = bugpack.require('mongo.DummyMongoManager');
  * @constructor
  * @extends {Obj}
  */
-var DummyMongoDataStore = Class.extend(Obj, {
+var DummyMongoQuery = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -46,7 +42,7 @@ var DummyMongoDataStore = Class.extend(Obj, {
     /**
      * @constructs
      */
-    _constructor: function() {
+    _constructor: function(manager) {
 
         this._super();
 
@@ -57,9 +53,9 @@ var DummyMongoDataStore = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {Map.<Class, DummyMongoManager>}
+         * @type {DummyMongoManager}
          */
-        this.managerMap     = new Map();
+        this.manager = manager;
     },
 
 
@@ -67,32 +63,21 @@ var DummyMongoDataStore = Class.extend(Obj, {
     // Public Methods
     //-------------------------------------------------------------------------------
 
-    /**
-     * @param {string} url
-     */
-    connect: function(url) {
-        //do nothing
+    exec: function(callback) {
+        var result = this.query();
+        callback(undefined, result);
     },
 
-    /**
-     * @param {string} modelName
-     * @return {MongoManager}
-     */
-    generateManager: function(modelName) {
-        var manager = this.managerMap.get(modelName);
-        if (!manager) {
-            manager     = new DummyMongoManager(modelName);
-        }
-        return manager;
-    },
+
+    //-------------------------------------------------------------------------------
+    // Test Methods
+    //-------------------------------------------------------------------------------
 
     /**
-     * @param {string} name
-     * @return {*}
+     * @return {DummyMongoManager}
      */
-    getSchemaForName: function(name) {
-        var model   = this.mongoose.model(name);
-        return model.schema;
+    getManager: function() {
+        return this.manager;
     }
 });
 
@@ -101,4 +86,4 @@ var DummyMongoDataStore = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('mongo.DummyMongoDataStore', DummyMongoDataStore);
+bugpack.export('mongo.DummyMongoQuery', DummyMongoQuery);

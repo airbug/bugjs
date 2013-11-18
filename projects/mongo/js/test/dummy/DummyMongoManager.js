@@ -7,35 +7,51 @@
 //@Export('DummyMongoManager')
 
 //@Require('Class')
+//@Require('Map')
 //@Require('Obj')
+//@Require('UuidGenerator')
+//@Require('mongo.DummyFindByIdQuery')
+//@Require('mongo.DummyFindByIdAndUpdateQuery')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
-var Class   = bugpack.require('Class');
-var Obj     = bugpack.require('Obj');
+var Class                           = bugpack.require('Class');
+var Map                             = bugpack.require('Map');
+var Obj                             = bugpack.require('Obj');
+var UuidGenerator                   = bugpack.require('UuidGenerator');
+var DummyFindByIdQuery              = bugpack.require('mongo.DummyFindByIdQuery');
+var DummyFindByIdAndUpdateQuery     = bugpack.require('mongo.DummyFindByIdAndUpdateQuery');
+
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ * @extends {Obj}
+ */
 var DummyMongoManager = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(model, schema){
+    /**
+     * @constructs
+     */
+    _constructor: function(modelName, dataObject) {
 
         this._super();
 
@@ -44,32 +60,17 @@ var DummyMongoManager = Class.extend(Obj, {
         // Private Properties
         //-------------------------------------------------------------------------------
 
-        Proxy.proxy(this, this.model, [
-            '$where',
-            'aggregate',
-            'count',
-            'create',
-            'distinct',
-            'ensureIndexes',
-            'find',
-            'findById',
-            'findByIdAndRemove',
-            'findByIdAndUpdate',
-            'findOne',
-            'findOneAndRemove',
-            'findOneAndUpdate',
-            'mapReduce',
-            'populate',
-            'remove',
-            'update',
-            'where'
-        ]);
+        /**
+         * @private
+         * @type {Object}
+         */
+        this.dataObject = dataObject || {};
 
-        Proxy.proxy(this, this.schema, [
-            'pre',
-            'post',
-            'virtual'
-        ]);
+        /**
+         * @private
+         * @type {string}
+         */
+        this.modelName  = modelName;
     },
 
 
@@ -93,7 +94,7 @@ var DummyMongoManager = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // Public Instance Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     configure: function(callback) {
@@ -119,9 +120,22 @@ var DummyMongoManager = Class.extend(Obj, {
     count: function() {
 
     },
-    create: function() {
 
+    /**
+     * @param {Object} dbObject
+     * @param {function(Error, Object)} callback
+     */
+    create: function(dbObject, callback) {
+        var dbObjectClone = Obj.clone(dbObject);
+        dbObjectClone._id = this.generateId();
+
+        //TEST
+        console.log("TEST create - dbObjectClone._id:", dbObjectClone._id);
+
+        this.dataObject[dbObjectClone._id.toString()] = dbObjectClone;
+        callback(undefined, dbObjectClone);
     },
+
     distinct: function() {
 
     },
@@ -131,14 +145,44 @@ var DummyMongoManager = Class.extend(Obj, {
     find: function() {
 
     },
-    findById: function() {
 
+    /**
+     * @param {string} id
+     * @param {function(Error, Object)} callback
+     * @returns {DummyFindByIdQuery}
+     */
+    findById: function(id, callback) {
+        //TEST
+        console.log("TEST findById - id:", id);
+
+        var query = new DummyFindByIdQuery(this, id);
+        if (callback) {
+            query.exec(callback);
+        } else {
+            return query;
+        }
     },
     findByIdAndRemove: function() {
 
     },
-    findByIdAndUpdate: function() {
 
+    /**
+     * @param {string} id
+     * @param {Object} updateObject
+     * @param {function(Error, Object)} callback
+     * @return {DummyFindByIdAndUpdateQuery}
+     */
+    findByIdAndUpdate: function(id, updateObject, callback) {
+        //TEST
+        console.log("TEST findByIdAndUpdate - id:", id);
+
+
+        var query = new DummyFindByIdAndUpdateQuery(this, id, updateObject);
+        if (callback) {
+            query.exec(callback);
+        } else {
+            return query;
+        }
     },
     findOne: function() {
 
@@ -172,6 +216,32 @@ var DummyMongoManager = Class.extend(Obj, {
     },
     virtual: function() {
         //TODO BRN:
+    },
+
+
+
+    //-------------------------------------------------------------------------------
+    // Helper Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @returns {Object}
+     */
+    generateId: function() {
+        var idObject = {
+            id: UuidGenerator.generateHexUuid(),
+            toString: function() {
+                return idObject.id;
+            }
+        };
+        return idObject;
+    },
+
+    /**
+     * @returns {Object}
+     */
+    getDataObject: function() {
+        return this.dataObject;
     }
 });
 

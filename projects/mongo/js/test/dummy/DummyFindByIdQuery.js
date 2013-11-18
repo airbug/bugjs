@@ -4,12 +4,10 @@
 
 //@Package('mongo')
 
-//@Export('DummyMongoDataStore')
+//@Export('DummyFindByIdQuery')
 
 //@Require('Class')
-//@Require('Map')
-//@Require('Obj')
-//@Require('mongo.DummyMongoManager')
+//@Require('mongo.DummyMongoQuery')
 
 
 //-------------------------------------------------------------------------------
@@ -24,9 +22,7 @@ var bugpack             = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
-var Map                 = bugpack.require('Map');
-var Obj                 = bugpack.require('Obj');
-var DummyMongoManager   = bugpack.require('mongo.DummyMongoManager');
+var DummyMongoQuery     = bugpack.require('mongo.DummyMongoQuery');
 
 
 //-------------------------------------------------------------------------------
@@ -35,9 +31,9 @@ var DummyMongoManager   = bugpack.require('mongo.DummyMongoManager');
 
 /**
  * @constructor
- * @extends {Obj}
+ * @extends {DummyMongoQuery}
  */
-var DummyMongoDataStore = Class.extend(Obj, {
+var DummyFindByIdQuery = Class.extend(DummyMongoQuery, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -45,10 +41,12 @@ var DummyMongoDataStore = Class.extend(Obj, {
 
     /**
      * @constructs
+     * @param {DummyMongoManager} manager
+     * @param {string} queryId
      */
-    _constructor: function() {
+    _constructor: function(manager, queryId) {
 
-        this._super();
+        this._super(manager);
 
 
         //-------------------------------------------------------------------------------
@@ -57,9 +55,15 @@ var DummyMongoDataStore = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {Map.<Class, DummyMongoManager>}
+         * @type {string}
          */
-        this.managerMap     = new Map();
+        this.queryId     = queryId;
+
+        /**
+         * @private
+         * @type {boolean}
+         */
+        this.queryLean   = false;
     },
 
 
@@ -68,31 +72,19 @@ var DummyMongoDataStore = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {string} url
+     * @param {boolean} queryLean
      */
-    connect: function(url) {
-        //do nothing
+    lean: function(queryLean) {
+        this.queryLean = queryLean;
+        return this;
     },
 
-    /**
-     * @param {string} modelName
-     * @return {MongoManager}
-     */
-    generateManager: function(modelName) {
-        var manager = this.managerMap.get(modelName);
-        if (!manager) {
-            manager     = new DummyMongoManager(modelName);
-        }
-        return manager;
-    },
+    query: function() {
 
-    /**
-     * @param {string} name
-     * @return {*}
-     */
-    getSchemaForName: function(name) {
-        var model   = this.mongoose.model(name);
-        return model.schema;
+        //TEST
+        console.log("DummyFindByIdQuery - this.queryId:", this.queryId, " this.getManager().getDataObject():", this.getManager().getDataObject());
+
+        return this.getManager().getDataObject()[this.queryId];
     }
 });
 
@@ -101,4 +93,4 @@ var DummyMongoDataStore = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('mongo.DummyMongoDataStore', DummyMongoDataStore);
+bugpack.export('mongo.DummyFindByIdQuery', DummyFindByIdQuery);

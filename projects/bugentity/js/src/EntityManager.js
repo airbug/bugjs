@@ -142,7 +142,7 @@ var EntityManager = Class.extend(Obj, {
      * @param {Array.<string>} dependencies
      * @param {function(Throwable, Entity)} callback
      */
-    create: function(entity, options, dependencies, callback){
+    create: function(entity, options, dependencies, callback) {
         var _this = this;
         if (!entity.getCreatedAt()) {
             entity.setCreatedAt(new Date());
@@ -159,7 +159,7 @@ var EntityManager = Class.extend(Obj, {
                     flow.complete(throwable);
                 });
             }),
-            $forEachParallel(dependencies, function(flow, dependency){
+            $forEachParallel(dependencies, function(flow, dependency) {
                 var dependencyOptions = options[dependency];
                 if(dependencyOptions){
                     var schema              = _this.schemaManager.getSchemaByClass(entity.getClass());
@@ -363,7 +363,7 @@ var EntityManager = Class.extend(Obj, {
      * @param {string} id
      * @param {function(Throwable, Entity)} callback
      */
-    retrieve: function(id, callback){
+    retrieve: function(id, callback) {
         var _this = this;
         this.dataStore.findById(id).lean(true).exec(function(throwable, dbObject) {
             if (!throwable) {
