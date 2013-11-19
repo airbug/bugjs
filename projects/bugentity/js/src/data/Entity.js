@@ -190,7 +190,7 @@ var Entity = Class.extend(Obj, {
      * @return {Object}
      */
     toObject: function() {
-        return LiteralUtil.convertToLiteral(this.deltaDocument.getData());
+        return Obj.clone(this.deltaDocument.getData(), true);
     }
 });
 
