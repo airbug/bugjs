@@ -49,6 +49,9 @@ var IDisposable     = bugpack.require('carapace.IDisposable');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ */
 var CarapaceView = Class.adapt(Backbone.View, {
 
     //-------------------------------------------------------------------------------
@@ -142,6 +145,13 @@ var CarapaceView = Class.adapt(Backbone.View, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @returns {string}
+     */
+    getCid: function() {
+        return this.cid;
+    },
+
+    /**
      * @return {string}
      */
     getId: function() {
@@ -149,7 +159,7 @@ var CarapaceView = Class.adapt(Backbone.View, {
     },
 
     /**
-     * @return {List<CarapaceView}
+     * @return {List.<CarapaceView>}
      */
     getViewChildList: function() {
         return this.viewChildList;
