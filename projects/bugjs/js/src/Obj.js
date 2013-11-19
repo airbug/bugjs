@@ -17,32 +17,41 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =         bugpack.require('Class');
-var HashUtil =      bugpack.require('HashUtil');
-var IClone =        bugpack.require('IClone');
-var IdGenerator =   bugpack.require('IdGenerator');
-var IEquals =       bugpack.require('IEquals');
-var IHashCode =     bugpack.require('IHashCode');
-var TypeUtil =      bugpack.require('TypeUtil');
+var Class           = bugpack.require('Class');
+var HashUtil        = bugpack.require('HashUtil');
+var IClone          = bugpack.require('IClone');
+var IdGenerator     = bugpack.require('IdGenerator');
+var IEquals         = bugpack.require('IEquals');
+var IHashCode       = bugpack.require('IHashCode');
+var TypeUtil        = bugpack.require('TypeUtil');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ * @implements {IClone}
+ * @implements {IEquals}
+ * @implements {IHashCode}
+ */
 var Obj = Class.declare({
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
+    /**
+     * @constructs
+     */
     _constructor: function() {
 
         this._super();
@@ -99,8 +108,7 @@ var Obj = Class.declare({
     clone: function(deep) {
         var classObject = this.getClass();
         var cloneObject = new classObject();
-        for (var key in this) {
-            var value = this[key];
+        Obj.forIn(this, function(key, value) {
             if (!TypeUtil.isFunction(value)) {
                 if (deep) {
                     cloneObject[key] = Obj.clone(value, deep);
@@ -108,7 +116,7 @@ var Obj = Class.declare({
                     cloneObject[key] = value;
                 }
             }
-        }
+        });
         return cloneObject;
     },
 

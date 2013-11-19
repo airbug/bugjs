@@ -50,12 +50,14 @@ var LiteralUtil     = {};
  */
 LiteralUtil.convertToLiteral = function(value) {
     var literal = undefined;
+    if (Class.doesImplement(value, IObjectable)) {
+        value = value.toObject();
+    } else if (Class.doesImplement(value, IArrayable)) {
+        value = value.toArray();
+    }
+
     if (TypeUtil.isObject(value)) {
-        if (Class.doesImplement(value, IObjectable)) {
-            literal = value.toObject();
-        } else if (Class.doesImplement(value, IArrayable)) {
-            literal = value.toArray();
-        } else if (Class.doesExtend(value, Date)) {
+         if (Class.doesExtend(value, Date)) {
             literal = value;
         } else {
             literal = {};

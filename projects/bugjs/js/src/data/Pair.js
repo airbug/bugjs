@@ -31,6 +31,12 @@ var Obj                 = bugpack.require('Obj');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ * @extends {Obj}
+ * @implements {IArrayable}
+ * @implements {IObjectable}
+ */
 var Pair = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
@@ -114,6 +120,7 @@ var Pair = Class.extend(Obj, {
             b: this.b
         };
     },
+
 
     //-------------------------------------------------------------------------------
     // Obj Extensions

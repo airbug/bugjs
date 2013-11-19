@@ -25,6 +25,9 @@ var Interface = bugpack.require('Interface');
 // Declare Interface
 //-------------------------------------------------------------------------------
 
+/**
+ * @interface
+ */
 var IEquals = Interface.declare({
 
     //-------------------------------------------------------------------------------

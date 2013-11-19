@@ -25,6 +25,9 @@ var Interface = bugpack.require('Interface');
 // Declare Interface
 //-------------------------------------------------------------------------------
 
+/**
+ * @interface
+ */
 var IArrayable = Interface.declare({
 
     //-------------------------------------------------------------------------------
@@ -32,7 +35,7 @@ var IArrayable = Interface.declare({
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {Array}
+     * @return {Array.<*>}
      */
     toArray: function() {}
 });
