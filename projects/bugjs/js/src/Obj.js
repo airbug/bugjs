@@ -348,12 +348,14 @@ Obj.iterator = function(value) {
 /**
  * @param {*} from
  * @param {*} into
+ * @return {*} into
  */
 Obj.merge = function(from, into) {
     if (TypeUtil.isObject(from) && TypeUtil.isObject(into)) {
         Obj.forIn(from, function(prop, value) {
             into[prop] = from[prop];
         });
+        return into;
     } else {
         throw new Error("both from and into parameters must be objects");
     }
