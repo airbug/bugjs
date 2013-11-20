@@ -394,3 +394,37 @@ var objEnsureInternalIdTest = {
 bugmeta.annotate(objEnsureInternalIdTest).with(
     test().name("Obj internalId already defined test")
 );
+
+var objMergeTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function(test) {
+        this.from = {
+            propertya: "a",
+            propertyb: "b",
+            propertyc: "c"
+        };
+        this.into = {
+            propertyx: "x",
+            propertyy: "y",
+            propertyz: "z"
+        };
+    },
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        var returnedObj = Obj.merge(this.from, this.into);
+        test.assertEqual(returnedObj, this.into,
+        "Assert the object returned by Obj.merge is the object given as the second parameter");
+        test.assertTrue( this.into.propertya === "a" && this.into.propertyb === "b" && this.into.propertyc === "c" &&
+            this.into.propertyx === "x" && this.into.propertyy === "y" && this.into.propertyz === "z",
+            "Assert that the into object has all properties from itself and from the from object");
+    }
+};
+bugmeta.annotate(objMergeTest).with(
+    test().name("Obj - .merge Test")
+);
