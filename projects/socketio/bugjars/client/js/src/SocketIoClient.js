@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('EventDispatcher')
+//@Require('Exception')
 //@Require('Proxy')
 //@Require('Queue')
 //@Require('TypeUtil')
@@ -18,7 +19,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -27,6 +28,7 @@ var bugpack = require('bugpack').context();
 
 var Class           = bugpack.require('Class');
 var EventDispatcher = bugpack.require('EventDispatcher');
+var Exception       = bugpack.require('Exception');
 var Proxy           = bugpack.require('Proxy');
 var Queue           = bugpack.require('Queue');
 var TypeUtil        = bugpack.require('TypeUtil');
@@ -207,10 +209,21 @@ var SocketIoClient = Class.extend(EventDispatcher, {
 
     /**
      * @private
+     * @param {Exception} exception
+     */
+    processConnectingException: function(exception) {
+        this.destroySocket();
+        this.connecting = false;
+        this.connected = false;
+        this.dispatchError(exception);
+    },
+
+    /**
+     * @private
      * @param {Error} error
      */
     processSocketError: function(error) {
-        this.dispatchEvent(new Event(SocketIoClient.EventTypes.ERROR, {error: error}));
+        this.dispatchError(error);
     },
 
 
@@ -259,16 +272,18 @@ var SocketIoClient = Class.extend(EventDispatcher, {
         console.log('SocketIoClient disconnected');
     },
 
-    //TODO BRN: Not sure if this fires
     /**
      * @private
      * @param {NodeJsEvent} event
      */
     hearSocketError: function(event) {
         var error = event.getArguments()[0];
-        this.connecting = false;
-        this.processSocketError(error);
         console.log("SocketIoClient socket error", error);
+        if (this.isConnecting() && !this.isConnected()) {
+            this.processConnectingException(new Exception("Could not connect"));
+        } else {
+            this.processSocketError(error);
+        }
     },
 
     //TODO BRN: Figure out these handlers

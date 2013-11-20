@@ -285,9 +285,10 @@ BugFs.deleteFileSync = function(filePath, resolveSymlink) {
 };
 
 /**
- * @param {string} aPath
+ * @static
+ * @param {(string | Path)} aPath
  * @param {?(boolean|function(boolean))=} resolveSymlink (defaults to false)
- * @param {?function(boolean)} callback
+ * @param {?function(boolean)=} callback
  */
 BugFs.exists = function(aPath, resolveSymlink, callback) {
     aPath = TypeUtil.isString(aPath) ? new Path(aPath) : aPath;
@@ -570,9 +571,9 @@ BugFs.readDirectorySync = function(directoryPath, resolveSymlink) {
 
 /**
  * @param {(string|Path)} filePath
- * @param {?(string|function(Error, *))=} encoding
- * @param {?(boolean|function(Error, *))=} resolveSymlink (defaults to true)
- * @param {function(Error, *)} callback
+ * @param {(string|function(Throwable, *))} encoding
+ * @param {(boolean|function(Throwable, *))=} resolveSymlink (defaults to true)
+ * @param {function(Throwable, *)=} callback
  */
 BugFs.readFile = function(filePath, encoding, resolveSymlink, callback) {
     filePath = TypeUtil.isString(filePath) ? new Path(filePath) : filePath;

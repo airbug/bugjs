@@ -5,6 +5,7 @@
 //@Export('Config')
 
 //@Require('Class')
+//@Require('IJsonable')
 //@Require('IObjectable')
 //@Require('Obj')
 //@Require('Properties')
@@ -22,6 +23,7 @@ var bugpack         = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class           = bugpack.require('Class');
+var IJsonable       = bugpack.require('IJsonable');
 var IObjectable     = bugpack.require('IObjectable');
 var Obj             = bugpack.require('Obj');
 var Properties      = bugpack.require('Properties');
@@ -34,6 +36,7 @@ var Properties      = bugpack.require('Properties');
 /**
  * @constructor
  * @extends {Obj}
+ * @implements {IJsonable}
  * @implements {IObjectable}
  */
 var Config = Class.extend(Obj, {
@@ -74,6 +77,29 @@ var Config = Class.extend(Obj, {
         return this.properties;
     },
 
+    /**
+     * @param {string} propertyName
+     * @return {*}
+     */
+    getProperty: function(propertyName) {
+        return this.properties.getProperty(propertyName);
+    },
+
+    /**
+     * @param {string} propertyName
+     * @param {*} propertyValue
+     */
+    setProperty: function(propertyName, propertyValue) {
+        this.properties.setProperty(propertyName, propertyValue);
+    },
+
+    /**
+     * @param {Object} propertiesObject
+     */
+    updateProperties: function(propertiesObject) {
+        this.properties.updateProperties(propertiesObject);
+    },
+
 
     //-------------------------------------------------------------------------------
     // IObjectable Implementation
@@ -83,7 +109,19 @@ var Config = Class.extend(Obj, {
      * @return {Object}
      */
     toObject: function() {
-        return this.properties.getPropertiesObject();
+        return Obj.clone(this.properties.getPropertiesObject(), true);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // IJsonable Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {string}
+     */
+    toJson: function() {
+        return JSON.stringify(this.toObject());
     }
 });
 
@@ -92,6 +130,7 @@ var Config = Class.extend(Obj, {
 // Interfaces
 //-------------------------------------------------------------------------------
 
+Class.implement(Config, IJsonable);
 Class.implement(Config, IObjectable);
 
 

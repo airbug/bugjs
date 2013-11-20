@@ -27,12 +27,21 @@ var Obj =   bugpack.require('Obj');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ * @extends {Obj}
+ */
 var Event = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
+    /**
+     * @constructs
+     * @param {string} type
+     * @param {*} data
+     */
     _constructor: function(type, data) {
 
         this._super();

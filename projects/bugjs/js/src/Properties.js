@@ -125,10 +125,10 @@ var Properties = Class.extend(Obj, {
      * @param {Object} propertiesObject
      */
     updateProperties: function(propertiesObject) {
-        for (var name in propertiesObject) {
-            var value = propertiesObject[name];
-            this.updateProperty(name, value);
-        }
+        var _this = this;
+        Obj.forIn(propertiesObject, function(propertyName, propertyValue) {
+            _this.updateProperty(propertyName, propertyValue);
+        });
     },
 
     /**

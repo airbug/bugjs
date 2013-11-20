@@ -100,3 +100,34 @@ var configInstantiationWithPropertiesObjectTest = {
 bugmeta.annotate(configInstantiationWithPropertiesObjectTest).with(
     test().name("Config - instantiation with propertiesObject test")
 );
+
+
+/**
+ * This tests...
+ * 1) Setting a property
+ * 2) Getting a property
+ */
+var configSetGetPropertyTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.testValue      = "testValue";
+        this.testName       = "testName";
+        this.testConfig     = new Config();
+        this.testConfig.setProperty(this.testName, this.testValue);
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        test.assertEqual(this.testConfig.getProperty(this.testName), this.testValue,
+            "Assert 'testName' is present in the Config and returns 'testValue'");
+    }
+};
+bugmeta.annotate(configSetGetPropertyTest).with(
+    test().name("Config - set/get property test")
+);
