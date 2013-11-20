@@ -491,6 +491,7 @@ var EntityManager = Class.extend(Obj, {
      * @return {Object}
      */
     convertDbObjectToDataObject: function(dbObject, entitySchema) {
+        console.log("EntityManager#convertDbObjectToDataObject");
         var _this           = this;
         var dataObject      = {};
         entitySchema.getPropertyList().forEach(function(schemaProperty) {
@@ -522,16 +523,18 @@ var EntityManager = Class.extend(Obj, {
             switch (propertyType) {
                 case "Set":
                     var valuesSet = new Set();
-                    if (schemaProperty.isId()) {
-                        propertyValue.forEach(function(value) {
-                            if (value) {
-                                valuesSet.add(value.toString());
-                            } else {
-                                valuesSet.add(value);
-                            }
-                        });
-                    } else {
-                        valuesSet.addAll(propertyValue);
+                    if (propertyValue) {
+                        if (schemaProperty.isId()) {
+                            propertyValue.forEach(function(value) {
+                                if (value) {
+                                    valuesSet.add(value.toString());
+                                } else {
+                                    valuesSet.add(value);
+                                }
+                            });
+                        } else {
+                            valuesSet.addAll(propertyValue);
+                        }
                     }
                     return valuesSet;
                     break;
