@@ -65,9 +65,36 @@ var stringPadTest = {
     }
 };
 bugmeta.annotate(stringPadTest).with(
-    test().name("String pad test")
+    test().name("String - #pad test")
 );
 
+
+/**
+ * This tests
+ * 1) Escape a string
+ */
+var stringEscapeStringTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.testString = "\'ABC\"123";
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        var result = StringUtil.escapeString(this.testString);
+        test.assertEqual(result, "\\\'ABC\\\"123",
+            "Assert the string has been escaped correctly");
+    }
+};
+bugmeta.annotate(stringEscapeStringTest).with(
+    test().name("String - #escapeString test")
+);
 
 /**
  * This tests
@@ -94,5 +121,5 @@ var stringTrimTest = {
     }
 };
 bugmeta.annotate(stringTrimTest).with(
-    test().name("String trim test")
+    test().name("String - #trim test")
 );

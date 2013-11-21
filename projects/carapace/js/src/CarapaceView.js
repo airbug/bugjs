@@ -49,6 +49,8 @@ var IDisposable     = bugpack.require('carapace.IDisposable');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+//TODO BRN: Remove the dependency upon Backbone and create our own simple MVC framework instead
+
 /**
  * @constructor
  */

@@ -71,6 +71,14 @@ var Config = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @param {Config} config
+     * @param {(Array.<string> | Collection.<string>)} propertyNames
+     */
+    absorbConfig: function(config, propertyNames) {
+        this.properties.absorbProperties(config.getProperties(), propertyNames);
+    },
+
+    /**
      * @return {Properties}
      */
     getProperties: function() {

@@ -84,6 +84,17 @@ var Properties = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @param {Properties} properties
+     * @param {(Array.<string> | Collection.<string>)} propertyNames
+     */
+    absorbProperties: function(properties, propertyNames) {
+        var _this = this;
+        propertyNames.forEach(function(propertyName) {
+            _this.setProperty(propertyName, properties.getProperty(propertyName));
+        });
+    },
+
+    /**
      * @param {string} propertyName
      * @return {*}
      */

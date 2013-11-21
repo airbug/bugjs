@@ -36,11 +36,11 @@ var StringUtil = {};
  * @param {string} value
  * @return {string}
  */
-StringUtil.capitalize = function(string){
-    var strings = string.split(" ");
+StringUtil.capitalize = function(value) {
+    var strings = value.split(" ");
     var result;
-    if(strings.map){
-        result = strings.map(function(string, index, array){
+    if (strings.map) {
+        result = strings.map(function(string, index, array) {
             return string[0].toUpperCase() + string.substring(1);
         });
     } else {
@@ -50,6 +50,14 @@ StringUtil.capitalize = function(string){
         });
     }
     return result.join(" ");
+};
+
+/**
+ * @param {string} value
+ * @return {string}
+ */
+StringUtil.escapeString = function(value) {
+    return (value + '').replace(/[\\"']/g, '\\$&').replace(/\u0000/g, '\\0');
 };
 
 /**
@@ -71,15 +79,17 @@ StringUtil.pad = function(value, pad, size) {
  * @param {string} value
  * @return {string}
  */
-StringUtil.pluralize = function(string){
-        //TODO also add irregular patterns
-        var irregularPlurals = {};
-        if(irregularPlurals[string]){
-            return irregularPlurals[string]
-        } else {
-            return string + "s";
-        }
-},
+StringUtil.pluralize = function(value) {
+    //TODO also add irregular patterns
+    var irregularPlurals = {
+        winklevoss: "winklevii"
+    };
+    if (irregularPlurals[value]) {
+        return irregularPlurals[value]
+    } else {
+        return value + "s";
+    }
+};
 
 /**
  * @param {string} value
@@ -99,21 +109,22 @@ StringUtil.trim = function(value) {
  * @param {string} value
  * @return {string}
  */
-StringUtil.uncapitalize = function(string){
-    var strings = string.split(" ");
+StringUtil.uncapitalize = function(value) {
+    var strings = value.split(" ");
     var result;
-    if(strings.map){
-        result = strings.map(function(string, index, array){
+    if (strings.map) {
+        result = strings.map(function(string, index, array) {
             return string[0].toLowerCase() + string.substring(1);
         });
     } else {
         result = [];
-        strings.forEach(function(string){
+        strings.forEach(function(string) {
             result.push(string[0].toLowerCase() + string.substring(1));
         });
     }
     return result.join(" ");
 };
+
 
 //-------------------------------------------------------------------------------
 // Exports
