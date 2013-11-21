@@ -53,6 +53,20 @@ var PasswordUtilIsValidTest = {
             "Ensure that empty passwords are not valid");
     }
 };
+
+PasswordUtilRequirementsStringTest = {
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        // TODO: dkk - use TypeUtil for test
+        test.assertTrue(PasswordUtil.requirementsString && PasswordUtil.requirementsString.length > 0,
+            "Ensure requirementsString is defined and has a length > 0");
+    }
+}
 bugmeta.annotate(PasswordUtilIsValidTest).with(
     test().name("PasswordUtil #isValid tests")
+);
+bugmeta.annotate(PasswordUtilRequirementsStringTest).with(
+    test().name("PasswordUtil requirementsString tests")
 );

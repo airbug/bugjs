@@ -40,6 +40,7 @@ PasswordUtil.isValid = function(password) {
     return true;
 };
 
+PasswordUtil.requirementsString = "Your password must be at least 6 characters long";
 
 //-------------------------------------------------------------------------------
 // Exports
