@@ -4,11 +4,20 @@
 
 //@Export('PasswordUtil')
 
+//@Require('TypeUtil')
+
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
 var bugpack         = require('bugpack').context();
+
+
+//-------------------------------------------------------------------------------
+// Bugpack Modules
+//-------------------------------------------------------------------------------
+
+var TypeUtil        = bugpack.require('TypeUtil');
 
 
 //-------------------------------------------------------------------------------
@@ -31,7 +40,7 @@ var PasswordUtil     = {};
  * @returns {Boolean}
  */
 PasswordUtil.isValid = function(password) {
-    if (password === undefined || password === null || typeof password !== "string") {
+    if (!TypeUtil.isString(password)) {
         return false;
     }
     if (password.length < 6) {

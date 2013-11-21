@@ -5,6 +5,7 @@
 //@TestFile
 
 //@Require('PasswordUtil')
+//@Require('TypeUtil')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
@@ -21,6 +22,7 @@ var bugpack         = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var PasswordUtil    = bugpack.require('PasswordUtil');
+var TypeUtil        = bugpack.require('TypeUtil');
 var BugMeta         = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 
@@ -59,9 +61,10 @@ PasswordUtilRequirementsStringTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
-        // TODO: dkk - use TypeUtil for test
-        test.assertTrue(PasswordUtil.requirementsString && PasswordUtil.requirementsString.length > 0,
-            "Ensure requirementsString is defined and has a length > 0");
+        test.assertTrue(TypeUtil.isString(PasswordUtil.requirementsString),
+            "Ensure requirementsString is a string");
+        test.assertTrue(PasswordUtil.requirementsString.length > 0,
+            "Ensure requirementsString has a length > 0");
     }
 }
 bugmeta.annotate(PasswordUtilIsValidTest).with(
