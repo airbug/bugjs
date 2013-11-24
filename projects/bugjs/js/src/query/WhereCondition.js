@@ -2,41 +2,41 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('EventPropagator')
+//@Export('WhereCondition')
 
 //@Require('Class')
-//@Require('IEventPropagator')
-//@Require('List')
+//@Require('ICondition')
 //@Require('Obj')
+//@Require('Set')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var IEventPropagator    = bugpack.require('IEventPropagator');
-var List                = bugpack.require('List');
-var Obj                 = bugpack.require('Obj');
+var Class                   = bugpack.require('Class');
+var ICondition              = bugpack.require('ICondition');
+var Obj                     = bugpack.require('Obj');
+var Set                     = bugpack.require('Set');
 
 
 //-------------------------------------------------------------------------------
-// Declare Class
+// Class
 //-------------------------------------------------------------------------------
 
 /**
  * @constructor
+ * @implements {ICondition}
  * @extends {Obj}
- * @implements {IEventPropagator}
  */
-var EventPropagator = Class.extend(Obj, {
+var WhereCondition = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -44,9 +44,8 @@ var EventPropagator = Class.extend(Obj, {
 
     /**
      * @constructs
-     * @param {*} target
      */
-    _constructor: function(target) {
+    _constructor: function(propertyQuery, inSet) {
 
         this._super();
 
@@ -57,15 +56,15 @@ var EventPropagator = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {List.<IEventPropagator>}
+         * @type {Set.<string>}
          */
-        this.eventPropagatorList    = new List();
+        this.inSet              = inSet;
 
         /**
          * @private
-         * @type {*}
+         * @type {string}
          */
-        this.target                 = target ? target : this;
+        this.propertyQuery      = propertyQuery;
     },
 
 
@@ -74,52 +73,34 @@ var EventPropagator = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @returns {List.<IEventPropagator>}
+     * @returns {Set.<string>}
      */
-    getEventPropagatorList: function() {
-        return this.eventPropagatorList;
+    getInSet: function() {
+        return this.inSet;
     },
 
     /**
-     * @return {*}
+     * @returns {string}
      */
-    getTarget: function() {
-        return this.target;
+    getPropertyQuery: function() {
+        return this.propertyQuery;
     },
 
 
     //-------------------------------------------------------------------------------
-    // IEventPropagator Implementation
+    // ICondition Implementation
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {IEventPropagator} eventPropagator
+     * @param {Object} value
+     * @return {boolean}
      */
-    addEventPropagator: function(eventPropagator) {
-        if (!this.eventPropagatorList.contains(eventPropagator)) {
-            this.eventPropagatorList.add(eventPropagator);
+    check: function(value) {
+        var propertyValue = Obj.findProperty(value, this.propertyQuery);
+        if (this.inSet.contains(propertyValue)) {
+            return true;
         }
-    },
-
-    /**
-     * @param {Event} event
-     */
-    propagateEvent: function(event) {
-        if (!event.isPropagationStopped()) {
-            event.setCurrentTarget(this.getTarget());
-            this.eventPropagatorList.forEach(function(eventPropagator) {
-                eventPropagator.propagateEvent(event);
-            });
-        }
-    },
-
-    /**
-     * @param {IEventPropagator} eventPropagator
-     */
-    removeEventPropagator: function(eventPropagator) {
-        if (this.eventPropagatorList.contains(eventPropagator)) {
-            this.eventPropagatorList.remove(eventPropagator);
-        }
+        return false;
     }
 });
 
@@ -128,11 +109,11 @@ var EventPropagator = Class.extend(Obj, {
 // Interfaces
 //-------------------------------------------------------------------------------
 
-Class.implement(EventPropagator, IEventPropagator);
+Class.implement(WhereCondition, ICondition);
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('EventPropagator', EventPropagator);
+bugpack.export('WhereCondition', WhereCondition);

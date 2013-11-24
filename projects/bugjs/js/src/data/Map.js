@@ -81,8 +81,8 @@ var Map = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {boolean}
-     * @return {*}
+     * @param {boolean=} deep
+     * @return {Map.<*, *>}
      */
     clone: function(deep) {
 
@@ -91,6 +91,27 @@ var Map = Class.extend(Obj, {
         var cloneMap = new Map();
         cloneMap.putAll(this);
         return cloneMap;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // IObjectable Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @returns {Object}
+     */
+    toObject: function() {
+        var _this   = this;
+        var object  = {};
+        var keys    = this.getKeyArray();
+        keys.forEach(function(key){
+            if(!TypeUtil.isString(key) && key.toString){
+                key = key.toString(); //NOTE: These keys may not be unique.
+            }
+            object[key] = _this.get(key);
+        });
+        return object;
     },
 
 
@@ -207,23 +228,16 @@ var Map = Class.extend(Obj, {
      */
     remove: function(key) {
         return this.hashTable.remove(key);
-    },
-
-    toObject: function() {
-        var _this   = this;
-        var object  = {};
-        var keys    = this.getKeyArray();
-        keys.forEach(function(key){
-            if(!TypeUtil.isString(key) && key.toString){
-                key = key.toString(); //NOTE: These keys may not be unique.
-            }
-            object[key] = _this.get(key);
-        });
-        return object;
     }
 });
 
+
+//-------------------------------------------------------------------------------
+// Interfaces
+//-------------------------------------------------------------------------------
+
 Class.implement(Map, IObjectable);
+
 
 //-------------------------------------------------------------------------------
 // Exports

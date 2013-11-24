@@ -225,6 +225,15 @@ var CarapaceContainer = Class.extend(Obj, {
 
     /**
      * @param {CarapaceContainer} containerChild
+     * @param {number} index
+     * @param {string} domQuery
+     */
+    addContainerChildAt: function(containerChild, index, domQuery) {
+        //TODO
+    },
+
+    /**
+     * @param {CarapaceContainer} containerChild
      * @return {boolean}
      */
     hasContainerChild: function(containerChild) {
@@ -233,12 +242,34 @@ var CarapaceContainer = Class.extend(Obj, {
 
     /**
      * @param {CarapaceContainer} containerChild
+     * @param {boolean=} destroy
      */
-    removeContainerChild: function(containerChild) {
+    removeContainerChild: function(containerChild, destroy) {
         if (this.hasContainerChild(containerChild)) {
             this.containerChildList.remove(containerChild);
             containerChild.containerParent = null;
+            if (destroy) {
+                containerChild.destroy();
+            }
         }
+    },
+
+    /**
+     *
+     */
+    removeAllContainerChildren: function(destroy) {
+        var _this = this;
+        var containerChildListClone = this.containerChildList.clone();
+        containerChildListClone.forEach(function(containerChild) {
+            _this.removeContainerChild(containerChild, destroy);
+        });
+    },
+
+    /**
+     * @param {number} index
+     */
+    removeContainerChildAt: function(index) {
+        //TODO
     },
 
 
@@ -410,8 +441,7 @@ var CarapaceContainer = Class.extend(Obj, {
         var _this = this;
         var containerChildListClone = this.containerChildList.clone();
         containerChildListClone.forEach(function(containerChild) {
-            containerChild.destroy();
-            _this.removeContainerChild(containerChild);
+            _this.removeContainerChild(containerChild, true);
         });
     },
 

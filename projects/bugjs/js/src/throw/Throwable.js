@@ -39,9 +39,9 @@ var Throwable = Class.extend(Obj, {
 
     /**
      * @param {string} type
-     * @param {*} data
-     * @param {string} message
-     * @param {Array.<Throwable>} causes
+     * @param {*=} data
+     * @param {string=} message
+     * @param {Array.<Throwable>=} causes
      * @private
      */
     _constructor: function(type, data, message, causes) {
@@ -187,28 +187,38 @@ var Throwable = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // Private Methods
+    // Protected Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @private
+     * @protected
      */
     buildStackTrace: function() {
         var _this = this;
         if (this.primaryStack) {
-            this.primaryStack = StackTraceUtil.generateStackTrace();
+            this.primaryStack = this.generateStackTrace();
         }
-        var stack = this.primaryStack;
-        stack += "\n\n";
-        stack += this.type + " was caused by " + this.causes.length + " exceptions:\n";
-        var count = 0;
-        this.causes.forEach(function(cause) {
-            count++;
-            stack += _this.type + " cause " + count + ":\n";
-            stack += cause.message + "\n";
-            stack += cause.stack;
-        });
+        var stack = this.primaryStack + "\n";
+        stack += "\n";
+        if (this.causes.length > 0) {
+            stack += this.type + " was caused by " + this.causes.length + " exceptions:\n";
+            var count = 0;
+            this.causes.forEach(function(cause) {
+                count++;
+                stack += _this.type + " cause " + count + ":\n";
+                stack += cause.message + "\n";
+                stack += cause.stack;
+            });
+        }
         this.stack = stack;
+    },
+
+    /**
+     * @protected
+     * @returns {string}
+     */
+    generateStackTrace: function() {
+        return this.message + "\n" + StackTraceUtil.generateStackTrace();
     }
 });
 

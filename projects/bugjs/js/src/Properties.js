@@ -95,31 +95,11 @@ var Properties = Class.extend(Obj, {
     },
 
     /**
-     * @param {string} propertyName
+     * @param {string} propertyQuery
      * @return {*}
      */
-    getProperty: function(propertyName) {
-
-        //NOTE BRN: We're trying to dig down in to the property object. So if we have a property Object like this
-        // {
-        //     name: {
-        //         subName: "someValue"
-        //     }
-        // }
-        // and we request a property named "name.subName", then "someValue" should be returned. If we request the property
-        // "name" then the object {subName: "someValue"} will be returned.
-
-        var parts = propertyName.split(".");
-        var propertyValue = this.propertiesObject;
-        for (var i = 0, size = parts.length; i < size; i++) {
-            var part = parts[i];
-            if (TypeUtil.isObject(propertyValue)) {
-                propertyValue = propertyValue[part];
-            } else {
-                return undefined;
-            }
-        }
-        return propertyValue;
+    getProperty: function(propertyQuery) {
+        return Obj.findProperty(this.propertiesObject, propertyQuery);
     },
 
     /**

@@ -54,9 +54,10 @@ var MultiMap = Class.extend(Map, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @param {boolean=} deep
      * @return {MultiMap}
      */
-    clone: function() {
+    clone: function(deep) {
         var cloneMultiMap = new MultiMap();
         cloneMultiMap.putAll(this);
         return cloneMultiMap;

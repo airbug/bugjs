@@ -7,6 +7,7 @@
 //@Require('Class')
 //@Require('EventListener')
 //@Require('EventPropagator')
+//@Require('EventQueryBuilder')
 //@Require('IEventReceiver')
 //@Require('List')
 //@Require('Map')
@@ -17,32 +18,42 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var EventListener   = bugpack.require('EventListener');
-var EventPropagator = bugpack.require('EventPropagator');
-var IEventReceiver  = bugpack.require('IEventReceiver');
-var List            = bugpack.require('List');
-var Map             = bugpack.require('Map');
-var TypeUtil        = bugpack.require('TypeUtil');
+var Class               = bugpack.require('Class');
+var EventListener       = bugpack.require('EventListener');
+var EventPropagator     = bugpack.require('EventPropagator');
+var EventQueryBuilder   = bugpack.require('EventQueryBuilder');
+var IEventReceiver      = bugpack.require('IEventReceiver');
+var List                = bugpack.require('List');
+var Map                 = bugpack.require('Map');
+var TypeUtil            = bugpack.require('TypeUtil');
 
 
 //-------------------------------------------------------------------------------
-// Declare Class
+// Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ * @extends {EventPropagator}
+ * @implements {IEventReceiver}
+ */
 var EventReceiver = Class.extend(EventPropagator, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
+    /**
+     * @constructs
+     * @param {*} target
+     */
     _constructor: function(target) {
 
         this._super(target);
@@ -54,15 +65,15 @@ var EventReceiver = Class.extend(EventPropagator, {
 
         /**
          * @private
-         * @type {Map}
+         * @type {Map.<string, List.<EventListener>>}
          */
-        this.eventTypeListenerMap = new Map();
+        this.eventTypeListenerMap   = new Map();
 
         /**
          * @private
          * @type {IEventPropagator}
          */
-        this.parentPropagator = undefined;
+        this.parentPropagator       = undefined;
     },
 
 
@@ -85,27 +96,17 @@ var EventReceiver = Class.extend(EventPropagator, {
     },
 
     /**
-     * @param {string} eventType
-     * @param {function(Event)} listenerFunction
-     * @param {?Object=} listenerContext (optional)
-     * @param {?boolean=} once (optional)
+     * @param {(string | Array.<string>)} eventTypes
+     * @param {function(Event)=} listenerFunction
+     * @param {Object=} listenerContext (optional)
+     * @param {boolean=} once (optional)
+     * @return {(undefined | EventQueryBuilder)}
      */
-    addEventListener: function(eventType, listenerFunction, listenerContext, once) {
-        console.log("EventListener Added:", eventType);
-
-        var eventTypeListenerList = this.eventTypeListenerMap.get(eventType);
-        if (!eventTypeListenerList) {
-            eventTypeListenerList = new List();
-            this.eventTypeListenerMap.put(eventType, eventTypeListenerList);
-        }
-        if (!TypeUtil.isBoolean(once)) {
-            once = false;
-        } else if (TypeUtil.isBoolean(listenerContext)) {
-            once = listenerContext;
-        }
-        var eventListener = new EventListener(listenerFunction, listenerContext, once);
-        if (!eventTypeListenerList.contains(eventListener)) {
-            eventTypeListenerList.add(eventListener);
+    addEventListener: function(eventTypes, listenerFunction, listenerContext, once) {
+        if (eventTypes && !listenerFunction) {
+            return this.generateEventQueryBuilder(eventTypes);
+        } else {
+            this.buildEventListeners(eventTypes, listenerFunction, listenerContext, once);
         }
     },
 
@@ -136,12 +137,13 @@ var EventReceiver = Class.extend(EventPropagator, {
     },
 
     /**
-     * @param {string} eventType
+     * @param {(string | Array.<string>)} eventTypes
      * @param {function(Event)} listenerFunction
-     * @param {} listenerContext
+     * @param {Object} listenerContext
+     * @return {(undefined | EventQuery)}
      */
-    onceOn: function(eventType, listenerFunction, listenerContext) {
-        this.addEventListener(eventType, listenerFunction, listenerContext, true);
+    onceOn: function(eventTypes, listenerFunction, listenerContext) {
+        return this.addEventListener(eventTypes, listenerFunction, listenerContext, true);
     },
 
     /**
@@ -189,8 +191,23 @@ var EventReceiver = Class.extend(EventPropagator, {
 
 
     //-------------------------------------------------------------------------------
-    // Public Class Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
+
+    /**
+     * @param {string} eventType
+     * @param {EventListener} eventListener
+     */
+    attachEventListener: function(eventType, eventListener) {
+        var eventTypeListenerList = this.eventTypeListenerMap.get(eventType);
+        if (!eventTypeListenerList) {
+            eventTypeListenerList = new List();
+            this.eventTypeListenerMap.put(eventType, eventTypeListenerList);
+        }
+        if (!eventTypeListenerList.contains(eventListener)) {
+            eventTypeListenerList.add(eventListener);
+        }
+    },
 
     /**
      *
@@ -208,7 +225,7 @@ var EventReceiver = Class.extend(EventPropagator, {
 
 
     //-------------------------------------------------------------------------------
-    // Private Class Methods
+    // Private Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -220,6 +237,48 @@ var EventReceiver = Class.extend(EventPropagator, {
         if (parentPropagator) {
             parentPropagator.propagateEvent(event);
         }
+    },
+
+    /**
+     * @param {string} eventType
+     * @param {function(Event)} listenerFunction
+     * @param {(Object | boolean)=} listenerContext
+     * @param {boolean=} once
+     */
+    buildEventListener: function(eventType, listenerFunction, listenerContext, once) {
+        if (!TypeUtil.isBoolean(once)) {
+            once = false;
+            if (TypeUtil.isBoolean(listenerContext)) {
+                once = listenerContext;
+            }
+        }
+        var eventListener = new EventListener(listenerFunction, listenerContext, once);
+        this.attachEventListener(eventType, eventListener);
+    },
+
+    /**
+     * @param {(string | Array.<string>)} eventTypes
+     * @param {function(Event)} listenerFunction
+     * @param {Object=} listenerContext
+     * @param {boolean=} once
+     */
+    buildEventListeners: function(eventTypes, listenerFunction, listenerContext, once) {
+        var _this = this;
+        if (TypeUtil.isArray(eventTypes)) {
+            eventTypes.forEach(function(type) {
+                _this.buildEventListener(type, listenerFunction, listenerContext, once);
+            });
+        } else {
+            this.buildEventListener(eventTypes, listenerFunction, listenerContext, once);
+        }
+    },
+
+    /**
+     * @param {(string | Array.<string>)} eventTypes
+     * @returns {EventQueryBuilder}
+     */
+    generateEventQueryBuilder: function(eventTypes) {
+        return new EventQueryBuilder(this, eventTypes);
     },
 
     /**
@@ -249,7 +308,7 @@ var EventReceiver = Class.extend(EventPropagator, {
      * @param {Event} event
      */
     propagateEventToPropagators: function(event) {
-        var cloneEventPropagatorList = this.eventPropagatorList.clone();
+        var cloneEventPropagatorList = this.getEventPropagatorList().clone();
         cloneEventPropagatorList.forEach(function(eventPropagator) {
             eventPropagator.propagateEvent(event);
         });

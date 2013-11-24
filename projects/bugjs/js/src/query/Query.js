@@ -2,10 +2,13 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('EventListener')
+//@Export('Query')
 
+//@Require('ArgumentBug')
 //@Require('Class')
+//@Require('ICondition')
 //@Require('Obj')
+//@Require('Set')
 
 
 //-------------------------------------------------------------------------------
@@ -19,19 +22,22 @@ var bugpack     = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
+var ArgumentBug = bugpack.require('ArgumentBug');
 var Class       = bugpack.require('Class');
+var ICondition  = bugpack.require('ICondition');
 var Obj         = bugpack.require('Obj');
+var Set         = bugpack.require('Set');
 
 
 //-------------------------------------------------------------------------------
-// Declare Class
+// Class
 //-------------------------------------------------------------------------------
 
 /**
  * @constructor
  * @extends {Obj}
  */
-var EventListener = Class.extend(Obj, {
+var Query = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -39,11 +45,8 @@ var EventListener = Class.extend(Obj, {
 
     /**
      * @constructs
-     * @param {function(Event)} listenerFunction
-     * @param {Object} listenerContext
-     * @param {boolean} once
      */
-    _constructor: function(listenerFunction, listenerContext, once) {
+    _constructor: function() {
 
         this._super();
 
@@ -54,49 +57,9 @@ var EventListener = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {function(Event)}
+         * @type {Set.<ICondition>}
          */
-        this.listenerFunction = listenerFunction;
-
-        /**
-         * @private
-         * @type {Object}
-         */
-        this.listenerContext = listenerContext;
-
-        /**
-         * @private
-         * @type {boolean}
-         */
-        this.once = once;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Object Implementation
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {*} value
-     * @return {boolean}
-     */
-    equals: function(value) {
-        if (Class.doesExtend(value, EventListener)) {
-            return (value.getListenerFunction() === this.listenerFunction && value.getListenerContext() === this.listenerContext);
-        }
-        return false;
-    },
-
-    /**
-     * @return {number}
-     */
-    hashCode: function() {
-        if (!this._hashCode) {
-            this._hashCode = Obj.hashCode("[EventListener]" +
-                Obj.hashCode(this.listenerFunction) + "_" +
-                Obj.hashCode(this.listenerContext));
-        }
-        return this._hashCode;
+        this.conditionSet   = new Set();
     },
 
 
@@ -105,24 +68,10 @@ var EventListener = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {Object}
+     * @returns {Set.<ICondition>}
      */
-    getListenerContext: function() {
-        return this.listenerContext;
-    },
-
-    /**
-     * @return {function(Event)}
-     */
-    getListenerFunction: function() {
-        return this.listenerFunction;
-    },
-
-    /**
-     * @return {boolean}
-     */
-    isOnce: function(){
-        return this.once;
+    getConditionSet: function() {
+        return this.conditionSet;
     },
 
 
@@ -131,10 +80,31 @@ var EventListener = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Event} event
+     * @param {ICondition} condition
      */
-    hearEvent: function(event) {
-        this.listenerFunction.call(this.listenerContext, event);
+    addCondition: function(condition) {
+        if (!Class.doesImplement(condition, ICondition)) {
+            throw new ArgumentBug(ArgumentBug.ILLEGAL, "condition", condition, "parameter must implement ICondition");
+        }
+        if (!this.conditionSet.contains(condition)) {
+            this.conditionSet.add(condition);
+        }
+    },
+
+    /**
+     * @param {*} value
+     * @return {boolean}
+     */
+    run: function(value) {
+        var conditionArray = this.conditionSet.toArray();
+        for (var i = 0, size = conditionArray.length; i < size; i++) {
+            var condition = conditionArray[i];
+            var result = condition.check(value);
+            if (!result) {
+                return false;
+            }
+        }
+        return true;
     }
 });
 
@@ -143,4 +113,4 @@ var EventListener = Class.extend(Obj, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('EventListener', EventListener);
+bugpack.export('Query', Query);

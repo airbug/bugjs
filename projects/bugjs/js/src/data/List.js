@@ -80,7 +80,7 @@ var List = Class.extend(Collection, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {boolean} deep
+     * @param {boolean=} deep
      * @return {List}
      */
     clone: function(deep) {

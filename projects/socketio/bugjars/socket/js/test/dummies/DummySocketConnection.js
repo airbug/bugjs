@@ -10,6 +10,7 @@
 //@Require('EventReceiver')
 //@Require('Map')
 //@Require('NodeJsEvent')
+//@Require('TypeUtil')
 //@Require('socketio:socket.SocketIoEmit')
 
 
@@ -28,6 +29,7 @@ var Class           = bugpack.require('Class');
 var EventReceiver   = bugpack.require('EventReceiver');
 var Map             = bugpack.require('Map');
 var NodeJsEvent     = bugpack.require('NodeJsEvent');
+var TypeUtil        = bugpack.require('TypeUtil');
 var SocketIoEmit    = bugpack.require('socketio:socket.SocketIoEmit');
 
 
@@ -168,14 +170,30 @@ var DummySocketConnection = Class.extend(EventReceiver, {
 
     /**
      * @private
-     * @param {string} eventType
+     * @param {(string | Array.<string>)} eventType
      */
     addEventListenerAdapter: function(eventType) {
+        var _this = this;
+        if (TypeUtil.isArray(eventType)) {
+            eventType.forEach(function(type) {
+                _this.attachEventListenerAdapter(type);
+            })
+        } else {
+            this.attachEventListenerAdapter(eventType);
+        }
+    },
+
+    /**
+     * @private
+     * @param {string} eventType
+     */
+    attachEventListenerAdapter: function(eventType) {
         var _this = this;
         if (!this.hasEventListenerAdapter(eventType)) {
             var eventListenerAdapter = function() {
                 var args = Array.prototype.slice.call(arguments, 0);
                 var nodeJsEvent = new NodeJsEvent(eventType, args);
+                nodeJsEvent.setTarget(_this.getTarget());
                 _this.propagateEvent(nodeJsEvent);
             };
             this.socket.addListener(eventType, eventListenerAdapter);

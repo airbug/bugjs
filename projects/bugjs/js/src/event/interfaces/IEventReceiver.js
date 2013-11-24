@@ -45,7 +45,7 @@ var IEventReceiver = Interface.declare({
     setParentPropagator: function(parentPropagator) {},
 
     /**
-     * @param {string} eventType
+     * @param {(string | Array.<string>)} eventType
      * @param {function(Event)} listenerFunction
      * @param {?Object=} listenerContext (optional)
      * @param {boolean=} once

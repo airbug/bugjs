@@ -2,41 +2,42 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('EventPropagator')
+//@Export('WhereConditionBuilder')
 
 //@Require('Class')
-//@Require('IEventPropagator')
-//@Require('List')
+//@Require('IConditionBuilder')
 //@Require('Obj')
+//@Require('Set')
+//@Require('WhereCondition')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var IEventPropagator    = bugpack.require('IEventPropagator');
-var List                = bugpack.require('List');
-var Obj                 = bugpack.require('Obj');
+var Class                   = bugpack.require('Class');
+var IConditionBuilder       = bugpack.require('IConditionBuilder');
+var Obj                     = bugpack.require('Obj');
+var Set                     = bugpack.require('Set');
+var WhereCondition          = bugpack.require('WhereCondition');
 
 
 //-------------------------------------------------------------------------------
-// Declare Class
+// Class
 //-------------------------------------------------------------------------------
 
 /**
  * @constructor
  * @extends {Obj}
- * @implements {IEventPropagator}
  */
-var EventPropagator = Class.extend(Obj, {
+var WhereConditionBuilder = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -44,9 +45,10 @@ var EventPropagator = Class.extend(Obj, {
 
     /**
      * @constructs
-     * @param {*} target
+     * @param {QueryBuilder} queryBuilder
+     * @param {string} propertyQuery
      */
-    _constructor: function(target) {
+    _constructor: function(queryBuilder, propertyQuery) {
 
         this._super();
 
@@ -57,15 +59,21 @@ var EventPropagator = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {List.<IEventPropagator>}
+         * @type {Set.<string>}
          */
-        this.eventPropagatorList    = new List();
+        this.inSet              = new Set();
 
         /**
          * @private
-         * @type {*}
+         * @type {string}
          */
-        this.target                 = target ? target : this;
+        this.propertyQuery      = propertyQuery;
+
+        /**
+         * @private
+         * @type {QueryBuilder}
+         */
+        this.queryBuilder       = queryBuilder;
     },
 
 
@@ -74,52 +82,50 @@ var EventPropagator = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @returns {List.<IEventPropagator>}
+     * @return {Set.<string>}
      */
-    getEventPropagatorList: function() {
-        return this.eventPropagatorList;
+    getInSet: function() {
+        return this.inSet;
     },
 
     /**
-     * @return {*}
+     * @returns {string}
      */
-    getTarget: function() {
-        return this.target;
+    getPropertyQuery: function() {
+        return this.propertyQuery;
+    },
+
+    /**
+     * @returns {QueryBuilder}
+     */
+    getQueryBuilder: function() {
+        return this.queryBuilder;
     },
 
 
     //-------------------------------------------------------------------------------
-    // IEventPropagator Implementation
+    // IConditionBuilder Implementation
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {IEventPropagator} eventPropagator
+     * @return {ICondition}
      */
-    addEventPropagator: function(eventPropagator) {
-        if (!this.eventPropagatorList.contains(eventPropagator)) {
-            this.eventPropagatorList.add(eventPropagator);
-        }
+    buildCondition: function() {
+        return new WhereCondition(this.propertyQuery, this.inSet);
     },
 
-    /**
-     * @param {Event} event
-     */
-    propagateEvent: function(event) {
-        if (!event.isPropagationStopped()) {
-            event.setCurrentTarget(this.getTarget());
-            this.eventPropagatorList.forEach(function(eventPropagator) {
-                eventPropagator.propagateEvent(event);
-            });
-        }
-    },
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
+    //-------------------------------------------------------------------------------
 
     /**
-     * @param {IEventPropagator} eventPropagator
+     * @param {Array.<string>} ins
+     * @return {QueryBuilder}
      */
-    removeEventPropagator: function(eventPropagator) {
-        if (this.eventPropagatorList.contains(eventPropagator)) {
-            this.eventPropagatorList.remove(eventPropagator);
-        }
+    in: function(ins) {
+        this.inSet.addAll(ins);
+        return this.getQueryBuilder();
     }
 });
 
@@ -128,11 +134,11 @@ var EventPropagator = Class.extend(Obj, {
 // Interfaces
 //-------------------------------------------------------------------------------
 
-Class.implement(EventPropagator, IEventPropagator);
+Class.implement(WhereConditionBuilder, IConditionBuilder);
 
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('EventPropagator', EventPropagator);
+bugpack.export('WhereConditionBuilder', WhereConditionBuilder);

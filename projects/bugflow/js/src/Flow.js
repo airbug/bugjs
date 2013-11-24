@@ -6,6 +6,8 @@
 
 //@Export('Flow')
 
+
+//@Require('Bug')
 //@Require('Class')
 //@Require('Obj')
 //@Require('TypeUtil')
@@ -16,25 +18,26 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =     bugpack.require('Class');
-var Obj =       bugpack.require('Obj');
-var TypeUtil =  bugpack.require('TypeUtil');
-var BugTrace =  bugpack.require('bugtrace.BugTrace');
+var Bug         = bugpack.require('Bug');
+var Class       = bugpack.require('Class');
+var Obj         = bugpack.require('Obj');
+var TypeUtil    = bugpack.require('TypeUtil');
+var BugTrace    = bugpack.require('bugtrace.BugTrace');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var $error = BugTrace.$error;
-var $trace = BugTrace.$trace;
+var $error      = BugTrace.$error;
+var $trace      = BugTrace.$trace;
 
 
 //-------------------------------------------------------------------------------
@@ -113,36 +116,36 @@ var Flow = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Error} error
+     * @param {Throwable} throwable
      * @param {...*} var_args
      */
-    complete: function(error) {
+    complete: function(throwable) {
         var _this = this;
-        if (error) {
-            this.error(error);
+        if (throwable) {
+            this.error(throwable);
         } else {
             var args = arguments;
             if (this.hasErrored()) {
-                throw new Error("Cannot complete flow. Flow has already errored out.");
+                throw new Bug("DuplicateFlow", {}, "Cannot complete flow. Flow has already errored out.");
             }
             if (this.hasCompleted()) {
-                throw new Error("Can only complete a flow once.");
+                throw new Bug("DuplicateFlow", {}, "Can only complete a flow once.");
             }
             _this.completeFlow(args);
         }
     },
 
     /**
-     * @param {Error} error
+     * @param {Throwable} throwable
      */
-    error: function(error) {
+    error: function(throwable) {
         if (this.hasErrored()) {
-            throw new Error("Can only error flow once.\n Caused by " + error);
+            throw new Bug("DuplicateFlow", {}, "Can only error flow once.", [throwable]);
         }
         if (this.hasCompleted()) {
-            throw new Error("Cannot error flow. Flow has already completed.\n Caused by " + error);
+            throw new Bug("DuplicateFlow", {}, "Cannot error flow. Flow has already completed.", [throwable]);
         }
-        this.errorFlow($error(error));
+        this.errorFlow($error(throwable));
     },
 
     /**

@@ -259,6 +259,35 @@ Obj.equals = function(value1, value2) {
 };
 
 /**
+ * @static
+ * @param {Object} object
+ * @param {string} propertyQuery
+ */
+Obj.findProperty = function(object, propertyQuery) {
+
+    //NOTE BRN: We're trying to dig down in to the property object. So if we have a property Object like this
+    // {
+    //     name: {
+    //         subName: "someValue"
+    //     }
+    // }
+    // and we request a property named "name.subName", then "someValue" should be returned. If we request the property
+    // "name" then the object {subName: "someValue"} will be returned.
+
+    var parts           = propertyQuery.split(".");
+    var propertyValue   = object;
+    for (var i = 0, size = parts.length; i < size; i++) {
+        var part = parts[i];
+        if (TypeUtil.isObject(propertyValue)) {
+            propertyValue = propertyValue[part];
+        } else {
+            return undefined;
+        }
+    }
+    return propertyValue;
+};
+
+/**
  * @license MIT License
  * This work is based on the code found here
  * https://github.com/kangax/protolicious/blob/master/experimental/object.for_in.js#L18

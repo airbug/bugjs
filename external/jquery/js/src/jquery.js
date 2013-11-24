@@ -27,7 +27,6 @@
 //-------------------------------------------------------------------------------
 
 var bugpack = require('bugpack').context();
-var window = this;
 
 (function( window, undefined ) {
     "use strict";
