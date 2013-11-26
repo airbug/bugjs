@@ -1,7 +1,44 @@
-ace.define('ace/snippets/asciidoc', ['require', 'exports', 'module' ], function(require, exports, module) {
+//-------------------------------------------------------------------------------
+// Annotations
+//-------------------------------------------------------------------------------
 
+//@Package('acethemes')
 
-exports.snippetText = "";
-exports.scope = "asciidoc";
+//@Export('Asciidoc')
 
-});
+//@Require('ace.Ace')
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var ace = bugpack.require('ace.Ace');
+
+//-------------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------------
+
+var Asciidoc = {};
+Asciidoc.load = function() {
+
+    ace.define('ace/snippets/asciidoc', ['require', 'exports', 'module' ], function(require, exports, module) {
+        
+        
+        exports.snippetText = "";
+        exports.scope = "asciidoc";
+        
+        });
+        
+};
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export('acesnippets.Asciidoc', Asciidoc);

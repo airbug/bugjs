@@ -1,7 +1,44 @@
-ace.define('ace/snippets/html_completions', ['require', 'exports', 'module' ], function(require, exports, module) {
+//-------------------------------------------------------------------------------
+// Annotations
+//-------------------------------------------------------------------------------
 
+//@Package('acethemes')
 
-exports.snippetText = "";
-exports.scope = "html_completions";
+//@Export('Html_completions')
 
-});
+//@Require('ace.Ace')
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var ace = bugpack.require('ace.Ace');
+
+//-------------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------------
+
+var Html_completions = {};
+Html_completions.load = function() {
+
+    ace.define('ace/snippets/html_completions', ['require', 'exports', 'module' ], function(require, exports, module) {
+        
+        
+        exports.snippetText = "";
+        exports.scope = "html_completions";
+        
+        });
+        
+};
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export('acesnippets.Html_completions', Html_completions);

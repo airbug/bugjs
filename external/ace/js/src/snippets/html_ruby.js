@@ -1,7 +1,44 @@
-ace.define('ace/snippets/html_ruby', ['require', 'exports', 'module' ], function(require, exports, module) {
+//-------------------------------------------------------------------------------
+// Annotations
+//-------------------------------------------------------------------------------
 
+//@Package('acethemes')
 
-exports.snippetText = "";
-exports.scope = "html_ruby";
+//@Export('Html_ruby')
 
-});
+//@Require('ace.Ace')
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var ace = bugpack.require('ace.Ace');
+
+//-------------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------------
+
+var Html_ruby = {};
+Html_ruby.load = function() {
+
+    ace.define('ace/snippets/html_ruby', ['require', 'exports', 'module' ], function(require, exports, module) {
+        
+        
+        exports.snippetText = "";
+        exports.scope = "html_ruby";
+        
+        });
+        
+};
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export('acesnippets.Html_ruby', Html_ruby);

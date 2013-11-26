@@ -1,7 +1,44 @@
-ace.define('ace/snippets/luapage', ['require', 'exports', 'module' ], function(require, exports, module) {
+//-------------------------------------------------------------------------------
+// Annotations
+//-------------------------------------------------------------------------------
 
+//@Package('acethemes')
 
-exports.snippetText = "";
-exports.scope = "luapage";
+//@Export('Luapage')
 
-});
+//@Require('ace.Ace')
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var ace = bugpack.require('ace.Ace');
+
+//-------------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------------
+
+var Luapage = {};
+Luapage.load = function() {
+
+    ace.define('ace/snippets/luapage', ['require', 'exports', 'module' ], function(require, exports, module) {
+        
+        
+        exports.snippetText = "";
+        exports.scope = "luapage";
+        
+        });
+        
+};
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export('acesnippets.Luapage', Luapage);

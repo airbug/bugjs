@@ -1,7 +1,44 @@
-ace.define('ace/snippets/assembly_x86', ['require', 'exports', 'module' ], function(require, exports, module) {
+//-------------------------------------------------------------------------------
+// Annotations
+//-------------------------------------------------------------------------------
 
+//@Package('acethemes')
 
-exports.snippetText = "";
-exports.scope = "assembly_x86";
+//@Export('Assembly_x86')
 
-});
+//@Require('ace.Ace')
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var ace = bugpack.require('ace.Ace');
+
+//-------------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------------
+
+var Assembly_x86 = {};
+Assembly_x86.load = function() {
+
+    ace.define('ace/snippets/assembly_x86', ['require', 'exports', 'module' ], function(require, exports, module) {
+        
+        
+        exports.snippetText = "";
+        exports.scope = "assembly_x86";
+        
+        });
+        
+};
+
+//-------------------------------------------------------------------------------
+// Exports
+//-------------------------------------------------------------------------------
+
+bugpack.export('acesnippets.Assembly_x86', Assembly_x86);
