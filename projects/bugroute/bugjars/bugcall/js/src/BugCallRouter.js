@@ -7,6 +7,7 @@
 //@Export('BugCallRouter')
 
 //@Require('Class')
+//@Require('Exception')
 //@Require('Map')
 //@Require('Obj')
 //@Require('TypeUtil')
@@ -18,7 +19,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -26,6 +27,7 @@ var bugpack     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
+var Exception           = bugpack.require('Exception');
 var Map                 = bugpack.require('Map');
 var Obj                 = bugpack.require('Obj');
 var TypeUtil            = bugpack.require('TypeUtil');
@@ -114,12 +116,11 @@ var BugCallRouter = Class.extend(Obj, {
                 _this.add(route);
             });
         } else if (TypeUtil.isObject(routes)) {
-            for (var requestType in routes) {
-                var listener = routes[requestType];
+            Obj.forIn(routes, function(requestType, listener) {
                 if (TypeUtil.isFunction(listener)) {
                     _this.add(new BugCallRoute(requestType, listener));
                 }
-            }
+            });
         } else {
             var routes = Array.prototype.slice.call(arguments);
             this.addAll(routes);
@@ -142,8 +143,7 @@ var BugCallRouter = Class.extend(Obj, {
         if (bugCallRoute) {
             bugCallRoute.route(request, responder, callback);
         } else {
-            console.log("Error route '", requestType, "' does not exist");
-            callback(new Error("Route '" + requestType + "' does not exist"));
+            callback(new Exception("NoRouteFound", {}, "Route '" + requestType + "' does not exist"));
         }
     }
 });
