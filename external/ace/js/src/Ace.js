@@ -45,6 +45,10 @@
 var bugpack = require('bugpack').context();
 
 
+//-------------------------------------------------------------------------------
+//
+//-------------------------------------------------------------------------------
+
 (function() {
 
 var ACE_NAMESPACE = "ace";
@@ -16263,16 +16267,16 @@ background: url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZ
 var dom = require("../lib/dom");
 dom.importCssString(exports.cssText, exports.cssClass);
 });
-;
-            (function() {
-                ace.require(["ace/ace"], function(a) {
-                    a && a.config.init();
-                    // if (!window.ace)
-                    //     window.ace = {}; //TODO
-                    for (var key in a) if (a.hasOwnProperty(key))
-                        ace[key] = a[key];
-                });
-            })();
+
+(function() {
+    ace.require(["ace/ace"], function(a) {
+        a && a.config.init();
+        // if (!window.ace)
+        //     window.ace = {}; //TODO
+        for (var key in a) if (a.hasOwnProperty(key))
+            ace[key] = a[key];
+    });
+})();
 
 //-------------------------------------------------------------------------------
 // Exports

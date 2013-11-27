@@ -9,6 +9,7 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('acethemes.Twilight')
+//@Require('acethemes.TextMate')
 
 
 //-------------------------------------------------------------------------------
@@ -25,7 +26,7 @@ var bugpack     = require('bugpack').context();
 var Class       = bugpack.require('Class');
 var Obj         = bugpack.require('Obj');
 var twilight    = bugpack.require('acethemes.Twilight');
-var textmate    = bugpack.require("acethemes.Textmate");
+var textMate    = bugpack.require("acethemes.TextMate");
 
 
 //-------------------------------------------------------------------------------
@@ -53,7 +54,7 @@ var AceThemes    = Class.extend(Obj, {
         /**
          * @type {{load: function()}}
          */
-        this.textmate   = textmate;
+        this.textMate   = textMate;
 
         /**
          * @type {{load: function()}}
@@ -68,7 +69,7 @@ var AceThemes    = Class.extend(Obj, {
 
     loadAll: function(){
         //TODO
-        this.textmate.load();
+        this.textMate.load();
         this.twilight.load();
     }
 });
@@ -81,7 +82,7 @@ var AceThemes    = Class.extend(Obj, {
 /**
  * @static
  * @private
- * @type {ace.AceThemes}
+ * @type {AceThemes}
  */
 AceThemes.instance = null;
 
@@ -91,7 +92,7 @@ AceThemes.instance = null;
 //-------------------------------------------------------------------------------
 
 /**
- * @return {BugTrace}
+ * @return {AceThemes}
  */
 AceThemes.getInstance = function() {
     if (AceThemes.instance === null) {
@@ -100,6 +101,9 @@ AceThemes.getInstance = function() {
     return AceThemes.instance;
 };
 
+/**
+ *
+ */
 AceThemes.loadAll = function(){
     var aceThemes = AceThemes.getInstance();
     aceThemes.loadAll();

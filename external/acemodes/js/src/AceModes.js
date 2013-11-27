@@ -128,7 +128,7 @@ var AceModes    = Class.extend(Obj, {
 /**
  * @static
  * @private
- * @type {ace.AceModes}
+ * @type {AceModes}
  */
 AceModes.instance = null;
 
@@ -138,7 +138,7 @@ AceModes.instance = null;
 //-------------------------------------------------------------------------------
 
 /**
- * @return {BugTrace}
+ * @return {AceModes}
  */
 AceModes.getInstance = function() {
     if (AceModes.instance === null) {
@@ -147,6 +147,9 @@ AceModes.getInstance = function() {
     return AceModes.instance;
 };
 
+/**
+ *
+ */
 AceModes.loadAll = function(){
     //TODO //BUGBUG
     var aceModes = AceModes.getInstance();
