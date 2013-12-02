@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Haskell')
 
@@ -28,8 +28,8 @@ var Haskell = {};
 Haskell.load = function() {
 
     ace.define('ace/snippets/haskell', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "snippet lang\n\
         	{-# LANGUAGE ${1:OverloadedStrings} #-}\n\
         snippet info\n\
@@ -114,9 +114,9 @@ Haskell.load = function() {
         		${1:fn} = ${2:undefined}\n\
         ";
         exports.scope = "haskell";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

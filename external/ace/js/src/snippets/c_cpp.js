@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('C_cpp')
 
@@ -28,8 +28,8 @@ var C_cpp = {};
 C_cpp.load = function() {
 
     ace.define('ace/snippets/c_cpp', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "## STL Collections\n\
         # std::array\n\
         snippet array\n\
@@ -163,9 +163,9 @@ C_cpp.load = function() {
         	}${4}\n\
         ";
         exports.scope = "c_cpp";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

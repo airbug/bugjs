@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Ruby')
 
@@ -28,8 +28,8 @@ var Ruby = {};
 Ruby.load = function() {
 
     ace.define('ace/snippets/ruby', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "########################################\n\
         # Ruby snippets - for Rails, see below #\n\
         ########################################\n\
@@ -960,9 +960,9 @@ Ruby.load = function() {
         	end\n\
         ";
         exports.scope = "ruby";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

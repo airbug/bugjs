@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Snippets')
 
@@ -28,8 +28,8 @@ var Snippets = {};
 Snippets.load = function() {
 
     ace.define('ace/snippets/snippets', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "# snippets for making snippets :)\n\
         snippet snip\n\
         	snippet ${1:trigger}\n\
@@ -41,9 +41,9 @@ Snippets.load = function() {
         	{VISUAL}\n\
         ";
         exports.scope = "snippets";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

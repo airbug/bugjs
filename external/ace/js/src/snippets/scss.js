@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Scss')
 
@@ -28,13 +28,13 @@ var Scss = {};
 Scss.load = function() {
 
     ace.define('ace/snippets/scss', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "scss";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

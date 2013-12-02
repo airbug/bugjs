@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Glsl')
 
@@ -28,13 +28,13 @@ var Glsl = {};
 Glsl.load = function() {
 
     ace.define('ace/snippets/glsl', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "glsl";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

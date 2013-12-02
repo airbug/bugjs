@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Twig')
 
@@ -28,13 +28,13 @@ var Twig = {};
 Twig.load = function() {
 
     ace.define('ace/snippets/twig', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "twig";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

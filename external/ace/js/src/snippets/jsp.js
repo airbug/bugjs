@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Jsp')
 
@@ -28,8 +28,8 @@ var Jsp = {};
 Jsp.load = function() {
 
     ace.define('ace/snippets/jsp', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "snippet @page\n\
         	<%@page contentType=\"text/html\" pageEncoding=\"UTF-8\"%>\n\
         snippet jstl\n\
@@ -131,9 +131,9 @@ Jsp.load = function() {
         	${fn:trim(${1:string})}\n\
         ";
         exports.scope = "jsp";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

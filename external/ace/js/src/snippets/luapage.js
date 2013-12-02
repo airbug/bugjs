@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Luapage')
 
@@ -28,13 +28,13 @@ var Luapage = {};
 Luapage.load = function() {
 
     ace.define('ace/snippets/luapage', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "luapage";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

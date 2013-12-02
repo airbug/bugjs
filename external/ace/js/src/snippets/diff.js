@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Diff')
 
@@ -28,8 +28,8 @@ var Diff = {};
 Diff.load = function() {
 
     ace.define('ace/snippets/diff', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "# DEP-3 (http://dep.debian.net/deps/dep3/) style patch header\n\
         snippet header DEP-3 style header\n\
         	Description: ${1}\n\
@@ -43,9 +43,9 @@ Diff.load = function() {
         \n\
         ";
         exports.scope = "diff";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

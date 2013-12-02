@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Autohotkey')
 
@@ -28,13 +28,13 @@ var Autohotkey = {};
 Autohotkey.load = function() {
 
     ace.define('ace/snippets/autohotkey', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "autohotkey";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

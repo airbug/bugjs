@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Html')
 
@@ -28,8 +28,8 @@ var Html = {};
 Html.load = function() {
 
     ace.define('ace/snippets/html', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "# Some useful Unicode entities\n\
         # Non-Breaking Space\n\
         snippet nbs\n\
@@ -860,9 +860,9 @@ Html.load = function() {
         	<wbr />${1}\n\
         ";
         exports.scope = "html";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

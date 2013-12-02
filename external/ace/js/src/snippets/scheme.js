@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Scheme')
 
@@ -28,13 +28,13 @@ var Scheme = {};
 Scheme.load = function() {
 
     ace.define('ace/snippets/scheme', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "scheme";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

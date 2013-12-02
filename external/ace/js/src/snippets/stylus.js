@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Stylus')
 
@@ -28,13 +28,13 @@ var Stylus = {};
 Stylus.load = function() {
 
     ace.define('ace/snippets/stylus', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "stylus";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

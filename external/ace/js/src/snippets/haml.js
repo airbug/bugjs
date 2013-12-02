@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Haml')
 
@@ -28,8 +28,8 @@ var Haml = {};
 Haml.load = function() {
 
     ace.define('ace/snippets/haml', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "snippet t\n\
         	%table\n\
         		%tr\n\
@@ -52,9 +52,9 @@ Haml.load = function() {
         \n\
         ";
         exports.scope = "haml";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

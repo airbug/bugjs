@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Livescript')
 
@@ -28,13 +28,13 @@ var Livescript = {};
 Livescript.load = function() {
 
     ace.define('ace/snippets/livescript', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "livescript";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

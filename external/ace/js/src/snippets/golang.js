@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Golang')
 
@@ -28,13 +28,13 @@ var Golang = {};
 Golang.load = function() {
 
     ace.define('ace/snippets/golang', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "golang";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

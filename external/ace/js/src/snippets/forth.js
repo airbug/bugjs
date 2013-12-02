@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Forth')
 
@@ -28,13 +28,13 @@ var Forth = {};
 Forth.load = function() {
 
     ace.define('ace/snippets/forth', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "forth";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

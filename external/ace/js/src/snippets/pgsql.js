@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Pgsql')
 
@@ -28,13 +28,13 @@ var Pgsql = {};
 Pgsql.load = function() {
 
     ace.define('ace/snippets/pgsql', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "pgsql";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

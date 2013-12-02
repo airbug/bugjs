@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Verilog')
 
@@ -28,13 +28,13 @@ var Verilog = {};
 Verilog.load = function() {
 
     ace.define('ace/snippets/verilog', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "verilog";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

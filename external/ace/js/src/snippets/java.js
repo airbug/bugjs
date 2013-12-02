@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Java')
 
@@ -28,8 +28,8 @@ var Java = {};
 Java.load = function() {
 
     ace.define('ace/snippets/java', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "## Access Modifiers\n\
         snippet po\n\
         	protected\n\
@@ -272,9 +272,9 @@ Java.load = function() {
         	(unless=${1:param});${2}\n\
         ";
         exports.scope = "java";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

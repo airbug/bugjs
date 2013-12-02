@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Mushcode_high_rules')
 
@@ -28,13 +28,13 @@ var Mushcode_high_rules = {};
 Mushcode_high_rules.load = function() {
 
     ace.define('ace/snippets/mushcode_high_rules', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "mushcode_high_rules";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

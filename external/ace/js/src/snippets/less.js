@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Less')
 
@@ -28,13 +28,13 @@ var Less = {};
 Less.load = function() {
 
     ace.define('ace/snippets/less', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "less";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('R')
 
@@ -28,8 +28,8 @@ var R = {};
 R.load = function() {
 
     ace.define('ace/snippets/r', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "snippet #!\n\
         	#!/usr/bin/env Rscript\n\
         \n\
@@ -153,9 +153,9 @@ R.load = function() {
         	kv.test(${1:x}, ${2:y})\n\
         ";
         exports.scope = "r";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

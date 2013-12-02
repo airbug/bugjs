@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Dart')
 
@@ -28,8 +28,8 @@ var Dart = {};
 Dart.load = function() {
 
     ace.define('ace/snippets/dart', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "snippet lib\n\
         	#library('${1}');\n\
         	${2}\n\
@@ -114,9 +114,9 @@ Dart.load = function() {
         	}\n\
         ";
         exports.scope = "dart";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Asciidoc')
 
@@ -28,13 +28,13 @@ var Asciidoc = {};
 Asciidoc.load = function() {
 
     ace.define('ace/snippets/asciidoc', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "asciidoc";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

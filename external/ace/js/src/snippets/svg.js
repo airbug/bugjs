@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Svg')
 
@@ -28,13 +28,13 @@ var Svg = {};
 Svg.load = function() {
 
     ace.define('ace/snippets/svg', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "svg";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

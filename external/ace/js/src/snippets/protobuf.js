@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Protobuf')
 
@@ -28,11 +28,11 @@ var Protobuf = {};
 Protobuf.load = function() {
 
     ace.define('ace/snippets/protobuf', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "protobuf";
-        
+
         });
 };
 

@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Plain_text')
 
@@ -28,13 +28,13 @@ var Plain_text = {};
 Plain_text.load = function() {
 
     ace.define('ace/snippets/plain_text', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "plain_text";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Html_ruby')
 
@@ -28,13 +28,13 @@ var Html_ruby = {};
 Html_ruby.load = function() {
 
     ace.define('ace/snippets/html_ruby', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "html_ruby";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

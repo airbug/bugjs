@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Markdown')
 
@@ -28,8 +28,8 @@ var Markdown = {};
 Markdown.load = function() {
 
     ace.define('ace/snippets/markdown', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "# Markdown\n\
         \n\
         # Includes octopress (http://octopress.org/) snippets\n\
@@ -119,9 +119,9 @@ Markdown.load = function() {
         	{% endpullquote %}\n\
         ";
         exports.scope = "markdown";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Rdoc')
 
@@ -28,13 +28,13 @@ var Rdoc = {};
 Rdoc.load = function() {
 
     ace.define('ace/snippets/rdoc', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "rdoc";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

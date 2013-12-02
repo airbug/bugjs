@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Css')
 
@@ -28,8 +28,8 @@ var Css = {};
 Css.load = function() {
 
     ace.define('ace/snippets/css', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "snippet .\n\
         	${1} {\n\
         		${2}\n\
@@ -999,9 +999,9 @@ Css.load = function() {
         	zoom: 1;\n\
         ";
         exports.scope = "css";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

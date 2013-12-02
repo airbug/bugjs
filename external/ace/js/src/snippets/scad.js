@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Scad')
 
@@ -28,13 +28,13 @@ var Scad = {};
 Scad.load = function() {
 
     ace.define('ace/snippets/scad', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "scad";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

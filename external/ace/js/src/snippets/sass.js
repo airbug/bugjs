@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Sass')
 
@@ -28,13 +28,13 @@ var Sass = {};
 Sass.load = function() {
 
     ace.define('ace/snippets/sass', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "sass";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

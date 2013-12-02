@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Lsl')
 
@@ -28,8 +28,8 @@ var Lsl = {};
 Lsl.load = function() {
 
     ace.define('ace/snippets/lsl', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "snippet @\n\
             @${1:label}\n\
         snippet CAMERA_ACTIVE\n\
@@ -919,9 +919,9 @@ Lsl.load = function() {
             }\n\
         ";
         exports.scope = "lsl";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Erlang')
 
@@ -28,8 +28,8 @@ var Erlang = {};
 Erlang.load = function() {
 
     ace.define('ace/snippets/erlang', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "# module and export all\n\
         snippet mod\n\
         	-module(${1:`Filename('', 'my')`}).\n\
@@ -192,9 +192,9 @@ Erlang.load = function() {
         \n\
         ";
         exports.scope = "erlang";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Assembly_x86')
 
@@ -28,13 +28,13 @@ var Assembly_x86 = {};
 Assembly_x86.load = function() {
 
     ace.define('ace/snippets/assembly_x86', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "assembly_x86";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

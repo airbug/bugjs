@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Coldfusion')
 
@@ -28,13 +28,13 @@ var Coldfusion = {};
 Coldfusion.load = function() {
 
     ace.define('ace/snippets/coldfusion', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "coldfusion";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

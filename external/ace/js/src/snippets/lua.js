@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Lua')
 
@@ -28,8 +28,8 @@ var Lua = {};
 Lua.load = function() {
 
     ace.define('ace/snippets/lua', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "snippet #!\n\
         	#!/usr/bin/env lua\n\
         	$1\n\
@@ -53,9 +53,9 @@ Lua.load = function() {
         	end\n\
         ";
         exports.scope = "lua";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

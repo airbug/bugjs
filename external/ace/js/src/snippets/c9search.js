@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('C9search')
 
@@ -28,13 +28,13 @@ var C9search = {};
 C9search.load = function() {
 
     ace.define('ace/snippets/c9search', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "c9search";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

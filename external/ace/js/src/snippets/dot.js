@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Dot')
 
@@ -28,13 +28,13 @@ var Dot = {};
 Dot.load = function() {
 
     ace.define('ace/snippets/dot', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "dot";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Rust')
 
@@ -28,13 +28,13 @@ var Rust = {};
 Rust.load = function() {
 
     ace.define('ace/snippets/rust', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "rust";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

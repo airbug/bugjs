@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Logiql')
 
@@ -28,13 +28,13 @@ var Logiql = {};
 Logiql.load = function() {
 
     ace.define('ace/snippets/logiql', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "logiql";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

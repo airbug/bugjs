@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Batchfile')
 
@@ -28,13 +28,13 @@ var Batchfile = {};
 Batchfile.load = function() {
 
     ace.define('ace/snippets/batchfile', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "batchfile";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

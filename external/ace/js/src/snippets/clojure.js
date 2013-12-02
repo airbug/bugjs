@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Clojure')
 
@@ -28,8 +28,8 @@ var Clojure = {};
 Clojure.load = function() {
 
     ace.define('ace/snippets/clojure', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "snippet comm\n\
         	(comment\n\
         	  ${1}\n\
@@ -122,9 +122,9 @@ Clojure.load = function() {
         		${3:body})\n\
         ";
         exports.scope = "clojure";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

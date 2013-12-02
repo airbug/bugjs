@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Python')
 
@@ -28,8 +28,8 @@ var Python = {};
 Python.load = function() {
 
     ace.define('ace/snippets/python', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "snippet #!\n\
         	#!/usr/bin/env python\n\
         snippet imp\n\
@@ -190,9 +190,9 @@ Python.load = function() {
         			verbose = argument\n\
         ";
         exports.scope = "python";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

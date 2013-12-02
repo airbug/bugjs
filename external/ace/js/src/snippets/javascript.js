@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Javascript')
 
@@ -28,8 +28,8 @@ var Javascript = {};
 Javascript.load = function() {
 
     ace.define('ace/snippets/javascript', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "# Prototype\n\
         snippet proto\n\
         	${1:class_name}.prototype.${2:method_name} = function(${3:first_argument}) {\n\
@@ -227,9 +227,9 @@ Javascript.load = function() {
         	$0\n\
         ";
         exports.scope = "javascript";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

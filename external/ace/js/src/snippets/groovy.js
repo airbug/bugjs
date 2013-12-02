@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Groovy')
 
@@ -28,13 +28,13 @@ var Groovy = {};
 Groovy.load = function() {
 
     ace.define('ace/snippets/groovy', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "groovy";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

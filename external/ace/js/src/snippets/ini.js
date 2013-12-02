@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Ini')
 
@@ -28,13 +28,13 @@ var Ini = {};
 Ini.load = function() {
 
     ace.define('ace/snippets/ini', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "ini";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

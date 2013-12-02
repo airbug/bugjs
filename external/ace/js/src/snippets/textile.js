@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Textile')
 
@@ -28,8 +28,8 @@ var Textile = {};
 Textile.load = function() {
 
     ace.define('ace/snippets/textile', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "# Jekyll post header\n\
         snippet header\n\
         	---\n\
@@ -62,9 +62,9 @@ Textile.load = function() {
         	\n\
         ";
         exports.scope = "textile";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

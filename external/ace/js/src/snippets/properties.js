@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Properties')
 
@@ -28,13 +28,13 @@ var Properties = {};
 Properties.load = function() {
 
     ace.define('ace/snippets/properties', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "properties";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

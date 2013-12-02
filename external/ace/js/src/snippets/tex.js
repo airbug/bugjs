@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Tex')
 
@@ -28,8 +28,8 @@ var Tex = {};
 Tex.load = function() {
 
     ace.define('ace/snippets/tex', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "#PREAMBLE\n\
         #newcommand\n\
         snippet nc\n\
@@ -222,9 +222,9 @@ Tex.load = function() {
         snippet sum\n\
         	\\sum^{${1:n}}_{${2:i=1}}{${3}}";
         exports.scope = "tex";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

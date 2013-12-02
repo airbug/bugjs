@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Perl')
 
@@ -28,8 +28,8 @@ var Perl = {};
 Perl.load = function() {
 
     ace.define('ace/snippets/perl', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "# #!/usr/bin/perl\n\
         snippet #!\n\
         	#!/usr/bin/env perl\n\
@@ -379,9 +379,9 @@ Perl.load = function() {
         \n\
         ";
         exports.scope = "perl";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

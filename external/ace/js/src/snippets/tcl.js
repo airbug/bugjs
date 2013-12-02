@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Tcl')
 
@@ -28,8 +28,8 @@ var Tcl = {};
 Tcl.load = function() {
 
     ace.define('ace/snippets/tcl', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "# #!/usr/bin/env tclsh\n\
         snippet #!\n\
         	#!/usr/bin/env tclsh\n\
@@ -124,9 +124,9 @@ Tcl.load = function() {
         	namespace current\n\
         ";
         exports.scope = "tcl";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Django')
 
@@ -28,8 +28,8 @@ var Django = {};
 Django.load = function() {
 
     ace.define('ace/snippets/django', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "# Model Fields\n\
         \n\
         # Note: Optional arguments are using defaults that match what Django will use\n\
@@ -140,9 +140,9 @@ Django.load = function() {
         	)\n\
         ";
         exports.scope = "django";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

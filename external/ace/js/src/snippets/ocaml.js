@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Ocaml')
 
@@ -28,13 +28,13 @@ var Ocaml = {};
 Ocaml.load = function() {
 
     ace.define('ace/snippets/ocaml', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "ocaml";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Rhtml')
 
@@ -28,13 +28,13 @@ var Rhtml = {};
 Rhtml.load = function() {
 
     ace.define('ace/snippets/rhtml', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "rhtml";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

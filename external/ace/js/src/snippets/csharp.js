@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Csharp')
 
@@ -28,13 +28,13 @@ var Csharp = {};
 Csharp.load = function() {
 
     ace.define('ace/snippets/csharp', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "csharp";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

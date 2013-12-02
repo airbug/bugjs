@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Lisp')
 
@@ -28,13 +28,13 @@ var Lisp = {};
 Lisp.load = function() {
 
     ace.define('ace/snippets/lisp', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "lisp";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

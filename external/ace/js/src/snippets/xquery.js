@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Xquery')
 
@@ -28,13 +28,13 @@ var Xquery = {};
 Xquery.load = function() {
 
     ace.define('ace/snippets/xquery', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "xquery";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

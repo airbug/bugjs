@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Powershell')
 
@@ -28,13 +28,13 @@ var Powershell = {};
 Powershell.load = function() {
 
     ace.define('ace/snippets/powershell', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "powershell";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

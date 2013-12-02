@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Scala')
 
@@ -28,13 +28,13 @@ var Scala = {};
 Scala.load = function() {
 
     ace.define('ace/snippets/scala', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "";
         exports.scope = "scala";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

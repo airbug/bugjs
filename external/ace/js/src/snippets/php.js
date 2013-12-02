@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Php')
 
@@ -28,8 +28,8 @@ var Php = {};
 Php.load = function() {
 
     ace.define('ace/snippets/php', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "snippet <?\n\
         	<?php\n\
         \n\
@@ -409,9 +409,9 @@ Php.load = function() {
         	return false;\n\
         ";
         exports.scope = "php";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Sql')
 
@@ -28,8 +28,8 @@ var Sql = {};
 Sql.load = function() {
 
     ace.define('ace/snippets/sql', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "snippet tbl\n\
         	create table ${1:table} (\n\
         		${2:columns}\n\
@@ -58,9 +58,9 @@ Sql.load = function() {
         	select * from ${1:table}\n\
         ";
         exports.scope = "sql";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

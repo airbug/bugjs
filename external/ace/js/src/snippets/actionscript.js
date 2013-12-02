@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Actionscript')
 
@@ -28,8 +28,8 @@ var Actionscript = {};
 Actionscript.load = function() {
 
     ace.define('ace/snippets/actionscript', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "snippet main\n\
         	package {\n\
         		import flash.display.*;\n\
@@ -189,9 +189,9 @@ Actionscript.load = function() {
         \n\
         ";
         exports.scope = "actionscript";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

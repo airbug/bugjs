@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Sh')
 
@@ -28,8 +28,8 @@ var Sh = {};
 Sh.load = function() {
 
     ace.define('ace/snippets/sh', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "# Shebang. Executing bash via /usr/bin/env makes scripts more portable.\n\
         snippet #!\n\
         	#!/usr/bin/env bash\n\
@@ -115,9 +115,9 @@ Sh.load = function() {
         \n\
         ";
         exports.scope = "sh";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

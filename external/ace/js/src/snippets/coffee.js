@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
+//@Package('acesnippets')
 
 //@Export('Coffee')
 
@@ -28,8 +28,8 @@ var Coffee = {};
 Coffee.load = function() {
 
     ace.define('ace/snippets/coffee', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         exports.snippetText = "# Closure loop\n\
         snippet forindo\n\
         	for ${1:name} in ${2:array}\n\
@@ -127,9 +127,9 @@ Coffee.load = function() {
         	${1:root} = exports ? this\n\
         ";
         exports.scope = "coffee";
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------
