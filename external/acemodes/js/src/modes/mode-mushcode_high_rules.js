@@ -30,16 +30,16 @@ Mushcode_high_rules.load = function() {
     /*
          * MUSHCodeMode
          */
-        
+
         ace.define('ace/mode/mushcode_high_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var MushCodeRules = function() {
-        
-        
+
+
             var keywords = (
          "@if|"+
          "@ifelse|"+
@@ -89,11 +89,11 @@ Mushcode_high_rules.load = function() {
          "dismiss|"+
          "@tel"
             );
-        
+
             var builtinConstants = (
                 "=#0"
             );
-        
+
             var builtinFunctions = (
          "default|"+
          "edefault|"+
@@ -527,22 +527,22 @@ Mushcode_high_rules.load = function() {
                 "constant.language": builtinConstants,
                 "keyword": keywords
             }, "identifier");
-        
+
             var strPre = "(?:r|u|ur|R|U|UR|Ur|uR)?";
-        
+
             var decimalInteger = "(?:(?:[1-9]\\d*)|(?:0))";
             var octInteger = "(?:0[oO]?[0-7]+)";
             var hexInteger = "(?:0[xX][\\dA-Fa-f]+)";
             var binInteger = "(?:0[bB][01]+)";
             var integer = "(?:" + decimalInteger + "|" + octInteger + "|" + hexInteger + "|" + binInteger + ")";
-        
+
             var exponent = "(?:[eE][+-]?\\d+)";
             var fraction = "(?:\\.\\d+)";
             var intPart = "(?:\\d+)";
             var pointFloat = "(?:(?:" + intPart + "?" + fraction + ")|(?:" + intPart + "\\.))";
             var exponentFloat = "(?:(?:" + pointFloat + "|" +  intPart + ")" + exponent + ")";
             var floatNumber = "(?:" + exponentFloat + "|" + pointFloat + ")";
-        
+
             this.$rules = {
                 "start" : [
                  {
@@ -591,12 +591,12 @@ Mushcode_high_rules.load = function() {
                 } ]
             };
         };
-        
+
         oop.inherits(MushCodeRules, TextHighlightRules);
-        
+
         exports.MushCodeRules = MushCodeRules;
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

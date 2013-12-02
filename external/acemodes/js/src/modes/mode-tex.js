@@ -45,15 +45,15 @@ Tex.load = function() {
          *
          */
         ace.define('ace/mode/tex', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/text_highlight_rules', 'ace/mode/tex_highlight_rules', 'ace/mode/matching_brace_outdent'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextMode = require("./text").Mode;
         var Tokenizer = require("../tokenizer").Tokenizer;
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
         var TexHighlightRules = require("./tex_highlight_rules").TexHighlightRules;
         var MatchingBraceOutdent = require("./matching_brace_outdent").MatchingBraceOutdent;
-        
+
         var Mode = function(suppressHighlighting) {
         	if (suppressHighlighting)
             	this.$tokenizer = new Tokenizer(new TextHighlightRules().getRules());
@@ -62,31 +62,31 @@ Tex.load = function() {
             this.$outdent = new MatchingBraceOutdent();
         };
         oop.inherits(Mode, TextMode);
-        
+
         (function() {
            this.getNextLineIndent = function(state, line, tab) {
               return this.$getIndent(line);
            };
-        
+
            this.allowAutoInsert = function() {
               return false;
            };
         }).call(Mode.prototype);
-        
+
         exports.Mode = Mode;
         });
         ace.define('ace/mode/tex_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/lib/lang', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var lang = require("../lib/lang");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var TexHighlightRules = function(textClass) {
-        
+
             if (!textClass)
                 textClass = "text";
-        
+
             this.$rules = {
                 "start" : [
         	        {
@@ -148,52 +148,52 @@ Tex.load = function() {
                 ]
             };
         };
-        
+
         oop.inherits(TexHighlightRules, TextHighlightRules);
-        
+
         exports.TexHighlightRules = TexHighlightRules;
         });
-        
+
         ace.define('ace/mode/matching_brace_outdent', ['require', 'exports', 'module' , 'ace/range'], function(require, exports, module) {
-        
-        
+
+
         var Range = require("../range").Range;
-        
+
         var MatchingBraceOutdent = function() {};
-        
+
         (function() {
-        
+
             this.checkOutdent = function(line, input) {
                 if (! /^\s+$/.test(line))
                     return false;
-        
+
                 return /^\s*\}/.test(input);
             };
-        
+
             this.autoOutdent = function(doc, row) {
                 var line = doc.getLine(row);
                 var match = line.match(/^(\s*\})/);
-        
+
                 if (!match) return 0;
-        
+
                 var column = match[1].length;
                 var openBracePos = doc.findMatchingBracket({row: row, column: column});
-        
+
                 if (!openBracePos || openBracePos.row == row) return 0;
-        
+
                 var indent = this.$getIndent(doc.getLine(openBracePos.row));
                 doc.replace(new Range(row, 0, row, column-1), indent);
             };
-        
+
             this.$getIndent = function(line) {
                 return line.match(/^\s*/)[0];
             };
-        
+
         }).call(MatchingBraceOutdent.prototype);
-        
+
         exports.MatchingBraceOutdent = MatchingBraceOutdent;
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

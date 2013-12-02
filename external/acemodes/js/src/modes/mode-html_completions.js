@@ -56,12 +56,12 @@ HtmlCompletions.load = function() {
          * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          *
          * ***** END LICENSE BLOCK ***** */
-        
+
         ace.define('ace/mode/html_completions', ['require', 'exports', 'module' , 'ace/token_iterator'], function(require, exports, module) {
-        
-        
+
+
         var TokenIterator = require("../token_iterator").TokenIterator;
-        
+
         var commonAttributes = [
             "accesskey",
             "class",
@@ -79,7 +79,7 @@ HtmlCompletions.load = function() {
             "title",
             "translate"
         ];
-        
+
         var eventAttributes = [
             "onabort",
             "onblur",
@@ -137,9 +137,9 @@ HtmlCompletions.load = function() {
             "onvolumechange",
             "onwaiting"
         ];
-        
+
         var globalAttributes = commonAttributes.concat(eventAttributes);
-        
+
         var attributeMap = {
             "html": ["manifest"],
             "head": [],
@@ -254,16 +254,16 @@ HtmlCompletions.load = function() {
             "menu": ["type", "label"],
             "dialog": ["open"]
         };
-        
+
         var allElements = Object.keys(attributeMap);
-        
+
         function hasType(token, type) {
             var tokenTypes = token.type.split('.');
             return type.split('.').every(function(type){
                 return (tokenTypes.indexOf(type) !== -1);
             });
         }
-        
+
         function findTagName(session, pos) {
             var iterator = new TokenIterator(session, pos.row, pos.column);
             var token = iterator.getCurrentToken();
@@ -275,26 +275,26 @@ HtmlCompletions.load = function() {
             if (token && hasType(token, 'tag-name') && !iterator.stepBackward().value.match('/'))
                 return token.value;
         }
-        
+
         var HtmlCompletions = function() {
-        
+
         };
-        
+
         (function() {
-        
+
             this.getCompletions = function(state, session, pos, prefix) {
                 var token = session.getTokenAt(pos.row, pos.column);
-        
+
                 if (!token)
                     return [];
                 if (hasType(token, "tag-name") || (token.value == '<' && hasType(token, "text")))
                     return this.getTagCompletions(state, session, pos, prefix);
                 if (hasType(token, 'text') || hasType(token, 'attribute-name'))
                     return this.getAttributeCompetions(state, session, pos, prefix);
-        
+
                 return [];
             };
-        
+
             this.getTagCompletions = function(state, session, pos, prefix) {
                 var elements = allElements;
                 if (prefix) {
@@ -309,7 +309,7 @@ HtmlCompletions.load = function() {
                     };
                 });
             };
-        
+
             this.getAttributeCompetions = function(state, session, pos, prefix) {
                 var tagName = findTagName(session, pos);
                 if (!tagName)
@@ -331,12 +331,12 @@ HtmlCompletions.load = function() {
                     };
                 });
             };
-        
+
         }).call(HtmlCompletions.prototype);
-        
+
         exports.HtmlCompletions = HtmlCompletions;
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

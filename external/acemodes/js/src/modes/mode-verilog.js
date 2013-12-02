@@ -56,39 +56,39 @@ Verilog.load = function() {
          * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          *
          * ***** END LICENSE BLOCK ***** */
-        
+
         ace.define('ace/mode/verilog', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/verilog_highlight_rules', 'ace/range'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextMode = require("./text").Mode;
         var Tokenizer = require("../tokenizer").Tokenizer;
         var VerilogHighlightRules = require("./verilog_highlight_rules").VerilogHighlightRules;
         var Range = require("../range").Range;
-        
+
         var Mode = function() {
             this.$tokenizer = new Tokenizer(new VerilogHighlightRules().getRules());
         };
         oop.inherits(Mode, TextMode);
-        
+
         (function() {
-        
+
             this.lineCommentStart = "//";
             this.blockComment = {start: "/*", end: "*/"};
-        
+
         }).call(Mode.prototype);
-        
+
         exports.Mode = Mode;
-        
+
         });
-        
-        
+
+
         ace.define('ace/mode/verilog_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var VerilogHighlightRules = function() {
         var keywords = "always|and|assign|automatic|begin|buf|bufif0|bufif1|case|casex|casez|cell|cmos|config|" +
             "deassign|default|defparam|design|disable|edge|else|end|endcase|endconfig|endfunction|endgenerate|endmodule|" +
@@ -102,21 +102,21 @@ Verilog.load = function() {
             "begin|bufif0|bufif1|case|casex|casez|config|else|end|endcase|endconfig|endfunction|" +
             "endgenerate|endmodule|endprimitive|endspecify|endtable|endtask|for|forever|function|generate|if|ifnone|" +
             "macromodule|module|primitive|repeat|specify|table|task|while";
-        
+
             var builtinConstants = (
                 "true|false|null"
             );
-        
+
             var builtinFunctions = (
                 "count|min|max|avg|sum|rank|now|coalesce|main"
             );
-        
+
             var keywordMapper = this.createKeywordMapper({
                 "support.function": builtinFunctions,
                 "keyword": keywords,
                 "constant.language": builtinConstants
             }, "identifier", true);
-        
+
             this.$rules = {
                 "start" : [ {
                     token : "comment",
@@ -148,12 +148,12 @@ Verilog.load = function() {
                 } ]
             };
         };
-        
+
         oop.inherits(VerilogHighlightRules, TextHighlightRules);
-        
+
         exports.VerilogHighlightRules = VerilogHighlightRules;
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

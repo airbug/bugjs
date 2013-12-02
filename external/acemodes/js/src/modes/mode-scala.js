@@ -28,36 +28,36 @@ var Scala = {};
 Scala.load = function() {
 
     ace.define('ace/mode/scala', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/javascript', 'ace/tokenizer', 'ace/mode/scala_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var JavaScriptMode = require("./javascript").Mode;
         var Tokenizer = require("../tokenizer").Tokenizer;
         var ScalaHighlightRules = require("./scala_highlight_rules").ScalaHighlightRules;
-        
+
         var Mode = function() {
             JavaScriptMode.call(this);
-            
+
             var highlighter = new ScalaHighlightRules();
             this.$tokenizer = new Tokenizer(highlighter.getRules());
             this.$keywordList = highlighter.$keywordList;
         };
         oop.inherits(Mode, JavaScriptMode);
-        
+
         (function() {
-        
+
             this.createWorker = function(session) {
                 return null;
             };
-        
+
         }).call(Mode.prototype);
-        
+
         exports.Mode = Mode;
         });
-        
+
         ace.define('ace/mode/javascript', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/javascript_highlight_rules', 'ace/mode/matching_brace_outdent', 'ace/range', 'ace/worker/worker_client', 'ace/mode/behaviour/cstyle', 'ace/mode/folding/cstyle'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextMode = require("./text").Mode;
         var Tokenizer = require("../tokenizer").Tokenizer;
@@ -67,10 +67,10 @@ Scala.load = function() {
         var WorkerClient = require("../worker/worker_client").WorkerClient;
         var CstyleBehaviour = require("./behaviour/cstyle").CstyleBehaviour;
         var CStyleFoldMode = require("./folding/cstyle").FoldMode;
-        
+
         var Mode = function() {
             var highlighter = new JavaScriptHighlightRules();
-            
+
             this.$tokenizer = new Tokenizer(highlighter.getRules());
             this.$outdent = new MatchingBraceOutdent();
             this.$behaviour = new CstyleBehaviour();
@@ -78,23 +78,23 @@ Scala.load = function() {
             this.foldingRules = new CStyleFoldMode();
         };
         oop.inherits(Mode, TextMode);
-        
+
         (function() {
-        
+
             this.lineCommentStart = "//";
             this.blockComment = {start: "/*", end: "*/"};
-        
+
             this.getNextLineIndent = function(state, line, tab) {
                 var indent = this.$getIndent(line);
-        
+
                 var tokenizedLine = this.$tokenizer.getLineTokens(line, state);
                 var tokens = tokenizedLine.tokens;
                 var endState = tokenizedLine.state;
-        
+
                 if (tokens.length && tokens[tokens.length-1].type == "comment") {
                     return indent;
                 }
-        
+
                 if (state == "start" || state == "no_regex") {
                     var match = line.match(/^.*(?:\bcase\b.*\:|[\{\(\[])\s*$/);
                     if (match) {
@@ -112,45 +112,45 @@ Scala.load = function() {
                         indent += "* ";
                     }
                 }
-        
+
                 return indent;
             };
-        
+
             this.checkOutdent = function(state, line, input) {
                 return this.$outdent.checkOutdent(line, input);
             };
-        
+
             this.autoOutdent = function(state, doc, row) {
                 this.$outdent.autoOutdent(doc, row);
             };
-        
+
             this.createWorker = function(session) {
                 var worker = new WorkerClient(["ace"], "ace/mode/javascript_worker", "JavaScriptWorker");
                 worker.attachToDocument(session.getDocument());
-        
+
                 worker.on("jslint", function(results) {
                     session.setAnnotations(results.data);
                 });
-        
+
                 worker.on("terminate", function() {
                     session.clearAnnotations();
                 });
-        
+
                 return worker;
             };
-        
+
         }).call(Mode.prototype);
-        
+
         exports.Mode = Mode;
         });
-        
+
         ace.define('ace/mode/javascript_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/doc_comment_highlight_rules', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var DocCommentHighlightRules = require("./doc_comment_highlight_rules").DocCommentHighlightRules;
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var JavaScriptHighlightRules = function() {
             var keywordMapper = this.createKeywordMapper({
                 "variable.language":
@@ -180,7 +180,7 @@ Scala.load = function() {
             }, "identifier");
             var kwBeforeRe = "case|do|else|finally|in|instanceof|return|throw|try|typeof|yield|void";
             var identifierRe = "[a-zA-Z\\$_\u00a1-\uffff][a-zA-Z\\d\\$_\u00a1-\uffff]*\\b";
-        
+
             var escapedRe = "\\\\(?:x[0-9a-fA-F]{2}|" + // hex
                 "u[0-9a-fA-F]{4}|" + // unicode
                 "[0-2][0-7]{0,2}|" + // oct
@@ -188,7 +188,7 @@ Scala.load = function() {
                 "37[0-7]?|" + // oct
                 "[4-7][0-7]?|" + //oct
                 ".)";
-        
+
             this.$rules = {
                 "no_regex" : [
                     {
@@ -443,24 +443,24 @@ Scala.load = function() {
                     }
                 ]
             };
-        
+
             this.embedRules(DocCommentHighlightRules, "doc-",
                 [ DocCommentHighlightRules.getEndRule("no_regex") ]);
         };
-        
+
         oop.inherits(JavaScriptHighlightRules, TextHighlightRules);
-        
+
         exports.JavaScriptHighlightRules = JavaScriptHighlightRules;
         });
-        
+
         ace.define('ace/mode/doc_comment_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var DocCommentHighlightRules = function() {
-        
+
             this.$rules = {
                 "start" : [ {
                     token : "comment.doc.tag",
@@ -473,9 +473,9 @@ Scala.load = function() {
                 }]
             };
         };
-        
+
         oop.inherits(DocCommentHighlightRules, TextHighlightRules);
-        
+
         DocCommentHighlightRules.getStartRule = function(start) {
             return {
                 token : "comment.doc", // doc comment
@@ -483,7 +483,7 @@ Scala.load = function() {
                 next  : start
             };
         };
-        
+
         DocCommentHighlightRules.getEndRule = function (start) {
             return {
                 token : "comment.doc", // closing comment
@@ -491,66 +491,66 @@ Scala.load = function() {
                 next  : start
             };
         };
-        
-        
+
+
         exports.DocCommentHighlightRules = DocCommentHighlightRules;
-        
+
         });
-        
+
         ace.define('ace/mode/matching_brace_outdent', ['require', 'exports', 'module' , 'ace/range'], function(require, exports, module) {
-        
-        
+
+
         var Range = require("../range").Range;
-        
+
         var MatchingBraceOutdent = function() {};
-        
+
         (function() {
-        
+
             this.checkOutdent = function(line, input) {
                 if (! /^\s+$/.test(line))
                     return false;
-        
+
                 return /^\s*\}/.test(input);
             };
-        
+
             this.autoOutdent = function(doc, row) {
                 var line = doc.getLine(row);
                 var match = line.match(/^(\s*\})/);
-        
+
                 if (!match) return 0;
-        
+
                 var column = match[1].length;
                 var openBracePos = doc.findMatchingBracket({row: row, column: column});
-        
+
                 if (!openBracePos || openBracePos.row == row) return 0;
-        
+
                 var indent = this.$getIndent(doc.getLine(openBracePos.row));
                 doc.replace(new Range(row, 0, row, column-1), indent);
             };
-        
+
             this.$getIndent = function(line) {
                 return line.match(/^\s*/)[0];
             };
-        
+
         }).call(MatchingBraceOutdent.prototype);
-        
+
         exports.MatchingBraceOutdent = MatchingBraceOutdent;
         });
-        
+
         ace.define('ace/mode/behaviour/cstyle', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/behaviour', 'ace/token_iterator', 'ace/lib/lang'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../../lib/oop");
         var Behaviour = require("../behaviour").Behaviour;
         var TokenIterator = require("../../token_iterator").TokenIterator;
         var lang = require("../../lib/lang");
-        
+
         var SAFE_INSERT_IN_TOKENS =
             ["text", "paren.rparen", "punctuation.operator"];
         var SAFE_INSERT_BEFORE_TOKENS =
             ["text", "paren.rparen", "punctuation.operator", "comment"];
-        
-        
+
+
         var autoInsertedBrackets = 0;
         var autoInsertedRow = -1;
         var autoInsertedLineEnd = "";
@@ -558,9 +558,9 @@ Scala.load = function() {
         var maybeInsertedRow = -1;
         var maybeInsertedLineStart = "";
         var maybeInsertedLineEnd = "";
-        
+
         var CstyleBehaviour = function () {
-            
+
             CstyleBehaviour.isSaneInsertion = function(editor, session) {
                 var cursor = editor.getCursorPosition();
                 var iterator = new TokenIterator(session, cursor.row, cursor.column);
@@ -573,11 +573,11 @@ Scala.load = function() {
                 return iterator.getCurrentTokenRow() !== cursor.row ||
                     this.$matchTokenType(iterator.getCurrentToken() || "text", SAFE_INSERT_BEFORE_TOKENS);
             };
-            
+
             CstyleBehaviour.$matchTokenType = function(token, types) {
                 return types.indexOf(token.type || token) > -1;
             };
-            
+
             CstyleBehaviour.recordAutoInsert = function(editor, session, bracket) {
                 var cursor = editor.getCursorPosition();
                 var line = session.doc.getLine(cursor.row);
@@ -587,7 +587,7 @@ Scala.load = function() {
                 autoInsertedLineEnd = bracket + line.substr(cursor.column);
                 autoInsertedBrackets++;
             };
-            
+
             CstyleBehaviour.recordMaybeInsert = function(editor, session, bracket) {
                 var cursor = editor.getCursorPosition();
                 var line = session.doc.getLine(cursor.row);
@@ -598,31 +598,31 @@ Scala.load = function() {
                 maybeInsertedLineEnd = line.substr(cursor.column);
                 maybeInsertedBrackets++;
             };
-            
+
             CstyleBehaviour.isAutoInsertedClosing = function(cursor, line, bracket) {
                 return autoInsertedBrackets > 0 &&
                     cursor.row === autoInsertedRow &&
                     bracket === autoInsertedLineEnd[0] &&
                     line.substr(cursor.column) === autoInsertedLineEnd;
             };
-            
+
             CstyleBehaviour.isMaybeInsertedClosing = function(cursor, line) {
                 return maybeInsertedBrackets > 0 &&
                     cursor.row === maybeInsertedRow &&
                     line.substr(cursor.column) === maybeInsertedLineEnd &&
                     line.substr(0, cursor.column) == maybeInsertedLineStart;
             };
-            
+
             CstyleBehaviour.popAutoInsertedClosing = function() {
                 autoInsertedLineEnd = autoInsertedLineEnd.substr(1);
                 autoInsertedBrackets--;
             };
-            
+
             CstyleBehaviour.clearMaybeInsertedClosing = function() {
                 maybeInsertedBrackets = 0;
                 maybeInsertedRow = -1;
             };
-        
+
             this.add("braces", "insertion", function (state, action, editor, session, text) {
                 var cursor = editor.getCursorPosition();
                 var line = session.doc.getLine(cursor.row);
@@ -672,10 +672,10 @@ Scala.load = function() {
                         var openBracePos = session.findMatchingBracket({row: cursor.row, column: cursor.column}, '}');
                         if (!openBracePos)
                              return null;
-        
+
                         var indent = this.getNextLineIndent(state, line.substring(0, cursor.column), session.getTabString());
                         var next_indent = this.$getIndent(line);
-        
+
                         return {
                             text: '\n' + indent + '\n' + next_indent + closing,
                             selection: [1, indent.length, 1, indent.length]
@@ -683,7 +683,7 @@ Scala.load = function() {
                     }
                 }
             });
-        
+
             this.add("braces", "deletion", function (state, action, editor, session, range) {
                 var selected = session.doc.getTextRange(range);
                 if (!range.isMultiLine() && selected == '{') {
@@ -697,7 +697,7 @@ Scala.load = function() {
                     }
                 }
             });
-        
+
             this.add("parens", "insertion", function (state, action, editor, session, text) {
                 if (text == '(') {
                     var selection = editor.getSelectionRange();
@@ -730,7 +730,7 @@ Scala.load = function() {
                     }
                 }
             });
-        
+
             this.add("parens", "deletion", function (state, action, editor, session, range) {
                 var selected = session.doc.getTextRange(range);
                 if (!range.isMultiLine() && selected == '(') {
@@ -742,7 +742,7 @@ Scala.load = function() {
                     }
                 }
             });
-        
+
             this.add("brackets", "insertion", function (state, action, editor, session, text) {
                 if (text == '[') {
                     var selection = editor.getSelectionRange();
@@ -775,7 +775,7 @@ Scala.load = function() {
                     }
                 }
             });
-        
+
             this.add("brackets", "deletion", function (state, action, editor, session, range) {
                 var selected = session.doc.getTextRange(range);
                 if (!range.isMultiLine() && selected == '[') {
@@ -787,7 +787,7 @@ Scala.load = function() {
                     }
                 }
             });
-        
+
             this.add("string_dquotes", "insertion", function (state, action, editor, session, text) {
                 if (text == '"' || text == "'") {
                     var quote = text;
@@ -808,7 +808,7 @@ Scala.load = function() {
                         var tokens = session.getTokens(selection.start.row);
                         var col = 0, token;
                         var quotepos = -1; // Track whether we're inside an open quote.
-        
+
                         for (var x = 0; x < tokens.length; x++) {
                             token = tokens[x];
                             if (token.type == "string") {
@@ -840,7 +840,7 @@ Scala.load = function() {
                     }
                 }
             });
-        
+
             this.add("string_dquotes", "deletion", function (state, action, editor, session, range) {
                 var selected = session.doc.getTextRange(range);
                 if (!range.isMultiLine() && (selected == '"' || selected == "'")) {
@@ -852,21 +852,21 @@ Scala.load = function() {
                     }
                 }
             });
-        
+
         };
-        
+
         oop.inherits(CstyleBehaviour, Behaviour);
-        
+
         exports.CstyleBehaviour = CstyleBehaviour;
         });
-        
+
         ace.define('ace/mode/folding/cstyle', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/range', 'ace/mode/folding/fold_mode'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../../lib/oop");
         var Range = require("../../range").Range;
         var BaseFoldMode = require("./fold_mode").FoldMode;
-        
+
         var FoldMode = exports.FoldMode = function(commentRegex) {
             if (commentRegex) {
                 this.foldingStartMarker = new RegExp(
@@ -878,63 +878,63 @@ Scala.load = function() {
             }
         };
         oop.inherits(FoldMode, BaseFoldMode);
-        
+
         (function() {
-        
+
             this.foldingStartMarker = /(\{|\[)[^\}\]]*$|^\s*(\/\*)/;
             this.foldingStopMarker = /^[^\[\{]*(\}|\])|^[\s\*]*(\*\/)/;
-        
+
             this.getFoldWidgetRange = function(session, foldStyle, row) {
                 var line = session.getLine(row);
                 var match = line.match(this.foldingStartMarker);
                 if (match) {
                     var i = match.index;
-        
+
                     if (match[1])
                         return this.openingBracketBlock(session, match[1], row, i);
-        
+
                     return session.getCommentFoldRange(row, i + match[0].length, 1);
                 }
-        
+
                 if (foldStyle !== "markbeginend")
                     return;
-        
+
                 var match = line.match(this.foldingStopMarker);
                 if (match) {
                     var i = match.index + match[0].length;
-        
+
                     if (match[1])
                         return this.closingBracketBlock(session, match[1], row, i);
-        
+
                     return session.getCommentFoldRange(row, i, -1);
                 }
             };
-        
+
         }).call(FoldMode.prototype);
-        
+
         });
         ace.define('ace/mode/scala_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/doc_comment_highlight_rules', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var DocCommentHighlightRules = require("./doc_comment_highlight_rules").DocCommentHighlightRules;
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var ScalaHighlightRules = function() {
             var keywords = (
                     "case|default|do|else|for|if|match|while|throw|return|try|catch|finally|yield|" +
                     "abstract|class|def|extends|final|forSome|implicit|implicits|import|lazy|new|object|" +
                     "override|package|private|protected|sealed|super|this|trait|type|val|var|with"
             );
-        
+
             var buildinConstants = ("true|false");
-        
+
             var langClasses = (
                 "AbstractMethodError|AssertionError|ClassCircularityError|"+
                 "ClassFormatError|Deprecated|EnumConstantNotPresentException|"+
                 "ExceptionInInitializerError|IllegalAccessError|"+
                 "IllegalThreadStateException|InstantiationError|InternalError|"+
-        
+
                 "NegativeArraySizeException|NoSuchFieldError|Override|Process|"+
                 "ProcessBuilder|SecurityManager|StringIndexOutOfBoundsException|"+
                 "SuppressWarnings|TypeNotPresentException|UnknownError|"+
@@ -957,17 +957,17 @@ Scala.load = function() {
                 "Cloneable|Class|CharSequence|Comparable|String|Object|" +
                 "Unit|Any|AnyVal|AnyRef|Null|ScalaObject|Singleton|Seq|Iterable|List|" +
                 "Option|Array|Char|Byte|Short|Int|Long|Nothing"
-        
-        
+
+
             );
-        
+
             var keywordMapper = this.createKeywordMapper({
                 "variable.language": "this",
                 "keyword": keywords,
                 "support.function": langClasses,
                 "constant.language": buildinConstants
             }, "identifier");
-        
+
             this.$rules = {
                 "start" : [
                     {
@@ -1057,16 +1057,16 @@ Scala.load = function() {
                     }
                 ]
             };
-        
+
             this.embedRules(DocCommentHighlightRules, "doc-",
                 [ DocCommentHighlightRules.getEndRule("start") ]);
         };
-        
+
         oop.inherits(ScalaHighlightRules, TextHighlightRules);
-        
+
         exports.ScalaHighlightRules = ScalaHighlightRules;
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

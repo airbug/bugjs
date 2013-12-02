@@ -74,13 +74,13 @@ html.load = function(){
         this.$tokenizer = new Tokenizer(highlighter.getRules());
         this.$behaviour = new HtmlBehaviour();
         this.$completer = new HtmlCompletions();
-        
+
         this.$embeds = highlighter.getEmbeds();
         this.createModeDelegates({
             "js-": JavaScriptMode,
             "css-": CssMode
         });
-        
+
         this.foldingRules = new HtmlFoldMode();
     };
     oop.inherits(Mode, TextMode);
@@ -121,7 +121,7 @@ html.load = function(){
 
     var Mode = function() {
         var highlighter = new JavaScriptHighlightRules();
-        
+
         this.$tokenizer = new Tokenizer(highlighter.getRules());
         this.$outdent = new MatchingBraceOutdent();
         this.$behaviour = new CstyleBehaviour();
@@ -611,7 +611,7 @@ html.load = function(){
     var maybeInsertedLineEnd = "";
 
     var CstyleBehaviour = function () {
-        
+
         CstyleBehaviour.isSaneInsertion = function(editor, session) {
             var cursor = editor.getCursorPosition();
             var iterator = new TokenIterator(session, cursor.row, cursor.column);
@@ -624,11 +624,11 @@ html.load = function(){
             return iterator.getCurrentTokenRow() !== cursor.row ||
                 this.$matchTokenType(iterator.getCurrentToken() || "text", SAFE_INSERT_BEFORE_TOKENS);
         };
-        
+
         CstyleBehaviour.$matchTokenType = function(token, types) {
             return types.indexOf(token.type || token) > -1;
         };
-        
+
         CstyleBehaviour.recordAutoInsert = function(editor, session, bracket) {
             var cursor = editor.getCursorPosition();
             var line = session.doc.getLine(cursor.row);
@@ -638,7 +638,7 @@ html.load = function(){
             autoInsertedLineEnd = bracket + line.substr(cursor.column);
             autoInsertedBrackets++;
         };
-        
+
         CstyleBehaviour.recordMaybeInsert = function(editor, session, bracket) {
             var cursor = editor.getCursorPosition();
             var line = session.doc.getLine(cursor.row);
@@ -649,26 +649,26 @@ html.load = function(){
             maybeInsertedLineEnd = line.substr(cursor.column);
             maybeInsertedBrackets++;
         };
-        
+
         CstyleBehaviour.isAutoInsertedClosing = function(cursor, line, bracket) {
             return autoInsertedBrackets > 0 &&
                 cursor.row === autoInsertedRow &&
                 bracket === autoInsertedLineEnd[0] &&
                 line.substr(cursor.column) === autoInsertedLineEnd;
         };
-        
+
         CstyleBehaviour.isMaybeInsertedClosing = function(cursor, line) {
             return maybeInsertedBrackets > 0 &&
                 cursor.row === maybeInsertedRow &&
                 line.substr(cursor.column) === maybeInsertedLineEnd &&
                 line.substr(0, cursor.column) == maybeInsertedLineStart;
         };
-        
+
         CstyleBehaviour.popAutoInsertedClosing = function() {
             autoInsertedLineEnd = autoInsertedLineEnd.substr(1);
             autoInsertedBrackets--;
         };
-        
+
         CstyleBehaviour.clearMaybeInsertedClosing = function() {
             maybeInsertedBrackets = 0;
             maybeInsertedRow = -1;
@@ -1570,7 +1570,7 @@ html.load = function(){
             token : "text",
             regex : "\\s+"
         }, {
-            
+
         token : !tagMap ? "meta.tag.tag-name" : function(value) {
                 if (tagMap[value])
                     return "meta.tag.tag-name." + tagMap[value];
@@ -1587,7 +1587,7 @@ html.load = function(){
 
         states[name + "_qstring"] = multiLineString("'", name + "_embed_attribute_list");
         states[name + "_qqstring"] = multiLineString("\"", name + "_embed_attribute_list");
-        
+
         states[name + "_embed_attribute_list"] = [{
             token : "meta.tag.r",
             regex : "/?>",
@@ -1629,7 +1629,7 @@ html.load = function(){
     var HtmlBehaviour = function () {
 
         this.inherit(XmlBehaviour); // Get xml behaviour
-        
+
         this.add("autoclosing", "insertion", function (state, action, editor, session, text) {
             if (text == '>') {
                 var position = editor.getCursorPosition();
@@ -1685,9 +1685,9 @@ html.load = function(){
     }
 
     var XmlBehaviour = function () {
-        
+
         this.inherit(CstyleBehaviour, ["string_dquotes"]); // Get string behaviour
-        
+
         this.add("autoclosing", "insertion", function (state, action, editor, session, text) {
             if (text == '>') {
                 var position = editor.getCursorPosition();
@@ -1735,7 +1735,7 @@ html.load = function(){
                 }
             }
         });
-        
+
     }
     oop.inherits(XmlBehaviour, Behaviour);
 
@@ -1813,7 +1813,7 @@ html.load = function(){
             }
             return null;
         };
-        
+
         this.$tryMode = function(state, session, foldStyle, row) {
             var mode = this.$getMode(state);
             return (mode ? mode.getFoldWidget(session, foldStyle, row) : "");
@@ -1829,13 +1829,13 @@ html.load = function(){
 
         this.getFoldWidgetRange = function(session, foldStyle, row) {
             var mode = this.$getMode(session.getState(row-1));
-            
+
             if (!mode || !mode.getFoldWidget(session, foldStyle, row))
                 mode = this.$getMode(session.getState(row));
-            
+
             if (!mode || !mode.getFoldWidget(session, foldStyle, row))
                 mode = this.defaultMode;
-            
+
             return mode.getFoldWidgetRange(session, foldStyle, row);
         };
 
@@ -1877,7 +1877,7 @@ html.load = function(){
 
             return "start";
         };
-        
+
         this._getFirstTagInLine = function(session, row) {
             var tokens = session.getTokens(row);
             var value = "";
@@ -1888,13 +1888,13 @@ html.load = function(){
                 else
                     value += lang.stringRepeat(" ", token.value.length);
             }
-            
+
             return this._parseTag(value);
         };
 
         this.tagRe = /^(\s*)(<?(\/?)([-_a-zA-Z0-9:!]*)\s*(\/?)>?)/;
         this._parseTag = function(tag) {
-            
+
             var match = tag.match(this.tagRe);
             var column = 0;
 
@@ -1911,10 +1911,10 @@ html.load = function(){
             var token = iterator.getCurrentToken();
             if (!token)
                 return null;
-                
+    
             var value = "";
             var start;
-            
+
             do {
                 if (token.type.lastIndexOf("meta.tag", 0) === 0) {
                     if (!start) {
@@ -1936,15 +1936,15 @@ html.load = function(){
                     }
                 }
             } while(token = iterator.stepForward());
-            
+
             return null;
         };
-        
+
         this._readTagBackward = function(iterator) {
             var token = iterator.getCurrentToken();
             if (!token)
                 return null;
-                
+    
             var value = "";
             var end;
 
@@ -1969,13 +1969,13 @@ html.load = function(){
                     }
                 }
             } while(token = iterator.stepBackward());
-            
+
             return null;
         };
-        
+
         this._pop = function(stack, tag) {
             while (stack.length) {
-                
+    
                 var top = stack[stack.length-1];
                 if (!tag || top.tagName == tag.tagName) {
                     return stack.pop();
@@ -1991,17 +1991,17 @@ html.load = function(){
                 }
             }
         };
-        
+
         this.getFoldWidgetRange = function(session, foldStyle, row) {
             var firstTag = this._getFirstTagInLine(session, row);
-            
+
             if (!firstTag.match)
                 return null;
-            
+
             var isBackward = firstTag.closing || firstTag.selfClosing;
             var stack = [];
             var tag;
-            
+
             if (!isBackward) {
                 var iterator = new TokenIterator(session, row, firstTag.column);
                 var start = {
@@ -2017,7 +2017,7 @@ html.load = function(){
                         } else
                             continue;
                     }
-                    
+        
                     if (tag.closing) {
                         this._pop(stack, tag);
                         if (stack.length == 0)
@@ -2034,7 +2034,7 @@ html.load = function(){
                     row: row,
                     column: firstTag.column
                 };
-                
+    
                 while (tag = this._readTagBackward(iterator)) {
                     if (tag.selfClosing) {
                         if (!stack.length) {
@@ -2044,7 +2044,7 @@ html.load = function(){
                         } else
                             continue;
                     }
-                    
+        
                     if (!tag.closing) {
                         this._pop(stack, tag);
                         if (stack.length == 0) {
@@ -2057,7 +2057,7 @@ html.load = function(){
                     }
                 }
             }
-            
+
         };
 
     }).call(FoldMode.prototype);

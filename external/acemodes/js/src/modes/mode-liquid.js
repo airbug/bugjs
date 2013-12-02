@@ -56,70 +56,70 @@ Liquid.load = function() {
          * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          *
          * ***** END LICENSE BLOCK ***** */
-        
+
         ace.define('ace/mode/liquid', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/liquid_highlight_rules', 'ace/mode/matching_brace_outdent', 'ace/range'], function(require, exports, module) {
-        
+
         var oop = require("../lib/oop");
         var TextMode = require("./text").Mode;
         var Tokenizer = require("../tokenizer").Tokenizer;
         var LiquidHighlightRules = require("./liquid_highlight_rules").LiquidHighlightRules;
         var MatchingBraceOutdent = require("./matching_brace_outdent").MatchingBraceOutdent;
         var Range = require("../range").Range;
-        
+
         var Mode = function() {
             var highlighter = new LiquidHighlightRules();
-            
+
             this.$tokenizer = new Tokenizer(highlighter.getRules());
             this.$keywordList = highlighter.$keywordList;
             this.$outdent = new MatchingBraceOutdent();
         };
         oop.inherits(Mode, TextMode);
-        
+
         (function() {
-        
+
             this.blockComment = {start: "<!--", end: "-->"};
-        
+
             this.getNextLineIndent = function(state, line, tab) {
                 var indent = this.$getIndent(line);
-        
+
                 var tokenizedLine = this.$tokenizer.getLineTokens(line, state);
                 var tokens = tokenizedLine.tokens;
                 var endState = tokenizedLine.state;
-        
+
                 if (tokens.length && tokens[tokens.length-1].type == "comment") {
                     return indent;
                 }
-        
+
                 if (state == "start") {
                     var match = line.match(/^.*[\{\(\[]\s*$/);
                     if (match) {
                         indent += tab;
                     }
                 }
-        
+
                 return indent;
             };
-        
+
             this.checkOutdent = function(state, line, input) {
                 return this.$outdent.checkOutdent(line, input);
             };
-        
+
             this.autoOutdent = function(state, doc, row) {
                 this.$outdent.autoOutdent(doc, row);
             };
-        
+
         }).call(Mode.prototype);
-        
+
         exports.Mode = Mode;
         });
-        
+
         ace.define('ace/mode/liquid_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text_highlight_rules', 'ace/mode/html_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
         var HtmlHighlightRules = require("./html_highlight_rules").HtmlHighlightRules;
-        
+
         var LiquidHighlightRules = function() {
             HtmlHighlightRules.call(this);
             var functions = (
@@ -127,17 +127,17 @@ Liquid.load = function() {
                  "escape_once|strip_html|strip_newlines|newline_to_br|replace|replace_first|" +
                  "truncate|truncatewords|prepend|append|minus|plus|times|divided_by|split"
             );
-        
+
             var keywords = (
                 "capture|endcapture|case|endcase|when|comment|endcomment|" +
                 "cycle|for|endfor|in|reversed|if|endif|else|elsif|include|endinclude|unless|endunless|" +
                 "style|text|image|widget|plugin|marker|endmarker|tablerow|endtablerow"
             );
-        
+
             var builtinVariables = 'forloop|tablerowloop';
-        
+
             var definitions = ("assign");
-        
+
             var keywordMapper = this.createKeywordMapper({
                 "variable.language": builtinVariables,
                 "keyword": keywords,
@@ -155,7 +155,7 @@ Liquid.load = function() {
                     push : "liquid-start"
                 });
             }
-        
+
             this.addRules({
                 "liquid-start" : [{
                     token: "variable",
@@ -197,23 +197,23 @@ Liquid.load = function() {
                     regex : "\\s+"
                 }]
             });
-        
+
             this.normalizeRules();
         };
         oop.inherits(LiquidHighlightRules, TextHighlightRules);
-        
+
         exports.LiquidHighlightRules = LiquidHighlightRules;
         });
-        
+
         ace.define('ace/mode/html_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/lib/lang', 'ace/mode/css_highlight_rules', 'ace/mode/javascript_highlight_rules', 'ace/mode/xml_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var lang = require("../lib/lang");
         var CssHighlightRules = require("./css_highlight_rules").CssHighlightRules;
         var JavaScriptHighlightRules = require("./javascript_highlight_rules").JavaScriptHighlightRules;
         var XmlHighlightRules = require("./xml_highlight_rules").XmlHighlightRules;
-        
+
         var tagMap = lang.createMap({
             a           : 'anchor',
             button 	    : 'form',
@@ -232,10 +232,10 @@ Liquid.load = function() {
             th          : 'table',
             tr          : 'table'
         });
-        
+
         var HtmlHighlightRules = function() {
             XmlHighlightRules.call(this);
-        
+
             this.addRules({
                 attributes: [{
                     include : "space"
@@ -285,22 +285,22 @@ Liquid.load = function() {
                     {token : "meta.tag.punctuation.end", regex : ">", next : "start"}
                 ]
             });
-        
+
             this.embedTagRules(CssHighlightRules, "css-", "style");
             this.embedTagRules(JavaScriptHighlightRules, "js-", "script");
-        
+
             if (this.constructor === HtmlHighlightRules)
                 this.normalizeRules();
         };
-        
+
         oop.inherits(HtmlHighlightRules, XmlHighlightRules);
-        
+
         exports.HtmlHighlightRules = HtmlHighlightRules;
         });
-        
+
         ace.define('ace/mode/css_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/lib/lang', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var lang = require("../lib/lang");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
@@ -309,13 +309,13 @@ Liquid.load = function() {
         var supportConstant = exports.supportConstant = "absolute|after-edge|after|all-scroll|all|alphabetic|always|antialiased|armenian|auto|avoid-column|avoid-page|avoid|balance|baseline|before-edge|before|below|bidi-override|block-line-height|block|bold|bolder|border-box|both|bottom|box|break-all|break-word|capitalize|caps-height|caption|center|central|char|circle|cjk-ideographic|clone|close-quote|col-resize|collapse|column|consider-shifts|contain|content-box|cover|crosshair|cubic-bezier|dashed|decimal-leading-zero|decimal|default|disabled|disc|disregard-shifts|distribute-all-lines|distribute-letter|distribute-space|distribute|dotted|double|e-resize|ease-in|ease-in-out|ease-out|ease|ellipsis|end|exclude-ruby|fill|fixed|georgian|glyphs|grid-height|groove|hand|hanging|hebrew|help|hidden|hiragana-iroha|hiragana|horizontal|icon|ideograph-alpha|ideograph-numeric|ideograph-parenthesis|ideograph-space|ideographic|inactive|include-ruby|inherit|initial|inline-block|inline-box|inline-line-height|inline-table|inline|inset|inside|inter-ideograph|inter-word|invert|italic|justify|katakana-iroha|katakana|keep-all|last|left|lighter|line-edge|line-through|line|linear|list-item|local|loose|lower-alpha|lower-greek|lower-latin|lower-roman|lowercase|lr-tb|ltr|mathematical|max-height|max-size|medium|menu|message-box|middle|move|n-resize|ne-resize|newspaper|no-change|no-close-quote|no-drop|no-open-quote|no-repeat|none|normal|not-allowed|nowrap|nw-resize|oblique|open-quote|outset|outside|overline|padding-box|page|pointer|pre-line|pre-wrap|pre|preserve-3d|progress|relative|repeat-x|repeat-y|repeat|replaced|reset-size|ridge|right|round|row-resize|rtl|s-resize|scroll|se-resize|separate|slice|small-caps|small-caption|solid|space|square|start|static|status-bar|step-end|step-start|steps|stretch|strict|sub|super|sw-resize|table-caption|table-cell|table-column-group|table-column|table-footer-group|table-header-group|table-row-group|table-row|table|tb-rl|text-after-edge|text-before-edge|text-bottom|text-size|text-top|text|thick|thin|transparent|underline|upper-alpha|upper-latin|upper-roman|uppercase|use-script|vertical-ideographic|vertical-text|visible|w-resize|wait|whitespace|z-index|zero";
         var supportConstantColor = exports.supportConstantColor = "aqua|black|blue|fuchsia|gray|green|lime|maroon|navy|olive|orange|purple|red|silver|teal|white|yellow";
         var supportConstantFonts = exports.supportConstantFonts = "arial|century|comic|courier|garamond|georgia|helvetica|impact|lucida|symbol|system|tahoma|times|trebuchet|utopia|verdana|webdings|sans-serif|serif|monospace";
-        
+
         var numRe = exports.numRe = "\\-?(?:(?:[0-9]+)|(?:[0-9]*\\.[0-9]+))";
         var pseudoElements = exports.pseudoElements = "(\\:+)\\b(after|before|first-letter|first-line|moz-selection|selection)\\b";
         var pseudoClasses  = exports.pseudoClasses =  "(:)\\b(active|checked|disabled|empty|enabled|first-child|first-of-type|focus|hover|indeterminate|invalid|last-child|last-of-type|link|not|nth-child|nth-last-child|nth-last-of-type|nth-of-type|only-child|only-of-type|required|root|target|valid|visited)\\b";
-        
+
         var CssHighlightRules = function() {
-        
+
             var keywordMapper = this.createKeywordMapper({
                 "support.function": supportFunction,
                 "support.constant": supportConstant,
@@ -323,7 +323,7 @@ Liquid.load = function() {
                 "support.constant.color": supportConstantColor,
                 "support.constant.fonts": supportConstantFonts
             }, "text", true);
-        
+
             this.$rules = {
                 "start" : [{
                     token : "comment", // multi line comment
@@ -352,7 +352,7 @@ Liquid.load = function() {
                 }, {
                     caseInsensitive: true
                 }],
-        
+
                 "media" : [{
                     token : "comment", // multi line comment
                     regex : "\\/\\*",
@@ -380,7 +380,7 @@ Liquid.load = function() {
                 }, {
                     caseInsensitive: true
                 }],
-        
+
                 "comment" : [{
                     token : "comment",
                     regex : "\\*\\/",
@@ -388,7 +388,7 @@ Liquid.load = function() {
                 }, {
                     defaultToken : "comment"
                 }],
-        
+
                 "ruleset" : [
                 {
                     token : "paren.rparen",
@@ -432,23 +432,23 @@ Liquid.load = function() {
                     caseInsensitive: true
                 }]
             };
-        
+
             this.normalizeRules();
         };
-        
+
         oop.inherits(CssHighlightRules, TextHighlightRules);
-        
+
         exports.CssHighlightRules = CssHighlightRules;
-        
+
         });
-        
+
         ace.define('ace/mode/javascript_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/doc_comment_highlight_rules', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var DocCommentHighlightRules = require("./doc_comment_highlight_rules").DocCommentHighlightRules;
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var JavaScriptHighlightRules = function() {
             var keywordMapper = this.createKeywordMapper({
                 "variable.language":
@@ -478,7 +478,7 @@ Liquid.load = function() {
             }, "identifier");
             var kwBeforeRe = "case|do|else|finally|in|instanceof|return|throw|try|typeof|yield|void";
             var identifierRe = "[a-zA-Z\\$_\u00a1-\uffff][a-zA-Z\\d\\$_\u00a1-\uffff]*\\b";
-        
+
             var escapedRe = "\\\\(?:x[0-9a-fA-F]{2}|" + // hex
                 "u[0-9a-fA-F]{4}|" + // unicode
                 "[0-2][0-7]{0,2}|" + // oct
@@ -486,7 +486,7 @@ Liquid.load = function() {
                 "37[0-7]?|" + // oct
                 "[4-7][0-7]?|" + //oct
                 ".)";
-        
+
             this.$rules = {
                 "no_regex" : [
                     {
@@ -741,24 +741,24 @@ Liquid.load = function() {
                     }
                 ]
             };
-        
+
             this.embedRules(DocCommentHighlightRules, "doc-",
                 [ DocCommentHighlightRules.getEndRule("no_regex") ]);
         };
-        
+
         oop.inherits(JavaScriptHighlightRules, TextHighlightRules);
-        
+
         exports.JavaScriptHighlightRules = JavaScriptHighlightRules;
         });
-        
+
         ace.define('ace/mode/doc_comment_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var DocCommentHighlightRules = function() {
-        
+
             this.$rules = {
                 "start" : [ {
                     token : "comment.doc.tag",
@@ -771,9 +771,9 @@ Liquid.load = function() {
                 }]
             };
         };
-        
+
         oop.inherits(DocCommentHighlightRules, TextHighlightRules);
-        
+
         DocCommentHighlightRules.getStartRule = function(start) {
             return {
                 token : "comment.doc", // doc comment
@@ -781,7 +781,7 @@ Liquid.load = function() {
                 next  : start
             };
         };
-        
+
         DocCommentHighlightRules.getEndRule = function (start) {
             return {
                 token : "comment.doc", // closing comment
@@ -789,19 +789,19 @@ Liquid.load = function() {
                 next  : start
             };
         };
-        
-        
+
+
         exports.DocCommentHighlightRules = DocCommentHighlightRules;
-        
+
         });
-        
+
         ace.define('ace/mode/xml_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/xml_util', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var xmlUtil = require("./xml_util");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var XmlHighlightRules = function(normalize) {
             this.$rules = {
                 start : [
@@ -822,16 +822,16 @@ Liquid.load = function() {
                     {include : "tag"},
                     {include : "reference"}
                 ],
-        
+
                 xml_declaration : [
                     {include : "attributes"},
                     {include : "instruction"}
                 ],
-        
+
                 instruction : [
                     {token : "punctuation.instruction.end", regex : "\\?>", next : "start"}
                 ],
-        
+
                 doctype : [
                     {include : "space"},
                     {include : "string"},
@@ -839,7 +839,7 @@ Liquid.load = function() {
                     {token : "xml-pe", regex : "[-_a-zA-Z0-9:]+"},
                     {token : "punctuation.begin", regex : "\\[", push : "declarations"}
                 ],
-        
+
                 declarations : [{
                     token : "text",
                     regex : "\\s+"
@@ -861,18 +861,18 @@ Liquid.load = function() {
                     },
                     {include : "string"}]
                 }],
-        
+
                 cdata : [
                     {token : "string.end", regex : "\\]\\]>", next : "start"},
                     {token : "text", regex : "\\s+"},
                     {token : "text", regex : "(?:[^\\]]|\\](?!\\]>))+"}
                 ],
-        
+
                 comment : [
                     {token : "comment", regex : "-->", next : "start"},
                     {defaultToken : "comment"}
                 ],
-        
+
                 tag : [{
                     token : ["meta.tag.punctuation.begin", "meta.tag.name"],
                     regex : "(<)((?:[-_a-zA-Z0-9]+:)?[-_a-zA-Z0-9]+)",
@@ -888,18 +888,18 @@ Liquid.load = function() {
                         {token : "meta.tag.punctuation.end", regex : ">", next : "start"}
                     ]
                 }],
-        
+
                 space : [
                     {token : "text", regex : "\\s+"}
                 ],
-        
+
                 reference : [{
                     token : "constant.language.escape",
                     regex : "(?:&#[0-9]+;)|(?:&#x[0-9a-fA-F]+;)|(?:&[a-zA-Z0-9_:\\.-]+;)"
                 }, {
                     token : "invalid.illegal", regex : "&"
                 }],
-        
+
                 string: [{
                     token : "string",
                     regex : "'",
@@ -909,19 +909,19 @@ Liquid.load = function() {
                     regex : '"',
                     push : "qqstring_inner"
                 }],
-        
+
                 qstring_inner: [
                     {token : "string", regex: "'", next: "pop"},
                     {include : "reference"},
                     {defaultToken : "string"}
                 ],
-        
+
                 qqstring_inner: [
                     {token : "string", regex: '"', next: "pop"},
                     {include : "reference"},
                     {defaultToken : "string"}
                 ],
-        
+
                 attributes: [{
                     token : "entity.other.attribute-name",
                     regex : "(?:[-_a-zA-Z0-9]+:)?[-_a-zA-Z0-9]+"
@@ -934,14 +934,14 @@ Liquid.load = function() {
                     include : "string"
                 }]
             };
-        
+
             if (this.constructor === XmlHighlightRules)
                 this.normalizeRules();
         };
-        
-        
+
+
         (function() {
-        
+
             this.embedTagRules = function(HighlightRules, prefix, tag){
                 this.$rules.tag.unshift({
                     token : ["meta.tag.punctuation.begin", "meta.tag.name." + tag],
@@ -952,7 +952,7 @@ Liquid.load = function() {
                         {token : "meta.tag.punctuation.end", regex : "/?>", next : prefix + "start"}
                     ]
                 });
-        
+
                 this.$rules[tag + "-end"] = [
                     {include : "space"},
                     {token : "meta.tag.punctuation.end", regex : ">",  next: "start",
@@ -961,7 +961,7 @@ Liquid.load = function() {
                             return this.token;
                     }}
                 ]
-        
+
                 this.embedRules(HighlightRules, prefix, [{
                     token: ["meta.tag.punctuation.begin", "meta.tag.name." + tag],
                     regex : "(</)(" + tag + ")",
@@ -974,17 +974,17 @@ Liquid.load = function() {
                     regex : "\\]\\]>"
                 }]);
             };
-        
+
         }).call(TextHighlightRules.prototype);
-        
+
         oop.inherits(XmlHighlightRules, TextHighlightRules);
-        
+
         exports.XmlHighlightRules = XmlHighlightRules;
         });
-        
+
         ace.define('ace/mode/xml_util', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         function string(state) {
             return [{
                 token : "string",
@@ -996,7 +996,7 @@ Liquid.load = function() {
                 next : state + "_qstring"
             }];
         }
-        
+
         function multiLineString(quote, state) {
             return [
                 {token : "string", regex : quote, next : state},
@@ -1007,13 +1007,13 @@ Liquid.load = function() {
                 {defaultToken : "string"}
             ];
         }
-        
+
         exports.tag = function(states, name, nextState, tagMap) {
             states[name] = [{
                 token : "text",
                 regex : "\\s+"
             }, {
-                
+    
             token : !tagMap ? "meta.tag.tag-name" : function(value) {
                     if (tagMap[value])
                         return "meta.tag.tag-name." + tagMap[value];
@@ -1027,10 +1027,10 @@ Liquid.load = function() {
                 regex: "",
                 next : name + "_embed_attribute_list"
             }];
-        
+
             states[name + "_qstring"] = multiLineString("'", name + "_embed_attribute_list");
             states[name + "_qqstring"] = multiLineString("\"", name + "_embed_attribute_list");
-            
+
             states[name + "_embed_attribute_list"] = [{
                 token : "meta.tag.r",
                 regex : "/?>",
@@ -1049,49 +1049,49 @@ Liquid.load = function() {
                 regex : "\\s+"
             }].concat(string(name));
         };
-        
+
         });
-        
+
         ace.define('ace/mode/matching_brace_outdent', ['require', 'exports', 'module' , 'ace/range'], function(require, exports, module) {
-        
-        
+
+
         var Range = require("../range").Range;
-        
+
         var MatchingBraceOutdent = function() {};
-        
+
         (function() {
-        
+
             this.checkOutdent = function(line, input) {
                 if (! /^\s+$/.test(line))
                     return false;
-        
+
                 return /^\s*\}/.test(input);
             };
-        
+
             this.autoOutdent = function(doc, row) {
                 var line = doc.getLine(row);
                 var match = line.match(/^(\s*\})/);
-        
+
                 if (!match) return 0;
-        
+
                 var column = match[1].length;
                 var openBracePos = doc.findMatchingBracket({row: row, column: column});
-        
+
                 if (!openBracePos || openBracePos.row == row) return 0;
-        
+
                 var indent = this.$getIndent(doc.getLine(openBracePos.row));
                 doc.replace(new Range(row, 0, row, column-1), indent);
             };
-        
+
             this.$getIndent = function(line) {
                 return line.match(/^\s*/)[0];
             };
-        
+
         }).call(MatchingBraceOutdent.prototype);
-        
+
         exports.MatchingBraceOutdent = MatchingBraceOutdent;
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

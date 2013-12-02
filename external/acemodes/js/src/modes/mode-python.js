@@ -104,27 +104,27 @@ python.load = function(){
             "break": 1,
             "continue": 1
         };
-        
+
         this.checkOutdent = function(state, line, input) {
             if (input !== "\r\n" && input !== "\r" && input !== "\n")
                 return false;
 
             var tokens = this.$tokenizer.getLineTokens(line.trim(), state).tokens;
-            
+
             if (!tokens)
                 return false;
             do {
                 var last = tokens.pop();
             } while (last && (last.type == "comment" || (last.type == "text" && last.value.match(/^\s+$/))));
-            
+
             if (!last)
                 return false;
-            
+
             return (last.type == "keyword" && outdents[last.value]);
         };
 
         this.autoOutdent = function(state, doc, row) {
-            
+
             row += 1;
             var indent = this.$getIndent(doc.getLine(row));
             var tab = doc.getTabString();

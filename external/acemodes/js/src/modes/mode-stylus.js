@@ -61,40 +61,40 @@ Stylus.load = function() {
          *
          *
          * ***** END LICENSE BLOCK ***** */
-        
+
         ace.define('ace/mode/stylus', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/stylus_highlight_rules', 'ace/mode/folding/coffee'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextMode = require("./text").Mode;
         var Tokenizer = require("../tokenizer").Tokenizer;
         var StylusHighlightRules = require("./stylus_highlight_rules").StylusHighlightRules;
         var FoldMode = require("./folding/coffee").FoldMode;
-        
+
         var Mode = function() {
             var highlighter = new StylusHighlightRules();
             this.foldingRules = new FoldMode();
-            
+
             this.$tokenizer = new Tokenizer(highlighter.getRules());
             this.$keywordList = highlighter.$keywordList;
         };
         oop.inherits(Mode, TextMode);
-        
+
         (function() {
         }).call(Mode.prototype);
-        
+
         exports.Mode = Mode;
         });
-        
+
         ace.define('ace/mode/stylus_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text_highlight_rules', 'ace/mode/css_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
         var CssHighlightRules = require("./css_highlight_rules");
-        
+
         var StylusHighlightRules = function() {
-        
+
             var keywordMapper = this.createKeywordMapper({
                 "support.type": CssHighlightRules.supportType,
                 "support.function": CssHighlightRules.supportFunction,
@@ -102,7 +102,7 @@ Stylus.load = function() {
                 "support.constant.color": CssHighlightRules.supportConstantColor,
                 "support.constant.fonts": CssHighlightRules.supportConstantFonts
             }, "text", true);
-        
+
             this.$rules = {
             start: [
                 {
@@ -238,17 +238,17 @@ Stylus.load = function() {
                 }
             ]
         }
-        
+
         };
-        
+
         oop.inherits(StylusHighlightRules, TextHighlightRules);
-        
+
         exports.StylusHighlightRules = StylusHighlightRules;
         });
-        
+
         ace.define('ace/mode/css_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/lib/lang', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var lang = require("../lib/lang");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
@@ -257,13 +257,13 @@ Stylus.load = function() {
         var supportConstant = exports.supportConstant = "absolute|after-edge|after|all-scroll|all|alphabetic|always|antialiased|armenian|auto|avoid-column|avoid-page|avoid|balance|baseline|before-edge|before|below|bidi-override|block-line-height|block|bold|bolder|border-box|both|bottom|box|break-all|break-word|capitalize|caps-height|caption|center|central|char|circle|cjk-ideographic|clone|close-quote|col-resize|collapse|column|consider-shifts|contain|content-box|cover|crosshair|cubic-bezier|dashed|decimal-leading-zero|decimal|default|disabled|disc|disregard-shifts|distribute-all-lines|distribute-letter|distribute-space|distribute|dotted|double|e-resize|ease-in|ease-in-out|ease-out|ease|ellipsis|end|exclude-ruby|fill|fixed|georgian|glyphs|grid-height|groove|hand|hanging|hebrew|help|hidden|hiragana-iroha|hiragana|horizontal|icon|ideograph-alpha|ideograph-numeric|ideograph-parenthesis|ideograph-space|ideographic|inactive|include-ruby|inherit|initial|inline-block|inline-box|inline-line-height|inline-table|inline|inset|inside|inter-ideograph|inter-word|invert|italic|justify|katakana-iroha|katakana|keep-all|last|left|lighter|line-edge|line-through|line|linear|list-item|local|loose|lower-alpha|lower-greek|lower-latin|lower-roman|lowercase|lr-tb|ltr|mathematical|max-height|max-size|medium|menu|message-box|middle|move|n-resize|ne-resize|newspaper|no-change|no-close-quote|no-drop|no-open-quote|no-repeat|none|normal|not-allowed|nowrap|nw-resize|oblique|open-quote|outset|outside|overline|padding-box|page|pointer|pre-line|pre-wrap|pre|preserve-3d|progress|relative|repeat-x|repeat-y|repeat|replaced|reset-size|ridge|right|round|row-resize|rtl|s-resize|scroll|se-resize|separate|slice|small-caps|small-caption|solid|space|square|start|static|status-bar|step-end|step-start|steps|stretch|strict|sub|super|sw-resize|table-caption|table-cell|table-column-group|table-column|table-footer-group|table-header-group|table-row-group|table-row|table|tb-rl|text-after-edge|text-before-edge|text-bottom|text-size|text-top|text|thick|thin|transparent|underline|upper-alpha|upper-latin|upper-roman|uppercase|use-script|vertical-ideographic|vertical-text|visible|w-resize|wait|whitespace|z-index|zero";
         var supportConstantColor = exports.supportConstantColor = "aqua|black|blue|fuchsia|gray|green|lime|maroon|navy|olive|orange|purple|red|silver|teal|white|yellow";
         var supportConstantFonts = exports.supportConstantFonts = "arial|century|comic|courier|garamond|georgia|helvetica|impact|lucida|symbol|system|tahoma|times|trebuchet|utopia|verdana|webdings|sans-serif|serif|monospace";
-        
+
         var numRe = exports.numRe = "\\-?(?:(?:[0-9]+)|(?:[0-9]*\\.[0-9]+))";
         var pseudoElements = exports.pseudoElements = "(\\:+)\\b(after|before|first-letter|first-line|moz-selection|selection)\\b";
         var pseudoClasses  = exports.pseudoClasses =  "(:)\\b(active|checked|disabled|empty|enabled|first-child|first-of-type|focus|hover|indeterminate|invalid|last-child|last-of-type|link|not|nth-child|nth-last-child|nth-last-of-type|nth-of-type|only-child|only-of-type|required|root|target|valid|visited)\\b";
-        
+
         var CssHighlightRules = function() {
-        
+
             var keywordMapper = this.createKeywordMapper({
                 "support.function": supportFunction,
                 "support.constant": supportConstant,
@@ -271,7 +271,7 @@ Stylus.load = function() {
                 "support.constant.color": supportConstantColor,
                 "support.constant.fonts": supportConstantFonts
             }, "text", true);
-        
+
             this.$rules = {
                 "start" : [{
                     token : "comment", // multi line comment
@@ -300,7 +300,7 @@ Stylus.load = function() {
                 }, {
                     caseInsensitive: true
                 }],
-        
+
                 "media" : [{
                     token : "comment", // multi line comment
                     regex : "\\/\\*",
@@ -328,7 +328,7 @@ Stylus.load = function() {
                 }, {
                     caseInsensitive: true
                 }],
-        
+
                 "comment" : [{
                     token : "comment",
                     regex : "\\*\\/",
@@ -336,7 +336,7 @@ Stylus.load = function() {
                 }, {
                     defaultToken : "comment"
                 }],
-        
+
                 "ruleset" : [
                 {
                     token : "paren.rparen",
@@ -380,57 +380,57 @@ Stylus.load = function() {
                     caseInsensitive: true
                 }]
             };
-        
+
             this.normalizeRules();
         };
-        
+
         oop.inherits(CssHighlightRules, TextHighlightRules);
-        
+
         exports.CssHighlightRules = CssHighlightRules;
-        
+
         });
-        
+
         ace.define('ace/mode/folding/coffee', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/folding/fold_mode', 'ace/range'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../../lib/oop");
         var BaseFoldMode = require("./fold_mode").FoldMode;
         var Range = require("../../range").Range;
-        
+
         var FoldMode = exports.FoldMode = function() {};
         oop.inherits(FoldMode, BaseFoldMode);
-        
+
         (function() {
-        
+
             this.getFoldWidgetRange = function(session, foldStyle, row) {
                 var range = this.indentationBlock(session, row);
                 if (range)
                     return range;
-        
+
                 var re = /\S/;
                 var line = session.getLine(row);
                 var startLevel = line.search(re);
                 if (startLevel == -1 || line[startLevel] != "#")
                     return;
-        
+
                 var startColumn = line.length;
                 var maxRow = session.getLength();
                 var startRow = row;
                 var endRow = row;
-        
+
                 while (++row < maxRow) {
                     line = session.getLine(row);
                     var level = line.search(re);
-        
+
                     if (level == -1)
                         continue;
-        
+
                     if (line[level] != "#")
                         break;
-        
+
                     endRow = row;
                 }
-        
+
                 if (endRow > startRow) {
                     var endColumn = session.getLine(endRow).length;
                     return new Range(startRow, startColumn, endRow, endColumn);
@@ -443,7 +443,7 @@ Stylus.load = function() {
                 var prev = session.getLine(row - 1);
                 var prevIndent = prev.search(/\S/);
                 var nextIndent = next.search(/\S/);
-        
+
                 if (indent == -1) {
                     session.foldWidgets[row - 1] = prevIndent!= -1 && prevIndent < nextIndent ? "start" : "";
                     return "";
@@ -461,22 +461,22 @@ Stylus.load = function() {
                         return "";
                     }
                 }
-        
+
                 if (prevIndent!= -1 && prevIndent < indent)
                     session.foldWidgets[row - 1] = "start";
                 else
                     session.foldWidgets[row - 1] = "";
-        
+
                 if (indent < nextIndent)
                     return "start";
                 else
                     return "";
             };
-        
+
         }).call(FoldMode.prototype);
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

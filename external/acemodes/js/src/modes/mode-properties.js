@@ -56,34 +56,34 @@ Properties.load = function() {
          * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          *
          * ***** END LICENSE BLOCK ***** */
-        
+
         ace.define('ace/mode/properties', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/properties_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextMode = require("./text").Mode;
         var Tokenizer = require("../tokenizer").Tokenizer;
         var PropertiesHighlightRules = require("./properties_highlight_rules").PropertiesHighlightRules;
-        
+
         var Mode = function() {
             var highlighter = new PropertiesHighlightRules();
             this.$tokenizer = new Tokenizer(highlighter.getRules());
         };
         oop.inherits(Mode, TextMode);
-        
+
         exports.Mode = Mode;
         });
-        
+
         ace.define('ace/mode/properties_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var PropertiesHighlightRules = function() {
-        
+
             var escapeRe = /\\u[0-9a-fA-F]{4}|\\/;
-        
+
             this.$rules = {
                 "start" : [
                     {
@@ -120,15 +120,15 @@ Properties.load = function() {
                     }
                 ]
             };
-        
+
         };
-        
+
         oop.inherits(PropertiesHighlightRules, TextHighlightRules);
-        
+
         exports.PropertiesHighlightRules = PropertiesHighlightRules;
         });
-        
-        
+
+
 };
 
 //-------------------------------------------------------------------------------

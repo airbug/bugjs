@@ -56,65 +56,65 @@ Abap.load = function() {
          * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          *
          * ***** END LICENSE BLOCK ***** */
-        
+
         ace.define('ace/mode/abap', ['require', 'exports', 'module' , 'ace/tokenizer', 'ace/mode/abap_highlight_rules', 'ace/mode/folding/coffee', 'ace/range', 'ace/mode/text', 'ace/lib/oop'], function(require, exports, module) {
-        
-        
+
+
         var Tokenizer = require("../tokenizer").Tokenizer;
         var Rules = require("./abap_highlight_rules").AbapHighlightRules;
         var FoldMode = require("./folding/coffee").FoldMode;
         var Range = require("../range").Range;
         var TextMode = require("./text").Mode;
         var oop = require("../lib/oop");
-        
+
         function Mode() {
             var highlighter = new Rules();
             this.$tokenizer = new Tokenizer(highlighter.getRules());
             this.$keywordList = new Rules(highlighter.$keywordList);
             this.foldingRules = new FoldMode();
         }
-        
+
         oop.inherits(Mode, TextMode);
-        
+
         (function() {
-            
+
             this.getNextLineIndent = function(state, line, tab) {
                 var indent = this.$getIndent(line);
                 return indent;
             };
-            
+
             this.toggleCommentLines = function(state, doc, startRow, endRow){
                 var range = new Range(0, 0, 0, 0);
                 for (var i = startRow; i <= endRow; ++i) {
                     var line = doc.getLine(i);
                     if (hereComment.test(line))
                         continue;
-                        
+            
                     if (commentLine.test(line))
                         line = line.replace(commentLine, '$1');
                     else
                         line = line.replace(indentation, '$&#');
-            
+
                     range.end.row = range.start.row = i;
                     range.end.column = line.length + 1;
                     doc.replace(range, line);
                 }
             };
-            
+
         }).call(Mode.prototype);
-        
+
         exports.Mode = Mode;
-        
+
         });
-        
+
         ace.define('ace/mode/abap_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var AbapHighlightRules = function() {
-        
+
             var keywordMapper = this.createKeywordMapper({
                 "variable.language": "this",
                 "keyword": 
@@ -153,7 +153,7 @@ Abap.load = function() {
                     " abapOperator cosh sinh tanh exp log log10 sqrt" +
                     " strlen xstrlen charlen numofchar dbmaxlen lines" 
             }, "text", true, " ");
-        
+
             var compoundKeywords = "WITH\\W+(?:HEADER\\W+LINE|FRAME|KEY)|NO\\W+STANDARD\\W+PAGE\\W+HEADING|"+
                 "EXIT\\W+FROM\\W+STEP\\W+LOOP|BEGIN\\W+OF\\W+(?:BLOCK|LINE)|BEGIN\\W+OF|"+
                 "END\\W+OF\\W+(?:BLOCK|LINE)|END\\W+OF|NO\\W+INTERVALS|"+
@@ -168,7 +168,7 @@ Abap.load = function() {
                 "START-OF-SELECTION|SUBTRACT-CORRESPONDING|SYNTAX-CHECK|SYNTAX-TRACE|TOP-OF-PAGE|TYPE-POOL|"+
                 "TYPE-POOLS|LINE-SIZE|LINE-COUNT|MESSAGE-ID|DISPLAY-MODE|READ(?:-ONLY)?|"+
                 "IS\\W+(?:NOT\\W+)?(?:ASSIGNED|BOUND|INITIAL|SUPPLIED)";
-             
+ 
             this.$rules = {
                 "start" : [
                     {token : "string", regex : "`", next  : "string"},
@@ -199,51 +199,51 @@ Abap.load = function() {
             }
         };
         oop.inherits(AbapHighlightRules, TextHighlightRules);
-        
+
         exports.AbapHighlightRules = AbapHighlightRules;
         });
-        
+
         ace.define('ace/mode/folding/coffee', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/folding/fold_mode', 'ace/range'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../../lib/oop");
         var BaseFoldMode = require("./fold_mode").FoldMode;
         var Range = require("../../range").Range;
-        
+
         var FoldMode = exports.FoldMode = function() {};
         oop.inherits(FoldMode, BaseFoldMode);
-        
+
         (function() {
-        
+
             this.getFoldWidgetRange = function(session, foldStyle, row) {
                 var range = this.indentationBlock(session, row);
                 if (range)
                     return range;
-        
+
                 var re = /\S/;
                 var line = session.getLine(row);
                 var startLevel = line.search(re);
                 if (startLevel == -1 || line[startLevel] != "#")
                     return;
-        
+
                 var startColumn = line.length;
                 var maxRow = session.getLength();
                 var startRow = row;
                 var endRow = row;
-        
+
                 while (++row < maxRow) {
                     line = session.getLine(row);
                     var level = line.search(re);
-        
+
                     if (level == -1)
                         continue;
-        
+
                     if (line[level] != "#")
                         break;
-        
+
                     endRow = row;
                 }
-        
+
                 if (endRow > startRow) {
                     var endColumn = session.getLine(endRow).length;
                     return new Range(startRow, startColumn, endRow, endColumn);
@@ -256,7 +256,7 @@ Abap.load = function() {
                 var prev = session.getLine(row - 1);
                 var prevIndent = prev.search(/\S/);
                 var nextIndent = next.search(/\S/);
-        
+
                 if (indent == -1) {
                     session.foldWidgets[row - 1] = prevIndent!= -1 && prevIndent < nextIndent ? "start" : "";
                     return "";
@@ -274,22 +274,22 @@ Abap.load = function() {
                         return "";
                     }
                 }
-        
+
                 if (prevIndent!= -1 && prevIndent < indent)
                     session.foldWidgets[row - 1] = "start";
                 else
                     session.foldWidgets[row - 1] = "";
-        
+
                 if (indent < nextIndent)
                     return "start";
                 else
                     return "";
             };
-        
+
         }).call(FoldMode.prototype);
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

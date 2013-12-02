@@ -69,7 +69,7 @@ ruby.load = function(){
 
     var Mode = function() {
         var highlighter = new RubyHighlightRules();
-        
+
         this.$tokenizer = new Tokenizer(highlighter.getRules());
         this.$keywordList = highlighter.$keywordList;
         this.$outdent = new MatchingBraceOutdent();

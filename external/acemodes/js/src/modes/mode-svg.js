@@ -56,10 +56,10 @@ Svg.load = function() {
          * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          *
          * ***** END LICENSE BLOCK ***** */
-        
+
         ace.define('ace/mode/svg', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/xml', 'ace/mode/javascript', 'ace/tokenizer', 'ace/mode/svg_highlight_rules', 'ace/mode/folding/mixed', 'ace/mode/folding/xml', 'ace/mode/folding/cstyle'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var XmlMode = require("./xml").Mode;
         var JavaScriptMode = require("./javascript").Mode;
@@ -68,71 +68,71 @@ Svg.load = function() {
         var MixedFoldMode = require("./folding/mixed").FoldMode;
         var XmlFoldMode = require("./folding/xml").FoldMode;
         var CStyleFoldMode = require("./folding/cstyle").FoldMode;
-        
+
         var Mode = function() {
             XmlMode.call(this);
-            
+
             this.highlighter = new SvgHighlightRules();
             this.$tokenizer = new Tokenizer(this.highlighter.getRules());
-            
+
             this.$embeds = this.highlighter.getEmbeds();
             this.createModeDelegates({
                 "js-": JavaScriptMode
             });
-            
+
             this.foldingRules = new MixedFoldMode(new XmlFoldMode({}), {
                 "js-": new CStyleFoldMode()
             });
         };
-        
+
         oop.inherits(Mode, XmlMode);
-        
+
         (function() {
-        
+
             this.getNextLineIndent = function(state, line, tab) {
                 return this.$getIndent(line);
             };
-            
-        
+
+
         }).call(Mode.prototype);
-        
+
         exports.Mode = Mode;
         });
-        
+
         ace.define('ace/mode/xml', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/xml_highlight_rules', 'ace/mode/behaviour/xml', 'ace/mode/folding/xml'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextMode = require("./text").Mode;
         var Tokenizer = require("../tokenizer").Tokenizer;
         var XmlHighlightRules = require("./xml_highlight_rules").XmlHighlightRules;
         var XmlBehaviour = require("./behaviour/xml").XmlBehaviour;
         var XmlFoldMode = require("./folding/xml").FoldMode;
-        
+
         var Mode = function() {
             this.$tokenizer = new Tokenizer(new XmlHighlightRules().getRules());
             this.$behaviour = new XmlBehaviour();
             this.foldingRules = new XmlFoldMode();
         };
-        
+
         oop.inherits(Mode, TextMode);
-        
+
         (function() {
-            
+
             this.blockComment = {start: "<!--", end: "-->"};
-        
+
         }).call(Mode.prototype);
-        
+
         exports.Mode = Mode;
         });
-        
+
         ace.define('ace/mode/xml_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/xml_util', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var xmlUtil = require("./xml_util");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var XmlHighlightRules = function(normalize) {
             this.$rules = {
                 start : [
@@ -153,16 +153,16 @@ Svg.load = function() {
                     {include : "tag"},
                     {include : "reference"}
                 ],
-        
+
                 xml_declaration : [
                     {include : "attributes"},
                     {include : "instruction"}
                 ],
-        
+
                 instruction : [
                     {token : "punctuation.instruction.end", regex : "\\?>", next : "start"}
                 ],
-        
+
                 doctype : [
                     {include : "space"},
                     {include : "string"},
@@ -170,7 +170,7 @@ Svg.load = function() {
                     {token : "xml-pe", regex : "[-_a-zA-Z0-9:]+"},
                     {token : "punctuation.begin", regex : "\\[", push : "declarations"}
                 ],
-        
+
                 declarations : [{
                     token : "text",
                     regex : "\\s+"
@@ -192,18 +192,18 @@ Svg.load = function() {
                     },
                     {include : "string"}]
                 }],
-        
+
                 cdata : [
                     {token : "string.end", regex : "\\]\\]>", next : "start"},
                     {token : "text", regex : "\\s+"},
                     {token : "text", regex : "(?:[^\\]]|\\](?!\\]>))+"}
                 ],
-        
+
                 comment : [
                     {token : "comment", regex : "-->", next : "start"},
                     {defaultToken : "comment"}
                 ],
-        
+
                 tag : [{
                     token : ["meta.tag.punctuation.begin", "meta.tag.name"],
                     regex : "(<)((?:[-_a-zA-Z0-9]+:)?[-_a-zA-Z0-9]+)",
@@ -219,18 +219,18 @@ Svg.load = function() {
                         {token : "meta.tag.punctuation.end", regex : ">", next : "start"}
                     ]
                 }],
-        
+
                 space : [
                     {token : "text", regex : "\\s+"}
                 ],
-        
+
                 reference : [{
                     token : "constant.language.escape",
                     regex : "(?:&#[0-9]+;)|(?:&#x[0-9a-fA-F]+;)|(?:&[a-zA-Z0-9_:\\.-]+;)"
                 }, {
                     token : "invalid.illegal", regex : "&"
                 }],
-        
+
                 string: [{
                     token : "string",
                     regex : "'",
@@ -240,19 +240,19 @@ Svg.load = function() {
                     regex : '"',
                     push : "qqstring_inner"
                 }],
-        
+
                 qstring_inner: [
                     {token : "string", regex: "'", next: "pop"},
                     {include : "reference"},
                     {defaultToken : "string"}
                 ],
-        
+
                 qqstring_inner: [
                     {token : "string", regex: '"', next: "pop"},
                     {include : "reference"},
                     {defaultToken : "string"}
                 ],
-        
+
                 attributes: [{
                     token : "entity.other.attribute-name",
                     regex : "(?:[-_a-zA-Z0-9]+:)?[-_a-zA-Z0-9]+"
@@ -265,14 +265,14 @@ Svg.load = function() {
                     include : "string"
                 }]
             };
-        
+
             if (this.constructor === XmlHighlightRules)
                 this.normalizeRules();
         };
-        
-        
+
+
         (function() {
-        
+
             this.embedTagRules = function(HighlightRules, prefix, tag){
                 this.$rules.tag.unshift({
                     token : ["meta.tag.punctuation.begin", "meta.tag.name." + tag],
@@ -283,7 +283,7 @@ Svg.load = function() {
                         {token : "meta.tag.punctuation.end", regex : "/?>", next : prefix + "start"}
                     ]
                 });
-        
+
                 this.$rules[tag + "-end"] = [
                     {include : "space"},
                     {token : "meta.tag.punctuation.end", regex : ">",  next: "start",
@@ -292,7 +292,7 @@ Svg.load = function() {
                             return this.token;
                     }}
                 ]
-        
+
                 this.embedRules(HighlightRules, prefix, [{
                     token: ["meta.tag.punctuation.begin", "meta.tag.name." + tag],
                     regex : "(</)(" + tag + ")",
@@ -305,17 +305,17 @@ Svg.load = function() {
                     regex : "\\]\\]>"
                 }]);
             };
-        
+
         }).call(TextHighlightRules.prototype);
-        
+
         oop.inherits(XmlHighlightRules, TextHighlightRules);
-        
+
         exports.XmlHighlightRules = XmlHighlightRules;
         });
-        
+
         ace.define('ace/mode/xml_util', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         function string(state) {
             return [{
                 token : "string",
@@ -327,7 +327,7 @@ Svg.load = function() {
                 next : state + "_qstring"
             }];
         }
-        
+
         function multiLineString(quote, state) {
             return [
                 {token : "string", regex : quote, next : state},
@@ -338,13 +338,13 @@ Svg.load = function() {
                 {defaultToken : "string"}
             ];
         }
-        
+
         exports.tag = function(states, name, nextState, tagMap) {
             states[name] = [{
                 token : "text",
                 regex : "\\s+"
             }, {
-                
+    
             token : !tagMap ? "meta.tag.tag-name" : function(value) {
                     if (tagMap[value])
                         return "meta.tag.tag-name." + tagMap[value];
@@ -358,10 +358,10 @@ Svg.load = function() {
                 regex: "",
                 next : name + "_embed_attribute_list"
             }];
-        
+
             states[name + "_qstring"] = multiLineString("'", name + "_embed_attribute_list");
             states[name + "_qqstring"] = multiLineString("\"", name + "_embed_attribute_list");
-            
+
             states[name + "_embed_attribute_list"] = [{
                 token : "meta.tag.r",
                 regex : "/?>",
@@ -380,17 +380,17 @@ Svg.load = function() {
                 regex : "\\s+"
             }].concat(string(name));
         };
-        
+
         });
-        
+
         ace.define('ace/mode/behaviour/xml', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/behaviour', 'ace/mode/behaviour/cstyle', 'ace/token_iterator'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../../lib/oop");
         var Behaviour = require("../behaviour").Behaviour;
         var CstyleBehaviour = require("./cstyle").CstyleBehaviour;
         var TokenIterator = require("../../token_iterator").TokenIterator;
-        
+
         function hasType(token, type) {
             var tokenTypes = token.type.split('.');
             return type.split('.').every(function(type){
@@ -398,17 +398,17 @@ Svg.load = function() {
             });
             return hasType;
         }
-        
+
         var XmlBehaviour = function () {
-            
+
             this.inherit(CstyleBehaviour, ["string_dquotes"]); // Get string behaviour
-            
+
             this.add("autoclosing", "insertion", function (state, action, editor, session, text) {
                 if (text == '>') {
                     var position = editor.getCursorPosition();
                     var iterator = new TokenIterator(session, position.row, position.column);
                     var token = iterator.getCurrentToken();
-        
+
                     if (token && hasType(token, 'string') && iterator.getCurrentTokenColumn() + token.value.length > position.column)
                         return;
                     var atCursor = false;
@@ -426,14 +426,14 @@ Svg.load = function() {
                     if (atCursor){
                         var tag = tag.substring(0, position.column - token.start);
                     }
-        
+
                     return {
                        text: '>' + '</' + tag + '>',
                        selection: [1, 1]
                     }
                 }
             });
-        
+
             this.add('autoindent', 'insertion', function (state, action, editor, session, text) {
                 if (text == "\n") {
                     var cursor = editor.getCursorPosition();
@@ -442,7 +442,7 @@ Svg.load = function() {
                     if (rightChars == '</') {
                         var next_indent = this.$getIndent(line);
                         var indent = next_indent + session.getTabString();
-        
+
                         return {
                             text: '\n' + indent + '\n' + next_indent,
                             selection: [1, indent.length, 1, indent.length]
@@ -450,27 +450,27 @@ Svg.load = function() {
                     }
                 }
             });
-            
+
         }
         oop.inherits(XmlBehaviour, Behaviour);
-        
+
         exports.XmlBehaviour = XmlBehaviour;
         });
-        
+
         ace.define('ace/mode/behaviour/cstyle', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/behaviour', 'ace/token_iterator', 'ace/lib/lang'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../../lib/oop");
         var Behaviour = require("../behaviour").Behaviour;
         var TokenIterator = require("../../token_iterator").TokenIterator;
         var lang = require("../../lib/lang");
-        
+
         var SAFE_INSERT_IN_TOKENS =
             ["text", "paren.rparen", "punctuation.operator"];
         var SAFE_INSERT_BEFORE_TOKENS =
             ["text", "paren.rparen", "punctuation.operator", "comment"];
-        
-        
+
+
         var autoInsertedBrackets = 0;
         var autoInsertedRow = -1;
         var autoInsertedLineEnd = "";
@@ -478,9 +478,9 @@ Svg.load = function() {
         var maybeInsertedRow = -1;
         var maybeInsertedLineStart = "";
         var maybeInsertedLineEnd = "";
-        
+
         var CstyleBehaviour = function () {
-            
+
             CstyleBehaviour.isSaneInsertion = function(editor, session) {
                 var cursor = editor.getCursorPosition();
                 var iterator = new TokenIterator(session, cursor.row, cursor.column);
@@ -493,11 +493,11 @@ Svg.load = function() {
                 return iterator.getCurrentTokenRow() !== cursor.row ||
                     this.$matchTokenType(iterator.getCurrentToken() || "text", SAFE_INSERT_BEFORE_TOKENS);
             };
-            
+
             CstyleBehaviour.$matchTokenType = function(token, types) {
                 return types.indexOf(token.type || token) > -1;
             };
-            
+
             CstyleBehaviour.recordAutoInsert = function(editor, session, bracket) {
                 var cursor = editor.getCursorPosition();
                 var line = session.doc.getLine(cursor.row);
@@ -507,7 +507,7 @@ Svg.load = function() {
                 autoInsertedLineEnd = bracket + line.substr(cursor.column);
                 autoInsertedBrackets++;
             };
-            
+
             CstyleBehaviour.recordMaybeInsert = function(editor, session, bracket) {
                 var cursor = editor.getCursorPosition();
                 var line = session.doc.getLine(cursor.row);
@@ -518,31 +518,31 @@ Svg.load = function() {
                 maybeInsertedLineEnd = line.substr(cursor.column);
                 maybeInsertedBrackets++;
             };
-            
+
             CstyleBehaviour.isAutoInsertedClosing = function(cursor, line, bracket) {
                 return autoInsertedBrackets > 0 &&
                     cursor.row === autoInsertedRow &&
                     bracket === autoInsertedLineEnd[0] &&
                     line.substr(cursor.column) === autoInsertedLineEnd;
             };
-            
+
             CstyleBehaviour.isMaybeInsertedClosing = function(cursor, line) {
                 return maybeInsertedBrackets > 0 &&
                     cursor.row === maybeInsertedRow &&
                     line.substr(cursor.column) === maybeInsertedLineEnd &&
                     line.substr(0, cursor.column) == maybeInsertedLineStart;
             };
-            
+
             CstyleBehaviour.popAutoInsertedClosing = function() {
                 autoInsertedLineEnd = autoInsertedLineEnd.substr(1);
                 autoInsertedBrackets--;
             };
-            
+
             CstyleBehaviour.clearMaybeInsertedClosing = function() {
                 maybeInsertedBrackets = 0;
                 maybeInsertedRow = -1;
             };
-        
+
             this.add("braces", "insertion", function (state, action, editor, session, text) {
                 var cursor = editor.getCursorPosition();
                 var line = session.doc.getLine(cursor.row);
@@ -592,10 +592,10 @@ Svg.load = function() {
                         var openBracePos = session.findMatchingBracket({row: cursor.row, column: cursor.column}, '}');
                         if (!openBracePos)
                              return null;
-        
+
                         var indent = this.getNextLineIndent(state, line.substring(0, cursor.column), session.getTabString());
                         var next_indent = this.$getIndent(line);
-        
+
                         return {
                             text: '\n' + indent + '\n' + next_indent + closing,
                             selection: [1, indent.length, 1, indent.length]
@@ -603,7 +603,7 @@ Svg.load = function() {
                     }
                 }
             });
-        
+
             this.add("braces", "deletion", function (state, action, editor, session, range) {
                 var selected = session.doc.getTextRange(range);
                 if (!range.isMultiLine() && selected == '{') {
@@ -617,7 +617,7 @@ Svg.load = function() {
                     }
                 }
             });
-        
+
             this.add("parens", "insertion", function (state, action, editor, session, text) {
                 if (text == '(') {
                     var selection = editor.getSelectionRange();
@@ -650,7 +650,7 @@ Svg.load = function() {
                     }
                 }
             });
-        
+
             this.add("parens", "deletion", function (state, action, editor, session, range) {
                 var selected = session.doc.getTextRange(range);
                 if (!range.isMultiLine() && selected == '(') {
@@ -662,7 +662,7 @@ Svg.load = function() {
                     }
                 }
             });
-        
+
             this.add("brackets", "insertion", function (state, action, editor, session, text) {
                 if (text == '[') {
                     var selection = editor.getSelectionRange();
@@ -695,7 +695,7 @@ Svg.load = function() {
                     }
                 }
             });
-        
+
             this.add("brackets", "deletion", function (state, action, editor, session, range) {
                 var selected = session.doc.getTextRange(range);
                 if (!range.isMultiLine() && selected == '[') {
@@ -707,7 +707,7 @@ Svg.load = function() {
                     }
                 }
             });
-        
+
             this.add("string_dquotes", "insertion", function (state, action, editor, session, text) {
                 if (text == '"' || text == "'") {
                     var quote = text;
@@ -728,7 +728,7 @@ Svg.load = function() {
                         var tokens = session.getTokens(selection.start.row);
                         var col = 0, token;
                         var quotepos = -1; // Track whether we're inside an open quote.
-        
+
                         for (var x = 0; x < tokens.length; x++) {
                             token = tokens[x];
                             if (token.type == "string") {
@@ -760,7 +760,7 @@ Svg.load = function() {
                     }
                 }
             });
-        
+
             this.add("string_dquotes", "deletion", function (state, action, editor, session, range) {
                 var selected = session.doc.getTextRange(range);
                 if (!range.isMultiLine() && (selected == '"' || selected == "'")) {
@@ -772,49 +772,49 @@ Svg.load = function() {
                     }
                 }
             });
-        
+
         };
-        
+
         oop.inherits(CstyleBehaviour, Behaviour);
-        
+
         exports.CstyleBehaviour = CstyleBehaviour;
         });
-        
+
         ace.define('ace/mode/folding/xml', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/lib/lang', 'ace/range', 'ace/mode/folding/fold_mode', 'ace/token_iterator'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../../lib/oop");
         var lang = require("../../lib/lang");
         var Range = require("../../range").Range;
         var BaseFoldMode = require("./fold_mode").FoldMode;
         var TokenIterator = require("../../token_iterator").TokenIterator;
-        
+
         var FoldMode = exports.FoldMode = function(voidElements) {
             BaseFoldMode.call(this);
             this.voidElements = voidElements || {};
         };
         oop.inherits(FoldMode, BaseFoldMode);
-        
+
         (function() {
-        
+
             this.getFoldWidget = function(session, foldStyle, row) {
                 var tag = this._getFirstTagInLine(session, row);
-        
+
                 if (tag.closing)
                     return foldStyle == "markbeginend" ? "end" : "";
-        
+
                 if (!tag.tagName || this.voidElements[tag.tagName.toLowerCase()])
                     return "";
-        
+
                 if (tag.selfClosing)
                     return "";
-        
+
                 if (tag.value.indexOf("/" + tag.tagName) !== -1)
                     return "";
-        
+
                 return "start";
             };
-            
+
             this._getFirstTagInLine = function(session, row) {
                 var tokens = session.getTokens(row);
                 var value = "";
@@ -825,16 +825,16 @@ Svg.load = function() {
                     else
                         value += lang.stringRepeat(" ", token.value.length);
                 }
-                
+    
                 return this._parseTag(value);
             };
-        
+
             this.tagRe = /^(\s*)(<?(\/?)([-_a-zA-Z0-9:!]*)\s*(\/?)>?)/;
             this._parseTag = function(tag) {
-                
+    
                 var match = tag.match(this.tagRe);
                 var column = 0;
-        
+
                 return {
                     value: tag,
                     match: match ? match[2] : "",
@@ -848,10 +848,10 @@ Svg.load = function() {
                 var token = iterator.getCurrentToken();
                 if (!token)
                     return null;
-                    
+        
                 var value = "";
                 var start;
-                
+    
                 do {
                     if (token.type.lastIndexOf("meta.tag", 0) === 0) {
                         if (!start) {
@@ -873,18 +873,18 @@ Svg.load = function() {
                         }
                     }
                 } while(token = iterator.stepForward());
-                
+    
                 return null;
             };
-            
+
             this._readTagBackward = function(iterator) {
                 var token = iterator.getCurrentToken();
                 if (!token)
                     return null;
-                    
+        
                 var value = "";
                 var end;
-        
+
                 do {
                     if (token.type.lastIndexOf("meta.tag", 0) === 0) {
                         if (!end) {
@@ -906,13 +906,13 @@ Svg.load = function() {
                         }
                     }
                 } while(token = iterator.stepBackward());
-                
+    
                 return null;
             };
-            
+
             this._pop = function(stack, tag) {
                 while (stack.length) {
-                    
+        
                     var top = stack[stack.length-1];
                     if (!tag || top.tagName == tag.tagName) {
                         return stack.pop();
@@ -928,17 +928,17 @@ Svg.load = function() {
                     }
                 }
             };
-            
+
             this.getFoldWidgetRange = function(session, foldStyle, row) {
                 var firstTag = this._getFirstTagInLine(session, row);
-                
+    
                 if (!firstTag.match)
                     return null;
-                
+    
                 var isBackward = firstTag.closing || firstTag.selfClosing;
                 var stack = [];
                 var tag;
-                
+    
                 if (!isBackward) {
                     var iterator = new TokenIterator(session, row, firstTag.column);
                     var start = {
@@ -954,7 +954,7 @@ Svg.load = function() {
                             } else
                                 continue;
                         }
-                        
+            
                         if (tag.closing) {
                             this._pop(stack, tag);
                             if (stack.length == 0)
@@ -971,7 +971,7 @@ Svg.load = function() {
                         row: row,
                         column: firstTag.column
                     };
-                    
+        
                     while (tag = this._readTagBackward(iterator)) {
                         if (tag.selfClosing) {
                             if (!stack.length) {
@@ -981,7 +981,7 @@ Svg.load = function() {
                             } else
                                 continue;
                         }
-                        
+            
                         if (!tag.closing) {
                             this._pop(stack, tag);
                             if (stack.length == 0) {
@@ -994,16 +994,16 @@ Svg.load = function() {
                         }
                     }
                 }
-                
+    
             };
-        
+
         }).call(FoldMode.prototype);
-        
+
         });
-        
+
         ace.define('ace/mode/javascript', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/javascript_highlight_rules', 'ace/mode/matching_brace_outdent', 'ace/range', 'ace/worker/worker_client', 'ace/mode/behaviour/cstyle', 'ace/mode/folding/cstyle'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextMode = require("./text").Mode;
         var Tokenizer = require("../tokenizer").Tokenizer;
@@ -1013,10 +1013,10 @@ Svg.load = function() {
         var WorkerClient = require("../worker/worker_client").WorkerClient;
         var CstyleBehaviour = require("./behaviour/cstyle").CstyleBehaviour;
         var CStyleFoldMode = require("./folding/cstyle").FoldMode;
-        
+
         var Mode = function() {
             var highlighter = new JavaScriptHighlightRules();
-            
+
             this.$tokenizer = new Tokenizer(highlighter.getRules());
             this.$outdent = new MatchingBraceOutdent();
             this.$behaviour = new CstyleBehaviour();
@@ -1024,23 +1024,23 @@ Svg.load = function() {
             this.foldingRules = new CStyleFoldMode();
         };
         oop.inherits(Mode, TextMode);
-        
+
         (function() {
-        
+
             this.lineCommentStart = "//";
             this.blockComment = {start: "/*", end: "*/"};
-        
+
             this.getNextLineIndent = function(state, line, tab) {
                 var indent = this.$getIndent(line);
-        
+
                 var tokenizedLine = this.$tokenizer.getLineTokens(line, state);
                 var tokens = tokenizedLine.tokens;
                 var endState = tokenizedLine.state;
-        
+
                 if (tokens.length && tokens[tokens.length-1].type == "comment") {
                     return indent;
                 }
-        
+
                 if (state == "start" || state == "no_regex") {
                     var match = line.match(/^.*(?:\bcase\b.*\:|[\{\(\[])\s*$/);
                     if (match) {
@@ -1058,45 +1058,45 @@ Svg.load = function() {
                         indent += "* ";
                     }
                 }
-        
+
                 return indent;
             };
-        
+
             this.checkOutdent = function(state, line, input) {
                 return this.$outdent.checkOutdent(line, input);
             };
-        
+
             this.autoOutdent = function(state, doc, row) {
                 this.$outdent.autoOutdent(doc, row);
             };
-        
+
             this.createWorker = function(session) {
                 var worker = new WorkerClient(["ace"], "ace/mode/javascript_worker", "JavaScriptWorker");
                 worker.attachToDocument(session.getDocument());
-        
+
                 worker.on("jslint", function(results) {
                     session.setAnnotations(results.data);
                 });
-        
+
                 worker.on("terminate", function() {
                     session.clearAnnotations();
                 });
-        
+
                 return worker;
             };
-        
+
         }).call(Mode.prototype);
-        
+
         exports.Mode = Mode;
         });
-        
+
         ace.define('ace/mode/javascript_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/doc_comment_highlight_rules', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var DocCommentHighlightRules = require("./doc_comment_highlight_rules").DocCommentHighlightRules;
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var JavaScriptHighlightRules = function() {
             var keywordMapper = this.createKeywordMapper({
                 "variable.language":
@@ -1126,7 +1126,7 @@ Svg.load = function() {
             }, "identifier");
             var kwBeforeRe = "case|do|else|finally|in|instanceof|return|throw|try|typeof|yield|void";
             var identifierRe = "[a-zA-Z\\$_\u00a1-\uffff][a-zA-Z\\d\\$_\u00a1-\uffff]*\\b";
-        
+
             var escapedRe = "\\\\(?:x[0-9a-fA-F]{2}|" + // hex
                 "u[0-9a-fA-F]{4}|" + // unicode
                 "[0-2][0-7]{0,2}|" + // oct
@@ -1134,7 +1134,7 @@ Svg.load = function() {
                 "37[0-7]?|" + // oct
                 "[4-7][0-7]?|" + //oct
                 ".)";
-        
+
             this.$rules = {
                 "no_regex" : [
                     {
@@ -1389,24 +1389,24 @@ Svg.load = function() {
                     }
                 ]
             };
-        
+
             this.embedRules(DocCommentHighlightRules, "doc-",
                 [ DocCommentHighlightRules.getEndRule("no_regex") ]);
         };
-        
+
         oop.inherits(JavaScriptHighlightRules, TextHighlightRules);
-        
+
         exports.JavaScriptHighlightRules = JavaScriptHighlightRules;
         });
-        
+
         ace.define('ace/mode/doc_comment_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var DocCommentHighlightRules = function() {
-        
+
             this.$rules = {
                 "start" : [ {
                     token : "comment.doc.tag",
@@ -1419,9 +1419,9 @@ Svg.load = function() {
                 }]
             };
         };
-        
+
         oop.inherits(DocCommentHighlightRules, TextHighlightRules);
-        
+
         DocCommentHighlightRules.getStartRule = function(start) {
             return {
                 token : "comment.doc", // doc comment
@@ -1429,7 +1429,7 @@ Svg.load = function() {
                 next  : start
             };
         };
-        
+
         DocCommentHighlightRules.getEndRule = function (start) {
             return {
                 token : "comment.doc", // closing comment
@@ -1437,59 +1437,59 @@ Svg.load = function() {
                 next  : start
             };
         };
-        
-        
+
+
         exports.DocCommentHighlightRules = DocCommentHighlightRules;
-        
+
         });
-        
+
         ace.define('ace/mode/matching_brace_outdent', ['require', 'exports', 'module' , 'ace/range'], function(require, exports, module) {
-        
-        
+
+
         var Range = require("../range").Range;
-        
+
         var MatchingBraceOutdent = function() {};
-        
+
         (function() {
-        
+
             this.checkOutdent = function(line, input) {
                 if (! /^\s+$/.test(line))
                     return false;
-        
+
                 return /^\s*\}/.test(input);
             };
-        
+
             this.autoOutdent = function(doc, row) {
                 var line = doc.getLine(row);
                 var match = line.match(/^(\s*\})/);
-        
+
                 if (!match) return 0;
-        
+
                 var column = match[1].length;
                 var openBracePos = doc.findMatchingBracket({row: row, column: column});
-        
+
                 if (!openBracePos || openBracePos.row == row) return 0;
-        
+
                 var indent = this.$getIndent(doc.getLine(openBracePos.row));
                 doc.replace(new Range(row, 0, row, column-1), indent);
             };
-        
+
             this.$getIndent = function(line) {
                 return line.match(/^\s*/)[0];
             };
-        
+
         }).call(MatchingBraceOutdent.prototype);
-        
+
         exports.MatchingBraceOutdent = MatchingBraceOutdent;
         });
-        
+
         ace.define('ace/mode/folding/cstyle', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/range', 'ace/mode/folding/fold_mode'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../../lib/oop");
         var Range = require("../../range").Range;
         var BaseFoldMode = require("./fold_mode").FoldMode;
-        
+
         var FoldMode = exports.FoldMode = function(commentRegex) {
             if (commentRegex) {
                 this.foldingStartMarker = new RegExp(
@@ -1501,77 +1501,77 @@ Svg.load = function() {
             }
         };
         oop.inherits(FoldMode, BaseFoldMode);
-        
+
         (function() {
-        
+
             this.foldingStartMarker = /(\{|\[)[^\}\]]*$|^\s*(\/\*)/;
             this.foldingStopMarker = /^[^\[\{]*(\}|\])|^[\s\*]*(\*\/)/;
-        
+
             this.getFoldWidgetRange = function(session, foldStyle, row) {
                 var line = session.getLine(row);
                 var match = line.match(this.foldingStartMarker);
                 if (match) {
                     var i = match.index;
-        
+
                     if (match[1])
                         return this.openingBracketBlock(session, match[1], row, i);
-        
+
                     return session.getCommentFoldRange(row, i + match[0].length, 1);
                 }
-        
+
                 if (foldStyle !== "markbeginend")
                     return;
-        
+
                 var match = line.match(this.foldingStopMarker);
                 if (match) {
                     var i = match.index + match[0].length;
-        
+
                     if (match[1])
                         return this.closingBracketBlock(session, match[1], row, i);
-        
+
                     return session.getCommentFoldRange(row, i, -1);
                 }
             };
-        
+
         }).call(FoldMode.prototype);
-        
+
         });
-        
+
         ace.define('ace/mode/svg_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/javascript_highlight_rules', 'ace/mode/xml_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var JavaScriptHighlightRules = require("./javascript_highlight_rules").JavaScriptHighlightRules;
         var XmlHighlightRules = require("./xml_highlight_rules").XmlHighlightRules;
-        
+
         var SvgHighlightRules = function() {
             XmlHighlightRules.call(this);
-        
+
             this.embedTagRules(JavaScriptHighlightRules, "js-", "script");
-        
+
             this.normalizeRules();
         };
-        
+
         oop.inherits(SvgHighlightRules, XmlHighlightRules);
-        
+
         exports.SvgHighlightRules = SvgHighlightRules;
         });
-        
+
         ace.define('ace/mode/folding/mixed', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/folding/fold_mode'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../../lib/oop");
         var BaseFoldMode = require("./fold_mode").FoldMode;
-        
+
         var FoldMode = exports.FoldMode = function(defaultMode, subModes) {
             this.defaultMode = defaultMode;
             this.subModes = subModes;
         };
         oop.inherits(FoldMode, BaseFoldMode);
-        
+
         (function() {
-        
-        
+
+
             this.$getMode = function(state) {
                 if (typeof state != "string") 
                     state = state[0];
@@ -1581,12 +1581,12 @@ Svg.load = function() {
                 }
                 return null;
             };
-            
+
             this.$tryMode = function(state, session, foldStyle, row) {
                 var mode = this.$getMode(state);
                 return (mode ? mode.getFoldWidget(session, foldStyle, row) : "");
             };
-        
+
             this.getFoldWidget = function(session, foldStyle, row) {
                 return (
                     this.$tryMode(session.getState(row-1), session, foldStyle, row) ||
@@ -1594,23 +1594,23 @@ Svg.load = function() {
                     this.defaultMode.getFoldWidget(session, foldStyle, row)
                 );
             };
-        
+
             this.getFoldWidgetRange = function(session, foldStyle, row) {
                 var mode = this.$getMode(session.getState(row-1));
-                
+    
                 if (!mode || !mode.getFoldWidget(session, foldStyle, row))
                     mode = this.$getMode(session.getState(row));
-                
+    
                 if (!mode || !mode.getFoldWidget(session, foldStyle, row))
                     mode = this.defaultMode;
-                
+    
                 return mode.getFoldWidgetRange(session, foldStyle, row);
             };
-        
+
         }).call(FoldMode.prototype);
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

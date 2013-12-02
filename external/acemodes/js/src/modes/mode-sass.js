@@ -56,37 +56,37 @@ Sass.load = function() {
          * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          *
          * ***** END LICENSE BLOCK ***** */
-        
+
         ace.define('ace/mode/sass', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/sass_highlight_rules', 'ace/mode/folding/coffee'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextMode = require("./text").Mode;
         var Tokenizer = require("../tokenizer").Tokenizer;
         var SassHighlightRules = require("./sass_highlight_rules").SassHighlightRules;
         var FoldMode = require("./folding/coffee").FoldMode;
-        
+
         var Mode = function() {
             this.$tokenizer = new Tokenizer(new SassHighlightRules().getRules());
             this.foldingRules = new FoldMode();
         };
         oop.inherits(Mode, TextMode);
-        
+
         (function() {   
             this.lineCommentStart = "//";
         }).call(Mode.prototype);
-        
+
         exports.Mode = Mode;
-        
+
         });
-        
+
         ace.define('ace/mode/sass_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/lib/lang', 'ace/mode/scss_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var lang = require("../lib/lang");
         var ScssHighlightRules = require("./scss_highlight_rules").ScssHighlightRules;
-        
+
         var SassHighlightRules = function() {
             ScssHighlightRules.call(this);
             var start = this.$rules.start;
@@ -105,7 +105,7 @@ Sass.load = function() {
                     token: "support.type",
                     regex: /^\s*:[\w\-]+\s/
                 });
-                
+    
                 this.$rules.comment = [
                     {regex: /^\s*/, onMatch: function(value, currentState, stack) {
                         if (stack[1] === -1)
@@ -122,26 +122,26 @@ Sass.load = function() {
                 ]
             }
         };
-        
+
         oop.inherits(SassHighlightRules, ScssHighlightRules);
-        
+
         exports.SassHighlightRules = SassHighlightRules;
-        
+
         });
-        
+
         ace.define('ace/mode/scss_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/lib/lang', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var lang = require("../lib/lang");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var ScssHighlightRules = function() {
-            
+
             var properties = lang.arrayToMap( (function () {
-        
+
                 var browserPrefix = ("-webkit-|-moz-|-o-|-ms-|-svg-|-pie-|-khtml-").split("|");
-                
+    
                 var prefixProperties = ("appearance|background-clip|background-inline-policy|background-origin|" + 
                      "background-size|binding|border-bottom-colors|border-left-colors|" + 
                      "border-right-colors|border-top-colors|border-end|border-end-color|" + 
@@ -160,7 +160,7 @@ Sass.load = function() {
                      "transition-delay|transition-duration|transition-property|" + 
                      "transition-timing-function|user-focus|user-input|user-modify|user-select|" +
                      "window-shadow|border-radius").split("|");
-                
+    
                 var properties = ("azimuth|background-attachment|background-color|background-image|" +
                     "background-position|background-repeat|background|border-bottom-color|" +
                     "border-bottom-style|border-bottom-width|border-bottom|border-collapse|" +
@@ -194,13 +194,13 @@ Sass.load = function() {
                 }
                 Array.prototype.push.apply(ret, prefixProperties);
                 Array.prototype.push.apply(ret, properties);
-                
+    
                 return ret;
-                
+    
             })() );
-            
-        
-        
+
+
+
             var functions = lang.arrayToMap(
                 ("hsl|hsla|rgb|rgba|url|attr|counter|counters|abs|adjust_color|adjust_hue|" +
                  "alpha|join|blue|ceil|change_color|comparable|complement|darken|desaturate|" + 
@@ -208,7 +208,7 @@ Sass.load = function() {
                  "nth|opacify|opacity|percentage|quote|red|round|saturate|saturation|" +
                  "scale_color|transparentize|type_of|unit|unitless|unqoute").split("|")
             );
-        
+
             var constants = lang.arrayToMap(
                 ("absolute|all-scroll|always|armenian|auto|baseline|below|bidi-override|" +
                 "block|bold|bolder|border-box|both|bottom|break-all|break-word|capitalize|center|" +
@@ -232,16 +232,16 @@ Sass.load = function() {
                 "vertical-ideographic|vertical-text|visible|w-resize|wait|whitespace|" +
                 "zero").split("|")
             );
-        
+
             var colors = lang.arrayToMap(
                 ("aqua|black|blue|fuchsia|gray|green|lime|maroon|navy|olive|orange|" +
                 "purple|red|silver|teal|white|yellow").split("|")
             );
-            
+
             var keywords = lang.arrayToMap(
                 ("@mixin|@extend|@include|@import|@media|@debug|@warn|@if|@for|@each|@while|@else|@font-face|@-webkit-keyframes|if|and|!default|module|def|end|declare").split("|")
             )
-            
+
             var tags = lang.arrayToMap(
                 ("a|abbr|acronym|address|applet|area|article|aside|audio|b|base|basefont|bdo|" + 
                  "big|blockquote|body|br|button|canvas|caption|center|cite|code|col|colgroup|" + 
@@ -253,9 +253,9 @@ Sass.load = function() {
                  "small|source|span|strike|strong|style|sub|summary|sup|table|tbody|td|" + 
                  "textarea|tfoot|th|thead|time|title|tr|tt|u|ul|var|video|wbr|xmp").split("|")
             );
-        
+
             var numRe = "\\-?(?:(?:[0-9]+)|(?:[0-9]*\\.[0-9]+))";
-        
+
             this.$rules = {
                 "start" : [
                     {
@@ -376,54 +376,54 @@ Sass.load = function() {
                 ]
             };
         };
-        
+
         oop.inherits(ScssHighlightRules, TextHighlightRules);
-        
+
         exports.ScssHighlightRules = ScssHighlightRules;
-        
+
         });
-        
+
         ace.define('ace/mode/folding/coffee', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/folding/fold_mode', 'ace/range'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../../lib/oop");
         var BaseFoldMode = require("./fold_mode").FoldMode;
         var Range = require("../../range").Range;
-        
+
         var FoldMode = exports.FoldMode = function() {};
         oop.inherits(FoldMode, BaseFoldMode);
-        
+
         (function() {
-        
+
             this.getFoldWidgetRange = function(session, foldStyle, row) {
                 var range = this.indentationBlock(session, row);
                 if (range)
                     return range;
-        
+
                 var re = /\S/;
                 var line = session.getLine(row);
                 var startLevel = line.search(re);
                 if (startLevel == -1 || line[startLevel] != "#")
                     return;
-        
+
                 var startColumn = line.length;
                 var maxRow = session.getLength();
                 var startRow = row;
                 var endRow = row;
-        
+
                 while (++row < maxRow) {
                     line = session.getLine(row);
                     var level = line.search(re);
-        
+
                     if (level == -1)
                         continue;
-        
+
                     if (line[level] != "#")
                         break;
-        
+
                     endRow = row;
                 }
-        
+
                 if (endRow > startRow) {
                     var endColumn = session.getLine(endRow).length;
                     return new Range(startRow, startColumn, endRow, endColumn);
@@ -436,7 +436,7 @@ Sass.load = function() {
                 var prev = session.getLine(row - 1);
                 var prevIndent = prev.search(/\S/);
                 var nextIndent = next.search(/\S/);
-        
+
                 if (indent == -1) {
                     session.foldWidgets[row - 1] = prevIndent!= -1 && prevIndent < nextIndent ? "start" : "";
                     return "";
@@ -454,22 +454,22 @@ Sass.load = function() {
                         return "";
                     }
                 }
-        
+
                 if (prevIndent!= -1 && prevIndent < indent)
                     session.foldWidgets[row - 1] = "start";
                 else
                     session.foldWidgets[row - 1] = "";
-        
+
                 if (indent < nextIndent)
                     return "start";
                 else
                     return "";
             };
-        
+
         }).call(FoldMode.prototype);
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

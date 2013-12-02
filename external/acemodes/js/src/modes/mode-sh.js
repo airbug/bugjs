@@ -56,49 +56,49 @@ Sh.load = function() {
          * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          *
          * ***** END LICENSE BLOCK ***** */
-        
+
         ace.define('ace/mode/sh', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/sh_highlight_rules', 'ace/range'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextMode = require("./text").Mode;
         var Tokenizer = require("../tokenizer").Tokenizer;
         var ShHighlightRules = require("./sh_highlight_rules").ShHighlightRules;
         var Range = require("../range").Range;
-        
+
         var Mode = function() {
             var highlighter = new ShHighlightRules();
-            
+
             this.$tokenizer = new Tokenizer(highlighter.getRules());
             this.$keywordList = highlighter.$keywordList;
         };
         oop.inherits(Mode, TextMode);
-        
+
         (function() {
-        
-           
+
+   
             this.lineCommentStart = "#";
-        
+
             this.getNextLineIndent = function(state, line, tab) {
                 var indent = this.$getIndent(line);
-        
+
                 var tokenizedLine = this.$tokenizer.getLineTokens(line, state);
                 var tokens = tokenizedLine.tokens;
-        
+
                 if (tokens.length && tokens[tokens.length-1].type == "comment") {
                     return indent;
                 }
-        
+
                 if (state == "start") {
                     var match = line.match(/^.*[\{\(\[\:]\s*$/);
                     if (match) {
                         indent += tab;
                     }
                 }
-        
+
                 return indent;
             };
-        
+
             var outdents = {
                 "pass": 1,
                 "return": 1,
@@ -106,52 +106,52 @@ Sh.load = function() {
                 "break": 1,
                 "continue": 1
             };
-        
+
             this.checkOutdent = function(state, line, input) {
                 if (input !== "\r\n" && input !== "\r" && input !== "\n")
                     return false;
-        
+
                 var tokens = this.$tokenizer.getLineTokens(line.trim(), state).tokens;
-        
+
                 if (!tokens)
                     return false;
                 do {
                     var last = tokens.pop();
                 } while (last && (last.type == "comment" || (last.type == "text" && last.value.match(/^\s+$/))));
-        
+
                 if (!last)
                     return false;
-        
+
                 return (last.type == "keyword" && outdents[last.value]);
             };
-        
+
             this.autoOutdent = function(state, doc, row) {
-        
+
                 row += 1;
                 var indent = this.$getIndent(doc.getLine(row));
                 var tab = doc.getTabString();
                 if (indent.slice(-tab.length) == tab)
                     doc.remove(new Range(row, indent.length-tab.length, row, indent.length));
             };
-        
+
         }).call(Mode.prototype);
-        
+
         exports.Mode = Mode;
         });
-        
+
         ace.define('ace/mode/sh_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var reservedKeywords = exports.reservedKeywords = (
                 '!|{|}|case|do|done|elif|else|'+
                 'esac|fi|for|if|in|then|until|while|'+
                 '&|;|export|local|read|typeset|unset|'+
                 'elif|select|set'
             );
-        
+
         var languageConstructs = exports.languageConstructs = (
             '[|]|alias|bg|bind|break|builtin|'+
              'cd|command|compgen|complete|continue|'+
@@ -162,30 +162,30 @@ Sh.load = function() {
              'suspend|test|times|trap|type|ulimit|'+
              'umask|unalias|wait'
         );
-        
+
         var ShHighlightRules = function() {
             var keywordMapper = this.createKeywordMapper({
                 "keyword": reservedKeywords,
                 "support.function.builtin": languageConstructs,
                 "invalid.deprecated": "debugger"
             }, "identifier");
-        
+
             var integer = "(?:(?:[1-9]\\d*)|(?:0))";
-        
+
             var fraction = "(?:\\.\\d+)";
             var intPart = "(?:\\d+)";
             var pointFloat = "(?:(?:" + intPart + "?" + fraction + ")|(?:" + intPart + "\\.))";
             var exponentFloat = "(?:(?:" + pointFloat + "|" +  intPart + ")" + ")";
             var floatNumber = "(?:" + exponentFloat + "|" + pointFloat + ")";
             var fileDescriptor = "(?:&" + intPart + ")";
-        
+
             var variableName = "[a-zA-Z][a-zA-Z0-9_]*";
             var variable = "(?:(?:\\$" + variableName + ")|(?:" + variableName + "=))";
-        
+
             var builtinVariable = "(?:\\$(?:SHLVL|\\$|\\!|\\?))";
-        
+
             var func = "(?:" + variableName + "\\s*\\(\\))";
-        
+
             this.$rules = {
                 "start" : [{
                     token : "constant",
@@ -244,15 +244,15 @@ Sh.load = function() {
                     regex : "[\\]\\)\\}]"
                 } ]
             };
-            
+
             this.normalizeRules();
         };
-        
+
         oop.inherits(ShHighlightRules, TextHighlightRules);
-        
+
         exports.ShHighlightRules = ShHighlightRules;
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

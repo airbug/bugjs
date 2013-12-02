@@ -61,40 +61,40 @@ Haml.load = function() {
          * Garen J. Torikian < gjtorikian AT gmail DOT com >
          *
          * ***** END LICENSE BLOCK ***** */
-        
+
         ace.define('ace/mode/haml', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/haml_highlight_rules', 'ace/mode/folding/coffee'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextMode = require("./text").Mode;
         var Tokenizer = require("../tokenizer").Tokenizer;
         var HamlHighlightRules = require("./haml_highlight_rules").HamlHighlightRules;
         var FoldMode = require("./folding/coffee").FoldMode;
-        
+
         var Mode = function() {
             var highlighter = new HamlHighlightRules();
-            this.foldingRules = new FoldMode();    
-            
+            this.foldingRules = new FoldMode();
+
             this.$tokenizer = new Tokenizer(highlighter.getRules());
         };
         oop.inherits(Mode, TextMode);
-        
+
         (function() {
             this.lineCommentStart = ["//", "#"];
-            
+
         }).call(Mode.prototype);
-        
+
         exports.Mode = Mode;
         });ace.define('ace/mode/haml_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text_highlight_rules', 'ace/mode/ruby_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
         var RubyExports = require("./ruby_highlight_rules");
         var RubyHighlightRules = RubyExports.RubyHighlightRules;
-        
+
         var HamlHighlightRules = function() {
-        
+
             this.$rules = 
                 {
             "start": [
@@ -128,7 +128,7 @@ Haml.load = function() {
                 },
                 RubyExports.constantNumericHex,
                 RubyExports.constantNumericFloat,
-                
+    
                 RubyExports.constantOtherSymbol,
                 {
                     token: "text",
@@ -150,9 +150,9 @@ Haml.load = function() {
                     regex: "\\{",
                     next: "section"
                 },
-                
+    
                 RubyExports.constantOtherSymbol,
-                
+    
                 {
                     token: "text",
                     regex: /\s/,
@@ -166,11 +166,11 @@ Haml.load = function() {
             ],
             "section": [
                 RubyExports.constantOtherSymbol,
-                
+    
                 RubyExports.qString,
                 RubyExports.qqString,
                 RubyExports.tString,
-                
+    
                 RubyExports.constantNumericHex,
                 RubyExports.constantNumericFloat,
                 {
@@ -185,7 +185,7 @@ Haml.load = function() {
                 {
                         token : "support.class", // class name
                         regex : "[A-Z][a-zA-Z_\\d]+"
-                },    
+                },
                 {
                     token : new RubyHighlightRules().getKeywords(),
                     regex : "[a-zA-Z_$][a-zA-Z0-9_$]*\\b"
@@ -207,51 +207,51 @@ Haml.load = function() {
                 }
             ]
         }
-        
+
         };
-        
+
         oop.inherits(HamlHighlightRules, TextHighlightRules);
-        
+
         exports.HamlHighlightRules = HamlHighlightRules;
         });
-        
+
         ace.define('ace/mode/ruby_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
         var constantOtherSymbol = exports.constantOtherSymbol = {
             token : "constant.other.symbol.ruby", // symbol
             regex : "[:](?:[A-Za-z_]|[@$](?=[a-zA-Z0-9_]))[a-zA-Z0-9_]*[!=?]?"
         };
-        
+
         var qString = exports.qString = {
             token : "string", // single line
             regex : "['](?:(?:\\\\.)|(?:[^'\\\\]))*?[']"
         };
-        
+
         var qqString = exports.qqString = {
             token : "string", // single line
             regex : '["](?:(?:\\\\.)|(?:[^"\\\\]))*?["]'
         };
-        
+
         var tString = exports.tString = {
             token : "string", // backtick string
             regex : "[`](?:(?:\\\\.)|(?:[^'\\\\]))*?[`]"
         };
-        
+
         var constantNumericHex = exports.constantNumericHex = {
             token : "constant.numeric", // hex
             regex : "0[xX][0-9a-fA-F](?:[0-9a-fA-F]|_(?=[0-9a-fA-F]))*\\b"
         };
-        
+
         var constantNumericFloat = exports.constantNumericFloat = {
             token : "constant.numeric", // float
             regex : "[+-]?\\d(?:\\d|_(?=\\d))*(?:(?:\\.\\d(?:\\d|_(?=\\d))*)?(?:[eE][+-]?\\d+)?)?\\b"
         };
-        
+
         var RubyHighlightRules = function() {
-        
+
             var builtinFunctions = (
                 "abort|Array|assert|assert_equal|assert_not_equal|assert_same|assert_not_same|" +
                 "assert_nil|assert_not_nil|assert_match|assert_no_match|assert_in_delta|assert_throws|" +
@@ -284,23 +284,23 @@ Haml.load = function() {
                 "cache|expire_fragment|expire_cache_for|observe|cache_sweeper|" +
                 "has_many|has_one|belongs_to|has_and_belongs_to_many"
             );
-        
+
             var keywords = (
                 "alias|and|BEGIN|begin|break|case|class|def|defined|do|else|elsif|END|end|ensure|" +
                 "__FILE__|finally|for|gem|if|in|__LINE__|module|next|not|or|private|protected|public|" +
                 "redo|rescue|retry|return|super|then|undef|unless|until|when|while|yield"
             );
-        
+
             var buildinConstants = (
                 "true|TRUE|false|FALSE|nil|NIL|ARGF|ARGV|DATA|ENV|RUBY_PLATFORM|RUBY_RELEASE_DATE|" +
                 "RUBY_VERSION|STDERR|STDIN|STDOUT|TOPLEVEL_BINDING"
             );
-        
+
             var builtinVariables = (
                 "\$DEBUG|\$defout|\$FILENAME|\$LOAD_PATH|\$SAFE|\$stdin|\$stdout|\$stderr|\$VERBOSE|" +
                 "$!|root_url|flash|session|cookies|params|request|response|logger|self"
             );
-        
+
             var keywordMapper = this.$keywords = this.createKeywordMapper({
                 "keyword": keywords,
                 "constant.language": buildinConstants,
@@ -308,7 +308,7 @@ Haml.load = function() {
                 "support.function": builtinFunctions,
                 "invalid.deprecated": "debugger" // TODO is this a remnant from js mode?
             }, "identifier");
-        
+
             this.$rules = {
                 "start" : [
                     {
@@ -322,11 +322,11 @@ Haml.load = function() {
                         token : "string.regexp",
                         regex : "[/](?:(?:\\[(?:\\\\]|[^\\]])+\\])|(?:\\\\/|[^\\]/]))*[/]\\w*\\s*(?=[).,;]|$)"
                     },
-        
+
                     qString,
                     qqString,
                     tString,
-        
+
                     {
                         token : "text", // namespaces aren't symbols
                         regex : "::"
@@ -337,11 +337,11 @@ Haml.load = function() {
                         token : "support.class", // class name
                         regex : "[A-Z][a-zA-Z_\\d]+"
                     },
-        
+
                     constantOtherSymbol,
                     constantNumericHex,
                     constantNumericFloat,
-        
+
                     {
                         token : "constant.language.boolean",
                         regex : "(?:true|false)\\b"
@@ -419,56 +419,56 @@ Haml.load = function() {
                     }
                 ]
             };
-        
+
             this.normalizeRules();
         };
-        
+
         oop.inherits(RubyHighlightRules, TextHighlightRules);
-        
+
         exports.RubyHighlightRules = RubyHighlightRules;
         });
-        
+
         ace.define('ace/mode/folding/coffee', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/folding/fold_mode', 'ace/range'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../../lib/oop");
         var BaseFoldMode = require("./fold_mode").FoldMode;
         var Range = require("../../range").Range;
-        
+
         var FoldMode = exports.FoldMode = function() {};
         oop.inherits(FoldMode, BaseFoldMode);
-        
+
         (function() {
-        
+
             this.getFoldWidgetRange = function(session, foldStyle, row) {
                 var range = this.indentationBlock(session, row);
                 if (range)
                     return range;
-        
+
                 var re = /\S/;
                 var line = session.getLine(row);
                 var startLevel = line.search(re);
                 if (startLevel == -1 || line[startLevel] != "#")
                     return;
-        
+
                 var startColumn = line.length;
                 var maxRow = session.getLength();
                 var startRow = row;
                 var endRow = row;
-        
+
                 while (++row < maxRow) {
                     line = session.getLine(row);
                     var level = line.search(re);
-        
+
                     if (level == -1)
                         continue;
-        
+
                     if (line[level] != "#")
                         break;
-        
+
                     endRow = row;
                 }
-        
+
                 if (endRow > startRow) {
                     var endColumn = session.getLine(endRow).length;
                     return new Range(startRow, startColumn, endRow, endColumn);
@@ -481,7 +481,7 @@ Haml.load = function() {
                 var prev = session.getLine(row - 1);
                 var prevIndent = prev.search(/\S/);
                 var nextIndent = next.search(/\S/);
-        
+
                 if (indent == -1) {
                     session.foldWidgets[row - 1] = prevIndent!= -1 && prevIndent < nextIndent ? "start" : "";
                     return "";
@@ -499,22 +499,22 @@ Haml.load = function() {
                         return "";
                     }
                 }
-        
+
                 if (prevIndent!= -1 && prevIndent < indent)
                     session.foldWidgets[row - 1] = "start";
                 else
                     session.foldWidgets[row - 1] = "";
-        
+
                 if (indent < nextIndent)
                     return "start";
                 else
                     return "";
             };
-        
+
         }).call(FoldMode.prototype);
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

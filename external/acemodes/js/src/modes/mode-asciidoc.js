@@ -56,24 +56,24 @@ Asciidoc.load = function() {
          * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          *
          * ***** END LICENSE BLOCK ***** */
-        
+
         ace.define('ace/mode/asciidoc', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/asciidoc_highlight_rules', 'ace/mode/folding/asciidoc'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextMode = require("./text").Mode;
         var Tokenizer = require("../tokenizer").Tokenizer;
         var AsciidocHighlightRules = require("./asciidoc_highlight_rules").AsciidocHighlightRules;
         var AsciidocFoldMode = require("./folding/asciidoc").FoldMode;
-        
+
         var Mode = function() {
             var highlighter = new AsciidocHighlightRules();
-            
+
             this.$tokenizer = new Tokenizer(highlighter.getRules());
-            this.foldingRules = new AsciidocFoldMode();    
+            this.foldingRules = new AsciidocFoldMode();
         };
         oop.inherits(Mode, TextMode);
-        
+
         (function() {
             this.type = "text";
             this.getNextLineIndent = function(state, line, tab) {
@@ -89,19 +89,19 @@ Asciidoc.load = function() {
                 }
             };
         }).call(Mode.prototype);
-        
+
         exports.Mode = Mode;
         });
-        
+
         ace.define('ace/mode/asciidoc_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var AsciidocHighlightRules = function() {
             var identifierRe = "[a-zA-Z\u00a1-\uffff]+\\b";
-        
+
             this.$rules = {
                 "start": [
                     {token: "empty",   regex: /$/},
@@ -112,17 +112,17 @@ Asciidoc.load = function() {
                     {token: "text",    regex: /^\s*$/},
                     {token: "empty", regex: "", next: "dissallowDelimitedBlock"}
                 ],
-        
+
                 "dissallowDelimitedBlock": [
                     {include: "paragraphEnd"},
                     {token: "comment", regex: '^//.+$'},
                     {token: "keyword", regex: "^(?:NOTE|TIP|IMPORTANT|WARNING|CAUTION):"},
-        
+
                     {include: "listStart"},
                     {token: "literal", regex: /^\s+.+$/, next: "indentedBlock"},
                     {token: "empty",   regex: "", next: "text"}
                 ],
-        
+
                 "paragraphEnd": [
                     {token: "doc.comment", regex: /^\/{4,}\s*$/,    next: "commentBlock"},
                     {token: "tableBlock",  regex: /^\s*[|!]=+\s*$/, next: "tableBlock"},
@@ -132,18 +132,18 @@ Asciidoc.load = function() {
                     {token: "literal",     regex: /^\.{4,}\s*$/,     next: "listingBlock"},
                     {token: "titleUnderline",    regex: /^(?:={2,}|-{2,}|~{2,}|\^{2,}|\+{2,})\s*$/, next: "start"},
                     {token: "singleLineTitle",   regex: /^={1,5}\s+\S.*$/, next: "start"},
-        
+
                     {token: "otherBlock",    regex: /^(?:\*{2,}|_{2,})\s*$/, next: "start"},
                     {token: "optionalTitle", regex: /^\.[^.\s].+$/,  next: "start"}
                 ],
-        
+
                 "listStart": [
                     {token: "keyword",  regex: /^\s*(?:\d+\.|[a-zA-Z]\.|[ixvmIXVM]+\)|\*{1,5}|-|\.{1,5})\s/, next: "listText"},
                     {token: "meta.tag", regex: /^.+(?::{2,4}|;;)(?: |$)/, next: "listText"},
                     {token: "support.function.list.callout", regex: /^(?:<\d+>|\d+>|>) /, next: "text"},
                     {token: "keyword",  regex: /^\+\s*$/, next: "start"}
                 ],
-        
+
                 "text": [
                     {token: ["link", "variable.language"], regex: /((?:https?:\/\/|ftp:\/\/|file:\/\/|mailto:|callto:)[^\s\[]+)(\[.*?\])/},
                     {token: "link", regex: /(?:https?:\/\/|ftp:\/\/|file:\/\/|mailto:|callto:)[^\s\[]+/},
@@ -161,21 +161,21 @@ Asciidoc.load = function() {
                     {token: "constant.character", regex: /\({2,3}.*?\){2,3}/},
                     {token: "keyword", regex: /\[\[.+?\]\]/},
                     {token: "support", regex: /^\[{3}[\w\d =\-]+\]{3}/},
-        
+
                     {include: "quotes"},
                     {token: "empty", regex: /^\s*$/, next: "start"}
                 ],
-        
+
                 "listText": [
                     {include: "listStart"},
                     {include: "text"}
                 ],
-        
+
                 "indentedBlock": [
                     {token: "literal", regex: /^[\s\w].+$/, next: "indentedBlock"},
                     {token: "literal", regex: "", next: "start"}
                 ],
-        
+
                 "listingBlock": [
                     {token: "literal", regex: /^\.{4,}\s*$/, next: "dissallowDelimitedBlock"},
                     {token: "constant.numeric", regex: '<\\d+>'},
@@ -194,14 +194,14 @@ Asciidoc.load = function() {
                     {include: "macros"},
                     {token: "literal", regex: "."}
                 ],
-        
+
                 "smallPassthrough": [
                     {token: "literal", regex: /[+]{3,}/, next: "dissallowDelimitedBlock"},
                     {token: "literal", regex: /^\s*$/, next: "dissallowDelimitedBlock"},
                     {token: "literal", regex: identifierRe + "|\\d+"},
                     {include: "macros"}
                 ],
-        
+
                 "commentBlock": [
                     {token: "doc.comment", regex: /^\/{4,}\s*$/, next: "dissallowDelimitedBlock"},
                     {token: "doc.comment", regex: '^.*$'}
@@ -225,32 +225,32 @@ Asciidoc.load = function() {
                     {token: ["markup.list.macro", "keyword"], regex: /([a-zA-Z\-][\w\.\/\-]+::?)(\[.*?\])/},
                     {token: "keyword",     regex: /^:.+?:(?= |$)/}
                 ],
-        
+
                 "quotes": [
                     {token: "string.italic", regex: /__[^_\s].*?__/},
                     {token: "string.italic", regex: quoteRule("_")},
-                    
+        
                     {token: "keyword.bold", regex: /\*\*[^*\s].*?\*\*/},
                     {token: "keyword.bold", regex: quoteRule("\\*")},
-                    
+        
                     {token: "literal", regex: quoteRule("\\+")},
                     {token: "literal", regex: /\+\+[^+\s].*?\+\+/},
                     {token: "literal", regex: /\$\$.+?\$\$/},
                     {token: "literal", regex: quoteRule("`")},
-        
+
                     {token: "keyword", regex: quoteRule("^")},
                     {token: "keyword", regex: quoteRule("~")},
                     {token: "keyword", regex: /##?/},
                     {token: "keyword", regex: /(?:\B|^)``|\b''/}
                 ]
-        
+
             };
-        
+
             function quoteRule(ch) {
                 var prefix = /\w/.test(ch) ? "\\b" : "(?:\\B|^)";
                 return prefix + ch + "[^" + ch + "].*?" + ch + "(?![\\w*])";
             }
-        
+
             var tokenMap = {
                 macro: "constant.character",
                 tableBlock: "doc.comment",
@@ -264,7 +264,7 @@ Asciidoc.load = function() {
                 escape: "constant.language.escape",
                 link: "markup.underline.list"
             };
-        
+
             for (var state in this.$rules) {
                 var stateRules = this.$rules[state];
                 for (var i = stateRules.length; i--; ) {
@@ -284,29 +284,29 @@ Asciidoc.load = function() {
             }
         };
         oop.inherits(AsciidocHighlightRules, TextHighlightRules);
-        
+
         exports.AsciidocHighlightRules = AsciidocHighlightRules;
         });
-        
+
         ace.define('ace/mode/folding/asciidoc', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/folding/fold_mode', 'ace/range'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../../lib/oop");
         var BaseFoldMode = require("./fold_mode").FoldMode;
         var Range = require("../../range").Range;
-        
+
         var FoldMode = exports.FoldMode = function() {};
         oop.inherits(FoldMode, BaseFoldMode);
-        
+
         (function() {
             this.foldingStartMarker = /^(?:\|={10,}|[\.\/=\-~^+]{4,}\s*$|={1,5} )/;
             this.singleLineHeadingRe = /^={1,5}(?=\s+\S)/;
-        
+
             this.getFoldWidget = function(session, foldStyle, row) {
                 var line = session.getLine(row);
                 if (!this.foldingStartMarker.test(line))
                     return ""
-        
+
                 if (line[0] == "=") {
                     if (this.singleLineHeadingRe.test(line))
                         return "start";
@@ -318,7 +318,7 @@ Asciidoc.load = function() {
                     return "end";
                 return "start";
             };
-        
+
             this.getFoldWidgetRange = function(session, foldStyle, row) {
                 var line = session.getLine(row);
                 var startColumn = line.length;
@@ -327,13 +327,13 @@ Asciidoc.load = function() {
                 var endRow = row;
                 if (!line.match(this.foldingStartMarker))
                     return;
-        
+
                 var token;
                 function getTokenType(row) {
                     token = session.getTokens(row)[0];
                     return token && token.type;
                 }
-        
+
                 var levels = ["=","-","~","^","+"];
                 var heading = "markup.heading";
                 var singleLineHeadingRe = this.singleLineHeadingRe;
@@ -348,7 +348,7 @@ Asciidoc.load = function() {
                     }
                     return level;
                 }
-        
+
                 if (getTokenType(row) == heading) {
                     var startHeadingLevel = getLevel();
                     while (++row < maxRow) {
@@ -358,15 +358,15 @@ Asciidoc.load = function() {
                         if (level <= startHeadingLevel)
                             break;
                     }
-        
+
                     var isSingleLineHeading = token && token.value.match(this.singleLineHeadingRe);
                     endRow = isSingleLineHeading ? row - 1 : row - 2;
-        
+
                     if (endRow > startRow) {
                         while (endRow > startRow && (!getTokenType(endRow) || token.value[0] == "["))
                             endRow--;
                     }
-        
+
                     if (endRow > startRow) {
                         var endColumn = session.getLine(endRow).length;
                         return new Range(startRow, startColumn, endRow, endColumn);
@@ -396,11 +396,11 @@ Asciidoc.load = function() {
                     }
                 }
             };
-        
+
         }).call(FoldMode.prototype);
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

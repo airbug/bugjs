@@ -61,39 +61,39 @@ Actionscript.load = function() {
          *
          *
          * ***** END LICENSE BLOCK ***** */
-        
+
         ace.define('ace/mode/actionscript', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/actionscript_highlight_rules', 'ace/mode/folding/cstyle'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextMode = require("./text").Mode;
         var Tokenizer = require("../tokenizer").Tokenizer;
         var ActionScriptHighlightRules = require("./actionscript_highlight_rules").ActionScriptHighlightRules;
         var FoldMode = require("./folding/cstyle").FoldMode;
-        
+
         var Mode = function() {
             var highlighter = new ActionScriptHighlightRules();
             this.foldingRules = new FoldMode();
             this.$tokenizer = new Tokenizer(highlighter.getRules());
         };
         oop.inherits(Mode, TextMode);
-        
+
         (function() {
             this.lineCommentStart = "//";
             this.blockComment = {start: "/*", end: "*/"};
         }).call(Mode.prototype);
-        
+
         exports.Mode = Mode;
         });
-        
+
         ace.define('ace/mode/actionscript_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var ActionScriptHighlightRules = function() {
-        
+
             this.$rules = { start: 
                [ { token: 'support.class.actionscript.2',
                    regex: '\\b(?:R(?:ecordset|DBMSResolver|adioButton(?:Group)?)|X(?:ML(?:Socket|Node|Connector)?|UpdateResolverDataHolder)|M(?:M(?:Save|Execute)|icrophoneMicrophone|o(?:use|vieClip(?:Loader)?)|e(?:nu(?:Bar)?|dia(?:Controller|Display|Playback))|ath)|B(?:yName|inding|utton)|S(?:haredObject|ystem|crollPane|t(?:yleSheet|age|ream)|ound|e(?:ndEvent|rviceObject)|OAPCall|lide)|N(?:umericStepper|et(?:stream|S(?:tream|ervices)|Connection|Debug(?:Config)?))|C(?:heckBox|o(?:ntextMenu(?:Item)?|okie|lor|m(?:ponentMixins|boBox))|ustomActions|lient|amera)|T(?:ypedValue|ext(?:Snapshot|Input|F(?:ield|ormat)|Area)|ree|AB)|Object|D(?:ownload|elta(?:Item|Packet)?|at(?:e(?:Chooser|Field)?|a(?:G(?:lue|rid)|Set|Type)))|U(?:RL|TC|IScrollBar)|P(?:opUpManager|endingCall|r(?:intJob|o(?:duct|gressBar)))|E(?:ndPoint|rror)|Video|Key|F(?:RadioButton|GridColumn|MessageBox|BarChart|S(?:croll(?:Bar|Pane)|tyleFormat|plitView)|orm|C(?:heckbox|omboBox|alendar)|unction|T(?:icker|ooltip(?:Lite)?|ree(?:Node)?)|IconButton|D(?:ataGrid|raggablePane)|P(?:ieChart|ushButton|ro(?:gressBar|mptBox))|L(?:i(?:stBox|neChart)|oadingBox)|AdvancedMessageBox)|W(?:indow|SDLURL|ebService(?:Connector)?)|L(?:ist|o(?:calConnection|ad(?:er|Vars)|g)|a(?:unch|bel))|A(?:sBroadcaster|cc(?:ordion|essibility)|S(?:Set(?:Native|PropFlags)|N(?:ew|ative)|C(?:onstructor|lamp(?:2)?)|InstanceOf)|pplication|lert|rray))\\b' },
@@ -175,28 +175,28 @@ Actionscript.load = function() {
                       'meta.class.actionscript.2',
                       'entity.other.inherited-class.actionscript.2' ],
                    regex: '\\b(class)(\\s+)([a-zA-Z_](?:\\w|\\.)*)(?:(\\s+)(extends)(\\s+)([a-zA-Z_](?:\\w|\\.)*))?' } ] }
-            
+
             this.normalizeRules();
         };
-        
+
         ActionScriptHighlightRules.metaData = { fileTypes: [ 'as' ],
               keyEquivalent: '^~A',
               name: 'ActionScript',
               scopeName: 'source.actionscript.2' }
-        
-        
+
+
         oop.inherits(ActionScriptHighlightRules, TextHighlightRules);
-        
+
         exports.ActionScriptHighlightRules = ActionScriptHighlightRules;
         });
-        
+
         ace.define('ace/mode/folding/cstyle', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/range', 'ace/mode/folding/fold_mode'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../../lib/oop");
         var Range = require("../../range").Range;
         var BaseFoldMode = require("./fold_mode").FoldMode;
-        
+
         var FoldMode = exports.FoldMode = function(commentRegex) {
             if (commentRegex) {
                 this.foldingStartMarker = new RegExp(
@@ -208,42 +208,42 @@ Actionscript.load = function() {
             }
         };
         oop.inherits(FoldMode, BaseFoldMode);
-        
+
         (function() {
-        
+
             this.foldingStartMarker = /(\{|\[)[^\}\]]*$|^\s*(\/\*)/;
             this.foldingStopMarker = /^[^\[\{]*(\}|\])|^[\s\*]*(\*\/)/;
-        
+
             this.getFoldWidgetRange = function(session, foldStyle, row) {
                 var line = session.getLine(row);
                 var match = line.match(this.foldingStartMarker);
                 if (match) {
                     var i = match.index;
-        
+
                     if (match[1])
                         return this.openingBracketBlock(session, match[1], row, i);
-        
+
                     return session.getCommentFoldRange(row, i + match[0].length, 1);
                 }
-        
+
                 if (foldStyle !== "markbeginend")
                     return;
-        
+
                 var match = line.match(this.foldingStopMarker);
                 if (match) {
                     var i = match.index + match[0].length;
-        
+
                     if (match[1])
                         return this.closingBracketBlock(session, match[1], row, i);
-        
+
                     return session.getCommentFoldRange(row, i, -1);
                 }
             };
-        
+
         }).call(FoldMode.prototype);
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

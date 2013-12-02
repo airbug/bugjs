@@ -399,7 +399,7 @@ objectiveC.load = function(){
                 this.$rules[r] = cRules[r];
             }
         }
-        
+
         this.$rules.bracketed_content = this.$rules.bracketed_content.concat(
             this.$rules.start, specialVariables
         );
@@ -470,7 +470,7 @@ objectiveC.load = function(){
             "break|case|continue|default|do|else|for|goto|if|_Pragma|" +
             "return|switch|while|catch|operator|try|throw|using"
         );
-        
+
         var storageType = (
             "asm|__asm__|auto|bool|_Bool|char|_Complex|double|enum|float|" +
             "_Imaginary|int|long|short|signed|struct|typedef|union|unsigned|void|" +

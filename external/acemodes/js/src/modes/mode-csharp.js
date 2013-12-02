@@ -50,34 +50,34 @@ cSharp.load = function(){
     oop.inherits(Mode, TextMode);
 
     (function() {
-        
+
         this.lineCommentStart = "//";
         this.blockComment = {start: "/*", end: "*/"};
-        
+
         this.getNextLineIndent = function(state, line, tab) {
             var indent = this.$getIndent(line);
-      
+  
             var tokenizedLine = this.$tokenizer.getLineTokens(line, state);
             var tokens = tokenizedLine.tokens;
-      
+  
             if (tokens.length && tokens[tokens.length-1].type == "comment") {
                 return indent;
             }
-        
+
             if (state == "start") {
                 var match = line.match(/^.*[\{\(\[]\s*$/);
                 if (match) {
                     indent += tab;
                 }
             }
-      
+  
             return indent;
         };
 
         this.checkOutdent = function(state, line, input) {
             return this.$outdent.checkOutdent(line, input);
         };
-      
+  
         this.autoOutdent = function(state, doc, row) {
             this.$outdent.autoOutdent(doc, row);
         };
@@ -289,7 +289,7 @@ cSharp.load = function(){
     var maybeInsertedLineEnd = "";
 
     var CstyleBehaviour = function () {
-        
+
         CstyleBehaviour.isSaneInsertion = function(editor, session) {
             var cursor = editor.getCursorPosition();
             var iterator = new TokenIterator(session, cursor.row, cursor.column);
@@ -302,11 +302,11 @@ cSharp.load = function(){
             return iterator.getCurrentTokenRow() !== cursor.row ||
                 this.$matchTokenType(iterator.getCurrentToken() || "text", SAFE_INSERT_BEFORE_TOKENS);
         };
-        
+
         CstyleBehaviour.$matchTokenType = function(token, types) {
             return types.indexOf(token.type || token) > -1;
         };
-        
+
         CstyleBehaviour.recordAutoInsert = function(editor, session, bracket) {
             var cursor = editor.getCursorPosition();
             var line = session.doc.getLine(cursor.row);
@@ -316,7 +316,7 @@ cSharp.load = function(){
             autoInsertedLineEnd = bracket + line.substr(cursor.column);
             autoInsertedBrackets++;
         };
-        
+
         CstyleBehaviour.recordMaybeInsert = function(editor, session, bracket) {
             var cursor = editor.getCursorPosition();
             var line = session.doc.getLine(cursor.row);
@@ -327,26 +327,26 @@ cSharp.load = function(){
             maybeInsertedLineEnd = line.substr(cursor.column);
             maybeInsertedBrackets++;
         };
-        
+
         CstyleBehaviour.isAutoInsertedClosing = function(cursor, line, bracket) {
             return autoInsertedBrackets > 0 &&
                 cursor.row === autoInsertedRow &&
                 bracket === autoInsertedLineEnd[0] &&
                 line.substr(cursor.column) === autoInsertedLineEnd;
         };
-        
+
         CstyleBehaviour.isMaybeInsertedClosing = function(cursor, line) {
             return maybeInsertedBrackets > 0 &&
                 cursor.row === maybeInsertedRow &&
                 line.substr(cursor.column) === maybeInsertedLineEnd &&
                 line.substr(0, cursor.column) == maybeInsertedLineStart;
         };
-        
+
         CstyleBehaviour.popAutoInsertedClosing = function() {
             autoInsertedLineEnd = autoInsertedLineEnd.substr(1);
             autoInsertedBrackets--;
         };
-        
+
         CstyleBehaviour.clearMaybeInsertedClosing = function() {
             maybeInsertedBrackets = 0;
             maybeInsertedRow = -1;

@@ -61,34 +61,34 @@ Jade.load = function() {
          * Garen J. Torikian <gjtorikian @ gmail DOT com>
          *
          * ***** END LICENSE BLOCK ***** */
-         
+ 
         ace.define('ace/mode/jade', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/jade_highlight_rules', 'ace/mode/folding/coffee'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextMode = require("./text").Mode;
         var Tokenizer = require("../tokenizer").Tokenizer;
         var JadeHighlightRules = require("./jade_highlight_rules").JadeHighlightRules;
         var FoldMode = require("./folding/coffee").FoldMode;
-        
+
         var Mode = function() {
             var highlighter = new JadeHighlightRules();
-            
+
             this.$tokenizer = new Tokenizer(highlighter.getRules());
             this.foldingRules = new FoldMode();
         };
         oop.inherits(Mode, TextMode);
-        
+
         (function() {
         	this.lineCommentStart = "//";
         }).call(Mode.prototype);
-        
+
         exports.Mode = Mode;
         });
-        
+
         ace.define('ace/mode/jade_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text_highlight_rules', 'ace/mode/markdown_highlight_rules', 'ace/mode/scss_highlight_rules', 'ace/mode/less_highlight_rules', 'ace/mode/coffee_highlight_rules', 'ace/mode/javascript_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
         var MarkdownHighlightRules = require("./markdown_highlight_rules").MarkdownHighlightRules;
@@ -96,7 +96,7 @@ Jade.load = function() {
         var LessHighlightRules = require("./less_highlight_rules").LessHighlightRules;
         var CoffeeHighlightRules = require("./coffee_highlight_rules").CoffeeHighlightRules;
         var JavaScriptHighlightRules = require("./javascript_highlight_rules").JavaScriptHighlightRules;
-        
+
         function mixin_embed(tag, prefix) {
             return { 
                 token : "entity.name.function.jade",
@@ -104,9 +104,9 @@ Jade.load = function() {
                 next  : prefix + "start"
             };
         }
-        
+
         var JadeHighlightRules = function() {
-        
+
             var escapedRe = "\\\\(?:x[0-9a-fA-F]{2}|" + // hex
                 "u[0-9a-fA-F]{4}|" + // unicode
                 "[0-2][0-7]{0,2}|" + // oct
@@ -114,7 +114,7 @@ Jade.load = function() {
                 "37[0-7]?|" + // oct
                 "[4-7][0-7]?|" + //oct
                 ".)";
-        
+
             this.$rules = 
                 {
             "start": [
@@ -285,22 +285,22 @@ Jade.load = function() {
                 }
             ]
         };
-        
+
             this.embedRules(JavaScriptHighlightRules, "js-", [{
                 token: "text",
                 regex: ".$",
                 next: "start"
             }]);
         };
-        
+
         oop.inherits(JadeHighlightRules, TextHighlightRules);
-        
+
         exports.JadeHighlightRules = JadeHighlightRules;
         });
-        
+
         ace.define('ace/mode/markdown_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/lib/lang', 'ace/mode/text_highlight_rules', 'ace/mode/javascript_highlight_rules', 'ace/mode/xml_highlight_rules', 'ace/mode/html_highlight_rules', 'ace/mode/css_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var lang = require("../lib/lang");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
@@ -308,11 +308,11 @@ Jade.load = function() {
         var XmlHighlightRules = require("./xml_highlight_rules").XmlHighlightRules;
         var HtmlHighlightRules = require("./html_highlight_rules").HtmlHighlightRules;
         var CssHighlightRules = require("./css_highlight_rules").CssHighlightRules;
-        
+
         var escaped = function(ch) {
             return "(?:[^" + lang.escapeRegExp(ch) + "\\\\]|\\\\.)*";
         }
-        
+
         function github_embed(tag, prefix) {
             return { // Github style block
                 token : "support.function",
@@ -320,10 +320,10 @@ Jade.load = function() {
                 push  : prefix + "start"
             };
         }
-        
+
         var MarkdownHighlightRules = function() {
             HtmlHighlightRules.call(this);
-        
+
             this.$rules["start"].unshift({
                 token : "empty_line",
                 regex : '^$',
@@ -364,7 +364,7 @@ Jade.load = function() {
             }, {
                 include : "basic"
             });
-        
+
             this.addRules({
                 "basic" : [{
                     token : "constant.language.escape",
@@ -404,7 +404,7 @@ Jade.load = function() {
                     {token : "support.function", regex : "^ {4}.+", next : "allowBlock"},
                     {token : "empty", regex : "", next : "start"}
                 ],
-        
+
                 "header" : [{
                     regex: "$",
                     next : "start"
@@ -413,13 +413,13 @@ Jade.load = function() {
                 }, {
                     defaultToken : "heading"
                 } ],
-        
+
                 "listblock-start" : [{
                     token : "support.variable",
                     regex : /(?:\[[ x]\])?/,
                     next  : "listblock"
                 }],
-        
+
                 "listblock" : [ { // Lists only escape on completely blank lines.
                     token : "empty_line",
                     regex : "^$",
@@ -433,7 +433,7 @@ Jade.load = function() {
                 }, {
                     defaultToken : "list"
                 } ],
-        
+
                 "blockquote" : [ { // BLockquotes only escape on blank lines.
                     token : "empty_line",
                     regex : "^\\s*$",
@@ -442,7 +442,7 @@ Jade.load = function() {
                     token : "string",
                     regex : ".+"
                 } ],
-        
+
                 "githubblock" : [ {
                     token : "support.function",
                     regex : "^```",
@@ -452,45 +452,45 @@ Jade.load = function() {
                     regex : ".+"
                 } ]
             });
-        
+
             this.embedRules(JavaScriptHighlightRules, "jscode-", [{
                token : "support.function",
                regex : "^```",
                next  : "pop"
             }]);
-        
+
             this.embedRules(HtmlHighlightRules, "htmlcode-", [{
                token : "support.function",
                regex : "^```",
                next  : "pop"
             }]);
-        
+
             this.embedRules(CssHighlightRules, "csscode-", [{
                token : "support.function",
                regex : "^```",
                next  : "pop"
             }]);
-        
+
             this.embedRules(XmlHighlightRules, "xmlcode-", [{
                token : "support.function",
                regex : "^```",
                next  : "pop"
             }]);
-        
+
             this.normalizeRules();
         };
         oop.inherits(MarkdownHighlightRules, TextHighlightRules);
-        
+
         exports.MarkdownHighlightRules = MarkdownHighlightRules;
         });
-        
+
         ace.define('ace/mode/javascript_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/doc_comment_highlight_rules', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var DocCommentHighlightRules = require("./doc_comment_highlight_rules").DocCommentHighlightRules;
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var JavaScriptHighlightRules = function() {
             var keywordMapper = this.createKeywordMapper({
                 "variable.language":
@@ -520,7 +520,7 @@ Jade.load = function() {
             }, "identifier");
             var kwBeforeRe = "case|do|else|finally|in|instanceof|return|throw|try|typeof|yield|void";
             var identifierRe = "[a-zA-Z\\$_\u00a1-\uffff][a-zA-Z\\d\\$_\u00a1-\uffff]*\\b";
-        
+
             var escapedRe = "\\\\(?:x[0-9a-fA-F]{2}|" + // hex
                 "u[0-9a-fA-F]{4}|" + // unicode
                 "[0-2][0-7]{0,2}|" + // oct
@@ -528,7 +528,7 @@ Jade.load = function() {
                 "37[0-7]?|" + // oct
                 "[4-7][0-7]?|" + //oct
                 ".)";
-        
+
             this.$rules = {
                 "no_regex" : [
                     {
@@ -783,24 +783,24 @@ Jade.load = function() {
                     }
                 ]
             };
-        
+
             this.embedRules(DocCommentHighlightRules, "doc-",
                 [ DocCommentHighlightRules.getEndRule("no_regex") ]);
         };
-        
+
         oop.inherits(JavaScriptHighlightRules, TextHighlightRules);
-        
+
         exports.JavaScriptHighlightRules = JavaScriptHighlightRules;
         });
-        
+
         ace.define('ace/mode/doc_comment_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var DocCommentHighlightRules = function() {
-        
+
             this.$rules = {
                 "start" : [ {
                     token : "comment.doc.tag",
@@ -813,9 +813,9 @@ Jade.load = function() {
                 }]
             };
         };
-        
+
         oop.inherits(DocCommentHighlightRules, TextHighlightRules);
-        
+
         DocCommentHighlightRules.getStartRule = function(start) {
             return {
                 token : "comment.doc", // doc comment
@@ -823,7 +823,7 @@ Jade.load = function() {
                 next  : start
             };
         };
-        
+
         DocCommentHighlightRules.getEndRule = function (start) {
             return {
                 token : "comment.doc", // closing comment
@@ -831,19 +831,19 @@ Jade.load = function() {
                 next  : start
             };
         };
-        
-        
+
+
         exports.DocCommentHighlightRules = DocCommentHighlightRules;
-        
+
         });
-        
+
         ace.define('ace/mode/xml_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/xml_util', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var xmlUtil = require("./xml_util");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var XmlHighlightRules = function(normalize) {
             this.$rules = {
                 start : [
@@ -864,16 +864,16 @@ Jade.load = function() {
                     {include : "tag"},
                     {include : "reference"}
                 ],
-        
+
                 xml_declaration : [
                     {include : "attributes"},
                     {include : "instruction"}
                 ],
-        
+
                 instruction : [
                     {token : "punctuation.instruction.end", regex : "\\?>", next : "start"}
                 ],
-        
+
                 doctype : [
                     {include : "space"},
                     {include : "string"},
@@ -881,7 +881,7 @@ Jade.load = function() {
                     {token : "xml-pe", regex : "[-_a-zA-Z0-9:]+"},
                     {token : "punctuation.begin", regex : "\\[", push : "declarations"}
                 ],
-        
+
                 declarations : [{
                     token : "text",
                     regex : "\\s+"
@@ -903,18 +903,18 @@ Jade.load = function() {
                     },
                     {include : "string"}]
                 }],
-        
+
                 cdata : [
                     {token : "string.end", regex : "\\]\\]>", next : "start"},
                     {token : "text", regex : "\\s+"},
                     {token : "text", regex : "(?:[^\\]]|\\](?!\\]>))+"}
                 ],
-        
+
                 comment : [
                     {token : "comment", regex : "-->", next : "start"},
                     {defaultToken : "comment"}
                 ],
-        
+
                 tag : [{
                     token : ["meta.tag.punctuation.begin", "meta.tag.name"],
                     regex : "(<)((?:[-_a-zA-Z0-9]+:)?[-_a-zA-Z0-9]+)",
@@ -930,18 +930,18 @@ Jade.load = function() {
                         {token : "meta.tag.punctuation.end", regex : ">", next : "start"}
                     ]
                 }],
-        
+
                 space : [
                     {token : "text", regex : "\\s+"}
                 ],
-        
+
                 reference : [{
                     token : "constant.language.escape",
                     regex : "(?:&#[0-9]+;)|(?:&#x[0-9a-fA-F]+;)|(?:&[a-zA-Z0-9_:\\.-]+;)"
                 }, {
                     token : "invalid.illegal", regex : "&"
                 }],
-        
+
                 string: [{
                     token : "string",
                     regex : "'",
@@ -951,19 +951,19 @@ Jade.load = function() {
                     regex : '"',
                     push : "qqstring_inner"
                 }],
-        
+
                 qstring_inner: [
                     {token : "string", regex: "'", next: "pop"},
                     {include : "reference"},
                     {defaultToken : "string"}
                 ],
-        
+
                 qqstring_inner: [
                     {token : "string", regex: '"', next: "pop"},
                     {include : "reference"},
                     {defaultToken : "string"}
                 ],
-        
+
                 attributes: [{
                     token : "entity.other.attribute-name",
                     regex : "(?:[-_a-zA-Z0-9]+:)?[-_a-zA-Z0-9]+"
@@ -976,14 +976,14 @@ Jade.load = function() {
                     include : "string"
                 }]
             };
-        
+
             if (this.constructor === XmlHighlightRules)
                 this.normalizeRules();
         };
-        
-        
+
+
         (function() {
-        
+
             this.embedTagRules = function(HighlightRules, prefix, tag){
                 this.$rules.tag.unshift({
                     token : ["meta.tag.punctuation.begin", "meta.tag.name." + tag],
@@ -994,7 +994,7 @@ Jade.load = function() {
                         {token : "meta.tag.punctuation.end", regex : "/?>", next : prefix + "start"}
                     ]
                 });
-        
+
                 this.$rules[tag + "-end"] = [
                     {include : "space"},
                     {token : "meta.tag.punctuation.end", regex : ">",  next: "start",
@@ -1003,7 +1003,7 @@ Jade.load = function() {
                             return this.token;
                     }}
                 ]
-        
+
                 this.embedRules(HighlightRules, prefix, [{
                     token: ["meta.tag.punctuation.begin", "meta.tag.name." + tag],
                     regex : "(</)(" + tag + ")",
@@ -1016,17 +1016,17 @@ Jade.load = function() {
                     regex : "\\]\\]>"
                 }]);
             };
-        
+
         }).call(TextHighlightRules.prototype);
-        
+
         oop.inherits(XmlHighlightRules, TextHighlightRules);
-        
+
         exports.XmlHighlightRules = XmlHighlightRules;
         });
-        
+
         ace.define('ace/mode/xml_util', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         function string(state) {
             return [{
                 token : "string",
@@ -1038,7 +1038,7 @@ Jade.load = function() {
                 next : state + "_qstring"
             }];
         }
-        
+
         function multiLineString(quote, state) {
             return [
                 {token : "string", regex : quote, next : state},
@@ -1049,13 +1049,13 @@ Jade.load = function() {
                 {defaultToken : "string"}
             ];
         }
-        
+
         exports.tag = function(states, name, nextState, tagMap) {
             states[name] = [{
                 token : "text",
                 regex : "\\s+"
             }, {
-                
+    
             token : !tagMap ? "meta.tag.tag-name" : function(value) {
                     if (tagMap[value])
                         return "meta.tag.tag-name." + tagMap[value];
@@ -1069,10 +1069,10 @@ Jade.load = function() {
                 regex: "",
                 next : name + "_embed_attribute_list"
             }];
-        
+
             states[name + "_qstring"] = multiLineString("'", name + "_embed_attribute_list");
             states[name + "_qqstring"] = multiLineString("\"", name + "_embed_attribute_list");
-            
+
             states[name + "_embed_attribute_list"] = [{
                 token : "meta.tag.r",
                 regex : "/?>",
@@ -1091,18 +1091,18 @@ Jade.load = function() {
                 regex : "\\s+"
             }].concat(string(name));
         };
-        
+
         });
-        
+
         ace.define('ace/mode/html_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/lib/lang', 'ace/mode/css_highlight_rules', 'ace/mode/javascript_highlight_rules', 'ace/mode/xml_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var lang = require("../lib/lang");
         var CssHighlightRules = require("./css_highlight_rules").CssHighlightRules;
         var JavaScriptHighlightRules = require("./javascript_highlight_rules").JavaScriptHighlightRules;
         var XmlHighlightRules = require("./xml_highlight_rules").XmlHighlightRules;
-        
+
         var tagMap = lang.createMap({
             a           : 'anchor',
             button 	    : 'form',
@@ -1121,10 +1121,10 @@ Jade.load = function() {
             th          : 'table',
             tr          : 'table'
         });
-        
+
         var HtmlHighlightRules = function() {
             XmlHighlightRules.call(this);
-        
+
             this.addRules({
                 attributes: [{
                     include : "space"
@@ -1174,22 +1174,22 @@ Jade.load = function() {
                     {token : "meta.tag.punctuation.end", regex : ">", next : "start"}
                 ]
             });
-        
+
             this.embedTagRules(CssHighlightRules, "css-", "style");
             this.embedTagRules(JavaScriptHighlightRules, "js-", "script");
-        
+
             if (this.constructor === HtmlHighlightRules)
                 this.normalizeRules();
         };
-        
+
         oop.inherits(HtmlHighlightRules, XmlHighlightRules);
-        
+
         exports.HtmlHighlightRules = HtmlHighlightRules;
         });
-        
+
         ace.define('ace/mode/css_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/lib/lang', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var lang = require("../lib/lang");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
@@ -1198,13 +1198,13 @@ Jade.load = function() {
         var supportConstant = exports.supportConstant = "absolute|after-edge|after|all-scroll|all|alphabetic|always|antialiased|armenian|auto|avoid-column|avoid-page|avoid|balance|baseline|before-edge|before|below|bidi-override|block-line-height|block|bold|bolder|border-box|both|bottom|box|break-all|break-word|capitalize|caps-height|caption|center|central|char|circle|cjk-ideographic|clone|close-quote|col-resize|collapse|column|consider-shifts|contain|content-box|cover|crosshair|cubic-bezier|dashed|decimal-leading-zero|decimal|default|disabled|disc|disregard-shifts|distribute-all-lines|distribute-letter|distribute-space|distribute|dotted|double|e-resize|ease-in|ease-in-out|ease-out|ease|ellipsis|end|exclude-ruby|fill|fixed|georgian|glyphs|grid-height|groove|hand|hanging|hebrew|help|hidden|hiragana-iroha|hiragana|horizontal|icon|ideograph-alpha|ideograph-numeric|ideograph-parenthesis|ideograph-space|ideographic|inactive|include-ruby|inherit|initial|inline-block|inline-box|inline-line-height|inline-table|inline|inset|inside|inter-ideograph|inter-word|invert|italic|justify|katakana-iroha|katakana|keep-all|last|left|lighter|line-edge|line-through|line|linear|list-item|local|loose|lower-alpha|lower-greek|lower-latin|lower-roman|lowercase|lr-tb|ltr|mathematical|max-height|max-size|medium|menu|message-box|middle|move|n-resize|ne-resize|newspaper|no-change|no-close-quote|no-drop|no-open-quote|no-repeat|none|normal|not-allowed|nowrap|nw-resize|oblique|open-quote|outset|outside|overline|padding-box|page|pointer|pre-line|pre-wrap|pre|preserve-3d|progress|relative|repeat-x|repeat-y|repeat|replaced|reset-size|ridge|right|round|row-resize|rtl|s-resize|scroll|se-resize|separate|slice|small-caps|small-caption|solid|space|square|start|static|status-bar|step-end|step-start|steps|stretch|strict|sub|super|sw-resize|table-caption|table-cell|table-column-group|table-column|table-footer-group|table-header-group|table-row-group|table-row|table|tb-rl|text-after-edge|text-before-edge|text-bottom|text-size|text-top|text|thick|thin|transparent|underline|upper-alpha|upper-latin|upper-roman|uppercase|use-script|vertical-ideographic|vertical-text|visible|w-resize|wait|whitespace|z-index|zero";
         var supportConstantColor = exports.supportConstantColor = "aqua|black|blue|fuchsia|gray|green|lime|maroon|navy|olive|orange|purple|red|silver|teal|white|yellow";
         var supportConstantFonts = exports.supportConstantFonts = "arial|century|comic|courier|garamond|georgia|helvetica|impact|lucida|symbol|system|tahoma|times|trebuchet|utopia|verdana|webdings|sans-serif|serif|monospace";
-        
+
         var numRe = exports.numRe = "\\-?(?:(?:[0-9]+)|(?:[0-9]*\\.[0-9]+))";
         var pseudoElements = exports.pseudoElements = "(\\:+)\\b(after|before|first-letter|first-line|moz-selection|selection)\\b";
         var pseudoClasses  = exports.pseudoClasses =  "(:)\\b(active|checked|disabled|empty|enabled|first-child|first-of-type|focus|hover|indeterminate|invalid|last-child|last-of-type|link|not|nth-child|nth-last-child|nth-last-of-type|nth-of-type|only-child|only-of-type|required|root|target|valid|visited)\\b";
-        
+
         var CssHighlightRules = function() {
-        
+
             var keywordMapper = this.createKeywordMapper({
                 "support.function": supportFunction,
                 "support.constant": supportConstant,
@@ -1212,7 +1212,7 @@ Jade.load = function() {
                 "support.constant.color": supportConstantColor,
                 "support.constant.fonts": supportConstantFonts
             }, "text", true);
-        
+
             this.$rules = {
                 "start" : [{
                     token : "comment", // multi line comment
@@ -1241,7 +1241,7 @@ Jade.load = function() {
                 }, {
                     caseInsensitive: true
                 }],
-        
+
                 "media" : [{
                     token : "comment", // multi line comment
                     regex : "\\/\\*",
@@ -1269,7 +1269,7 @@ Jade.load = function() {
                 }, {
                     caseInsensitive: true
                 }],
-        
+
                 "comment" : [{
                     token : "comment",
                     regex : "\\*\\/",
@@ -1277,7 +1277,7 @@ Jade.load = function() {
                 }, {
                     defaultToken : "comment"
                 }],
-        
+
                 "ruleset" : [
                 {
                     token : "paren.rparen",
@@ -1321,29 +1321,29 @@ Jade.load = function() {
                     caseInsensitive: true
                 }]
             };
-        
+
             this.normalizeRules();
         };
-        
+
         oop.inherits(CssHighlightRules, TextHighlightRules);
-        
+
         exports.CssHighlightRules = CssHighlightRules;
-        
+
         });
-        
+
         ace.define('ace/mode/scss_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/lib/lang', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var lang = require("../lib/lang");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var ScssHighlightRules = function() {
-            
+
             var properties = lang.arrayToMap( (function () {
-        
+
                 var browserPrefix = ("-webkit-|-moz-|-o-|-ms-|-svg-|-pie-|-khtml-").split("|");
-                
+    
                 var prefixProperties = ("appearance|background-clip|background-inline-policy|background-origin|" + 
                      "background-size|binding|border-bottom-colors|border-left-colors|" + 
                      "border-right-colors|border-top-colors|border-end|border-end-color|" + 
@@ -1362,7 +1362,7 @@ Jade.load = function() {
                      "transition-delay|transition-duration|transition-property|" + 
                      "transition-timing-function|user-focus|user-input|user-modify|user-select|" +
                      "window-shadow|border-radius").split("|");
-                
+    
                 var properties = ("azimuth|background-attachment|background-color|background-image|" +
                     "background-position|background-repeat|background|border-bottom-color|" +
                     "border-bottom-style|border-bottom-width|border-bottom|border-collapse|" +
@@ -1396,13 +1396,13 @@ Jade.load = function() {
                 }
                 Array.prototype.push.apply(ret, prefixProperties);
                 Array.prototype.push.apply(ret, properties);
-                
+    
                 return ret;
-                
+    
             })() );
-            
-        
-        
+
+
+
             var functions = lang.arrayToMap(
                 ("hsl|hsla|rgb|rgba|url|attr|counter|counters|abs|adjust_color|adjust_hue|" +
                  "alpha|join|blue|ceil|change_color|comparable|complement|darken|desaturate|" + 
@@ -1410,7 +1410,7 @@ Jade.load = function() {
                  "nth|opacify|opacity|percentage|quote|red|round|saturate|saturation|" +
                  "scale_color|transparentize|type_of|unit|unitless|unqoute").split("|")
             );
-        
+
             var constants = lang.arrayToMap(
                 ("absolute|all-scroll|always|armenian|auto|baseline|below|bidi-override|" +
                 "block|bold|bolder|border-box|both|bottom|break-all|break-word|capitalize|center|" +
@@ -1434,16 +1434,16 @@ Jade.load = function() {
                 "vertical-ideographic|vertical-text|visible|w-resize|wait|whitespace|" +
                 "zero").split("|")
             );
-        
+
             var colors = lang.arrayToMap(
                 ("aqua|black|blue|fuchsia|gray|green|lime|maroon|navy|olive|orange|" +
                 "purple|red|silver|teal|white|yellow").split("|")
             );
-            
+
             var keywords = lang.arrayToMap(
                 ("@mixin|@extend|@include|@import|@media|@debug|@warn|@if|@for|@each|@while|@else|@font-face|@-webkit-keyframes|if|and|!default|module|def|end|declare").split("|")
             )
-            
+
             var tags = lang.arrayToMap(
                 ("a|abbr|acronym|address|applet|area|article|aside|audio|b|base|basefont|bdo|" + 
                  "big|blockquote|body|br|button|canvas|caption|center|cite|code|col|colgroup|" + 
@@ -1455,9 +1455,9 @@ Jade.load = function() {
                  "small|source|span|strike|strong|style|sub|summary|sup|table|tbody|td|" + 
                  "textarea|tfoot|th|thead|time|title|tr|tt|u|ul|var|video|wbr|xmp").split("|")
             );
-        
+
             var numRe = "\\-?(?:(?:[0-9]+)|(?:[0-9]*\\.[0-9]+))";
-        
+
             this.$rules = {
                 "start" : [
                     {
@@ -1578,26 +1578,26 @@ Jade.load = function() {
                 ]
             };
         };
-        
+
         oop.inherits(ScssHighlightRules, TextHighlightRules);
-        
+
         exports.ScssHighlightRules = ScssHighlightRules;
-        
+
         });
-        
+
         ace.define('ace/mode/less_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/lib/lang', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var lang = require("../lib/lang");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var LessHighlightRules = function() {
-            
+
             var properties = lang.arrayToMap( (function () {
-        
+
                 var browserPrefix = ("-webkit-|-moz-|-o-|-ms-|-svg-|-pie-|-khtml-").split("|");
-                
+    
                 var prefixProperties = ("appearance|background-clip|background-inline-policy|background-origin|" + 
                      "background-size|binding|border-bottom-colors|border-left-colors|" + 
                      "border-right-colors|border-top-colors|border-end|border-end-color|" + 
@@ -1616,7 +1616,7 @@ Jade.load = function() {
                      "transition-delay|transition-duration|transition-property|" + 
                      "transition-timing-function|user-focus|user-input|user-modify|user-select|" +
                      "window-shadow|border-radius").split("|");
-                
+    
                 var properties = ("azimuth|background-attachment|background-color|background-image|" +
                     "background-position|background-repeat|background|border-bottom-color|" +
                     "border-bottom-style|border-bottom-width|border-bottom|border-collapse|" +
@@ -1650,20 +1650,20 @@ Jade.load = function() {
                 }
                 Array.prototype.push.apply(ret, prefixProperties);
                 Array.prototype.push.apply(ret, properties);
-                
+    
                 return ret;
-                
+    
             })() );
-            
-        
-        
+
+
+
             var functions = lang.arrayToMap(
                 ("hsl|hsla|rgb|rgba|url|attr|counter|counters|lighten|darken|saturate|" +
                 "desaturate|fadein|fadeout|fade|spin|mix|hue|saturation|lightness|" +
                 "alpha|round|ceil|floor|percentage|color|iscolor|isnumber|isstring|" +
                 "iskeyword|isurl|ispixel|ispercentage|isem").split("|")
             );
-        
+
             var constants = lang.arrayToMap(
                 ("absolute|all-scroll|always|armenian|auto|baseline|below|bidi-override|" +
                 "block|bold|bolder|border-box|both|bottom|break-all|break-word|capitalize|center|" +
@@ -1687,18 +1687,18 @@ Jade.load = function() {
                 "vertical-ideographic|vertical-text|visible|w-resize|wait|whitespace|" +
                 "zero").split("|")
             );
-        
+
             var colors = lang.arrayToMap(
                 ("aqua|black|blue|fuchsia|gray|green|lime|maroon|navy|olive|orange|" +
                 "purple|red|silver|teal|white|yellow").split("|")
             );
-            
+
             var keywords = lang.arrayToMap(
                 ("@mixin|@extend|@include|@import|@media|@debug|@warn|@if|@for|@each|" +
                 "@while|@else|@font-face|@-webkit-keyframes|if|and|!default|module|" +
                 "def|end|declare|when|not|and").split("|")
             );
-            
+
             var tags = lang.arrayToMap(
                 ("a|abbr|acronym|address|applet|area|article|aside|audio|b|base|basefont|bdo|" + 
                  "big|blockquote|body|br|button|canvas|caption|center|cite|code|col|colgroup|" + 
@@ -1710,9 +1710,9 @@ Jade.load = function() {
                  "small|source|span|strike|strong|style|sub|summary|sup|table|tbody|td|" + 
                  "textarea|tfoot|th|thead|time|title|tr|tt|u|ul|var|video|wbr|xmp").split("|")
             );
-        
+
             var numRe = "\\-?(?:(?:[0-9]+)|(?:[0-9]*\\.[0-9]+))";
-        
+
             this.$rules = {
                 "start" : [
                     {
@@ -1807,41 +1807,41 @@ Jade.load = function() {
                 ]
             };
         };
-        
+
         oop.inherits(LessHighlightRules, TextHighlightRules);
-        
+
         exports.LessHighlightRules = LessHighlightRules;
-        
+
         });
-        
+
         ace.define('ace/mode/coffee_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
             var oop = require("../lib/oop");
             var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
             oop.inherits(CoffeeHighlightRules, TextHighlightRules);
-        
+
             function CoffeeHighlightRules() {
                 var identifier = "[$A-Za-z_\\x7f-\\uffff][$\\w\\x7f-\\uffff]*";
-        
+
                 var keywords = (
                     "this|throw|then|try|typeof|super|switch|return|break|by|continue|" +
                     "catch|class|in|instanceof|is|isnt|if|else|extends|for|forown|" +
                     "finally|function|while|when|new|no|not|delete|debugger|do|loop|of|off|" +
                     "or|on|unless|until|and|yes"
                 );
-        
+
                 var langConstant = (
                     "true|false|null|undefined|NaN|Infinity"
                 );
-        
+
                 var illegal = (
                     "case|const|default|function|var|void|with|enum|export|implements|" +
                     "interface|let|package|private|protected|public|static|yield|" +
                     "__hasProp|slice|bind|indexOf"
                 );
-        
+
                 var supportClass = (
                     "Array|Boolean|Date|Function|Number|Object|RegExp|ReferenceError|String|" +
                     "Error|EvalError|InternalError|RangeError|ReferenceError|StopIteration|" +
@@ -1849,16 +1849,16 @@ Jade.load = function() {
                     "ArrayBuffer|Float32Array|Float64Array|Int16Array|Int32Array|Int8Array|" +
                     "Uint16Array|Uint32Array|Uint8Array|Uint8ClampedArray"
                 );
-        
+
                 var supportFunction = (
                     "Math|JSON|isNaN|isFinite|parseInt|parseFloat|encodeURI|" +
                     "encodeURIComponent|decodeURI|decodeURIComponent|String|"
                 );
-        
+
                 var variableLanguage = (
                     "window|arguments|prototype|document"
                 );
-        
+
                 var keywordMapper = this.createKeywordMapper({
                     "keyword": keywords,
                     "constant.language": langConstant,
@@ -1867,14 +1867,14 @@ Jade.load = function() {
                     "language.support.function": supportFunction,
                     "variable.language": variableLanguage
                 }, "identifier");
-        
+
                 var functionRule = {
                     token: ["paren.lparen", "variable.parameter", "paren.rparen", "text", "storage.type"],
                     regex: /(?:(\()((?:"[^")]*?"|'[^')]*?'|\/[^\/)]*?\/|[^()\"'\/])*?)(\))(\s*))?([\-=]>)/.source
                 };
-        
+
                 var stringEscape = /\\(?:x[0-9a-fA-F]{2}|u[0-9a-fA-F]{4}|[0-2][0-7]{0,2}|3[0-6][0-7]?|37[0-7]?|[4-7][0-7]?|.)/;
-        
+
                 this.$rules = {
                     start : [
                         {
@@ -1988,8 +1988,8 @@ Jade.load = function() {
                             token : "text",
                             regex : "\\s+"
                         }],
-        
-        
+
+
                     heregex : [{
                         token : "string.regex",
                         regex : '.*?///[imgy]{0,4}',
@@ -2001,7 +2001,7 @@ Jade.load = function() {
                         token : "string.regex",
                         regex : "\\S+"
                     }],
-        
+
                     comment : [{
                         token : "comment",
                         regex : '###',
@@ -2012,51 +2012,51 @@ Jade.load = function() {
                 };
                 this.normalizeRules();
             }
-        
+
             exports.CoffeeHighlightRules = CoffeeHighlightRules;
         });
-        
+
         ace.define('ace/mode/folding/coffee', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/folding/fold_mode', 'ace/range'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../../lib/oop");
         var BaseFoldMode = require("./fold_mode").FoldMode;
         var Range = require("../../range").Range;
-        
+
         var FoldMode = exports.FoldMode = function() {};
         oop.inherits(FoldMode, BaseFoldMode);
-        
+
         (function() {
-        
+
             this.getFoldWidgetRange = function(session, foldStyle, row) {
                 var range = this.indentationBlock(session, row);
                 if (range)
                     return range;
-        
+
                 var re = /\S/;
                 var line = session.getLine(row);
                 var startLevel = line.search(re);
                 if (startLevel == -1 || line[startLevel] != "#")
                     return;
-        
+
                 var startColumn = line.length;
                 var maxRow = session.getLength();
                 var startRow = row;
                 var endRow = row;
-        
+
                 while (++row < maxRow) {
                     line = session.getLine(row);
                     var level = line.search(re);
-        
+
                     if (level == -1)
                         continue;
-        
+
                     if (line[level] != "#")
                         break;
-        
+
                     endRow = row;
                 }
-        
+
                 if (endRow > startRow) {
                     var endColumn = session.getLine(endRow).length;
                     return new Range(startRow, startColumn, endRow, endColumn);
@@ -2069,7 +2069,7 @@ Jade.load = function() {
                 var prev = session.getLine(row - 1);
                 var prevIndent = prev.search(/\S/);
                 var nextIndent = next.search(/\S/);
-        
+
                 if (indent == -1) {
                     session.foldWidgets[row - 1] = prevIndent!= -1 && prevIndent < nextIndent ? "start" : "";
                     return "";
@@ -2087,22 +2087,22 @@ Jade.load = function() {
                         return "";
                     }
                 }
-        
+
                 if (prevIndent!= -1 && prevIndent < indent)
                     session.foldWidgets[row - 1] = "start";
                 else
                     session.foldWidgets[row - 1] = "";
-        
+
                 if (indent < nextIndent)
                     return "start";
                 else
                     return "";
             };
-        
+
         }).call(FoldMode.prototype);
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

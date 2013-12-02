@@ -90,7 +90,7 @@ php.load = function(){
             + unicode.packages.Nd
             + unicode.packages.Pc + "\_]+", "g"
         );
-        
+
         this.nonTokenRe = new RegExp("^(?:[^"
             + unicode.packages.L
             + unicode.packages.Mn + unicode.packages.Mc
@@ -98,7 +98,7 @@ php.load = function(){
             + unicode.packages.Pc + "\_]|\s])+", "g"
         );
 
-           
+   
         this.lineCommentStart = ["//", "#"];
         this.blockComment = {start: "/*", end: "*/"};
 
@@ -2017,7 +2017,7 @@ php.load = function(){
             token : "text",
             regex : "\\s+"
         }, {
-            
+
         token : !tagMap ? "meta.tag.tag-name" : function(value) {
                 if (tagMap[value])
                     return "meta.tag.tag-name." + tagMap[value];
@@ -2034,7 +2034,7 @@ php.load = function(){
 
         states[name + "_qstring"] = multiLineString("'", name + "_embed_attribute_list");
         states[name + "_qqstring"] = multiLineString("\"", name + "_embed_attribute_list");
-        
+
         states[name + "_embed_attribute_list"] = [{
             token : "meta.tag.r",
             regex : "/?>",
@@ -2119,7 +2119,7 @@ php.load = function(){
     var maybeInsertedLineEnd = "";
 
     var CstyleBehaviour = function () {
-        
+
         CstyleBehaviour.isSaneInsertion = function(editor, session) {
             var cursor = editor.getCursorPosition();
             var iterator = new TokenIterator(session, cursor.row, cursor.column);
@@ -2132,11 +2132,11 @@ php.load = function(){
             return iterator.getCurrentTokenRow() !== cursor.row ||
                 this.$matchTokenType(iterator.getCurrentToken() || "text", SAFE_INSERT_BEFORE_TOKENS);
         };
-        
+
         CstyleBehaviour.$matchTokenType = function(token, types) {
             return types.indexOf(token.type || token) > -1;
         };
-        
+
         CstyleBehaviour.recordAutoInsert = function(editor, session, bracket) {
             var cursor = editor.getCursorPosition();
             var line = session.doc.getLine(cursor.row);
@@ -2146,7 +2146,7 @@ php.load = function(){
             autoInsertedLineEnd = bracket + line.substr(cursor.column);
             autoInsertedBrackets++;
         };
-        
+
         CstyleBehaviour.recordMaybeInsert = function(editor, session, bracket) {
             var cursor = editor.getCursorPosition();
             var line = session.doc.getLine(cursor.row);
@@ -2157,26 +2157,26 @@ php.load = function(){
             maybeInsertedLineEnd = line.substr(cursor.column);
             maybeInsertedBrackets++;
         };
-        
+
         CstyleBehaviour.isAutoInsertedClosing = function(cursor, line, bracket) {
             return autoInsertedBrackets > 0 &&
                 cursor.row === autoInsertedRow &&
                 bracket === autoInsertedLineEnd[0] &&
                 line.substr(cursor.column) === autoInsertedLineEnd;
         };
-        
+
         CstyleBehaviour.isMaybeInsertedClosing = function(cursor, line) {
             return maybeInsertedBrackets > 0 &&
                 cursor.row === maybeInsertedRow &&
                 line.substr(cursor.column) === maybeInsertedLineEnd &&
                 line.substr(0, cursor.column) == maybeInsertedLineStart;
         };
-        
+
         CstyleBehaviour.popAutoInsertedClosing = function() {
             autoInsertedLineEnd = autoInsertedLineEnd.substr(1);
             autoInsertedBrackets--;
         };
-        
+
         CstyleBehaviour.clearMaybeInsertedClosing = function() {
             maybeInsertedBrackets = 0;
             maybeInsertedRow = -1;

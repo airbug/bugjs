@@ -413,7 +413,7 @@ css.load = function(){
     var maybeInsertedLineEnd = "";
 
     var CstyleBehaviour = function () {
-        
+
         CstyleBehaviour.isSaneInsertion = function(editor, session) {
             var cursor = editor.getCursorPosition();
             var iterator = new TokenIterator(session, cursor.row, cursor.column);
@@ -426,11 +426,11 @@ css.load = function(){
             return iterator.getCurrentTokenRow() !== cursor.row ||
                 this.$matchTokenType(iterator.getCurrentToken() || "text", SAFE_INSERT_BEFORE_TOKENS);
         };
-        
+
         CstyleBehaviour.$matchTokenType = function(token, types) {
             return types.indexOf(token.type || token) > -1;
         };
-        
+
         CstyleBehaviour.recordAutoInsert = function(editor, session, bracket) {
             var cursor = editor.getCursorPosition();
             var line = session.doc.getLine(cursor.row);
@@ -440,7 +440,7 @@ css.load = function(){
             autoInsertedLineEnd = bracket + line.substr(cursor.column);
             autoInsertedBrackets++;
         };
-        
+
         CstyleBehaviour.recordMaybeInsert = function(editor, session, bracket) {
             var cursor = editor.getCursorPosition();
             var line = session.doc.getLine(cursor.row);
@@ -451,26 +451,26 @@ css.load = function(){
             maybeInsertedLineEnd = line.substr(cursor.column);
             maybeInsertedBrackets++;
         };
-        
+
         CstyleBehaviour.isAutoInsertedClosing = function(cursor, line, bracket) {
             return autoInsertedBrackets > 0 &&
                 cursor.row === autoInsertedRow &&
                 bracket === autoInsertedLineEnd[0] &&
                 line.substr(cursor.column) === autoInsertedLineEnd;
         };
-        
+
         CstyleBehaviour.isMaybeInsertedClosing = function(cursor, line) {
             return maybeInsertedBrackets > 0 &&
                 cursor.row === maybeInsertedRow &&
                 line.substr(cursor.column) === maybeInsertedLineEnd &&
                 line.substr(0, cursor.column) == maybeInsertedLineStart;
         };
-        
+
         CstyleBehaviour.popAutoInsertedClosing = function() {
             autoInsertedLineEnd = autoInsertedLineEnd.substr(1);
             autoInsertedBrackets--;
         };
-        
+
         CstyleBehaviour.clearMaybeInsertedClosing = function() {
             maybeInsertedBrackets = 0;
             maybeInsertedRow = -1;

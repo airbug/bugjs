@@ -61,50 +61,50 @@ Scheme.load = function() {
          * NalaGinrut@gmail.com
          *
          * ***** END LICENSE BLOCK ***** */
-        
+
         ace.define('ace/mode/scheme', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/scheme_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextMode = require("./text").Mode;
         var Tokenizer = require("../tokenizer").Tokenizer;
         var SchemeHighlightRules = require("./scheme_highlight_rules").SchemeHighlightRules;
-        
+
         var Mode = function() {
             var highlighter = new SchemeHighlightRules();
-            
+
             this.$tokenizer = new Tokenizer(highlighter.getRules());
         };
         oop.inherits(Mode, TextMode);
-        
+
         (function() {
-               
+   
             this.lineCommentStart = ";";
-            
+
         }).call(Mode.prototype);
-        
+
         exports.Mode = Mode;
         });
-        
+
         ace.define('ace/mode/scheme_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var SchemeHighlightRules = function() {
             var keywordControl = "case|do|let|loop|if|else|when";
             var keywordOperator = "eq?|eqv?|equal?|and|or|not|null?";
             var constantLanguage = "#t|#f";
             var supportFunctions = "cons|car|cdr|cond|lambda|lambda*|syntax-rules|format|set!|quote|eval|append|list|list?|member?|load";
-        
+
             var keywordMapper = this.createKeywordMapper({
                 "keyword.control": keywordControl,
                 "keyword.operator": keywordOperator,
                 "constant.language": constantLanguage,
                 "support.function": supportFunctions
             }, "identifier", true);
-        
+
             this.$rules = 
                 {
             "start": [
@@ -164,14 +164,14 @@ Scheme.load = function() {
                 }
             ]
         }
-        
+
         };
-        
+
         oop.inherits(SchemeHighlightRules, TextHighlightRules);
-        
+
         exports.SchemeHighlightRules = SchemeHighlightRules;
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

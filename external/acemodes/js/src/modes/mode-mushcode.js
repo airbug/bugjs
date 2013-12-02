@@ -56,47 +56,47 @@ Mushcode.load = function() {
          * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          *
          * ***** END LICENSE BLOCK ***** */
-        
+
         ace.define('ace/mode/mushcode', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/mushcode_high_rules', 'ace/mode/folding/pythonic', 'ace/range'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextMode = require("./text").Mode;
         var Tokenizer = require("../tokenizer").Tokenizer;
         var MushCodeRules = require("./mushcode_high_rules").MushCodeRules;
         var PythonFoldMode = require("./folding/pythonic").FoldMode;
         var Range = require("../range").Range;
-        
+
         var Mode = function() {
             this.$tokenizer = new Tokenizer(new MushCodeRules().getRules());
             this.foldingRules = new PythonFoldMode("\\:");
         };
         oop.inherits(Mode, TextMode);
-        
+
         (function() {
-        
+
             this.lineCommentStart = "#";
-        
+
             this.getNextLineIndent = function(state, line, tab) {
                 var indent = this.$getIndent(line);
-        
+
                 var tokenizedLine = this.$tokenizer.getLineTokens(line, state);
                 var tokens = tokenizedLine.tokens;
-        
+
                 if (tokens.length && tokens[tokens.length-1].type == "comment") {
                     return indent;
                 }
-        
+
                 if (state == "start") {
                     var match = line.match(/^.*[\{\(\[\:]\s*$/);
                     if (match) {
                         indent += tab;
                     }
                 }
-        
+
                 return indent;
             };
-        
+
            var outdents = {
                 "pass": 1,
                 "return": 1,
@@ -104,48 +104,48 @@ Mushcode.load = function() {
                 "break": 1,
                 "continue": 1
             };
-        
+
             this.checkOutdent = function(state, line, input) {
                 if (input !== "\r\n" && input !== "\r" && input !== "\n")
                     return false;
-        
+
                 var tokens = this.$tokenizer.getLineTokens(line.trim(), state).tokens;
-        
+
                 if (!tokens)
                     return false;
                 do {
                     var last = tokens.pop();
                 } while (last && (last.type == "comment" || (last.type == "text" && last.value.match(/^\s+$/))));
-        
+
                 if (!last)
                     return false;
-        
+
                 return (last.type == "keyword" && outdents[last.value]);
             };
-        
+
             this.autoOutdent = function(state, doc, row) {
-        
+
                 row += 1;
                 var indent = this.$getIndent(doc.getLine(row));
                 var tab = doc.getTabString();
                 if (indent.slice(-tab.length) == tab)
                     doc.remove(new Range(row, indent.length-tab.length, row, indent.length));
             };
-        
+
         }).call(Mode.prototype);
-        
+
         exports.Mode = Mode;
         });
-        
+
         ace.define('ace/mode/mushcode_high_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var MushCodeRules = function() {
-        
-        
+
+
             var keywords = (
          "@if|"+
          "@ifelse|"+
@@ -195,11 +195,11 @@ Mushcode.load = function() {
          "dismiss|"+
          "@tel"
             );
-        
+
             var builtinConstants = (
                 "=#0"
             );
-        
+
             var builtinFunctions = (
          "default|"+
          "edefault|"+
@@ -633,22 +633,22 @@ Mushcode.load = function() {
                 "constant.language": builtinConstants,
                 "keyword": keywords
             }, "identifier");
-        
+
             var strPre = "(?:r|u|ur|R|U|UR|Ur|uR)?";
-        
+
             var decimalInteger = "(?:(?:[1-9]\\d*)|(?:0))";
             var octInteger = "(?:0[oO]?[0-7]+)";
             var hexInteger = "(?:0[xX][\\dA-Fa-f]+)";
             var binInteger = "(?:0[bB][01]+)";
             var integer = "(?:" + decimalInteger + "|" + octInteger + "|" + hexInteger + "|" + binInteger + ")";
-        
+
             var exponent = "(?:[eE][+-]?\\d+)";
             var fraction = "(?:\\.\\d+)";
             var intPart = "(?:\\d+)";
             var pointFloat = "(?:(?:" + intPart + "?" + fraction + ")|(?:" + intPart + "\\.))";
             var exponentFloat = "(?:(?:" + pointFloat + "|" +  intPart + ")" + exponent + ")";
             var floatNumber = "(?:" + exponentFloat + "|" + pointFloat + ")";
-        
+
             this.$rules = {
                 "start" : [
                  {
@@ -697,25 +697,25 @@ Mushcode.load = function() {
                 } ]
             };
         };
-        
+
         oop.inherits(MushCodeRules, TextHighlightRules);
-        
+
         exports.MushCodeRules = MushCodeRules;
         });
-        
+
         ace.define('ace/mode/folding/pythonic', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/folding/fold_mode'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../../lib/oop");
         var BaseFoldMode = require("./fold_mode").FoldMode;
-        
+
         var FoldMode = exports.FoldMode = function(markers) {
             this.foldingStartMarker = new RegExp("([\\[{])(?:\\s*)$|(" + markers + ")(?:\\s*)(?:#.*)?$");
         };
         oop.inherits(FoldMode, BaseFoldMode);
-        
+
         (function() {
-        
+
             this.getFoldWidgetRange = function(session, foldStyle, row) {
                 var line = session.getLine(row);
                 var match = line.match(this.foldingStartMarker);
@@ -727,11 +727,11 @@ Mushcode.load = function() {
                     return this.indentationBlock(session, row);
                 }
             }
-        
+
         }).call(FoldMode.prototype);
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

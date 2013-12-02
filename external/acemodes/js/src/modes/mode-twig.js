@@ -56,10 +56,10 @@ Twig.load = function() {
          * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          *
          * ***** END LICENSE BLOCK ***** */
-        
+
         ace.define('ace/mode/twig', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/mode/javascript', 'ace/mode/css', 'ace/tokenizer', 'ace/mode/twig_highlight_rules', 'ace/mode/behaviour/html', 'ace/mode/folding/html', 'ace/mode/matching_brace_outdent'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextMode = require("./text").Mode;
         var JavaScriptMode = require("./javascript").Mode;
@@ -69,62 +69,62 @@ Twig.load = function() {
         var HtmlBehaviour = require("./behaviour/html").HtmlBehaviour;
         var HtmlFoldMode = require("./folding/html").FoldMode;
         var MatchingBraceOutdent = require("./matching_brace_outdent").MatchingBraceOutdent;
-        
+
         var Mode = function() {
             var highlighter = new TwigHighlightRules();
             this.$tokenizer = new Tokenizer(highlighter.getRules());
             this.$outdent = new MatchingBraceOutdent();
             this.$behaviour = new HtmlBehaviour();
-        
+
             this.$embeds = highlighter.getEmbeds();
             this.createModeDelegates({
                 "js-": JavaScriptMode,
                 "css-": CssMode
             });
-        
+
             this.foldingRules = new HtmlFoldMode();
         };
         oop.inherits(Mode, TextMode);
-        
+
         (function() {
             this.blockComment = {start: "{#", end: "#}"};
-        
+
             this.getNextLineIndent = function(state, line, tab) {
                 var indent = this.$getIndent(line);
-        
+
                 var tokenizedLine = this.$tokenizer.getLineTokens(line, state);
                 var tokens = tokenizedLine.tokens;
                 var endState = tokenizedLine.state;
-        
+
                 if (tokens.length && tokens[tokens.length-1].type == "comment") {
                     return indent;
                 }
-        
+
                 if (state == "start") {
                     var match = line.match(/^.*[\{\(\[]\s*$/);
                     if (match) {
                         indent += tab;
                     }
                 }
-        
+
                 return indent;
             };
-        
+
             this.checkOutdent = function(state, line, input) {
                 return this.$outdent.checkOutdent(line, input);
             };
-        
+
             this.autoOutdent = function(state, doc, row) {
                 this.$outdent.autoOutdent(doc, row);
             };
         }).call(Mode.prototype);
-        
+
         exports.Mode = Mode;
         });
-        
+
         ace.define('ace/mode/javascript', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/javascript_highlight_rules', 'ace/mode/matching_brace_outdent', 'ace/range', 'ace/worker/worker_client', 'ace/mode/behaviour/cstyle', 'ace/mode/folding/cstyle'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextMode = require("./text").Mode;
         var Tokenizer = require("../tokenizer").Tokenizer;
@@ -134,10 +134,10 @@ Twig.load = function() {
         var WorkerClient = require("../worker/worker_client").WorkerClient;
         var CstyleBehaviour = require("./behaviour/cstyle").CstyleBehaviour;
         var CStyleFoldMode = require("./folding/cstyle").FoldMode;
-        
+
         var Mode = function() {
             var highlighter = new JavaScriptHighlightRules();
-            
+
             this.$tokenizer = new Tokenizer(highlighter.getRules());
             this.$outdent = new MatchingBraceOutdent();
             this.$behaviour = new CstyleBehaviour();
@@ -145,23 +145,23 @@ Twig.load = function() {
             this.foldingRules = new CStyleFoldMode();
         };
         oop.inherits(Mode, TextMode);
-        
+
         (function() {
-        
+
             this.lineCommentStart = "//";
             this.blockComment = {start: "/*", end: "*/"};
-        
+
             this.getNextLineIndent = function(state, line, tab) {
                 var indent = this.$getIndent(line);
-        
+
                 var tokenizedLine = this.$tokenizer.getLineTokens(line, state);
                 var tokens = tokenizedLine.tokens;
                 var endState = tokenizedLine.state;
-        
+
                 if (tokens.length && tokens[tokens.length-1].type == "comment") {
                     return indent;
                 }
-        
+
                 if (state == "start" || state == "no_regex") {
                     var match = line.match(/^.*(?:\bcase\b.*\:|[\{\(\[])\s*$/);
                     if (match) {
@@ -179,45 +179,45 @@ Twig.load = function() {
                         indent += "* ";
                     }
                 }
-        
+
                 return indent;
             };
-        
+
             this.checkOutdent = function(state, line, input) {
                 return this.$outdent.checkOutdent(line, input);
             };
-        
+
             this.autoOutdent = function(state, doc, row) {
                 this.$outdent.autoOutdent(doc, row);
             };
-        
+
             this.createWorker = function(session) {
                 var worker = new WorkerClient(["ace"], "ace/mode/javascript_worker", "JavaScriptWorker");
                 worker.attachToDocument(session.getDocument());
-        
+
                 worker.on("jslint", function(results) {
                     session.setAnnotations(results.data);
                 });
-        
+
                 worker.on("terminate", function() {
                     session.clearAnnotations();
                 });
-        
+
                 return worker;
             };
-        
+
         }).call(Mode.prototype);
-        
+
         exports.Mode = Mode;
         });
-        
+
         ace.define('ace/mode/javascript_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/doc_comment_highlight_rules', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var DocCommentHighlightRules = require("./doc_comment_highlight_rules").DocCommentHighlightRules;
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var JavaScriptHighlightRules = function() {
             var keywordMapper = this.createKeywordMapper({
                 "variable.language":
@@ -247,7 +247,7 @@ Twig.load = function() {
             }, "identifier");
             var kwBeforeRe = "case|do|else|finally|in|instanceof|return|throw|try|typeof|yield|void";
             var identifierRe = "[a-zA-Z\\$_\u00a1-\uffff][a-zA-Z\\d\\$_\u00a1-\uffff]*\\b";
-        
+
             var escapedRe = "\\\\(?:x[0-9a-fA-F]{2}|" + // hex
                 "u[0-9a-fA-F]{4}|" + // unicode
                 "[0-2][0-7]{0,2}|" + // oct
@@ -255,7 +255,7 @@ Twig.load = function() {
                 "37[0-7]?|" + // oct
                 "[4-7][0-7]?|" + //oct
                 ".)";
-        
+
             this.$rules = {
                 "no_regex" : [
                     {
@@ -510,24 +510,24 @@ Twig.load = function() {
                     }
                 ]
             };
-        
+
             this.embedRules(DocCommentHighlightRules, "doc-",
                 [ DocCommentHighlightRules.getEndRule("no_regex") ]);
         };
-        
+
         oop.inherits(JavaScriptHighlightRules, TextHighlightRules);
-        
+
         exports.JavaScriptHighlightRules = JavaScriptHighlightRules;
         });
-        
+
         ace.define('ace/mode/doc_comment_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var DocCommentHighlightRules = function() {
-        
+
             this.$rules = {
                 "start" : [ {
                     token : "comment.doc.tag",
@@ -540,9 +540,9 @@ Twig.load = function() {
                 }]
             };
         };
-        
+
         oop.inherits(DocCommentHighlightRules, TextHighlightRules);
-        
+
         DocCommentHighlightRules.getStartRule = function(start) {
             return {
                 token : "comment.doc", // doc comment
@@ -550,7 +550,7 @@ Twig.load = function() {
                 next  : start
             };
         };
-        
+
         DocCommentHighlightRules.getEndRule = function (start) {
             return {
                 token : "comment.doc", // closing comment
@@ -558,66 +558,66 @@ Twig.load = function() {
                 next  : start
             };
         };
-        
-        
+
+
         exports.DocCommentHighlightRules = DocCommentHighlightRules;
-        
+
         });
-        
+
         ace.define('ace/mode/matching_brace_outdent', ['require', 'exports', 'module' , 'ace/range'], function(require, exports, module) {
-        
-        
+
+
         var Range = require("../range").Range;
-        
+
         var MatchingBraceOutdent = function() {};
-        
+
         (function() {
-        
+
             this.checkOutdent = function(line, input) {
                 if (! /^\s+$/.test(line))
                     return false;
-        
+
                 return /^\s*\}/.test(input);
             };
-        
+
             this.autoOutdent = function(doc, row) {
                 var line = doc.getLine(row);
                 var match = line.match(/^(\s*\})/);
-        
+
                 if (!match) return 0;
-        
+
                 var column = match[1].length;
                 var openBracePos = doc.findMatchingBracket({row: row, column: column});
-        
+
                 if (!openBracePos || openBracePos.row == row) return 0;
-        
+
                 var indent = this.$getIndent(doc.getLine(openBracePos.row));
                 doc.replace(new Range(row, 0, row, column-1), indent);
             };
-        
+
             this.$getIndent = function(line) {
                 return line.match(/^\s*/)[0];
             };
-        
+
         }).call(MatchingBraceOutdent.prototype);
-        
+
         exports.MatchingBraceOutdent = MatchingBraceOutdent;
         });
-        
+
         ace.define('ace/mode/behaviour/cstyle', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/behaviour', 'ace/token_iterator', 'ace/lib/lang'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../../lib/oop");
         var Behaviour = require("../behaviour").Behaviour;
         var TokenIterator = require("../../token_iterator").TokenIterator;
         var lang = require("../../lib/lang");
-        
+
         var SAFE_INSERT_IN_TOKENS =
             ["text", "paren.rparen", "punctuation.operator"];
         var SAFE_INSERT_BEFORE_TOKENS =
             ["text", "paren.rparen", "punctuation.operator", "comment"];
-        
-        
+
+
         var autoInsertedBrackets = 0;
         var autoInsertedRow = -1;
         var autoInsertedLineEnd = "";
@@ -625,9 +625,9 @@ Twig.load = function() {
         var maybeInsertedRow = -1;
         var maybeInsertedLineStart = "";
         var maybeInsertedLineEnd = "";
-        
+
         var CstyleBehaviour = function () {
-            
+
             CstyleBehaviour.isSaneInsertion = function(editor, session) {
                 var cursor = editor.getCursorPosition();
                 var iterator = new TokenIterator(session, cursor.row, cursor.column);
@@ -640,11 +640,11 @@ Twig.load = function() {
                 return iterator.getCurrentTokenRow() !== cursor.row ||
                     this.$matchTokenType(iterator.getCurrentToken() || "text", SAFE_INSERT_BEFORE_TOKENS);
             };
-            
+
             CstyleBehaviour.$matchTokenType = function(token, types) {
                 return types.indexOf(token.type || token) > -1;
             };
-            
+
             CstyleBehaviour.recordAutoInsert = function(editor, session, bracket) {
                 var cursor = editor.getCursorPosition();
                 var line = session.doc.getLine(cursor.row);
@@ -654,7 +654,7 @@ Twig.load = function() {
                 autoInsertedLineEnd = bracket + line.substr(cursor.column);
                 autoInsertedBrackets++;
             };
-            
+
             CstyleBehaviour.recordMaybeInsert = function(editor, session, bracket) {
                 var cursor = editor.getCursorPosition();
                 var line = session.doc.getLine(cursor.row);
@@ -665,31 +665,31 @@ Twig.load = function() {
                 maybeInsertedLineEnd = line.substr(cursor.column);
                 maybeInsertedBrackets++;
             };
-            
+
             CstyleBehaviour.isAutoInsertedClosing = function(cursor, line, bracket) {
                 return autoInsertedBrackets > 0 &&
                     cursor.row === autoInsertedRow &&
                     bracket === autoInsertedLineEnd[0] &&
                     line.substr(cursor.column) === autoInsertedLineEnd;
             };
-            
+
             CstyleBehaviour.isMaybeInsertedClosing = function(cursor, line) {
                 return maybeInsertedBrackets > 0 &&
                     cursor.row === maybeInsertedRow &&
                     line.substr(cursor.column) === maybeInsertedLineEnd &&
                     line.substr(0, cursor.column) == maybeInsertedLineStart;
             };
-            
+
             CstyleBehaviour.popAutoInsertedClosing = function() {
                 autoInsertedLineEnd = autoInsertedLineEnd.substr(1);
                 autoInsertedBrackets--;
             };
-            
+
             CstyleBehaviour.clearMaybeInsertedClosing = function() {
                 maybeInsertedBrackets = 0;
                 maybeInsertedRow = -1;
             };
-        
+
             this.add("braces", "insertion", function (state, action, editor, session, text) {
                 var cursor = editor.getCursorPosition();
                 var line = session.doc.getLine(cursor.row);
@@ -739,10 +739,10 @@ Twig.load = function() {
                         var openBracePos = session.findMatchingBracket({row: cursor.row, column: cursor.column}, '}');
                         if (!openBracePos)
                              return null;
-        
+
                         var indent = this.getNextLineIndent(state, line.substring(0, cursor.column), session.getTabString());
                         var next_indent = this.$getIndent(line);
-        
+
                         return {
                             text: '\n' + indent + '\n' + next_indent + closing,
                             selection: [1, indent.length, 1, indent.length]
@@ -750,7 +750,7 @@ Twig.load = function() {
                     }
                 }
             });
-        
+
             this.add("braces", "deletion", function (state, action, editor, session, range) {
                 var selected = session.doc.getTextRange(range);
                 if (!range.isMultiLine() && selected == '{') {
@@ -764,7 +764,7 @@ Twig.load = function() {
                     }
                 }
             });
-        
+
             this.add("parens", "insertion", function (state, action, editor, session, text) {
                 if (text == '(') {
                     var selection = editor.getSelectionRange();
@@ -797,7 +797,7 @@ Twig.load = function() {
                     }
                 }
             });
-        
+
             this.add("parens", "deletion", function (state, action, editor, session, range) {
                 var selected = session.doc.getTextRange(range);
                 if (!range.isMultiLine() && selected == '(') {
@@ -809,7 +809,7 @@ Twig.load = function() {
                     }
                 }
             });
-        
+
             this.add("brackets", "insertion", function (state, action, editor, session, text) {
                 if (text == '[') {
                     var selection = editor.getSelectionRange();
@@ -842,7 +842,7 @@ Twig.load = function() {
                     }
                 }
             });
-        
+
             this.add("brackets", "deletion", function (state, action, editor, session, range) {
                 var selected = session.doc.getTextRange(range);
                 if (!range.isMultiLine() && selected == '[') {
@@ -854,7 +854,7 @@ Twig.load = function() {
                     }
                 }
             });
-        
+
             this.add("string_dquotes", "insertion", function (state, action, editor, session, text) {
                 if (text == '"' || text == "'") {
                     var quote = text;
@@ -875,7 +875,7 @@ Twig.load = function() {
                         var tokens = session.getTokens(selection.start.row);
                         var col = 0, token;
                         var quotepos = -1; // Track whether we're inside an open quote.
-        
+
                         for (var x = 0; x < tokens.length; x++) {
                             token = tokens[x];
                             if (token.type == "string") {
@@ -907,7 +907,7 @@ Twig.load = function() {
                     }
                 }
             });
-        
+
             this.add("string_dquotes", "deletion", function (state, action, editor, session, range) {
                 var selected = session.doc.getTextRange(range);
                 if (!range.isMultiLine() && (selected == '"' || selected == "'")) {
@@ -919,21 +919,21 @@ Twig.load = function() {
                     }
                 }
             });
-        
+
         };
-        
+
         oop.inherits(CstyleBehaviour, Behaviour);
-        
+
         exports.CstyleBehaviour = CstyleBehaviour;
         });
-        
+
         ace.define('ace/mode/folding/cstyle', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/range', 'ace/mode/folding/fold_mode'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../../lib/oop");
         var Range = require("../../range").Range;
         var BaseFoldMode = require("./fold_mode").FoldMode;
-        
+
         var FoldMode = exports.FoldMode = function(commentRegex) {
             if (commentRegex) {
                 this.foldingStartMarker = new RegExp(
@@ -945,45 +945,45 @@ Twig.load = function() {
             }
         };
         oop.inherits(FoldMode, BaseFoldMode);
-        
+
         (function() {
-        
+
             this.foldingStartMarker = /(\{|\[)[^\}\]]*$|^\s*(\/\*)/;
             this.foldingStopMarker = /^[^\[\{]*(\}|\])|^[\s\*]*(\*\/)/;
-        
+
             this.getFoldWidgetRange = function(session, foldStyle, row) {
                 var line = session.getLine(row);
                 var match = line.match(this.foldingStartMarker);
                 if (match) {
                     var i = match.index;
-        
+
                     if (match[1])
                         return this.openingBracketBlock(session, match[1], row, i);
-        
+
                     return session.getCommentFoldRange(row, i + match[0].length, 1);
                 }
-        
+
                 if (foldStyle !== "markbeginend")
                     return;
-        
+
                 var match = line.match(this.foldingStopMarker);
                 if (match) {
                     var i = match.index + match[0].length;
-        
+
                     if (match[1])
                         return this.closingBracketBlock(session, match[1], row, i);
-        
+
                     return session.getCommentFoldRange(row, i, -1);
                 }
             };
-        
+
         }).call(FoldMode.prototype);
-        
+
         });
-        
+
         ace.define('ace/mode/css', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/css_highlight_rules', 'ace/mode/matching_brace_outdent', 'ace/worker/worker_client', 'ace/mode/behaviour/css', 'ace/mode/folding/cstyle'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextMode = require("./text").Mode;
         var Tokenizer = require("../tokenizer").Tokenizer;
@@ -992,7 +992,7 @@ Twig.load = function() {
         var WorkerClient = require("../worker/worker_client").WorkerClient;
         var CssBehaviour = require("./behaviour/css").CssBehaviour;
         var CStyleFoldMode = require("./folding/cstyle").FoldMode;
-        
+
         var Mode = function() {
             var highlighter = new CssHighlightRules();
             this.$tokenizer = new Tokenizer(highlighter.getRules());
@@ -1002,59 +1002,59 @@ Twig.load = function() {
             this.foldingRules = new CStyleFoldMode();
         };
         oop.inherits(Mode, TextMode);
-        
+
         (function() {
-        
+
             this.foldingRules = "cStyle";
             this.blockComment = {start: "/*", end: "*/"};
-        
+
             this.getNextLineIndent = function(state, line, tab) {
                 var indent = this.$getIndent(line);
                 var tokens = this.$tokenizer.getLineTokens(line, state).tokens;
                 if (tokens.length && tokens[tokens.length-1].type == "comment") {
                     return indent;
                 }
-        
+
                 var match = line.match(/^.*\{\s*$/);
                 if (match) {
                     indent += tab;
                 }
-        
+
                 return indent;
             };
-        
+
             this.checkOutdent = function(state, line, input) {
                 return this.$outdent.checkOutdent(line, input);
             };
-        
+
             this.autoOutdent = function(state, doc, row) {
                 this.$outdent.autoOutdent(doc, row);
             };
-        
+
             this.createWorker = function(session) {
                 var worker = new WorkerClient(["ace"], "ace/mode/css_worker", "Worker");
                 worker.attachToDocument(session.getDocument());
-        
+
                 worker.on("csslint", function(e) {
                     session.setAnnotations(e.data);
                 });
-        
+
                 worker.on("terminate", function() {
                     session.clearAnnotations();
                 });
-        
+
                 return worker;
             };
-        
+
         }).call(Mode.prototype);
-        
+
         exports.Mode = Mode;
-        
+
         });
-        
+
         ace.define('ace/mode/css_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/lib/lang', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var lang = require("../lib/lang");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
@@ -1063,13 +1063,13 @@ Twig.load = function() {
         var supportConstant = exports.supportConstant = "absolute|after-edge|after|all-scroll|all|alphabetic|always|antialiased|armenian|auto|avoid-column|avoid-page|avoid|balance|baseline|before-edge|before|below|bidi-override|block-line-height|block|bold|bolder|border-box|both|bottom|box|break-all|break-word|capitalize|caps-height|caption|center|central|char|circle|cjk-ideographic|clone|close-quote|col-resize|collapse|column|consider-shifts|contain|content-box|cover|crosshair|cubic-bezier|dashed|decimal-leading-zero|decimal|default|disabled|disc|disregard-shifts|distribute-all-lines|distribute-letter|distribute-space|distribute|dotted|double|e-resize|ease-in|ease-in-out|ease-out|ease|ellipsis|end|exclude-ruby|fill|fixed|georgian|glyphs|grid-height|groove|hand|hanging|hebrew|help|hidden|hiragana-iroha|hiragana|horizontal|icon|ideograph-alpha|ideograph-numeric|ideograph-parenthesis|ideograph-space|ideographic|inactive|include-ruby|inherit|initial|inline-block|inline-box|inline-line-height|inline-table|inline|inset|inside|inter-ideograph|inter-word|invert|italic|justify|katakana-iroha|katakana|keep-all|last|left|lighter|line-edge|line-through|line|linear|list-item|local|loose|lower-alpha|lower-greek|lower-latin|lower-roman|lowercase|lr-tb|ltr|mathematical|max-height|max-size|medium|menu|message-box|middle|move|n-resize|ne-resize|newspaper|no-change|no-close-quote|no-drop|no-open-quote|no-repeat|none|normal|not-allowed|nowrap|nw-resize|oblique|open-quote|outset|outside|overline|padding-box|page|pointer|pre-line|pre-wrap|pre|preserve-3d|progress|relative|repeat-x|repeat-y|repeat|replaced|reset-size|ridge|right|round|row-resize|rtl|s-resize|scroll|se-resize|separate|slice|small-caps|small-caption|solid|space|square|start|static|status-bar|step-end|step-start|steps|stretch|strict|sub|super|sw-resize|table-caption|table-cell|table-column-group|table-column|table-footer-group|table-header-group|table-row-group|table-row|table|tb-rl|text-after-edge|text-before-edge|text-bottom|text-size|text-top|text|thick|thin|transparent|underline|upper-alpha|upper-latin|upper-roman|uppercase|use-script|vertical-ideographic|vertical-text|visible|w-resize|wait|whitespace|z-index|zero";
         var supportConstantColor = exports.supportConstantColor = "aqua|black|blue|fuchsia|gray|green|lime|maroon|navy|olive|orange|purple|red|silver|teal|white|yellow";
         var supportConstantFonts = exports.supportConstantFonts = "arial|century|comic|courier|garamond|georgia|helvetica|impact|lucida|symbol|system|tahoma|times|trebuchet|utopia|verdana|webdings|sans-serif|serif|monospace";
-        
+
         var numRe = exports.numRe = "\\-?(?:(?:[0-9]+)|(?:[0-9]*\\.[0-9]+))";
         var pseudoElements = exports.pseudoElements = "(\\:+)\\b(after|before|first-letter|first-line|moz-selection|selection)\\b";
         var pseudoClasses  = exports.pseudoClasses =  "(:)\\b(active|checked|disabled|empty|enabled|first-child|first-of-type|focus|hover|indeterminate|invalid|last-child|last-of-type|link|not|nth-child|nth-last-child|nth-last-of-type|nth-of-type|only-child|only-of-type|required|root|target|valid|visited)\\b";
-        
+
         var CssHighlightRules = function() {
-        
+
             var keywordMapper = this.createKeywordMapper({
                 "support.function": supportFunction,
                 "support.constant": supportConstant,
@@ -1077,7 +1077,7 @@ Twig.load = function() {
                 "support.constant.color": supportConstantColor,
                 "support.constant.fonts": supportConstantFonts
             }, "text", true);
-        
+
             this.$rules = {
                 "start" : [{
                     token : "comment", // multi line comment
@@ -1106,7 +1106,7 @@ Twig.load = function() {
                 }, {
                     caseInsensitive: true
                 }],
-        
+
                 "media" : [{
                     token : "comment", // multi line comment
                     regex : "\\/\\*",
@@ -1134,7 +1134,7 @@ Twig.load = function() {
                 }, {
                     caseInsensitive: true
                 }],
-        
+
                 "comment" : [{
                     token : "comment",
                     regex : "\\*\\/",
@@ -1142,7 +1142,7 @@ Twig.load = function() {
                 }, {
                     defaultToken : "comment"
                 }],
-        
+
                 "ruleset" : [
                 {
                     token : "paren.rparen",
@@ -1186,28 +1186,28 @@ Twig.load = function() {
                     caseInsensitive: true
                 }]
             };
-        
+
             this.normalizeRules();
         };
-        
+
         oop.inherits(CssHighlightRules, TextHighlightRules);
-        
+
         exports.CssHighlightRules = CssHighlightRules;
-        
+
         });
-        
+
         ace.define('ace/mode/behaviour/css', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/behaviour', 'ace/mode/behaviour/cstyle', 'ace/token_iterator'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../../lib/oop");
         var Behaviour = require("../behaviour").Behaviour;
         var CstyleBehaviour = require("./cstyle").CstyleBehaviour;
         var TokenIterator = require("../../token_iterator").TokenIterator;
-        
+
         var CssBehaviour = function () {
-        
+
             this.inherit(CstyleBehaviour);
-        
+
             this.add("colon", "insertion", function (state, action, editor, session, text) {
                 if (text === ':') {
                     var cursor = editor.getCursorPosition();
@@ -1234,7 +1234,7 @@ Twig.load = function() {
                     }
                 }
             });
-        
+
             this.add("colon", "deletion", function (state, action, editor, session, range) {
                 var selected = session.doc.getTextRange(range);
                 if (!range.isMultiLine() && selected === ':') {
@@ -1254,7 +1254,7 @@ Twig.load = function() {
                     }
                 }
             });
-        
+
             this.add("semicolon", "insertion", function (state, action, editor, session, text) {
                 if (text === ';') {
                     var cursor = editor.getCursorPosition();
@@ -1268,24 +1268,24 @@ Twig.load = function() {
                     }
                 }
             });
-        
+
         }
         oop.inherits(CssBehaviour, CstyleBehaviour);
-        
+
         exports.CssBehaviour = CssBehaviour;
         });
-        
+
         ace.define('ace/mode/twig_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/lib/lang', 'ace/mode/html_highlight_rules', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var lang = require("../lib/lang");
         var HtmlHighlightRules = require("./html_highlight_rules").HtmlHighlightRules;
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var TwigHighlightRules = function() {
             HtmlHighlightRules.call(this);
-        
+
             var tags = "autoescape|block|do|embed|extends|filter|flush|for|from|if|import|include|macro|sandbox|set|spaceless|use|verbatim";
             tags = tags + "|end" + tags.replace(/\|/g, "|end");
             var filters = "abs|batch|capitalize|convert_encoding|date|date_modify|default|e|escape|first|format|join|json_encode|keys|last|length|lower|merge|nl2br|number_format|raw|replace|reverse|slice|sort|split|striptags|title|trim|upper|url_encode";
@@ -1293,7 +1293,7 @@ Twig.load = function() {
             var tests = "constant|divisibleby|sameas|defined|empty|even|iterable|odd";
             var constants = "null|none|true|false";
             var operators = "b-and|b-xor|b-or|in|is|and|or|not"
-        
+
             var keywordMapper = this.createKeywordMapper({
                 "keyword.control.twig": tags,
                 "support.function.twig": [filters, functions, tests].join("|"),
@@ -1320,7 +1320,7 @@ Twig.load = function() {
                 regex : ".*-?#\\}",
                 next : "pop"
             }];
-        
+
             this.$rules["twig-start"] = [{
                 token : "variable.other.readwrite.local.twig",
                 regex : "-?\\}\\}",
@@ -1374,7 +1374,7 @@ Twig.load = function() {
                 token : "text",
                 regex : "\\s+"
             } ];
-        
+
             this.$rules["twig-qqstring"] = [{
                     token : "constant.language.escape",
                     regex : /\\[\\"$#ntr]|#{[^"}]*}/
@@ -1386,7 +1386,7 @@ Twig.load = function() {
                     defaultToken : "string"
                 }
             ];
-        
+
             this.$rules["twig-qstring"] = [{
                     token : "constant.language.escape",
                     regex : /\\[\\'ntr]}/
@@ -1398,24 +1398,24 @@ Twig.load = function() {
                     defaultToken : "string"
                 }
             ];
-        
+
             this.normalizeRules();
         };
-        
+
         oop.inherits(TwigHighlightRules, TextHighlightRules);
-        
+
         exports.TwigHighlightRules = TwigHighlightRules;
         });
-        
+
         ace.define('ace/mode/html_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/lib/lang', 'ace/mode/css_highlight_rules', 'ace/mode/javascript_highlight_rules', 'ace/mode/xml_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var lang = require("../lib/lang");
         var CssHighlightRules = require("./css_highlight_rules").CssHighlightRules;
         var JavaScriptHighlightRules = require("./javascript_highlight_rules").JavaScriptHighlightRules;
         var XmlHighlightRules = require("./xml_highlight_rules").XmlHighlightRules;
-        
+
         var tagMap = lang.createMap({
             a           : 'anchor',
             button 	    : 'form',
@@ -1434,10 +1434,10 @@ Twig.load = function() {
             th          : 'table',
             tr          : 'table'
         });
-        
+
         var HtmlHighlightRules = function() {
             XmlHighlightRules.call(this);
-        
+
             this.addRules({
                 attributes: [{
                     include : "space"
@@ -1487,26 +1487,26 @@ Twig.load = function() {
                     {token : "meta.tag.punctuation.end", regex : ">", next : "start"}
                 ]
             });
-        
+
             this.embedTagRules(CssHighlightRules, "css-", "style");
             this.embedTagRules(JavaScriptHighlightRules, "js-", "script");
-        
+
             if (this.constructor === HtmlHighlightRules)
                 this.normalizeRules();
         };
-        
+
         oop.inherits(HtmlHighlightRules, XmlHighlightRules);
-        
+
         exports.HtmlHighlightRules = HtmlHighlightRules;
         });
-        
+
         ace.define('ace/mode/xml_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/xml_util', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var xmlUtil = require("./xml_util");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var XmlHighlightRules = function(normalize) {
             this.$rules = {
                 start : [
@@ -1527,16 +1527,16 @@ Twig.load = function() {
                     {include : "tag"},
                     {include : "reference"}
                 ],
-        
+
                 xml_declaration : [
                     {include : "attributes"},
                     {include : "instruction"}
                 ],
-        
+
                 instruction : [
                     {token : "punctuation.instruction.end", regex : "\\?>", next : "start"}
                 ],
-        
+
                 doctype : [
                     {include : "space"},
                     {include : "string"},
@@ -1544,7 +1544,7 @@ Twig.load = function() {
                     {token : "xml-pe", regex : "[-_a-zA-Z0-9:]+"},
                     {token : "punctuation.begin", regex : "\\[", push : "declarations"}
                 ],
-        
+
                 declarations : [{
                     token : "text",
                     regex : "\\s+"
@@ -1566,18 +1566,18 @@ Twig.load = function() {
                     },
                     {include : "string"}]
                 }],
-        
+
                 cdata : [
                     {token : "string.end", regex : "\\]\\]>", next : "start"},
                     {token : "text", regex : "\\s+"},
                     {token : "text", regex : "(?:[^\\]]|\\](?!\\]>))+"}
                 ],
-        
+
                 comment : [
                     {token : "comment", regex : "-->", next : "start"},
                     {defaultToken : "comment"}
                 ],
-        
+
                 tag : [{
                     token : ["meta.tag.punctuation.begin", "meta.tag.name"],
                     regex : "(<)((?:[-_a-zA-Z0-9]+:)?[-_a-zA-Z0-9]+)",
@@ -1593,18 +1593,18 @@ Twig.load = function() {
                         {token : "meta.tag.punctuation.end", regex : ">", next : "start"}
                     ]
                 }],
-        
+
                 space : [
                     {token : "text", regex : "\\s+"}
                 ],
-        
+
                 reference : [{
                     token : "constant.language.escape",
                     regex : "(?:&#[0-9]+;)|(?:&#x[0-9a-fA-F]+;)|(?:&[a-zA-Z0-9_:\\.-]+;)"
                 }, {
                     token : "invalid.illegal", regex : "&"
                 }],
-        
+
                 string: [{
                     token : "string",
                     regex : "'",
@@ -1614,19 +1614,19 @@ Twig.load = function() {
                     regex : '"',
                     push : "qqstring_inner"
                 }],
-        
+
                 qstring_inner: [
                     {token : "string", regex: "'", next: "pop"},
                     {include : "reference"},
                     {defaultToken : "string"}
                 ],
-        
+
                 qqstring_inner: [
                     {token : "string", regex: '"', next: "pop"},
                     {include : "reference"},
                     {defaultToken : "string"}
                 ],
-        
+
                 attributes: [{
                     token : "entity.other.attribute-name",
                     regex : "(?:[-_a-zA-Z0-9]+:)?[-_a-zA-Z0-9]+"
@@ -1639,14 +1639,14 @@ Twig.load = function() {
                     include : "string"
                 }]
             };
-        
+
             if (this.constructor === XmlHighlightRules)
                 this.normalizeRules();
         };
-        
-        
+
+
         (function() {
-        
+
             this.embedTagRules = function(HighlightRules, prefix, tag){
                 this.$rules.tag.unshift({
                     token : ["meta.tag.punctuation.begin", "meta.tag.name." + tag],
@@ -1657,7 +1657,7 @@ Twig.load = function() {
                         {token : "meta.tag.punctuation.end", regex : "/?>", next : prefix + "start"}
                     ]
                 });
-        
+
                 this.$rules[tag + "-end"] = [
                     {include : "space"},
                     {token : "meta.tag.punctuation.end", regex : ">",  next: "start",
@@ -1666,7 +1666,7 @@ Twig.load = function() {
                             return this.token;
                     }}
                 ]
-        
+
                 this.embedRules(HighlightRules, prefix, [{
                     token: ["meta.tag.punctuation.begin", "meta.tag.name." + tag],
                     regex : "(</)(" + tag + ")",
@@ -1679,17 +1679,17 @@ Twig.load = function() {
                     regex : "\\]\\]>"
                 }]);
             };
-        
+
         }).call(TextHighlightRules.prototype);
-        
+
         oop.inherits(XmlHighlightRules, TextHighlightRules);
-        
+
         exports.XmlHighlightRules = XmlHighlightRules;
         });
-        
+
         ace.define('ace/mode/xml_util', ['require', 'exports', 'module' ], function(require, exports, module) {
-        
-        
+
+
         function string(state) {
             return [{
                 token : "string",
@@ -1701,7 +1701,7 @@ Twig.load = function() {
                 next : state + "_qstring"
             }];
         }
-        
+
         function multiLineString(quote, state) {
             return [
                 {token : "string", regex : quote, next : state},
@@ -1712,13 +1712,13 @@ Twig.load = function() {
                 {defaultToken : "string"}
             ];
         }
-        
+
         exports.tag = function(states, name, nextState, tagMap) {
             states[name] = [{
                 token : "text",
                 regex : "\\s+"
             }, {
-                
+    
             token : !tagMap ? "meta.tag.tag-name" : function(value) {
                     if (tagMap[value])
                         return "meta.tag.tag-name." + tagMap[value];
@@ -1732,10 +1732,10 @@ Twig.load = function() {
                 regex: "",
                 next : name + "_embed_attribute_list"
             }];
-        
+
             states[name + "_qstring"] = multiLineString("'", name + "_embed_attribute_list");
             states[name + "_qqstring"] = multiLineString("\"", name + "_embed_attribute_list");
-            
+
             states[name + "_embed_attribute_list"] = [{
                 token : "meta.tag.r",
                 regex : "/?>",
@@ -1754,18 +1754,18 @@ Twig.load = function() {
                 regex : "\\s+"
             }].concat(string(name));
         };
-        
+
         });
-        
+
         ace.define('ace/mode/behaviour/html', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/behaviour/xml', 'ace/mode/behaviour/cstyle', 'ace/token_iterator'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../../lib/oop");
         var XmlBehaviour = require("../behaviour/xml").XmlBehaviour;
         var CstyleBehaviour = require("./cstyle").CstyleBehaviour;
         var TokenIterator = require("../../token_iterator").TokenIterator;
         var voidElements = ['area', 'base', 'br', 'col', 'command', 'embed', 'hr', 'img', 'input', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr'];
-        
+
         function hasType(token, type) {
             var tokenTypes = token.type.split('.');
             return type.split('.').every(function(type){
@@ -1773,17 +1773,17 @@ Twig.load = function() {
             });
             return hasType;
         }
-        
+
         var HtmlBehaviour = function () {
-        
+
             this.inherit(XmlBehaviour); // Get xml behaviour
-            
+
             this.add("autoclosing", "insertion", function (state, action, editor, session, text) {
                 if (text == '>') {
                     var position = editor.getCursorPosition();
                     var iterator = new TokenIterator(session, position.row, position.column);
                     var token = iterator.getCurrentToken();
-        
+
                     if (token && hasType(token, 'string') && iterator.getCurrentTokenColumn() + token.value.length > position.column)
                         return;
                     var atCursor = false;
@@ -1812,18 +1812,18 @@ Twig.load = function() {
             });
         }
         oop.inherits(HtmlBehaviour, XmlBehaviour);
-        
+
         exports.HtmlBehaviour = HtmlBehaviour;
         });
-        
+
         ace.define('ace/mode/behaviour/xml', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/behaviour', 'ace/mode/behaviour/cstyle', 'ace/token_iterator'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../../lib/oop");
         var Behaviour = require("../behaviour").Behaviour;
         var CstyleBehaviour = require("./cstyle").CstyleBehaviour;
         var TokenIterator = require("../../token_iterator").TokenIterator;
-        
+
         function hasType(token, type) {
             var tokenTypes = token.type.split('.');
             return type.split('.').every(function(type){
@@ -1831,17 +1831,17 @@ Twig.load = function() {
             });
             return hasType;
         }
-        
+
         var XmlBehaviour = function () {
-            
+
             this.inherit(CstyleBehaviour, ["string_dquotes"]); // Get string behaviour
-            
+
             this.add("autoclosing", "insertion", function (state, action, editor, session, text) {
                 if (text == '>') {
                     var position = editor.getCursorPosition();
                     var iterator = new TokenIterator(session, position.row, position.column);
                     var token = iterator.getCurrentToken();
-        
+
                     if (token && hasType(token, 'string') && iterator.getCurrentTokenColumn() + token.value.length > position.column)
                         return;
                     var atCursor = false;
@@ -1859,14 +1859,14 @@ Twig.load = function() {
                     if (atCursor){
                         var tag = tag.substring(0, position.column - token.start);
                     }
-        
+
                     return {
                        text: '>' + '</' + tag + '>',
                        selection: [1, 1]
                     }
                 }
             });
-        
+
             this.add('autoindent', 'insertion', function (state, action, editor, session, text) {
                 if (text == "\n") {
                     var cursor = editor.getCursorPosition();
@@ -1875,7 +1875,7 @@ Twig.load = function() {
                     if (rightChars == '</') {
                         var next_indent = this.$getIndent(line);
                         var indent = next_indent + session.getTabString();
-        
+
                         return {
                             text: '\n' + indent + '\n' + next_indent,
                             selection: [1, indent.length, 1, indent.length]
@@ -1883,21 +1883,21 @@ Twig.load = function() {
                     }
                 }
             });
-            
+
         }
         oop.inherits(XmlBehaviour, Behaviour);
-        
+
         exports.XmlBehaviour = XmlBehaviour;
         });
-        
+
         ace.define('ace/mode/folding/html', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/folding/mixed', 'ace/mode/folding/xml', 'ace/mode/folding/cstyle'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../../lib/oop");
         var MixedFoldMode = require("./mixed").FoldMode;
         var XmlFoldMode = require("./xml").FoldMode;
         var CStyleFoldMode = require("./cstyle").FoldMode;
-        
+
         var FoldMode = exports.FoldMode = function() {
             MixedFoldMode.call(this, new XmlFoldMode({
                 "area": 1,
@@ -1932,26 +1932,26 @@ Twig.load = function() {
                 "css-": new CStyleFoldMode()
             });
         };
-        
+
         oop.inherits(FoldMode, MixedFoldMode);
-        
+
         });
-        
+
         ace.define('ace/mode/folding/mixed', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/folding/fold_mode'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../../lib/oop");
         var BaseFoldMode = require("./fold_mode").FoldMode;
-        
+
         var FoldMode = exports.FoldMode = function(defaultMode, subModes) {
             this.defaultMode = defaultMode;
             this.subModes = subModes;
         };
         oop.inherits(FoldMode, BaseFoldMode);
-        
+
         (function() {
-        
-        
+
+
             this.$getMode = function(state) {
                 if (typeof state != "string") 
                     state = state[0];
@@ -1961,12 +1961,12 @@ Twig.load = function() {
                 }
                 return null;
             };
-            
+
             this.$tryMode = function(state, session, foldStyle, row) {
                 var mode = this.$getMode(state);
                 return (mode ? mode.getFoldWidget(session, foldStyle, row) : "");
             };
-        
+
             this.getFoldWidget = function(session, foldStyle, row) {
                 return (
                     this.$tryMode(session.getState(row-1), session, foldStyle, row) ||
@@ -1974,58 +1974,58 @@ Twig.load = function() {
                     this.defaultMode.getFoldWidget(session, foldStyle, row)
                 );
             };
-        
+
             this.getFoldWidgetRange = function(session, foldStyle, row) {
                 var mode = this.$getMode(session.getState(row-1));
-                
+    
                 if (!mode || !mode.getFoldWidget(session, foldStyle, row))
                     mode = this.$getMode(session.getState(row));
-                
+    
                 if (!mode || !mode.getFoldWidget(session, foldStyle, row))
                     mode = this.defaultMode;
-                
+    
                 return mode.getFoldWidgetRange(session, foldStyle, row);
             };
-        
+
         }).call(FoldMode.prototype);
-        
+
         });
-        
+
         ace.define('ace/mode/folding/xml', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/lib/lang', 'ace/range', 'ace/mode/folding/fold_mode', 'ace/token_iterator'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../../lib/oop");
         var lang = require("../../lib/lang");
         var Range = require("../../range").Range;
         var BaseFoldMode = require("./fold_mode").FoldMode;
         var TokenIterator = require("../../token_iterator").TokenIterator;
-        
+
         var FoldMode = exports.FoldMode = function(voidElements) {
             BaseFoldMode.call(this);
             this.voidElements = voidElements || {};
         };
         oop.inherits(FoldMode, BaseFoldMode);
-        
+
         (function() {
-        
+
             this.getFoldWidget = function(session, foldStyle, row) {
                 var tag = this._getFirstTagInLine(session, row);
-        
+
                 if (tag.closing)
                     return foldStyle == "markbeginend" ? "end" : "";
-        
+
                 if (!tag.tagName || this.voidElements[tag.tagName.toLowerCase()])
                     return "";
-        
+
                 if (tag.selfClosing)
                     return "";
-        
+
                 if (tag.value.indexOf("/" + tag.tagName) !== -1)
                     return "";
-        
+
                 return "start";
             };
-            
+
             this._getFirstTagInLine = function(session, row) {
                 var tokens = session.getTokens(row);
                 var value = "";
@@ -2036,16 +2036,16 @@ Twig.load = function() {
                     else
                         value += lang.stringRepeat(" ", token.value.length);
                 }
-                
+    
                 return this._parseTag(value);
             };
-        
+
             this.tagRe = /^(\s*)(<?(\/?)([-_a-zA-Z0-9:!]*)\s*(\/?)>?)/;
             this._parseTag = function(tag) {
-                
+    
                 var match = tag.match(this.tagRe);
                 var column = 0;
-        
+
                 return {
                     value: tag,
                     match: match ? match[2] : "",
@@ -2059,10 +2059,10 @@ Twig.load = function() {
                 var token = iterator.getCurrentToken();
                 if (!token)
                     return null;
-                    
+        
                 var value = "";
                 var start;
-                
+    
                 do {
                     if (token.type.lastIndexOf("meta.tag", 0) === 0) {
                         if (!start) {
@@ -2084,18 +2084,18 @@ Twig.load = function() {
                         }
                     }
                 } while(token = iterator.stepForward());
-                
+    
                 return null;
             };
-            
+
             this._readTagBackward = function(iterator) {
                 var token = iterator.getCurrentToken();
                 if (!token)
                     return null;
-                    
+        
                 var value = "";
                 var end;
-        
+
                 do {
                     if (token.type.lastIndexOf("meta.tag", 0) === 0) {
                         if (!end) {
@@ -2117,13 +2117,13 @@ Twig.load = function() {
                         }
                     }
                 } while(token = iterator.stepBackward());
-                
+    
                 return null;
             };
-            
+
             this._pop = function(stack, tag) {
                 while (stack.length) {
-                    
+        
                     var top = stack[stack.length-1];
                     if (!tag || top.tagName == tag.tagName) {
                         return stack.pop();
@@ -2139,17 +2139,17 @@ Twig.load = function() {
                     }
                 }
             };
-            
+
             this.getFoldWidgetRange = function(session, foldStyle, row) {
                 var firstTag = this._getFirstTagInLine(session, row);
-                
+    
                 if (!firstTag.match)
                     return null;
-                
+    
                 var isBackward = firstTag.closing || firstTag.selfClosing;
                 var stack = [];
                 var tag;
-                
+    
                 if (!isBackward) {
                     var iterator = new TokenIterator(session, row, firstTag.column);
                     var start = {
@@ -2165,7 +2165,7 @@ Twig.load = function() {
                             } else
                                 continue;
                         }
-                        
+            
                         if (tag.closing) {
                             this._pop(stack, tag);
                             if (stack.length == 0)
@@ -2182,7 +2182,7 @@ Twig.load = function() {
                         row: row,
                         column: firstTag.column
                     };
-                    
+        
                     while (tag = this._readTagBackward(iterator)) {
                         if (tag.selfClosing) {
                             if (!stack.length) {
@@ -2192,7 +2192,7 @@ Twig.load = function() {
                             } else
                                 continue;
                         }
-                        
+            
                         if (!tag.closing) {
                             this._pop(stack, tag);
                             if (stack.length == 0) {
@@ -2205,13 +2205,13 @@ Twig.load = function() {
                         }
                     }
                 }
-                
+    
             };
-        
+
         }).call(FoldMode.prototype);
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

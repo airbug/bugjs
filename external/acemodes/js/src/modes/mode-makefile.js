@@ -61,49 +61,49 @@ Makefile.load = function() {
          *
          *
          * ***** END LICENSE BLOCK ***** */
-        
+
         ace.define('ace/mode/makefile', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/makefile_highlight_rules', 'ace/mode/folding/coffee'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextMode = require("./text").Mode;
         var Tokenizer = require("../tokenizer").Tokenizer;
         var MakefileHighlightRules = require("./makefile_highlight_rules").MakefileHighlightRules;
         var FoldMode = require("./folding/coffee").FoldMode;
-        
+
         var Mode = function() {
             var highlighter = new MakefileHighlightRules();
             this.foldingRules = new FoldMode();
-            
+
             this.$tokenizer = new Tokenizer(highlighter.getRules());
             this.$keywordList = highlighter.$keywordList;
         };
         oop.inherits(Mode, TextMode);
-        
+
         (function() {
-               
-            this.lineCommentStart = "#";    
+   
+            this.lineCommentStart = "#";
             this.$indentWithTabs = true;
-            
+
         }).call(Mode.prototype);
-        
+
         exports.Mode = Mode;
         });ace.define('ace/mode/makefile_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text_highlight_rules', 'ace/mode/sh_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var ShHighlightFile = require("./sh_highlight_rules");
-        
+
         var MakefileHighlightRules = function() {
-        
+
             var keywordMapper = this.createKeywordMapper({
                 "keyword": ShHighlightFile.reservedKeywords,
                 "support.function.builtin": ShHighlightFile.languageConstructs,
                 "invalid.deprecated": "debugger"
             }, "string");
-        
+
             this.$rules = 
                 {
             "start": [
@@ -153,27 +153,27 @@ Makefile.load = function() {
                 }
             ]
         }
-        
+
         };
-        
+
         oop.inherits(MakefileHighlightRules, TextHighlightRules);
-        
+
         exports.MakefileHighlightRules = MakefileHighlightRules;
         });
-        
+
         ace.define('ace/mode/sh_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var reservedKeywords = exports.reservedKeywords = (
                 '!|{|}|case|do|done|elif|else|'+
                 'esac|fi|for|if|in|then|until|while|'+
                 '&|;|export|local|read|typeset|unset|'+
                 'elif|select|set'
             );
-        
+
         var languageConstructs = exports.languageConstructs = (
             '[|]|alias|bg|bind|break|builtin|'+
              'cd|command|compgen|complete|continue|'+
@@ -184,30 +184,30 @@ Makefile.load = function() {
              'suspend|test|times|trap|type|ulimit|'+
              'umask|unalias|wait'
         );
-        
+
         var ShHighlightRules = function() {
             var keywordMapper = this.createKeywordMapper({
                 "keyword": reservedKeywords,
                 "support.function.builtin": languageConstructs,
                 "invalid.deprecated": "debugger"
             }, "identifier");
-        
+
             var integer = "(?:(?:[1-9]\\d*)|(?:0))";
-        
+
             var fraction = "(?:\\.\\d+)";
             var intPart = "(?:\\d+)";
             var pointFloat = "(?:(?:" + intPart + "?" + fraction + ")|(?:" + intPart + "\\.))";
             var exponentFloat = "(?:(?:" + pointFloat + "|" +  intPart + ")" + ")";
             var floatNumber = "(?:" + exponentFloat + "|" + pointFloat + ")";
             var fileDescriptor = "(?:&" + intPart + ")";
-        
+
             var variableName = "[a-zA-Z][a-zA-Z0-9_]*";
             var variable = "(?:(?:\\$" + variableName + ")|(?:" + variableName + "=))";
-        
+
             var builtinVariable = "(?:\\$(?:SHLVL|\\$|\\!|\\?))";
-        
+
             var func = "(?:" + variableName + "\\s*\\(\\))";
-        
+
             this.$rules = {
                 "start" : [{
                     token : "constant",
@@ -266,56 +266,56 @@ Makefile.load = function() {
                     regex : "[\\]\\)\\}]"
                 } ]
             };
-            
+
             this.normalizeRules();
         };
-        
+
         oop.inherits(ShHighlightRules, TextHighlightRules);
-        
+
         exports.ShHighlightRules = ShHighlightRules;
         });
-        
+
         ace.define('ace/mode/folding/coffee', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/folding/fold_mode', 'ace/range'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../../lib/oop");
         var BaseFoldMode = require("./fold_mode").FoldMode;
         var Range = require("../../range").Range;
-        
+
         var FoldMode = exports.FoldMode = function() {};
         oop.inherits(FoldMode, BaseFoldMode);
-        
+
         (function() {
-        
+
             this.getFoldWidgetRange = function(session, foldStyle, row) {
                 var range = this.indentationBlock(session, row);
                 if (range)
                     return range;
-        
+
                 var re = /\S/;
                 var line = session.getLine(row);
                 var startLevel = line.search(re);
                 if (startLevel == -1 || line[startLevel] != "#")
                     return;
-        
+
                 var startColumn = line.length;
                 var maxRow = session.getLength();
                 var startRow = row;
                 var endRow = row;
-        
+
                 while (++row < maxRow) {
                     line = session.getLine(row);
                     var level = line.search(re);
-        
+
                     if (level == -1)
                         continue;
-        
+
                     if (line[level] != "#")
                         break;
-        
+
                     endRow = row;
                 }
-        
+
                 if (endRow > startRow) {
                     var endColumn = session.getLine(endRow).length;
                     return new Range(startRow, startColumn, endRow, endColumn);
@@ -328,7 +328,7 @@ Makefile.load = function() {
                 var prev = session.getLine(row - 1);
                 var prevIndent = prev.search(/\S/);
                 var nextIndent = next.search(/\S/);
-        
+
                 if (indent == -1) {
                     session.foldWidgets[row - 1] = prevIndent!= -1 && prevIndent < nextIndent ? "start" : "";
                     return "";
@@ -346,22 +346,22 @@ Makefile.load = function() {
                         return "";
                     }
                 }
-        
+
                 if (prevIndent!= -1 && prevIndent < indent)
                     session.foldWidgets[row - 1] = "start";
                 else
                     session.foldWidgets[row - 1] = "";
-        
+
                 if (indent < nextIndent)
                     return "start";
                 else
                     return "";
             };
-        
+
         }).call(FoldMode.prototype);
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

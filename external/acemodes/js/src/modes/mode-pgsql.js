@@ -56,27 +56,27 @@ Pgsql.load = function() {
          * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          *
          * ***** END LICENSE BLOCK ***** */
-        
+
         ace.define('ace/mode/pgsql', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/pgsql_highlight_rules', 'ace/range'], function(require, exports, module) {
-        
+
         var oop = require("../lib/oop");
         var TextMode = require("../mode/text").Mode;
         var Tokenizer = require("../tokenizer").Tokenizer;
         var PgsqlHighlightRules = require("./pgsql_highlight_rules").PgsqlHighlightRules;
         var Range = require("../range").Range;
-        
+
         var Mode = function() {
             var highlighter = new PgsqlHighlightRules();
-        
+
             this.$tokenizer = new Tokenizer(highlighter.getRules());
             this.$keywordList = highlighter.$keywordList;
         };
         oop.inherits(Mode, TextMode);
-        
+
         (function() {
             this.lineCommentStart = "--";
             this.blockComment = {start: "/*", end: "*/"};
-        
+
             this.getNextLineIndent = function(state, line, tab) { 
                 if (state == "start" || state == "keyword.statementEnd") {
                     return "";
@@ -84,21 +84,21 @@ Pgsql.load = function() {
                     return this.$getIndent(line); // Keep whatever indent the previous line has
                 }
             }
-        
+
         }).call(Mode.prototype);
-        
+
         exports.Mode = Mode;
         });
-        
+
         ace.define('ace/mode/pgsql_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/lib/lang', 'ace/mode/doc_comment_highlight_rules', 'ace/mode/text_highlight_rules', 'ace/mode/perl_highlight_rules', 'ace/mode/python_highlight_rules'], function(require, exports, module) {
-        
+
         var oop = require("../lib/oop");
         var lang = require("../lib/lang");
         var DocCommentHighlightRules = require("./doc_comment_highlight_rules").DocCommentHighlightRules;
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
         var PerlHighlightRules = require("./perl_highlight_rules").PerlHighlightRules;
         var PythonHighlightRules = require("./python_highlight_rules").PythonHighlightRules;
-        
+
         var PgsqlHighlightRules = function() {
             var keywords = (
                 "abort|absolute|abstime|access|aclitem|action|add|admin|after|aggregate|all|also|alter|always|" +
@@ -142,8 +142,8 @@ Pgsql.load = function() {
                 "with|without|work|wrapper|write|xid|xml|xmlattributes|xmlconcat|xmlelement|xmlexists|" +
                 "xmlforest|xmlparse|xmlpi|xmlroot|xmlserialize|year|yes|zone"
             );
-        
-        
+
+
             var builtinFunctions = (
                 "RI_FKey_cascade_del|RI_FKey_cascade_upd|RI_FKey_check_ins|RI_FKey_check_upd|" +
                 "RI_FKey_noaction_del|RI_FKey_noaction_upd|RI_FKey_restrict_del|RI_FKey_restrict_upd|" +
@@ -460,13 +460,13 @@ Pgsql.load = function() {
                 "xml_out|xml_recv|xml_send|xmlagg|xmlcomment|xmlconcat2|xmlexists|xmlvalidate|xpath|" +
                 "xpath_exists"
             );
-        
+
             var keywordMapper = this.createKeywordMapper({
                 "support.function": builtinFunctions,
                 "keyword": keywords
             }, "identifier", true);
-        
-        
+
+
             var sqlRules = [{
                     token : "string", // single line string -- assume dollar strings if multi-line for now
                     regex : "['](?:(?:\\\\.)|(?:[^'\\\\]))*?[']"
@@ -496,8 +496,8 @@ Pgsql.load = function() {
                     regex : "\\s+"
                 }
             ];
-        
-        
+
+
             this.$rules = {
                 "start" : [{
                         token : "comment",
@@ -517,7 +517,7 @@ Pgsql.load = function() {
                         regex : "^\\\\[\\S]+.*$"
                     }
                 ],
-        
+
                 "statement" : [{
                         token : "comment",
                         regex : "--.*$"
@@ -547,7 +547,7 @@ Pgsql.load = function() {
                         next : "dollarStatementString"
                     }
                 ].concat(sqlRules),
-        
+
                 "dollarSql" : [{
                         token : "comment",
                         regex : "--.*$"
@@ -565,7 +565,7 @@ Pgsql.load = function() {
                         next : "dollarSqlString"
                     }
                 ].concat(sqlRules),
-        
+
                 "comment" : [{
                         token : "comment", // closing comment
                         regex : ".*?\\*\\/",
@@ -575,7 +575,7 @@ Pgsql.load = function() {
                         regex : ".+"
                     }
                 ],
-        
+
                 "commentStatement" : [{
                         token : "comment", // closing comment
                         regex : ".*?\\*\\/",
@@ -585,7 +585,7 @@ Pgsql.load = function() {
                         regex : ".+"
                     }
                 ],
-        
+
                 "commentDollarSql" : [{
                         token : "comment", // closing comment
                         regex : ".*?\\*\\/",
@@ -595,7 +595,7 @@ Pgsql.load = function() {
                         regex : ".+"
                     }
                 ],
-        
+
                 "dollarStatementString" : [{
                         token : "string", // closing dollarstring
                         regex : ".*?\\$[\\w_0-9]*\\$",
@@ -605,7 +605,7 @@ Pgsql.load = function() {
                         regex : ".+"
                     }
                 ],
-        
+
                 "dollarSqlString" : [{
                         token : "string", // closing dollarstring
                         regex : ".*?\\$[\\w_0-9]*\\$",
@@ -616,25 +616,25 @@ Pgsql.load = function() {
                     }
                 ]
             };
-        
+
             this.embedRules(DocCommentHighlightRules, "doc-", [ DocCommentHighlightRules.getEndRule("start") ]);
             this.embedRules(PerlHighlightRules, "perl-", [{token : "string", regex : "\\$perl\\$", next : "statement"}]);
             this.embedRules(PythonHighlightRules, "python-", [{token : "string", regex : "\\$python\\$", next : "statement"}]);
         };
-        
+
         oop.inherits(PgsqlHighlightRules, TextHighlightRules);
-        
+
         exports.PgsqlHighlightRules = PgsqlHighlightRules;
         });
-        
+
         ace.define('ace/mode/doc_comment_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var DocCommentHighlightRules = function() {
-        
+
             this.$rules = {
                 "start" : [ {
                     token : "comment.doc.tag",
@@ -647,9 +647,9 @@ Pgsql.load = function() {
                 }]
             };
         };
-        
+
         oop.inherits(DocCommentHighlightRules, TextHighlightRules);
-        
+
         DocCommentHighlightRules.getStartRule = function(start) {
             return {
                 token : "comment.doc", // doc comment
@@ -657,7 +657,7 @@ Pgsql.load = function() {
                 next  : start
             };
         };
-        
+
         DocCommentHighlightRules.getEndRule = function (start) {
             return {
                 token : "comment.doc", // closing comment
@@ -665,27 +665,27 @@ Pgsql.load = function() {
                 next  : start
             };
         };
-        
-        
+
+
         exports.DocCommentHighlightRules = DocCommentHighlightRules;
-        
+
         });
-        
+
         ace.define('ace/mode/perl_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var PerlHighlightRules = function() {
-        
+
             var keywords = (
                 "base|constant|continue|else|elsif|for|foreach|format|goto|if|last|local|my|next|" +
                  "no|package|parent|redo|require|scalar|sub|unless|until|while|use|vars"
             );
-        
+
             var buildinConstants = ("ARGV|ENV|INC|SIG");
-        
+
             var builtinFunctions = (
                 "getprotobynumber|getprotobyname|getservbyname|gethostbyaddr|" +
                  "gethostbyname|getservbyport|getnetbyaddr|getnetbyname|getsockname|" +
@@ -710,13 +710,13 @@ Pgsql.load = function() {
                  "eof|chr|int|ord|exp|pos|pop|sin|log|abs|oct|hex|tie|cos|vec|END|ref|" +
                  "map|die|uc|lc|do"
             );
-        
+
             var keywordMapper = this.createKeywordMapper({
                 "keyword": keywords,
                 "constant.language": buildinConstants,
                 "support.function": builtinFunctions
             }, "identifier");
-        
+
             this.$rules = {
                 "start" : [
                     {
@@ -798,30 +798,30 @@ Pgsql.load = function() {
                 ]
             };
         };
-        
+
         oop.inherits(PerlHighlightRules, TextHighlightRules);
-        
+
         exports.PerlHighlightRules = PerlHighlightRules;
         });
-        
+
         ace.define('ace/mode/python_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var PythonHighlightRules = function() {
-        
+
             var keywords = (
                 "and|as|assert|break|class|continue|def|del|elif|else|except|exec|" +
                 "finally|for|from|global|if|import|in|is|lambda|not|or|pass|print|" +
                 "raise|return|try|while|with|yield"
             );
-        
+
             var builtinConstants = (
                 "True|False|None|NotImplemented|Ellipsis|__debug__"
             );
-        
+
             var builtinFunctions = (
                 "abs|divmod|input|open|staticmethod|all|enumerate|int|ord|str|any|" +
                 "eval|isinstance|pow|sum|basestring|execfile|issubclass|print|super|" +
@@ -838,24 +838,24 @@ Pgsql.load = function() {
                 "constant.language": builtinConstants,
                 "keyword": keywords
             }, "identifier");
-        
+
             var strPre = "(?:r|u|ur|R|U|UR|Ur|uR)?";
-        
+
             var decimalInteger = "(?:(?:[1-9]\\d*)|(?:0))";
             var octInteger = "(?:0[oO]?[0-7]+)";
             var hexInteger = "(?:0[xX][\\dA-Fa-f]+)";
             var binInteger = "(?:0[bB][01]+)";
             var integer = "(?:" + decimalInteger + "|" + octInteger + "|" + hexInteger + "|" + binInteger + ")";
-        
+
             var exponent = "(?:[eE][+-]?\\d+)";
             var fraction = "(?:\\.\\d+)";
             var intPart = "(?:\\d+)";
             var pointFloat = "(?:(?:" + intPart + "?" + fraction + ")|(?:" + intPart + "\\.))";
             var exponentFloat = "(?:(?:" + pointFloat + "|" +  intPart + ")" + exponent + ")";
             var floatNumber = "(?:" + exponentFloat + "|" + pointFloat + ")";
-        
+
             var stringEscape =  "\\\\(x[0-9A-Fa-f]{2}|[0-7]{3}|[\\\\abfnrtv'\"]|U[0-9A-Fa-f]{8}|u[0-9A-Fa-f]{4})";
-        
+
             this.$rules = {
                 "start" : [ {
                     token : "comment",
@@ -954,12 +954,12 @@ Pgsql.load = function() {
                 }]
             };
         };
-        
+
         oop.inherits(PythonHighlightRules, TextHighlightRules);
-        
+
         exports.PythonHighlightRules = PythonHighlightRules;
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

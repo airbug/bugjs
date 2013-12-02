@@ -56,30 +56,30 @@ Plain_text.load = function() {
          * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          *
          * ***** END LICENSE BLOCK ***** */
-        
+
         ace.define('ace/mode/plain_text', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/text_highlight_rules', 'ace/mode/behaviour'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextMode = require("./text").Mode;
         var Tokenizer = require("../tokenizer").Tokenizer;
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
         var Behaviour = require("./behaviour").Behaviour;
-        
+
         var Mode = function() {
             this.$tokenizer = new Tokenizer(new TextHighlightRules().getRules());
             this.$behaviour = new Behaviour();
         };
-        
+
         oop.inherits(Mode, TextMode);
-        
+
         (function() {
             this.type = "text";
             this.getNextLineIndent = function(state, line, tab) {
                 return '';
             };
         }).call(Mode.prototype);
-        
+
         exports.Mode = Mode;
         });
 };

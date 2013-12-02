@@ -56,48 +56,48 @@ Matlab.load = function() {
          * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          *
          * ***** END LICENSE BLOCK ***** */
-        
+
         ace.define('ace/mode/matlab', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/matlab_highlight_rules', 'ace/range'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextMode = require("./text").Mode;
         var Tokenizer = require("../tokenizer").Tokenizer;
         var MatlabHighlightRules = require("./matlab_highlight_rules").MatlabHighlightRules;
         var Range = require("../range").Range;
-        
+
         var Mode = function() {
             this.$tokenizer = new Tokenizer(new MatlabHighlightRules().getRules());
         };
         oop.inherits(Mode, TextMode);
-        
+
         (function() {
-        
+
             this.lineCommentStart = "%";
             this.blockComment = {start: "%{", end: "%}"};
-        
+
         }).call(Mode.prototype);
-        
+
         exports.Mode = Mode;
-        
+
         });
-        
+
         ace.define('ace/mode/matlab_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var MatlabHighlightRules = function() {
-        
+
         var keywords = (
                 "break|case|catch|classdef|continue|else|elseif|end|for|function|global|if|otherwise|parfor|persistent|return|spmd|switch|try|while"
             );
-        
+
             var builtinConstants = (
                 "true|false|inf|Inf|nan|NaN|eps|pi|ans|nargin|nargout|varargin|varargout"
             );
-        
+
             var builtinFunctions = (
                 "abs|accumarray|acos(?:d|h)?|acot(?:d|h)?|acsc(?:d|h)?|actxcontrol(?:list|select)?|actxGetRunningServer|actxserver|addlistener|addpath|addpref|addtodate|"+
         		"airy|align|alim|all|allchild|alpha|alphamap|amd|ancestor|and|angle|annotation|any|area|arrayfun|asec(?:d|h)?|asin(?:d|h)?|assert|assignin|atan(?:2|d|h)?|" +
@@ -216,7 +216,7 @@ Matlab.load = function() {
                 "keyword": keywords,
                 "constant.language": builtinConstants
             }, "identifier", true);
-        
+
             this.$rules = {
                 "start" : [ {
                     token : "comment",
@@ -251,9 +251,9 @@ Matlab.load = function() {
                 } ]
             };
         };
-        
+
         oop.inherits(MatlabHighlightRules, TextHighlightRules);
-        
+
         exports.MatlabHighlightRules = MatlabHighlightRules;
         });
 };

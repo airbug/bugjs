@@ -156,33 +156,33 @@ Diff.load = function() {
         
         exports.DiffHighlightRules = DiffHighlightRules;
         });
-        
+
         ace.define('ace/mode/folding/diff', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/folding/fold_mode', 'ace/range'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../../lib/oop");
         var BaseFoldMode = require("./fold_mode").FoldMode;
         var Range = require("../../range").Range;
-        
+
         var FoldMode = exports.FoldMode = function(levels, flag) {
         	this.regExpList = levels;
         	this.flag = flag;
         	this.foldingStartMarker = RegExp("^(" + levels.join("|") + ")", this.flag);
         };
         oop.inherits(FoldMode, BaseFoldMode);
-        
+
         (function() {
             this.getFoldWidgetRange = function(session, foldStyle, row) {
                 var line = session.getLine(row);
                 var start = {row: row, column: line.length};
-        
+
                 var regList = this.regExpList;
                 for (var i = 1; i <= regList.length; i++) {
                     var re = RegExp("^(" + regList.slice(0, i).join("|") + ")", this.flag);
                     if (re.test(line))
                         break;
                 }
-        
+
                 for (var l = session.getLength(); ++row < l; ) {
                     line = session.getLine(row);
                     if (re.test(line))
@@ -192,11 +192,11 @@ Diff.load = function() {
                     return;
                 return  Range.fromPoints(start, {row: row - 1, column: line.length});
             };
-        
+
         }).call(FoldMode.prototype);
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------

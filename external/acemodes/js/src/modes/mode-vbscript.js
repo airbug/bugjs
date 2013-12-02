@@ -61,40 +61,40 @@ Vbscript.load = function() {
          *
          *
          * ***** END LICENSE BLOCK ***** */
-        
+
         ace.define('ace/mode/vbscript', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/vbscript_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextMode = require("./text").Mode;
         var Tokenizer = require("../tokenizer").Tokenizer;
         var VBScriptHighlightRules = require("./vbscript_highlight_rules").VBScriptHighlightRules;
-        
+
         var Mode = function() {
             var highlighter = new VBScriptHighlightRules();
-            
+
             this.$tokenizer = new Tokenizer(highlighter.getRules());
         };
         oop.inherits(Mode, TextMode);
-        
+
         (function() {
-               
+   
             this.lineCommentStart = ["'", "REM"];
-            
+
         }).call(Mode.prototype);
-        
+
         exports.Mode = Mode;
         });
-        
-        
+
+
         ace.define('ace/mode/vbscript_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var VBScriptHighlightRules = function() {
-        
+
             this.$rules = {
             "start": [
                 {
@@ -301,11 +301,11 @@ Vbscript.load = function() {
                 }
             ]
         }
-        
+
         };
-        
+
         oop.inherits(VBScriptHighlightRules, TextHighlightRules);
-        
+
         exports.VBScriptHighlightRules = VBScriptHighlightRules;
         });
 };

@@ -61,39 +61,39 @@ Batchfile.load = function() {
          *
          *
          * ***** END LICENSE BLOCK ***** */
-        
+
         ace.define('ace/mode/batchfile', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/batchfile_highlight_rules', 'ace/mode/folding/cstyle'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextMode = require("./text").Mode;
         var Tokenizer = require("../tokenizer").Tokenizer;
         var BatchFileHighlightRules = require("./batchfile_highlight_rules").BatchFileHighlightRules;
         var FoldMode = require("./folding/cstyle").FoldMode;
-        
+
         var Mode = function() {
             var highlighter = new BatchFileHighlightRules();
             this.foldingRules = new FoldMode();
             this.$tokenizer = new Tokenizer(highlighter.getRules());
         };
         oop.inherits(Mode, TextMode);
-        
+
         (function() {
             this.lineCommentStart = "::";
             this.blockComment = "";
         }).call(Mode.prototype);
-        
+
         exports.Mode = Mode;
         });
-        
+
         ace.define('ace/mode/batchfile_highlight_rules', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text_highlight_rules'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../lib/oop");
         var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
-        
+
         var BatchFileHighlightRules = function() {
-        
+
             this.$rules = { start: 
                [ { token: 'keyword.command.dosbatch',
                    regex: '\\b(?:append|assoc|at|attrib|break|cacls|cd|chcp|chdir|chkdsk|chkntfs|cls|cmd|color|comp|compact|convert|copy|date|del|dir|diskcomp|diskcopy|doskey|echo|endlocal|erase|fc|find|findstr|format|ftype|graftabl|help|keyb|label|md|mkdir|mode|more|move|path|pause|popd|print|prompt|pushd|rd|recover|ren|rename|replace|restore|rmdir|set|setlocal|shift|sort|start|subst|time|title|tree|type|ver|verify|vol|xcopy)\\b',
@@ -132,27 +132,27 @@ Batchfile.load = function() {
                  { token: 'constant.numeric', regex: '%~\\d+'},
                  { token: ['markup.list', 'constant.other', 'markup.list'],
                     regex: '(%)(\\w+)(%?)' }]}
-            
+
             this.normalizeRules();
         };
-        
+
         BatchFileHighlightRules.metaData = { name: 'Batch File',
               scopeName: 'source.dosbatch',
               fileTypes: [ 'bat' ] }
-        
-        
+
+
         oop.inherits(BatchFileHighlightRules, TextHighlightRules);
-        
+
         exports.BatchFileHighlightRules = BatchFileHighlightRules;
         });
-        
+
         ace.define('ace/mode/folding/cstyle', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/range', 'ace/mode/folding/fold_mode'], function(require, exports, module) {
-        
-        
+
+
         var oop = require("../../lib/oop");
         var Range = require("../../range").Range;
         var BaseFoldMode = require("./fold_mode").FoldMode;
-        
+
         var FoldMode = exports.FoldMode = function(commentRegex) {
             if (commentRegex) {
                 this.foldingStartMarker = new RegExp(
@@ -164,42 +164,42 @@ Batchfile.load = function() {
             }
         };
         oop.inherits(FoldMode, BaseFoldMode);
-        
+
         (function() {
-        
+
             this.foldingStartMarker = /(\{|\[)[^\}\]]*$|^\s*(\/\*)/;
             this.foldingStopMarker = /^[^\[\{]*(\}|\])|^[\s\*]*(\*\/)/;
-        
+
             this.getFoldWidgetRange = function(session, foldStyle, row) {
                 var line = session.getLine(row);
                 var match = line.match(this.foldingStartMarker);
                 if (match) {
                     var i = match.index;
-        
+
                     if (match[1])
                         return this.openingBracketBlock(session, match[1], row, i);
-        
+
                     return session.getCommentFoldRange(row, i + match[0].length, 1);
                 }
-        
+
                 if (foldStyle !== "markbeginend")
                     return;
-        
+
                 var match = line.match(this.foldingStopMarker);
                 if (match) {
                     var i = match.index + match[0].length;
-        
+
                     if (match[1])
                         return this.closingBracketBlock(session, match[1], row, i);
-        
+
                     return session.getCommentFoldRange(row, i, -1);
                 }
             };
-        
+
         }).call(FoldMode.prototype);
-        
+
         });
-        
+
 };
 
 //-------------------------------------------------------------------------------
