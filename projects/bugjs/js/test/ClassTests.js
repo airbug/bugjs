@@ -243,7 +243,133 @@ var classImplementTest = {
     }
 };
 bugmeta.annotate(classImplementTest).with(
-    test().name("Class implement test")
+    test().name("Class - #implement test")
+);
+
+
+/**
+ *
+ */
+var classNonImplementErrorTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.TestInterface = Interface.declare({
+            someInterfaceFunction: function() {
+
+            }
+        });
+        this.TestClass = Class.extend(Obj, {
+            someFunction: function() {
+
+            }
+        });
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        var _this = this;
+        test.assertThrows(function() {
+            Class.implement(_this.TestClass, _this.TestInterface);
+        }, "Assert implementing an interfaces that a Class does not implement throws an error");
+    }
+};
+bugmeta.annotate(classNonImplementErrorTest).with(
+    test().name("Class - non implement Error test")
+);
+
+
+/**
+ *
+ */
+var classImplementTwiceErrorTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.TestInterface = Interface.declare({
+            someInterfaceFunction: function() {
+
+            }
+        });
+        this.TestClass = Class.extend(Obj, {
+            someFunction: function() {
+
+            },
+            someInterfaceFunction: function() {
+
+            }
+        });
+        Class.implement(this.TestClass, this.TestInterface);
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        var _this = this;
+        test.assertThrows(function() {
+            Class.implement(_this.TestClass, _this.TestInterface);
+        }, "Assert implementing an interface twice throws an error");
+    }
+};
+bugmeta.annotate(classImplementTwiceErrorTest).with(
+    test().name("Class - implement twice Error test")
+);
+
+/**
+ *
+ */
+var classImplementExtendedInterfaceNoErrorTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.TestInterface = Interface.declare({
+            someInterfaceFunction: function() {
+
+            }
+        });
+        this.TestSubInterface = Interface.extend(this.TestInterface, {
+            someOtherInterfaceFunction: function() {
+
+            }
+        });
+        this.TestClass = Class.extend(Obj, {
+            someFunction: function() {
+
+            },
+            someInterfaceFunction: function() {
+
+            },
+            someOtherInterfaceFunction: function() {
+
+            }
+        });
+        Class.implement(this.TestClass, this.TestInterface);
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        var _this = this;
+        test.assertNotThrows(function() {
+            Class.implement(_this.TestClass, _this.TestSubInterface);
+        }, "Assert implementing a sub interface of an already implemented interface does not throw an error");
+    }
+};
+bugmeta.annotate(classImplementExtendedInterfaceNoErrorTest).with(
+    test().name("Class - implement extended interface of already implemented interfaces does not error test")
 );
 
 
@@ -300,6 +426,72 @@ var classDoesImplementTest = {
 bugmeta.annotate(classDoesImplementTest).with(
     test().name("Class doesImplement test")
 );
+
+
+/**
+ *
+ */
+var classDoesImplementExtendedInterfaceTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.TestInterface = Interface.declare({
+            someInterfaceFunction: function() {
+
+            }
+        });
+        this.TestSubInterface = Interface.extend(this.TestInterface, {
+            someOtherInterfaceFunction: function() {
+
+            }
+        });
+        this.TestClass = Class.extend(Obj, {
+            someInterfaceFunction: function() {
+
+            },
+            someOtherInterfaceFunction: function() {
+
+            },
+            someFunction: function() {
+
+            }
+        });
+        Class.implement(this.TestClass, this.TestSubInterface);
+        this.instance = new this.TestClass();
+        this.valuesThatDoNotImplement = [
+            {},
+            [],
+            function() {},
+            "some string",
+            12345,
+            null,
+            undefined,
+            0
+        ];
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        test.assertEqual(Class.doesImplement(this.instance, this.TestInterface), true,
+            "Assert that and instance of our TestClass does implement the TestInterface");
+        test.assertEqual(Class.doesImplement(this.instance, this.TestSubInterface), true,
+            "Assert that and instance of our TestClass does implement the TestSubInterface");
+        var _this = this;
+        this.valuesThatDoNotImplement.forEach(function(value) {
+            test.assertEqual(Class.doesImplement(value, _this.TestInterface), false,
+                "Assert that the value '" + value + "' does not implement the test interface");
+        });
+    }
+};
+bugmeta.annotate(classDoesImplementExtendedInterfaceTest).with(
+    test().name("Class - #doesImplement extended Interface test")
+);
+
 
 /**
  *

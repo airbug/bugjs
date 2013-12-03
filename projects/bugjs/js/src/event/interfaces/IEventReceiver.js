@@ -45,17 +45,18 @@ var IEventReceiver = Interface.declare({
     setParentPropagator: function(parentPropagator) {},
 
     /**
-     * @param {(string | Array.<string>)} eventType
-     * @param {function(Event)} listenerFunction
-     * @param {?Object=} listenerContext (optional)
+     * @param {(string | Array.<string>)} eventTypes
+     * @param {function(Event)=} listenerFunction
+     * @param {(Object | boolean)=} listenerContext
      * @param {boolean=} once
+     * @return {(undefined | EventQueryBuilder)}
      */
-    addEventListener: function(eventType, listenerFunction, listenerContext, once) {},
+    addEventListener: function(eventTypes, listenerFunction, listenerContext, once) {},
 
     /**
      * @param {string} eventType
      * @param {function(Event)} listenerFunction
-     * @param {?Object} listenerContext (optional)
+     * @param {Object=} listenerContext
      */
     hasEventListener: function(eventType, listenerFunction, listenerContext) {},
 
@@ -67,7 +68,7 @@ var IEventReceiver = Interface.declare({
     /**
      * @param {string} eventType
      * @param {function(Event)} listenerFunction
-     * @param {Object} listenerContext
+     * @param {Object=} listenerContext
      */
     removeEventListener: function(eventType, listenerFunction, listenerContext) {}
 });

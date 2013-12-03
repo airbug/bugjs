@@ -38,7 +38,7 @@ var TypeUtil        = bugpack.require('TypeUtil');
 //-------------------------------------------------------------------------------
 
 /**
- * @constructor
+ * @class
  * @implements {IClone}
  * @implements {IEquals}
  * @implements {IHashCode}
@@ -102,7 +102,7 @@ var Obj = Class.declare({
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {boolean} deep
+     * @param {boolean=} deep
      * @return {*}
      */
     clone: function(deep) {
@@ -360,9 +360,17 @@ Obj.hasProperty = function(object, propertyName) {
     return Obj.hasOwnProperty.call(object, propertyName)
 };
 
-Obj.getProperties = function() {
-    //TODO BRN: Test for Object.prototype.keys. If it exists, then use it, otherwise, use our own function
-
+/**
+ * @static
+ * @param {Object} object
+ * @returns {Array.<string>}
+ */
+Obj.getProperties = function(object) {
+    var propertyArray = [];
+    Obj.forIn(object, function(propertyName) {
+        propertyArray.push(propertyName);
+    });
+    return propertyArray;
 };
 
 /**

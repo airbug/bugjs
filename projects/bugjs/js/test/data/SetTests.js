@@ -151,7 +151,9 @@ var setAddTest = {
     //-------------------------------------------------------------------------------
 
     setup: function() {
-        this.set = new Set();
+        this.testValue1     = "value1";
+        this.testValue2     = "value2";
+        this.set            = new Set();
     },
 
 
@@ -159,18 +161,18 @@ var setAddTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
-        var result1 = this.set.add("value1");
-        test.assertTrue(this.set.contains("value1"),
+        var result1 = this.set.add(this.testValue1);
+        test.assertTrue(this.set.contains(this.testValue1),
             "Assert first item added to the set is contained within the set.");
         test.assertEqual(this.set.getCount(), 1,
             "Assert count is 1 after adding 1 item.");
         test.assertTrue(result1,
             "Assert that true was returned when adding value1");
 
-        var result2 = this.set.add("value2");
-        test.assertTrue(this.set.contains("value1"),
+        var result2 = this.set.add(this.testValue2);
+        test.assertTrue(this.set.contains(this.testValue1),
             "Assert first item added to the list is still contained within the set after adding a second item.");
-        test.assertTrue(this.set.contains("value2"),
+        test.assertTrue(this.set.contains(this.testValue2),
             "Assert second item added to the set is contained within the set.");
         test.assertEqual(this.set.getCount(), 2,
             "Assert count is 2 after adding 2 items.");

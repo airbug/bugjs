@@ -96,22 +96,26 @@ var collectionAddTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
-        this.collection.add('value1');
+        var result1 = this.collection.add('value1');
         test.assertEqual(this.collection.getCount(), 1, "Assert count value is incremented after adding an item to the " +
             "collection");
         test.assertEqual(this.collection.contains('value1'), true, "Assert contains function indicates that the collection " +
             "contains the added value.");
+        test.assertTrue(result1,
+            "Assert Collection#add returned true");
     
-        this.collection.add('value2');
+        var result2 = this.collection.add('value2');
         test.assertEqual(this.collection.getCount(), 2, "Assert count value is incremented after adding second item to the " +
             "collection");
         test.assertEqual(this.collection.contains('value1'), true, "Assert contains function indicates that the collection " +
             "contains the first added value.");
         test.assertEqual(this.collection.contains('value2'), true, "Assert contains function indicates that the collection " +
             "contains the second added value.");
+        test.assertTrue(result2,
+            "Assert Collection#add returned true");
 
 
-        this.collection.add('value3');
+        var result3 = this.collection.add('value3');
         test.assertEqual(this.collection.getCount(), 3, "Assert count value is incremented after adding third item to the " +
             "collection");
         test.assertEqual(this.collection.contains('value1'), true, "Assert contains function indicates that the collection " +
@@ -120,6 +124,8 @@ var collectionAddTest = {
             "contains the second added value.");
         test.assertEqual(this.collection.contains('value3'), true, "Assert contains function indicates that the collection " +
             "contains the third added value.");
+        test.assertTrue(result3,
+            "Assert Collection#add returned true");
     }
 };
 bugmeta.annotate(collectionAddTest).with(
@@ -129,7 +135,7 @@ bugmeta.annotate(collectionAddTest).with(
 /**
  *
  */
-var collectionMergeTest = {
+var collectionAddAllTest = {
 
     // Setup Test
     //-------------------------------------------------------------------------------
@@ -144,20 +150,20 @@ var collectionMergeTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
-        this.collectionOne.merge(this.collectionTwo);
-        test.assertEqual(this.collectionOne.getCount(), 6, "Assert count value is incremented correctly after merging another item to the ");
-        test.assertEqual(this.collectionOne.contains('Chewbacca'), true, "Assert contains function indicates that the collection " +
-            "contains the added value.");
-        test.assertEqual(this.collectionOne.contains('R2D2'), true, "Assert contains function indicates that the collection " +
-            "contains the added value.");
-        test.assertEqual(this.collectionOne.contains('C-3PO'), true, "Assert contains function indicates that the collection " +
-            "contains the added value.");
+        this.collectionOne.addAll(this.collectionTwo);
+        test.assertEqual(this.collectionOne.getCount(), 6,
+            "Assert count value is incremented correctly after merging another item to the ");
+        test.assertEqual(this.collectionOne.contains('Chewbacca'), true,
+            "Assert contains function indicates that the collection contains the added value.");
+        test.assertEqual(this.collectionOne.contains('R2D2'), true,
+            "Assert contains function indicates that the collection contains the added value.");
+        test.assertEqual(this.collectionOne.contains('C-3PO'), true,
+            "Assert contains function indicates that the collection contains the added value.");
     }
 };
-bugmeta.annotate(collectionMergeTest).with(
-    test().name("Collection merge test")
+bugmeta.annotate(collectionAddAllTest).with(
+    test().name("Collection - #addAll test")
 );
-
 
 /**
  *

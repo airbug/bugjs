@@ -13,6 +13,7 @@
 //@Require('Class')
 //@Require('Collection')
 //@Require('HashTable')
+//@Require('IMap')
 //@Require('IObjectable')
 //@Require('Obj')
 //@Require('TypeUtil')
@@ -32,6 +33,7 @@ var bugpack         = require('bugpack').context();
 var Class           = bugpack.require('Class');
 var Collection      = bugpack.require('Collection');
 var HashTable       = bugpack.require('HashTable');
+var IMap            = bugpack.require('IMap');
 var IObjectable     = bugpack.require('IObjectable');
 var Obj             = bugpack.require('Obj');
 var TypeUtil        = bugpack.require('TypeUtil');
@@ -41,13 +43,20 @@ var TypeUtil        = bugpack.require('TypeUtil');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var Map = Class.extend(Obj, {
+var Map = Class.extend(Obj, /** @lends {Map.prototype} */ {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    /**
+     * @constructs
+     * @param {Map.<K, V>} map
+     * @extends {Obj}
+     * @implements {IMap.<K,V>}
+     * @template K, V
+     */
+    _constructor: function(map) {
 
         this._super();
 
@@ -61,6 +70,10 @@ var Map = Class.extend(Obj, {
          * @type {HashTable}
          */
         this.hashTable = new HashTable();
+
+        if (map) {
+            this.putAll(map);
+        }
     },
 
 
@@ -69,54 +82,36 @@ var Map = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {number}
+     * @return {HashTable}
      */
-    getCount: function() {
-        return this.hashTable.getCount();
+    getHashTable: function() {
+        return this.hashTable;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Object Implementation
+    // Obj Methods
     //-------------------------------------------------------------------------------
 
     /**
      * @param {boolean=} deep
-     * @return {Map.<*, *>}
+     * @return {Map.<K, V>}
      */
     clone: function(deep) {
-
-        //TODO BRN: Handle "deep" cloning
-
         var cloneMap = new Map();
-        cloneMap.putAll(this);
+        if (deep) {
+            this.forEach(function(value, key) {
+                cloneMap.put(Obj.clone(key, deep), Obj.clone(value, deep));
+            });
+        } else {
+            cloneMap.putAll(this);
+        }
         return cloneMap;
     },
 
 
     //-------------------------------------------------------------------------------
-    // IObjectable Implementation
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @returns {Object}
-     */
-    toObject: function() {
-        var _this   = this;
-        var object  = {};
-        var keys    = this.getKeyArray();
-        keys.forEach(function(key){
-            if(!TypeUtil.isString(key) && key.toString){
-                key = key.toString(); //NOTE: These keys may not be unique.
-            }
-            object[key] = _this.get(key);
-        });
-        return object;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Class methods
+    // IMap Implementation
     //-------------------------------------------------------------------------------
 
     /**
@@ -143,7 +138,7 @@ var Map = Class.extend(Obj, {
     },
 
     /**
-     * @param {function(*)} func
+     * @param {function(V, K)} func
      */
     forEach: function(func) {
         this.hashTable.forEach(func);
@@ -151,21 +146,28 @@ var Map = Class.extend(Obj, {
 
     /**
      * @param {*} key
-     * @return {*} Returns undefined if no value is found.
+     * @return {V} Returns undefined if no value is found.
      */
     get: function(key) {
         return this.hashTable.get(key);
     },
 
     /**
-     * @return {Array<*>}
+     * @return {number}
+     */
+    getCount: function() {
+        return this.hashTable.getCount();
+    },
+
+    /**
+     * @return {Array.<K>}
      */
     getKeyArray: function() {
         return this.hashTable.getKeyArray();
     },
 
     /**
-     * @return {Collection}
+     * @return {ICollection.<K>}
      */
     getKeyCollection: function() {
         var keyCollection = new Collection();
@@ -176,14 +178,14 @@ var Map = Class.extend(Obj, {
     },
 
     /**
-     * @return {Array<*>}
+     * @return {Array.<V>}
      */
     getValueArray: function() {
         return this.hashTable.getValueArray();
     },
 
     /**
-     * @return {Collection}
+     * @return {ICollection.<V>}
      */
     getValueCollection: function() {
         var valueCollection = new Collection();
@@ -201,41 +203,64 @@ var Map = Class.extend(Obj, {
     },
 
     /**
-     * @param {*} key
-     * @param {*} value
-     * @return {*}
+     * @param {K} key
+     * @param {V} value
+     * @return {V}
      */
     put: function(key, value) {
         return this.hashTable.put(key, value);
     },
 
     /**
-     * @param {Map} map
+     * @param {IMap.<K, V>} map
      */
     putAll: function(map) {
-        if (Class.doesExtend(map, Map)) {
+        var _this = this;
+        if (Class.doesImplement(map, IMap)) {
             var keys = map.getKeyArray();
             keys.forEach(function(key) {
                 var value = map.get(key);
-                this.put(key, value);
+                _this.put(key, value);
             });
         }
     },
 
     /**
      * @param {*} key
-     * @return {*}
+     * @return {V}
      */
     remove: function(key) {
         return this.hashTable.remove(key);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // IObjectable Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @returns {Object}
+     */
+    toObject: function() {
+        var _this   = this;
+        var object  = {};
+        var keys    = this.getKeyArray();
+        keys.forEach(function(key){
+            if(!TypeUtil.isString(key) && key.toString){
+                key = key.toString(); //NOTE: These keys may not be unique.
+            }
+            object[key] = _this.get(key);
+        });
+        return object;
     }
 });
 
 
 //-------------------------------------------------------------------------------
-// Interfaces
+// Implement Interfaces
 //-------------------------------------------------------------------------------
 
+Class.implement(Map, IMap);
 Class.implement(Map, IObjectable);
 
 

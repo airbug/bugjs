@@ -75,8 +75,10 @@ var EventQueryListener = Class.extend(EventListener, {
      * @param {Event} event
      */
     hearEvent: function(event) {
-        var result = this.eventQuery.run
-        this.listenerFunction.call(this.listenerContext, event);
+        var result = this.eventQuery.run(event);
+        if (result) {
+            this.getListenerFunction().call(this.getListenerContext(), event);
+        }
     }
 });
 

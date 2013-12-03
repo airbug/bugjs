@@ -25,6 +25,9 @@ var TypeUtil    = bugpack.require('TypeUtil');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @constructor
+ */
 var Interface   = function() {};
 
 var InterfaceStatic = {
@@ -75,14 +78,10 @@ Interface.declare = function(declaration) {
 Interface.extend = function(_interface, declaration) {
     var prototype = new _interface();
     for (var name in declaration) {
-        if (!TypeUtil.isFunction(prototype[name])) {
-            if (TypeUtil.isFunction(declaration[name])) {
-                prototype[name] = declaration[name];
-            } else {
-                throw new Error("Interface can only declare functions");
-            }
+        if (TypeUtil.isFunction(declaration[name])) {
+            prototype[name] = declaration[name];
         } else {
-            throw new Error("Function '" + name + "' is already declared in sub-interface " + _interface);
+            throw new Error("Interface can only declare functions");
         }
     }
     var newInterface = function() {};

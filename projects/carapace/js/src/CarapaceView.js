@@ -16,6 +16,8 @@
 //@Require('List')
 //@Require('Obj')
 //@Require('Proxy')
+//@Require('RemovePropertyChange')
+//@Require('SetPropertyChange')
 //@Require('backbone.Backbone')
 //@Require('carapace.IDisposable')
 
@@ -24,25 +26,27 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var Event           = bugpack.require('Event');
-var EventDispatcher = bugpack.require('EventDispatcher');
-var HashUtil        = bugpack.require('HashUtil');
-var IdGenerator     = bugpack.require('IdGenerator');
-var IEquals         = bugpack.require('IEquals');
-var IHashCode       = bugpack.require('IHashCode');
-var List            = bugpack.require('List');
-var Obj             = bugpack.require('Obj');
-var Proxy           = bugpack.require('Proxy');
-var Backbone        = bugpack.require('backbone.Backbone');
-var IDisposable     = bugpack.require('carapace.IDisposable');
+var Class                   = bugpack.require('Class');
+var Event                   = bugpack.require('Event');
+var EventDispatcher         = bugpack.require('EventDispatcher');
+var HashUtil                = bugpack.require('HashUtil');
+var IdGenerator             = bugpack.require('IdGenerator');
+var IEquals                 = bugpack.require('IEquals');
+var IHashCode               = bugpack.require('IHashCode');
+var List                    = bugpack.require('List');
+var Obj                     = bugpack.require('Obj');
+var Proxy                   = bugpack.require('Proxy');
+var RemovePropertyChange    = bugpack.require('RemovePropertyChange');
+var SetPropertyChange       = bugpack.require('SetPropertyChange');
+var Backbone                = bugpack.require('backbone.Backbone');
+var IDisposable             = bugpack.require('carapace.IDisposable');
 
 
 //-------------------------------------------------------------------------------
@@ -52,7 +56,7 @@ var IDisposable     = bugpack.require('carapace.IDisposable');
 //TODO BRN: Remove the dependency upon Backbone and create our own simple MVC framework instead
 
 /**
- * @constructor
+ * @class
  */
 var CarapaceView = Class.adapt(Backbone.View, {
 
@@ -321,6 +325,10 @@ var CarapaceView = Class.adapt(Backbone.View, {
      */
     deinitializeView: function() {
         this.eventDispatcher.removeAllListeners();
+        if (this.model) {
+            this.model.unobserve(RemovePropertyChange.CHANGE_TYPE, "*", this.observeModelRemovePropertyChange, this);
+            this.model.unobserve(SetPropertyChange.CHANGE_TYPE, "*", this.observeModelSetPropertyChange, this);
+        }
     },
 
     /**
@@ -351,7 +359,8 @@ var CarapaceView = Class.adapt(Backbone.View, {
      */
     initializeView: function() {
         if (this.model) {
-            this.model.bind('change', this.handleModelChange, this);
+            this.model.observe(RemovePropertyChange.CHANGE_TYPE, "*", this.observeModelRemovePropertyChange, this);
+            this.model.observe(SetPropertyChange.CHANGE_TYPE, "*", this.observeModelSetPropertyChange, this);
         }
     },
 
@@ -368,18 +377,18 @@ var CarapaceView = Class.adapt(Backbone.View, {
      * @protected
      */
     renderModel: function() {
-        var changedAttributes = this.model.changedAttributes();
-        for (var attributeName in changedAttributes) {
-            this.renderModelAttribute(attributeName, changedAttributes[attributeName]);
-        }
+        var _this = this;
+        this.model.forIn(function(propertyName, propertyValue) {
+            _this.renderModelProperty(propertyName, propertyValue);
+        });
     },
 
     /**
      * @protected
-     * @param {string} attributeName
-     * @param {string} attributeValue
+     * @param {string} propertyName
+     * @param {*} propertyValue
      */
-    renderModelAttribute: function(attributeName, attributeValue) {
+    renderModelProperty: function(propertyName, propertyValue) {
 
     },
 
@@ -419,14 +428,23 @@ var CarapaceView = Class.adapt(Backbone.View, {
 
 
     //-------------------------------------------------------------------------------
-    // Model Event Hanlders
+    // Observers
     //-------------------------------------------------------------------------------
 
     /**
-     * @protected
+     * @private
+     * @param {RemovePropertyChange} change
      */
-    handleModelChange: function() {
-        this.renderView();
+    observeModelRemovePropertyChange: function(change) {
+        this.renderModelProperty(change.getObjectPath());
+    },
+
+    /**
+     * @private
+     * @param {SetPropertyChange} change
+     */
+    observeModelSetPropertyChange: function(change) {
+        this.renderModelProperty(change.getObjectPath(), change.getPropertyValue());
     }
 });
 

@@ -34,7 +34,7 @@ var QueryBuilder            = bugpack.require('QueryBuilder');
 //-------------------------------------------------------------------------------
 
 /**
- * @constructor
+ * @class
  * @extends {QueryBuilder}
  */
 var EventQueryBuilder = Class.extend(QueryBuilder, {
@@ -100,12 +100,9 @@ var EventQueryBuilder = Class.extend(QueryBuilder, {
      * @param {?boolean=} once (optional)
      */
     call: function(listenerFunction, listenerContext, once) {
-        var _this               = this;
         var eventQuery          = this.build();
         var eventQueryListener  = new EventQueryListener(listenerFunction, listenerContext, once, eventQuery);
-        this.eventTypes.forEach(function(eventType) {
-            _this.eventReceiver.attachEventListener(eventType, eventQueryListener);
-        });
+        this.eventReceiver.attachEventListenerToTypes(this.eventTypes, eventQueryListener);
     },
 
     /**

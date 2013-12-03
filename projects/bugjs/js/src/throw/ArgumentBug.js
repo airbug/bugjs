@@ -37,9 +37,6 @@ var ArgumentBug = Class.extend(Bug, {
 
     _constructor: function(type, argName, argValue, message, causes) {
 
-        this._super(type, {}, message, causes);
-
-
         //-------------------------------------------------------------------------------
         // Private Properties
         //-------------------------------------------------------------------------------
@@ -55,6 +52,8 @@ var ArgumentBug = Class.extend(Bug, {
          * @type {*}
          */
         this.argValue   = argValue;
+
+        this._super(type, {}, message, causes);
     },
 
 

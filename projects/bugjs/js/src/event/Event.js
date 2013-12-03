@@ -12,15 +12,15 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var Obj =   bugpack.require('Obj');
+var Class       = bugpack.require('Class');
+var Obj         = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
@@ -28,10 +28,10 @@ var Obj =   bugpack.require('Obj');
 //-------------------------------------------------------------------------------
 
 /**
- * @constructor
+ * @class
  * @extends {Obj}
  */
-var Event = Class.extend(Obj, {
+var Event = Class.extend(Obj, /** @lends {Event.prototype} */{
 
     //-------------------------------------------------------------------------------
     // Constructor

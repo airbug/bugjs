@@ -12,6 +12,8 @@
 
 //@Require('Class')
 //@Require('Collection')
+//@Require('IMap')
+//@Require('IMultiMap')
 //@Require('Map')
 
 
@@ -19,7 +21,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -28,6 +30,8 @@ var bugpack = require('bugpack').context();
 
 var Class       = bugpack.require('Class');
 var Collection  = bugpack.require('Collection');
+var IMap        = bugpack.require('IMap');
+var IMultiMap   = bugpack.require('IMultiMap');
 var Map         = bugpack.require('Map');
 
 
@@ -35,7 +39,13 @@ var Map         = bugpack.require('Map');
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var MultiMap = Class.extend(Map, {
+/**
+ * @class
+ * @extends {Map.<K, V>}
+ * @implements {IMultiMap.<K, V>}
+ * @template K, V
+ */
+var MultiMap = Class.extend(Map, /** @lends {MultiMap.prototype} */{
 
     //-------------------------------------------------------------------------------
     // Getters and Setters
@@ -55,7 +65,7 @@ var MultiMap = Class.extend(Map, {
 
     /**
      * @param {boolean=} deep
-     * @return {MultiMap}
+     * @return {MultiMap.<K, V>}
      */
     clone: function(deep) {
         var cloneMultiMap = new MultiMap();
@@ -73,7 +83,7 @@ var MultiMap = Class.extend(Map, {
      * @return {boolean}
      */
     containsValue: function(value) {
-        var valueArray = this.hashTable.getValueArray();
+        var valueArray = this.getHashTable().getValueArray();
         for (var i = 0, size = valueArray.length; i < size; i++) {
             var valueCollection = valueArray[i];
             if (valueCollection.contains(value)) {
@@ -84,100 +94,93 @@ var MultiMap = Class.extend(Map, {
     },
 
     /**
-     * @param {function(*)} func
+     * @param {function(ICollection.<V>, K)} func
      */
     forEachCollection: function(func) {
-        this.hashTable.forEach(func);
+        this.getHashTable().forEach(func);
     },
 
     /**
-     * @param {function(*)} func
+     * @param {function(V, K)} func
      */
     forEachValue: function(func) {
-        this.hashTable.forEach(function(valueCollection) {
+        this.getHashTable().forEach(function(valueCollection) {
             valueCollection.forEach(func);
         });
     },
 
     /**
+     * @override
      * @param {*} key
-     * @return {(Set.<*>|undefined)}
+     * @return {ICollection.<V>}
      */
     get: function(key) {
-        return this.hashTable.get(key);
+        return this.getHashTable().get(key);
     },
 
     /**
-     * @return {Array<*>}
-     */
-    getKeyArray: function() {
-        return this.hashTable.getKeyArray();
-    },
-
-    /**
-     * @return {Collection}
+     * @return {ICollection.<K>}
      */
     getKeyCollection: function() {
         var keyCollection = new Collection();
-        this.hashTable.getKeyArray().forEach(function(key) {
+        this.getHashTable().getKeyArray().forEach(function(key) {
             keyCollection.add(key);
         });
         return keyCollection;
     },
 
     /**
-     * @return {Array<*>}
+     * @return {Array.<V>}
      */
     getValueArray: function() {
         var valueArray = [];
-        this.hashTable.forEach(function(valueSet) {
+        this.getHashTable().forEach(function(valueSet) {
             valueArray = valueArray.concat(valueSet.getValueArray());
         });
         return valueArray;
     },
 
     /**
-     * @return {Collection}
+     * @return {ICollection.<V>}
      */
     getValueCollection: function() {
         var valueCollection = new Collection();
-        this.hashTable.forEach(function(valueSet) {
+        this.getHashTable().forEach(function(valueSet) {
             valueCollection.addAll(valueSet);
         });
         return valueCollection;
     },
 
     /**
-     * @param {*} key
-     * @param {*} value
-     * @return {*}
+     * @param {K} key
+     * @param {V} value
+     * @return {V}
      */
     put: function(key, value) {
-        var valueCollection = this.hashTable.get(key);
+        var valueCollection = this.getHashTable().get(key);
         if (!valueCollection) {
             valueCollection = new Collection();
-            this.hashTable.put(key, valueCollection);
+            this.getHashTable().put(key, valueCollection);
         }
         valueCollection.add(value);
         return value;
     },
 
     /**
-     * @param {(Map|MultiMap)} map
+     * @param {IMap.<K, V>} map
      */
     putAll: function(map) {
-        if (Class.doesExtend(map, Map)) {
-            var keys = map.getKeyArray();
-            keys.forEach(function(key) {
+        var _this = this;
+        if (Class.doesImplement(map, IMap)) {
+            map.getKeyArray().forEach(function(key) {
                 var value = map.get(key);
-                this.put(key, value);
+                _this.put(key, value);
             });
-        } else if (Class.doesExtend(map, MultiMap)) {
-            var keys = map.getKeyArray();
-            keys.forEach(function(key) {
+        } else if (Class.doesImplement(map, IMultiMap)) {
+            map.getKeyArray().forEach(function(key) {
                 var valueCollection = map.get(key);
                 valueCollection.forEach(function(value) {
-                    this.put(key, value);
+                    _this.put(key, value);
                 });
             });
         }
@@ -186,10 +189,10 @@ var MultiMap = Class.extend(Map, {
     /**
      * Removes all values under the key
      * @param {*} key
-     * @return {*}
+     * @return {ICollection.<V>}
      */
     remove: function(key) {
-        return this.hashTable.remove(key);
+        return this.getHashTable().remove(key);
     },
 
     /**
@@ -200,16 +203,23 @@ var MultiMap = Class.extend(Map, {
      */
     removeKeyValuePair: function(key, value) {
         var result = false;
-        var valueCollection = this.hashTable.get(key);
+        var valueCollection = this.getHashTable().get(key);
         if (valueCollection) {
             result = valueCollection.remove(value);
             if (result && valueCollection.isEmpty()) {
-                this.hashTable.remove(valueCollection);
+                this.getHashTable().remove(valueCollection);
             }
         }
         return result;
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Implement Interfaces
+//-------------------------------------------------------------------------------
+
+Class.implement(MultiMap, IMultiMap);
 
 
 //-------------------------------------------------------------------------------

@@ -15,6 +15,7 @@
 
 //@Require('Class')
 //@Require('Collection')
+//@Require('ISet')
 //@Require('Obj')
 
 
@@ -22,7 +23,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -31,6 +32,7 @@ var bugpack = require('bugpack').context();
 
 var Class           = bugpack.require('Class');
 var Collection      = bugpack.require('Collection');
+var ISet            = bugpack.require('ISet');
 var Obj             = bugpack.require('Obj');
 
 
@@ -38,42 +40,25 @@ var Obj             = bugpack.require('Obj');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Collection.<D>}
+ * @implements {ISet.<D>}
+ * @template D
+ */
 var Set = Class.extend(Collection, {
 
     //-------------------------------------------------------------------------------
-    // Constructor
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {(Collection.<*> | Array.<*>)} items
-     */
-    _constructor: function(items) {
-
-        this._super(items);
-
-
-        //-------------------------------------------------------------------------------
-        // Private Properties
-        //-------------------------------------------------------------------------------
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
-
-
-    //-------------------------------------------------------------------------------
-    // Object Implementation
+    // Obj Methods
     //-------------------------------------------------------------------------------
 
     /**
      * @param {boolean} deep
-     * @return {Set}
+     * @return {Set.<D>}
      */
     clone: function(deep) {
         var cloneSet = new Set();
-        if(deep){
+        if (deep) {
             this.forEach(function(item){
                 cloneSet.add(Obj.clone(item, true));
             });
@@ -85,21 +70,29 @@ var Set = Class.extend(Collection, {
 
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Collection Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {*} value
+     * @override
+     * @param {D} value
      * @return {boolean}
      */
     add: function(value) {
-        if (!this.hashStore.hasValue(value)) {
-            this.hashStore.addValue(value);
+        if (!this.getHashStore().hasValue(value)) {
+            this.getHashStore().addValue(value);
             return true;
         }
         return false;
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Implement Interfaces
+//-------------------------------------------------------------------------------
+
+Class.implement(Set, ISet);
 
 
 //-------------------------------------------------------------------------------

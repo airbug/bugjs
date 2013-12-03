@@ -195,7 +195,7 @@ var Throwable = Class.extend(Obj, {
      */
     buildStackTrace: function() {
         var _this = this;
-        if (this.primaryStack) {
+        if (!this.primaryStack) {
             this.primaryStack = this.generateStackTrace();
         }
         var stack = this.primaryStack + "\n";

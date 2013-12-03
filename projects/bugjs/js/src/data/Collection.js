@@ -9,10 +9,12 @@
 
 //@Export('Collection')
 
+//@Require('ArgumentBug')
 //@Require('Class')
 //@Require('CollectionIterator')
 //@Require('HashStore')
 //@Require('IArrayable')
+//@Require('ICollection')
 //@Require('IIterable')
 //@Require('Obj')
 //@Require('TypeUtil')
@@ -22,34 +24,45 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
+var ArgumentBug         = bugpack.require('ArgumentBug');
 var Class               = bugpack.require('Class');
 var CollectionIterator  = bugpack.require('CollectionIterator');
 var HashStore           = bugpack.require('HashStore');
 var IArrayable          = bugpack.require('IArrayable');
+var ICollection         = bugpack.require('ICollection');
 var IIterable           = bugpack.require('IIterable');
 var Obj                 = bugpack.require('Obj');
 var TypeUtil            = bugpack.require('TypeUtil');
 
 
 //-------------------------------------------------------------------------------
-// Declare Class
+// Class
 //-------------------------------------------------------------------------------
 
-var Collection = Class.extend(Obj, {
+/**
+ * @class
+ * @extends {Obj}
+ * @implements {IArrayable}
+ * @implements {ICollection.<C>}
+ * @implements {IIterable}
+ * @template C
+ */
+var Collection = Class.extend(Obj, /** @lends {Collection.prototype} */{
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {(Collection.<*> | Array.<*>)} items
+     * @constructs
+     * @param {(ICollection.<C> | Array.<C>)} items
      */
     _constructor: function(items) {
 
@@ -82,28 +95,10 @@ var Collection = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {number}
+     * @return {HashStore}
      */
-    getCount: function() {
-        return this.hashStore.getCount();
-    },
-
-    /**
-     * @return {Array.<*>}
-     */
-    getValueArray: function() {
-
-        //NOTE BRN: The getValueArray method of HashStore already creates a new array
-
-        return this.hashStore.getValueArray();
-    },
-
-    /**
-     * @param {*} value
-     * @return {number}
-     */
-    getValueCount: function(value) {
-        return this.hashStore.getValueCount(value);
+    getHashStore: function() {
+        return this.hashStore;
     },
 
 
@@ -121,66 +116,29 @@ var Collection = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // IIterable Implementation
+    // ICollection Implementation
     //-------------------------------------------------------------------------------
 
     /**
-     * NOTE BRN: Because of the way javascript works and the current lack of Iterator support across browsers. Iterators
-     * create a snap shot of the values in the Collection before starting the iteration process. If a value is modified
-     * in one iteration and then visited at a later time, its value in the loop is its value when the iteration was
-     * started. A values that is deleted before it has been visited WILL be visited later.
-     * Values added to the Collection over which iteration is occurring will be omitted from iteration.
-     *
-     * @return {IIterator}
-     */
-    iterator: function() {
-        return new CollectionIterator(this);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Obj Extensions
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {boolean} deep
-     * @return {Collection.<*>}
-     */
-    clone: function(deep) {
-        var cloneCollection = new Collection();
-        if (deep) {
-            this.forEach(function(item){
-                cloneCollection.add(Obj.clone(item, true));
-            });
-        } else {
-            cloneCollection.addAll(this);
-        }
-        return cloneCollection;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {*} value
+     * @param {C} value
+     * @return {boolean}
      */
     add: function(value) {
         this.hashStore.addValue(value);
+        return true;
     },
 
     /**
-     * @param {(Collection.<*>|Array.<*>)} items
+     * @param {(ICollection.<C> | Array.<C>)} items
      */
     addAll: function(items) {
-        if (Class.doesExtend(items, Collection) || TypeUtil.isArray(items)) {
+        if (Class.doesImplement(items, ICollection) || TypeUtil.isArray(items)) {
             var _this = this;
             items.forEach(function(value) {
                 _this.add(value);
             });
         } else {
-            throw new Error("'items' must be an instance of Collection or Array");
+            throw new ArgumentBug(ArgumentBug.ILLEGAL, "items", items, "parameter must implement ICollection or be an Array");
         }
     },
 
@@ -205,13 +163,13 @@ var Collection = Class.extend(Obj, {
      * If you want to check for exact equality, use the equals function.
      * Empty collections are always contained by another collection
      * e.g. Collection[0,1] containsAll Collection[] is true
-     * @param {(Collection.<*> | Array.<*>)} items
+     * @param {(ICollection.<*> | Array.<*>)} items
      * @return {boolean}
      */
     containsAll: function(items) {
-        if (Class.doesExtend(items, Collection) || TypeUtil.isArray(items)) {
+        if (Class.doesImplement(items, ICollection) || TypeUtil.isArray(items)) {
             var valueArray = items;
-            if (Class.doesExtend(items, Collection)) {
+            if (Class.doesImplement(items, ICollection)) {
                 valueArray = items.getValueArray();
             }
             for (var i = 0, size = valueArray.length; i < size; i++) {
@@ -222,24 +180,27 @@ var Collection = Class.extend(Obj, {
             }
             return true;
         } else {
-            throw new Error("'items' must be an instance of Collection or Array");
+            throw new ArgumentBug(ArgumentBug.ILLEGAL, "items", items, "parameter must implement ICollection or be an Array");
         }
     },
 
     /**
-     * @param {(Collection.<*> | Array.<*>)} items
+     * @param {(ICollection.<*> | Array.<*>)} items
      * @return {boolean}
      */
     containsEqual: function(items) {
+        var collection = undefined;
         if (TypeUtil.isArray(items)) {
-            items = new Collection(items);
+            collection = new Collection(items);
+        } else {
+            collection = items;
         }
-        if (Class.doesExtend(items, Collection)) {
-            if (items.getCount() === this.getCount()) {
+        if (Class.doesImplement(collection, ICollection)) {
+            if (collection.getCount() === this.getCount()) {
                 var collectionValueArray = this.getValueArray();
                 for (var i1 = 0, size1 = collectionValueArray.length; i1 < size1; i1++) {
                     var collectionValue = collectionValueArray[i1];
-                    if (this.getValueCount(collectionValue) !== items.getValueCount(collectionValue)) {
+                    if (this.getValueCount(collectionValue) !== collection.getValueCount(collectionValue)) {
                         return false;
                     }
                 }
@@ -247,7 +208,7 @@ var Collection = Class.extend(Obj, {
             }
             return false;
         } else {
-            throw new Error("'items' must be an instance of Collection or Array");
+            throw new ArgumentBug(ArgumentBug.ILLEGAL, "items", items, "parameter must implement ICollection or be an Array");
         }
     },
 
@@ -267,24 +228,35 @@ var Collection = Class.extend(Obj, {
     },
 
     /**
+     * @return {number}
+     */
+    getCount: function() {
+        return this.hashStore.getCount();
+    },
+
+    /**
+     * @return {Array.<C>}
+     */
+    getValueArray: function() {
+
+        //NOTE BRN: The getValueArray method of HashStore already creates a new array
+
+        return this.hashStore.getValueArray();
+    },
+
+    /**
+     * @param {*} value
+     * @return {number}
+     */
+    getValueCount: function(value) {
+        return this.hashStore.getValueCount(value);
+    },
+
+    /**
      * @return {boolean}
      */
     isEmpty: function() {
         return this.hashStore.isEmpty();
-    },
-
-    /**
-     * @param {Collection} collection
-     */
-    merge: function(collection) {
-        if (Class.doesExtend(collection, Collection)) {
-            var _this = this;
-            collection.forEach(function(value) {
-                _this.add(value);
-            });
-        } else {
-            throw new Error("collection must be an instance of Collection");
-        }
     },
 
     /**
@@ -296,26 +268,66 @@ var Collection = Class.extend(Obj, {
     },
 
     /**
-     * @param {(Collection.<*> | Array.<*>)} items
+     * @param {(ICollection.<*> | Array.<*>)} items
      */
     removeAll: function(items) {
-        if (Class.doesExtend(items, Collection) || TypeUtil.isArray(items)) {
+        if (Class.doesImplement(items, ICollection) || TypeUtil.isArray(items)) {
             var _this = this;
             items.forEach(function(value) {
                 _this.remove(value);
             });
         } else {
-            throw new Error("collection must be an instance of Collection");
+            throw new ArgumentBug(ArgumentBug.ILLEGAL, "items", items, "parameter must implement ICollection or be an Array");
         }
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // IIterable Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     * NOTE BRN: Because of the way javascript works and the current lack of Iterator support across browsers. Iterators
+     * create a snap shot of the values in the Collection before starting the iteration process. If a value is modified
+     * in one iteration and then visited at a later time, its value in the loop is its value when the iteration was
+     * started. A values that is deleted before it has been visited WILL be visited later.
+     * Values added to the Collection over which iteration is occurring will be omitted from iteration.
+     *
+     * @return {IIterator}
+     */
+    iterator: function() {
+        return new CollectionIterator(this);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Obj Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {boolean} deep
+     * @return {Collection.<C>}
+     */
+    clone: function(deep) {
+        var cloneCollection = new Collection();
+        if (deep) {
+            this.forEach(function(item){
+                cloneCollection.add(Obj.clone(item, true));
+            });
+        } else {
+            cloneCollection.addAll(this);
+        }
+        return cloneCollection;
     }
 });
 
 
 //-------------------------------------------------------------------------------
-// Interfaces
+// Implement Interfaces
 //-------------------------------------------------------------------------------
 
 Class.implement(Collection, IArrayable);
+Class.implement(Collection, ICollection);
 Class.implement(Collection, IIterable);
 
 

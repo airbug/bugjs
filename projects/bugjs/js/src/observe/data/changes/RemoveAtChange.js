@@ -2,42 +2,51 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('carapace')
+//@Export('RemoveAtChange')
 
-//@Export('CarapaceCollection')
-
+//@Require('RemoveChange')
 //@Require('Class')
-//@Require('backbone.Backbone')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =     bugpack.require('Class');
-var Backbone =  bugpack.require('backbone.Backbone');
+var RemoveChange        = bugpack.require('RemoveChange');
+var Class               = bugpack.require('Class');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var CarapaceCollection = Class.adapt(Backbone.Collection, {
+/**
+ * @class
+ * @extends {RemoveChange}
+ */
+var RemoveAtChange = Class.extend(RemoveChange, /** @lends {RemoveAtChange.prototype} */ {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(data, options) {
+    /**
+     * @constructs
+     * @param {string} objectPath
+     * @param {*} value
+     * @param {number} index
+     */
+    _constructor: function(objectPath, value, index) {
 
-        this._super(data, options);
+        this._super(objectPath, value);
+
 
         //-------------------------------------------------------------------------------
         // Private Properties
@@ -45,31 +54,41 @@ var CarapaceCollection = Class.adapt(Backbone.Collection, {
 
         /**
          * @private
-         * @type {boolean}
+         * @type {number}
          */
-        this.disposed = false;
+        this.index  = index;
     },
 
 
     //-------------------------------------------------------------------------------
-    // IDisposable Implementation
+    // Getters and Setters
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @return {number}
      */
-    dispose: function() {
-        if (!this.disposed) {
-            this.disposed = true;
-            this.unbind();
-            //TODO BRN: Reset and eject any data.
-        }
+    getIndex: function() {
+        return this.index;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Obj Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {boolean=} deep
+     * @return {RemoveAtChange}
+     */
+    clone: function(deep) {
+
+        //TODO BRN: Implement deep cloning
+
+        var cloneRemoveAtChange = new RemoveAtChange(this.getObjectPath(), this.getValue(), this.getIndex());
+        cloneRemoveAtChange.setChangingObservable(this.getChangingObservable());
+        cloneRemoveAtChange.setReportingObservable(this.getReportingObservable());
+        return cloneRemoveAtChange;
     }
-
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
 });
 
 
@@ -77,4 +96,4 @@ var CarapaceCollection = Class.adapt(Backbone.Collection, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('carapace.CarapaceCollection', CarapaceCollection);
+bugpack.export('RemoveAtChange', RemoveAtChange);

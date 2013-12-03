@@ -125,6 +125,61 @@ bugmeta.annotate(listAddTest).with(
 /**
  *
  */
+var listAddAtTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.list = new List();
+        this.value1 = "value1";
+        this.value2 = "value2";
+        this.value3 = "value3";
+        this.value4 = "value4";
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        this.list.addAt(0, this.value1);
+        test.assertEqual(this.list.getAt(0), this.value1,
+            "Assert first item added to the list is at index 0.");
+
+        this.list.addAt(1, this.value2);
+        test.assertEqual(this.list.getAt(0), this.value1,
+            "Assert first item added to the list is still at index 0 after adding a second item.");
+        test.assertEqual(this.list.getAt(1), this.value2,
+            "Assert second item added to the list is at index 1.");
+
+
+        this.list.addAt(0, this.value3);
+        test.assertEqual(this.list.getAt(0), this.value3,
+            "Assert item added to the list at index 0 is value3.");
+        test.assertEqual(this.list.getAt(1), this.value1,
+            "Assert item at index 1 is value1");
+        test.assertEqual(this.list.getAt(2), this.value2,
+            "Assert item at index 2 is value2");
+
+        this.list.addAt(1, this.value4);
+        test.assertEqual(this.list.getAt(0), this.value3,
+            "Assert item at index 0 is value3");
+        test.assertEqual(this.list.getAt(1), this.value4,
+            "Assert item at index 1 is value4");
+        test.assertEqual(this.list.getAt(2), this.value1,
+            "Assert item at index 2 is value1");
+        test.assertEqual(this.list.getAt(3), this.value2,
+            "Assert item at index 3 is value2");
+    }
+};
+bugmeta.annotate(listAddAtTest).with(
+    test().name("List - #addAt test")
+);
+
+/**
+ *
+ */
 var listClearTest = {
 
     // Setup Test
@@ -412,6 +467,41 @@ bugmeta.annotate(listRemoveAtTest).with(
 /**
  *
  */
+var listSetTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.list = new List();
+        this.value1 = "value1";
+        this.value2 = "value2";
+        this.value3 = "value3";
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        this.list.add(this.value1);
+        this.list.add(this.value2);
+        var result = this.list.set(0, this.value3);
+        test.assertEqual(result, this.value1,
+            "Assert set returned value1");
+        test.assertEqual(this.list.getAt(0), this.value3,
+            "Assert value3 is at index 0");
+        test.assertEqual(this.list.getAt(1), this.value2,
+            "Assert value2 is at index 1");
+    }
+};
+bugmeta.annotate(listSetTest).with(
+    test().name("List - #set test")
+);
+
+/**
+ *
+ */
 var listAddEqualObjectsTest = {
 
     // Setup Test
@@ -469,6 +559,7 @@ var listAddEqualObjectsTest = {
 bugmeta.annotate(listAddEqualObjectsTest).with(
     test().name("List add equal objects test")
 );
+
 
 
 /**

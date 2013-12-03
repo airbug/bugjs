@@ -122,8 +122,8 @@ var MappedParallelException = Class.extend(ParallelException, {
      */
     buildStackTrace: function() {
         var _this = this;
-        if (this.primaryStack) {
-            this.primaryStack = StackTraceUtil.generateStackTrace();
+        if (!this.primaryStack) {
+            this.primaryStack = this.generateStackTrace();
         }
         var stack = this.primaryStack;
         stack += "\n\n";

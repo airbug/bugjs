@@ -4,8 +4,12 @@
 
 //@Export('List')
 
+//@Require('ArgumentBug')
+//@Require('Bug')
 //@Require('Class')
 //@Require('Collection')
+//@Require('ICollection')
+//@Require('IList')
 //@Require('Obj')
 //@Require('TypeUtil')
 
@@ -14,23 +18,33 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var Collection  = bugpack.require('Collection');
-var Obj         = bugpack.require('Obj');
-var TypeUtil    = bugpack.require('TypeUtil');
+var ArgumentBug     = bugpack.require('ArgumentBug');
+var Bug             = bugpack.require('Bug');
+var Class           = bugpack.require('Class');
+var Collection      = bugpack.require('Collection');
+var ICollection     = bugpack.require('ICollection');
+var IList           = bugpack.require('IList');
+var Obj             = bugpack.require('Obj');
+var TypeUtil        = bugpack.require('TypeUtil');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Collection}
+ * @implements {IList.<C>}
+ * @template C
+ */
 var List = Class.extend(Collection, {
 
     //-------------------------------------------------------------------------------
@@ -38,6 +52,7 @@ var List = Class.extend(Collection, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @constructs
      * @param {(Collection.<*> | Array.<*>)} items
      */
     _constructor: function(items) {
@@ -54,7 +69,6 @@ var List = Class.extend(Collection, {
          * @type {Array.<*>}
          */
         this.valueArray = [];
-
 
         if (items) {
             this.addAll(items);
@@ -81,7 +95,7 @@ var List = Class.extend(Collection, {
 
     /**
      * @param {boolean=} deep
-     * @return {List}
+     * @return {List.<C>}
      */
     clone: function(deep) {
         var cloneList = new List();
@@ -101,11 +115,13 @@ var List = Class.extend(Collection, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {*} value
+     * @param {C} value
+     * @return {boolean}
      */
     add: function(value) {
         this._super(value);
         this.valueArray.push(value);
+        return true;
     },
 
     /**
@@ -147,7 +163,7 @@ var List = Class.extend(Collection, {
 
     /**
      * @param {number} index
-     * @param {*} value
+     * @param {C} value
      */
     addAt: function(index, value) {
 
@@ -158,16 +174,16 @@ var List = Class.extend(Collection, {
             this.hashStore.addValue(value);
             this.valueArray.splice(index, 0, value);
         } else {
-            throw new Error("Index out of bounds");
+            throw new Bug("IndexOutOfBounds", {}, "index was out of bounds");
         }
     },
 
     /**
      * @param {number} index
-     * @param {(Collection.<*> | Array.<*>)} items
+     * @param {(ICollection.<C> | Array.<*>)} items
      */
     addAllAt: function(index, items) {
-        if (Class.doesExtend(items, Collection) || TypeUtil.isArray(items)) {
+        if (Class.doesImplement(items, ICollection) || TypeUtil.isArray(items)) {
             var insertingIndex = index;
             var _this = this;
             items.forEach(function(value) {
@@ -178,19 +194,19 @@ var List = Class.extend(Collection, {
                 insertingIndex++;
             });
         } else {
-            throw new Error("'items' must be an instance of Collection or Array");
+            throw new ArgumentBug(ArgumentBug.ILLEGAL, "items", items, "parameter must either implement ICollection or be an Array");
         }
     },
 
     /**
      * @param {number} index
-     * @return {*}
+     * @return {C}
      */
     getAt: function(index) {
         if (index < this.getCount()) {
             return this.valueArray[index];
         } else {
-            throw new Error("Index out of bounds");
+            throw new Bug("IndexOutOfBounds", {}, "index was out of bounds");
         }
     },
 
@@ -222,11 +238,11 @@ var List = Class.extend(Collection, {
 
     /**
      * @param {number} index
-     * @return {*} The removed value
+     * @return {C} The removed value
      */
     removeAt: function(index) {
         var value = this.getAt(index);
-        var result = this.hashStore.removeValue(value);
+        var result = this.getHashStore().removeValue(value);
         if (result) {
             this.valueArray.splice(index, 1);
         }
@@ -235,24 +251,25 @@ var List = Class.extend(Collection, {
 
     /**
      * @param {number} index
-     * @param {*} value
+     * @param {C} value
      */
     set: function(index, value) {
-        this.removeAt(index);
+        var previousValue = this.removeAt(index);
         this.addAt(index, value);
+        return previousValue;
     },
 
     /**
      * @param {number} fromIndex
      * @param {number} toIndex
-     * @return {List.<*>}
+     * @return {List.<C>}
      */
     subList: function(fromIndex, toIndex) {
         if (!TypeUtil.isNumber(toIndex)) {
             toIndex = this.getCount();
         }
         if (fromIndex < 0 || fromIndex > toIndex || toIndex > this.getCount()) {
-            throw new Error("Index out of bounds");
+            throw new Bug("IndexOutOfBounds", {}, "index was out of bounds");
         }
         var subList = new List();
         for (var i = fromIndex; i < toIndex; i++) {
@@ -261,6 +278,13 @@ var List = Class.extend(Collection, {
         return subList;
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Implement Interfaces
+//-------------------------------------------------------------------------------
+
+Class.implement(List, IList);
 
 
 //-------------------------------------------------------------------------------

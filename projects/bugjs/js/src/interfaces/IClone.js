@@ -35,7 +35,7 @@ var IClone = Interface.declare({
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {boolean} deep
+     * @param {boolean=} deep
      * @return {*}
      */
     clone: function(deep) {}

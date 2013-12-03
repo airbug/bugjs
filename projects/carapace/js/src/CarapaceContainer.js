@@ -56,12 +56,6 @@ var CarapaceContainer = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {Map.<string, CarapaceCollection>}
-         */
-        this.collectionMap      = new Map();
-
-        /**
-         * @private
          * @type {List.<CarapaceContainer>}
          */
         this.containerChildList = new List();
@@ -77,12 +71,6 @@ var CarapaceContainer = Class.extend(Obj, {
          * @type {boolean}
          */
         this.created            = false;
-
-        /**
-         * @private
-         * @type {Map.<CarapaceModel>}
-         */
-        this.modelMap           = new Map();
 
         /**
          * @private
@@ -273,82 +261,6 @@ var CarapaceContainer = Class.extend(Obj, {
     },
 
 
-    // Collection Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @protected
-     * @param {string} key
-     * @param {CarapaceCollection} collection
-     */
-    addCollection: function(key, collection) {
-        if (!key) {
-            throw new Error("key must be defined");
-        }
-        if (this.collectionMap.containsKey(key)) {
-            throw new Error("A collection is already present for this key: " + key);
-        }
-        this.collectionMap.put(key, collection);
-    },
-
-    /**
-     * @protected
-     * @param {string} key
-     * @return {CarapaceCollection}
-     */
-    getCollection: function(key) {
-        return this.collectionMap.get(key);
-    },
-
-    /**
-     * @protected
-     * @param {string} key
-     */
-    removeCollection: function(key) {
-        if (this.collectionMap.containsKey(key)) {
-            this.collectionMap.remove(key);
-        }
-    },
-
-
-    // Model Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @protected
-     * @param {string} key
-     * @param {CarapaceModel} model
-     */
-    addModel: function(key, model) {
-        if (!key) {
-            throw new Error("key must be defined");
-        }
-        if (this.modelMap.containsKey(key)) {
-            throw new Error("A model is already present for this key: " + key);
-        }
-        this.modelMap.put(key, model);
-    },
-
-    /**
-     * @protected
-     * @param {string} key
-     * @return {CarapaceModel}
-     */
-    getModel: function(key) {
-        return this.modelMap.get(key);
-    },
-
-    /**
-     * @protected
-     * @param {string} key
-     */
-    removeModel: function(key) {
-        if (this.modelMap.containsKey(key)) {
-            this.modelMap.remove(key);
-        }
-    },
-
-
     //-------------------------------------------------------------------------------
     // Protected Class Methods
     //-------------------------------------------------------------------------------
@@ -417,21 +329,8 @@ var CarapaceContainer = Class.extend(Obj, {
      * @proetected
      */
     destroyContainer: function() {
-        var _this = this;
         this.viewTop.dispose();
         this.viewTop = null;
-        this.collectionMap.getKeyArray().forEach(function(key) {
-            var collection = _this.collectionMap.get(key);
-            if(collection){
-                _this.removeCollection(key);
-                collection.dispose();
-            }
-        });
-        this.modelMap.getKeyArray().forEach(function(key) {
-            var model = _this.modelMap.get(key);
-            _this.removeModel(key);
-            model.dispose();
-        });
     },
 
     /**
