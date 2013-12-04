@@ -12,6 +12,7 @@
 //@Require('UuidGenerator')
 //@Require('mongo.DummyFindByIdQuery')
 //@Require('mongo.DummyFindByIdAndUpdateQuery')
+//@Require('mongo.DummyFindOneQuery')
 
 
 //-------------------------------------------------------------------------------
@@ -31,7 +32,7 @@ var Obj                             = bugpack.require('Obj');
 var UuidGenerator                   = bugpack.require('UuidGenerator');
 var DummyFindByIdQuery              = bugpack.require('mongo.DummyFindByIdQuery');
 var DummyFindByIdAndUpdateQuery     = bugpack.require('mongo.DummyFindByIdAndUpdateQuery');
-
+var DummyFindOneQuery               = bugpack.require('mongo.DummyFindOneQuery');
 
 
 //-------------------------------------------------------------------------------
@@ -173,7 +174,20 @@ var DummyMongoManager = Class.extend(Obj, {
             return query;
         }
     },
-    findOne: function() {
+
+    /**
+     *
+     * @param {Object} queryParams
+     * @param {function(Error, Object)} callback
+     * @returns {DummyFindOneQuery}
+     */
+    findOne: function(queryParams, callback) {
+        var query = new DummyFindOneQuery(this, queryParams);
+        if (callback) {
+            query.exec(callback);
+        } else {
+            return query;
+        }
 
     },
     findOneAndRemove: function() {
