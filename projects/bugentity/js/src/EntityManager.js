@@ -140,7 +140,7 @@ var EntityManager = Class.extend(Obj, {
      * @param {Entity} entity
      * @param {{*}} options
      * @param {Array.<string>} dependencies
-     * @param {function(Throwable, Entity)} callback
+     * @param {function(Throwable, Entity=)} callback
      */
     create: function(entity, options, dependencies, callback) {
         var _this = this;
@@ -188,7 +188,7 @@ var EntityManager = Class.extend(Obj, {
             })
         ]).execute(function(throwable){
             if(!throwable){
-                callback(undefined, entity);
+                callback(null, entity);
             } else {
                 callback(throwable);
             }
