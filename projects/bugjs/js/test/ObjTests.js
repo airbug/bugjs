@@ -174,18 +174,120 @@ bugmeta.annotate(objEqualsTest).with(
 /**
  * This tests
  * 1) The static clone method of the Obj class
+ * 2) Cloning an Obj (shallow)
  */
-var objCloneTest = {
+var objCloneObjShallowTest = {
 
     // Setup Test
     //-------------------------------------------------------------------------------
 
     setup: function() {
-        this.testObj = new Obj();
+        this.testObj        = new Obj();
+        this.testSubObject  = {};
         this.testObj.someValue =  "testValue";
-        this.genericObject = {
-            aValue: "myValue"
+        this.testObj.subObject = this.testSubObject;
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        var cloneObj = Obj.clone(this.testObj);
+        test.assertNotEqual(cloneObj, this.testObj,
+            "Assert that the clone Obj does not equal the original Obj");
+        test.assertEqual(cloneObj.testValue, this.testObj.testValue,
+            "Assert that testValue was copied to the Obj clone");
+        test.assertTrue(Class.doesExtend(cloneObj, Obj),
+            "Assert that cloneObj is an instance of Obj");
+        test.assertEqual(cloneObj.subObject, this.testSubObject,
+            "Assert that the subObject has not been cloned");
+    }
+};
+bugmeta.annotate(objCloneObjShallowTest).with(
+    test().name("Obj - clone Obj shallow test")
+);
+
+/**
+ * This tests
+ * 1) The static clone method of the Obj class
+ * 2) Cloning an object literal (shallow)
+ */
+var objCloneObjectLiteralShallowTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.testValue      = "testValue";
+        this.testSubArray   = [];
+        this.genericObject  = {
+            testValue: this.testValue,
+            subArray: this.testSubArray
         };
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        var cloneGenericObject = Obj.clone(this.genericObject);
+        test.assertNotEqual(cloneGenericObject, this.genericObject,
+            "Assert the cloned generic object and the original generic object are not equal.");
+        test.assertEqual(cloneGenericObject.testValue, this.testValue,
+            "Assert the values were copied from the original generic object to the cloned generic object");
+        test.assertEqual(cloneGenericObject.subArray, this.testSubArray,
+            "Assert the subArray has not been cloned");
+    }
+};
+bugmeta.annotate(objCloneObjectLiteralShallowTest).with(
+    test().name("Obj - #clone object literal shallow test")
+);
+
+/**
+ * This tests
+ * 1) The static clone method of the Obj class
+ * 2) Cloning a Date
+ */
+var objCloneDateTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.testDate = new Date();
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        var cloneDateObject = Obj.clone(this.testDate);
+        test.assertTrue(Class.doesExtend(cloneDateObject, Date),
+            "Assert that the clone is an instance of Date");
+        test.assertNotEqual(cloneDateObject, this.testDate,
+            "Assert that the date objects are not the same object");
+        test.assertEqual(cloneDateObject.getTime(), this.testDate.getTime(),
+            "Assert that the Date objects have the same time");
+    }
+};
+bugmeta.annotate(objCloneDateTest).with(
+    test().name("Obj - #clone Date test")
+);
+
+/**
+ * This tests
+ * 1) The static clone method of the Obj class
+ * 2) Values that should be passed through
+ */
+var objClonePassThroughTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
         this.valuesThatPassThrough = [
             "",
             "string",
@@ -203,18 +305,6 @@ var objCloneTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
-        var cloneObj = Obj.clone(this.testObj);
-        test.assertNotEqual(cloneObj, this.testObj,
-            "Assert that the clone Obj does not equal the original Obj");
-        test.assertEqual(cloneObj.testValue, this.testObj.testValue,
-            "Assert that testValue was copied to the Obj clone");
-
-        var cloneGenericObject = Obj.clone(this.genericObject);
-        test.assertNotEqual(cloneGenericObject, this.genericObject,
-            "Assert the cloned generic object and the original generic object are not equal.");
-        test.assertEqual(cloneGenericObject.aValue, this.genericObject.aValue,
-            "Assert the values were coppied from the original generic object to the cloned generic object");
-
         this.valuesThatPassThrough.forEach(function(passThroughValue) {
             var valueClone = Obj.clone(passThroughValue);
             test.assertEqual(valueClone, passThroughValue,
@@ -223,10 +313,9 @@ var objCloneTest = {
         })
     }
 };
-bugmeta.annotate(objCloneTest).with(
-    test().name("Obj clone test")
+bugmeta.annotate(objClonePassThroughTest).with(
+    test().name("Obj - #clone pass through test")
 );
-
 
 /**
  * This tests..

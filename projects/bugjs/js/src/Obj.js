@@ -209,15 +209,18 @@ Obj.hasOwnProperty = Object.prototype.hasOwnProperty;
 
 /**
  * @static
- * @param {Object} value
+ * @param {A} value
  * @param {boolean} deep
- * @return {{*}}
+ * @return {A}
+ * @template A
  */
 Obj.clone = function(value, deep) {
     var clone = null;
     if (TypeUtil.isObject(value)) {
         if (Class.doesImplement(value, IClone)) {
             clone = value.clone(deep);
+        } else if (Class.doesExtend(value, Date)) {
+            clone = new Date(value.getTime());
         } else {
             clone = {};
             Obj.forIn(value, function(propertyName, propertyValue) {

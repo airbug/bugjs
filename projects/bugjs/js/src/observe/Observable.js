@@ -71,6 +71,18 @@ var Observable = Class.extend(ChangePropagator, {
 
 
     //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {MultiListMap.<string, Observer>}
+     */
+    getChangeTypeObserverMap: function() {
+        return this.changeTypeObserverMap;
+    },
+
+
+    //-------------------------------------------------------------------------------
     // IObservable Implementation
     //-------------------------------------------------------------------------------
         
@@ -142,8 +154,13 @@ var Observable = Class.extend(ChangePropagator, {
      * @param {?Object=} observerContext
      */
     removeObserver: function(changeTypes, pathPatterns, observerFunction, observerContext) {
-        var observerSet = this.factoryObservers(pathPatterns, observerFunction, observerContext);
-        this.detachObserversFromTypes(changeTypes, observerSet);
+        if (TypeUtil.isArray(pathPatterns)) {
+            var observerSet = this.factoryObservers(pathPatterns, observerFunction, observerContext);
+            this.detachObserversFromTypes(changeTypes, observerSet);
+        } else {
+            var observer = this.factoryObserver(pathPatterns, observerFunction, observerContext);
+            this.detachObserverFromTypes(changeTypes, observer);
+        }
     },
 
     /**

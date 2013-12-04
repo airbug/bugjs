@@ -35,6 +35,10 @@ var TypeUtil            = bugpack.require('TypeUtil');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Obj}
+ */
 var DeltaDocument = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
@@ -42,7 +46,8 @@ var DeltaDocument = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @constructs
+     * @param {*} data
      */
     _constructor: function(data) {
 
@@ -89,7 +94,6 @@ var DeltaDocument = Class.extend(Obj, {
      * @param {string} path
      */
     getPath: function(path) {
-        var _this = this;
         var pathParts = path.split(".");
         var target = undefined;
         var currentData = this.data;
@@ -119,7 +123,19 @@ var DeltaDocument = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // IClone Overrides
+    // IObjectable Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @returns {Object}
+     */
+    toObject: function() {
+        return this.data;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Obj Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -140,14 +156,16 @@ var DeltaDocument = Class.extend(Obj, {
      */
     commitDelta: function() {
         this.previousDocument = this.clone(true);
-    },
-
-    toObject: function() {
-        return this.data;
     }
 });
 
+
+//-------------------------------------------------------------------------------
+// Implement Interfaces
+//-------------------------------------------------------------------------------
+
 Class.implement(DeltaDocument, IObjectable);
+
 
 //-------------------------------------------------------------------------------
 // Exports

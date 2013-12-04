@@ -6,6 +6,7 @@
 
 //@Export('EntityManager')
 
+//@Require('Bug')
 //@Require('Class')
 //@Require('Map')
 //@Require('Obj')
@@ -31,6 +32,7 @@ var bugpack                 = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
+var Bug                     = bugpack.require('Bug');
 var Class                   = bugpack.require('Class');
 var Map                     = bugpack.require('Map');
 var Obj                     = bugpack.require('Obj');
@@ -85,7 +87,7 @@ var EntityManager = Class.extend(Obj, {
          * @private
          * @type {MongoManager}
          */
-        this.dataStore              = undefined;
+        this.dataStore              = null;
 
         /**
          * @private
@@ -97,11 +99,11 @@ var EntityManager = Class.extend(Obj, {
          * @private
          * @type {string}
          */
-        this.entityType             = undefined;
+        this.entityType             = null;
 
         /**
          * @private
-         * @type {mongo.MongoDataStore}
+         * @type {MongoDataStore}
          */
         this.mongoDataStore         = mongoDataStore;
 
@@ -161,10 +163,10 @@ var EntityManager = Class.extend(Obj, {
             }),
             $forEachParallel(dependencies, function(flow, dependency) {
                 var dependencyOptions = options[dependency];
-                if(dependencyOptions){
+                if (dependencyOptions) {
                     var schema              = _this.schemaManager.getSchemaByClass(entity.getClass());
                     var schemaProperty      = schema.getPropertyByName(dependency);
-                    if(schemaProperty){
+                    if (schemaProperty) {
                         var schemaPropertyType  = schemaProperty.getType();
                         var manager             = _this.entityManagerStore.getEntityManagerByEntityType(schemaPropertyType);
                         var data                = {};
@@ -174,20 +176,27 @@ var EntityManager = Class.extend(Obj, {
                             var idSetter    = dependencyOptions.idSetter;
                             var setter      = dependencyOptions.setter;
                             var ownerProperty = dependencyOptions.ownerProperty;
-                            if(idSetter) idSetter.call(entity, generatedDependency.getId());
-                            if(setter) setter.call(entity, generatedDependency);
-                            if(ownerProperty) generatedDependency["set" + StringUtil.capitalize(ownerProperty)](entity);
+                            if (idSetter) {
+                                idSetter.call(entity, generatedDependency.getId());
+                            }
+                            if (setter) {
+                                setter.call(entity, generatedDependency);
+                            }
+                            if (ownerProperty) {
+                                generatedDependency["set" + StringUtil.capitalize(ownerProperty)](entity);
+                            }
                             flow.complete(throwable);
                         });
                     } else {
-                        flow.error(new Error("Unknown dependency '" + dependency + "'"));
+                        flow.error(new Bug("EntityManager", {}, "Unknown dependency '" + dependency + "'"));
                     }
                 } else {
-                    flow.error(new Error("Cannot find options for dependency '" + dependency + "'"));
+                    flow.error(new Bug("EntityManager", {}, "Cannot find options for dependency '" + dependency + "'"));
                 }
             })
         ]).execute(function(throwable){
-            if(!throwable){
+            if (!throwable) {
+                entity.commitDelta();
                 callback(null, entity);
             } else {
                 callback(throwable);
@@ -197,22 +206,33 @@ var EntityManager = Class.extend(Obj, {
 
     /**
      * @param {Entity} entity
-     * @param {function(Throwable)} callback
+     * @param {function(Throwable=)} callback
      */
     delete: function(entity, callback){
-        var id = entity.getId();
-        this.dataStore.findByIdAndRemove(id, function(error, dbObject) {
-            callback(error);
+        var _this   = this;
+        var id      = entity.getId();
+        this.dataStore.findByIdAndRemove(id, function(dbError, dbObject) {
+            if (!dbError) {
+                entity.commitDelta();
+                callback();
+            } else {
+                callback(_this.factoryBugFromDbError(dbError));
+            }
         });
     },
 
     /**
      * @param {string} id
-     * @param {function(error)} callback
+     * @param {function(Throwable=)} callback
      */
     deleteById: function(id, callback){
-        this.dataStore.findByIdAndRemove(id, function(error, dbObject) {
-            callback(error);
+        var _this   = this;
+        this.dataStore.findByIdAndRemove(id, function(dbError, dbObject) {
+            if (!dbError) {
+                callback();
+            } else {
+                callback(_this.factoryBugFromDbError(dbError));
+            }
         });
     },
 
@@ -337,35 +357,39 @@ var EntityManager = Class.extend(Obj, {
 
     /**
      * @param {Entity} entity
-     * @param {function(Throwable, Entity)} callback
+     * @param {function(Throwable, Entity=)} callback
      */
     update: function(entity, callback){
+        entity.setUpdatedAt(new Date());
+
+        var _this           = this;
         var dataStore       = this.dataStore;
         var id              = entity.getId();
         var updateObject    = this.buildUpdateObject(entity);
-        dataStore.findByIdAndUpdate(id, updateObject, function(throwable, dbObject) {
-            if (!throwable) {
-                callback(undefined, entity);
+        dataStore.findByIdAndUpdate(id, updateObject, function(dbError, dbObject) {
+            if (!dbError) {
+                entity.commitDelta();
+                callback(null, entity);
             } else {
-                callback(throwable, entity);
+                callback(_this.factoryBugFromDbError(dbError));
             }
         });
     },
 
     /**
      * @param {string} id
-     * @param {function(Throwable, Entity)} callback
+     * @param {function(Throwable, Entity=)} callback
      */
     retrieve: function(id, callback) {
         var _this = this;
         this.dataStore.findById(id).lean(true).exec(function(throwable, dbObject) {
             if (!throwable) {
-                var entityObject = null;
+                var entity = null;
                 if (dbObject) {
-                    entityObject = _this.convertDbObjectToEntity(dbObject);
-                    entityObject.commitDelta();
+                    entity = _this.convertDbObjectToEntity(dbObject);
+                    entity.commitDelta();
                 }
-                callback(undefined, entityObject);
+                callback(null, entity);
             } else {
                 callback(throwable);
             }
@@ -374,25 +398,24 @@ var EntityManager = Class.extend(Obj, {
 
     /**
      * @param {Array.<string>} ids
-     * @param {function(Throwable, Map.<string, Entity>)} callback
+     * @param {function(Throwable, Map.<string, Entity>=)} callback
      */
     retrieveEach: function(ids, callback) {
-        console.log("EntityManager#retrieveEach");
         var _this = this;
         this.dataStore.where("_id").in(ids).lean(true).exec(function(throwable, dbObjects) {
             if (!throwable) {
                 var newMap = new Map();
                 dbObjects.forEach(function(dbObject) {
-                    var entityObject = _this.convertDbObjectToEntity(dbObject);
-                    entityObject.commitDelta();
-                    newMap.put(entityObject.getId(), entityObject);
+                    var entity = _this.convertDbObjectToEntity(dbObject);
+                    entity.commitDelta();
+                    newMap.put(entity.getId(), entity);
                 });
                 ids.forEach(function(id) {
                     if (!newMap.containsKey(id)) {
                         newMap.put(id, null);
                     }
                 });
-                callback(undefined, newMap);
+                callback(null, newMap);
             } else {
                 callback(throwable);
             }
@@ -405,7 +428,7 @@ var EntityManager = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {function(Throwable)}
+     * @param {function(Throwable=)} callback
      */
     initializeModule: function(callback) {
         this.dataStore = this.mongoDataStore.generateManager(this.entityType);
@@ -608,6 +631,14 @@ var EntityManager = Class.extend(Obj, {
                     return propertyValue;
                 }
         }
+    },
+
+    /**
+     * @private
+     * @param {Error} dbError
+     */
+    factoryBugFromDbError: function(dbError) {
+        return new Bug("DbError", {error: dbError}, "An error occurred in the DB", [dbError]);
     }
 });
 

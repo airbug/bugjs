@@ -4,9 +4,11 @@
 
 //@Export('Observer')
 
+//@Require('ArgumentBug')
 //@Require('Class')
 //@Require('Obj')
 //@Require('ObjectPathMatcher')
+//@Require('TypeUtil')
 
 
 //-------------------------------------------------------------------------------
@@ -20,9 +22,11 @@ var bugpack             = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
+var ArgumentBug         = bugpack.require('ArgumentBug');
 var Class               = bugpack.require('Class');
 var Obj                 = bugpack.require('Obj');
 var ObjectPathMatcher   = bugpack.require('ObjectPathMatcher');
+var TypeUtil            = bugpack.require('TypeUtil');
 
 
 //-------------------------------------------------------------------------------
@@ -43,17 +47,22 @@ var Observer = Class.extend(Obj, {
      * @constructs
      * @param {string} objectPathPattern
      * @param {function(ObservableChange)} observerFunction
-     * @param {Object} observerContext
+     * @param {Object=} observerContext
      */
     _constructor: function(objectPathPattern, observerFunction, observerContext) {
 
         this._super();
 
+        if (!TypeUtil.isString(objectPathPattern)) {
+            throw new ArgumentBug(ArgumentBug.ILLEGAL, "objectPathPattern", objectPathPattern, "parameter must be a string");
+        }
+        if (!TypeUtil.isFunction(observerFunction)) {
+            throw new ArgumentBug(ArgumentBug.ILLEGAL, "observerFunction", observerFunction, "parameter must be a function");
+        }
 
         //-------------------------------------------------------------------------------
         // Private Properties
         //-------------------------------------------------------------------------------
-
 
         /**
          * @private
