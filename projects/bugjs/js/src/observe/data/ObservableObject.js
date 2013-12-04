@@ -201,6 +201,16 @@ var ObservableObject = Class.extend(Observable, /** @lends {ObservableObject.pro
         }
     },
 
+    /**
+     * @param {Object} propertiesObject
+     */
+    setProperties: function(propertiesObject) {
+        var _this = this;
+        Obj.forIn(propertiesObject, function(propertyName, propertyValue) {
+            _this.setProperty(propertyName, propertyValue);
+        });
+    },
+
 
     //-------------------------------------------------------------------------------
     // Private Methods

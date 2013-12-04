@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('ISet')
+//@Require('LiteralUtil')
 //@Require('Obj')
 //@Require('ObservableObject')
 //@Require('ObservableSet')
@@ -26,6 +27,7 @@ var bugpack             = require('bugpack').context();
 
 var Class               = bugpack.require('Class');
 var ISet                = bugpack.require('ISet');
+var LiteralUtil         = bugpack.require('LiteralUtil');
 var Obj                 = bugpack.require('Obj');
 var ObservableObject    = bugpack.require('ObservableObject');
 var ObservableSet       = bugpack.require('ObservableSet');
@@ -148,6 +150,13 @@ var BugModel = Class.extend(ObservableObject, {
             this.initialized = false;
             this.deinitializeModel();
         }
+    },
+
+    /**
+     * @returns {*}
+     */
+    toLiteral: function() {
+        return LiteralUtil.convertToLiteral(this.getData());
     },
 
 

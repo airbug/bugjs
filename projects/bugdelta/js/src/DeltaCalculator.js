@@ -36,7 +36,8 @@ var DeltaCalculator = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @constructs
+     * @param {DeltaBuilder} deltaBuilder
      */
     _constructor: function(deltaBuilder) {
 
@@ -54,6 +55,17 @@ var DeltaCalculator = Class.extend(Obj, {
         this.deltaBuilder = deltaBuilder;
     },
 
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {DeltaBuilder}
+     */
+    getDeltaBuilder: function() {
+        return this.deltaBuilder;
+    },
 
     //-------------------------------------------------------------------------------
     // Abstract Methods

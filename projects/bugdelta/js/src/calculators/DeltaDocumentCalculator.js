@@ -78,7 +78,7 @@ var DeltaDocumentCalculator = Class.extend(DeltaCalculator, {
                         delta.addDeltaChange(new DeltaDocumentChange(DeltaDocumentChange.ChangeTypes.DATA_SET, currentPath,
                             currentValue.getData(), previousValue.getData()));
                     } else {
-                        var deltaCalculator = this.deltaBuilder.getCalculatorResolver().resolveCalculator(currentData);
+                        var deltaCalculator = this.getDeltaBuilder().getCalculatorResolver().resolveCalculator(currentData);
                         if (deltaCalculator) {
                             deltaCalculator.calculateDelta(delta, currentPath, currentData, previousData);
                         } else {
