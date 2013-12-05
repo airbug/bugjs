@@ -31,7 +31,7 @@ var TypeUtil = {};
  * @return {boolean}
  */
 TypeUtil.isArray = function(value) {
-    return value !== null && value !== undefined && value instanceof Array;
+    return value instanceof Array;
 };
 
 /**
@@ -39,7 +39,15 @@ TypeUtil.isArray = function(value) {
  * @return {boolean}
  */
 TypeUtil.isBoolean = function(value) {
-    return value !== null && value !== undefined && (typeof value === 'boolean' || value instanceof Boolean);
+    return (typeof value === 'boolean' || value instanceof Boolean);
+};
+
+/**
+ * @param {*} value
+ * @return {boolean}
+ */
+TypeUtil.isDate = function(value) {
+    return value instanceof Date;
 };
 
 /**
@@ -47,7 +55,7 @@ TypeUtil.isBoolean = function(value) {
  * @return {boolean}
  */
 TypeUtil.isFunction = function(value) {
-    return value !== null && value !== undefined && typeof value === "function";
+    return typeof value === "function";
 };
 
 /**
@@ -63,7 +71,7 @@ TypeUtil.isNull = function(value) {
  * @return {boolean}
  */
 TypeUtil.isNumber = function(value) {
-    return value !== null && value !== undefined && (typeof value === 'number' || value instanceof Number);
+    return (typeof value === 'number' || value instanceof Number);
 };
 
 /**
@@ -71,8 +79,7 @@ TypeUtil.isNumber = function(value) {
  * @return {boolean}
  */
 TypeUtil.isObject = function(value) {
-    return value !== null && value !== undefined && typeof value === 'object' && !TypeUtil.isArray(value) &&
-        !TypeUtil.isBoolean(value) && !TypeUtil.isNumber(value) && !TypeUtil.isString(value);
+    return TypeUtil.toType(value) === "object";
 };
 
 /**
@@ -80,7 +87,7 @@ TypeUtil.isObject = function(value) {
  * @return {boolean}
  */
 TypeUtil.isString = function(value) {
-    return value !== null && value !== undefined && (typeof value === 'string' || value instanceof String);
+    return (typeof value === 'string' || value instanceof String);
 };
 
 /**
@@ -96,7 +103,11 @@ TypeUtil.isUndefined = function(value) {
  * @return {string}
  */
 TypeUtil.toType = function(value) {
-    return Object.prototype.toString.call(value).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
+    var type = typeof value;
+    if (type === "object") {
+        type = Object.prototype.toString.call(value).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
+    }
+    return type;
 };
 
 

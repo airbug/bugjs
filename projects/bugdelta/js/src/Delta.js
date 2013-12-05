@@ -78,6 +78,20 @@ var Delta = Class.extend(Obj, {
      */
     addDeltaChange: function(deltaChange) {
         this.deltaChangeList.add(deltaChange)
+    },
+
+    /**
+     * @returns {number}
+     */
+    getChangeCount: function() {
+        return this.deltaChangeList.getCount();
+    },
+
+    /**
+     * @return {boolean}
+     */
+    isEmpty: function() {
+        return this.deltaChangeList.isEmpty();
     }
 });
 

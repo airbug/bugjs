@@ -219,8 +219,6 @@ Obj.clone = function(value, deep) {
     if (TypeUtil.isObject(value)) {
         if (Class.doesImplement(value, IClone)) {
             clone = value.clone(deep);
-        } else if (Class.doesExtend(value, Date)) {
-            clone = new Date(value.getTime());
         } else {
             clone = {};
             Obj.forIn(value, function(propertyName, propertyValue) {
@@ -257,6 +255,28 @@ Obj.clone = function(value, deep) {
 Obj.equals = function(value1, value2) {
     if (Class.doesImplement(value1, IEquals)) {
         return value1.equals(value2);
+    }
+    var type1 = TypeUtil.toType(value1);
+    var type2 = TypeUtil.toType(value2);
+    if (type1 === type2) {
+        switch (type1) {
+            case "boolean":
+                value1 = value1.valueOf();
+                value2 = value2.valueOf();
+                break;
+            case "date":
+                value1 = value1.getTime();
+                value2 = value2.getTime();
+                break;
+            case "number":
+                value1 = value1 - 0;
+                value2 = value2 - 0;
+                break;
+            case "string":
+                value1 = value1 + "";
+                value2 = value2 + "";
+                break;
+        }
     }
     return value1 === value2;
 };

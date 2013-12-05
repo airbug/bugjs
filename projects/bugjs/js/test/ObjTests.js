@@ -141,6 +141,7 @@ var objEqualsTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
+        var time = (new Date()).getTime();
         test.assertTrue(Obj.equals("value1", "value1"),
             "Assert equals returns true for two matching strings");
         test.assertTrue(Obj.equals(123, 123),
@@ -153,21 +154,22 @@ var objEqualsTest = {
             "Assert equals returns true for two undefined values");
         test.assertTrue(Obj.equals(this.testObject1, this.testObject1),
             "Assert two of the same Obj instance are equal");
-    
-        //TODO BRN (QUESTION): Do these assertions make sense? Should we do some sort of auto conversion for these values?
-        test.assertFalse(Obj.equals(new String("abc123"), "abc123"),
-            "Assert equals returns false for a string object and string literal that are the same string");
-        test.assertFalse(Obj.equals(new Number(123), 123),
-            "Assert equals returns false for number object and number literal that are the same number");
-        test.assertFalse(Obj.equals(new Number(123), new Number(123)),
-            "Assert equals returns false for two number objects that are the same number");
-
+        test.assertTrue(Obj.equals(new String("abc123"), "abc123"),
+            "Assert equals returns true for a string object and string literal that are the same string");
+        test.assertTrue(Obj.equals(new Number(123), 123),
+            "Assert equals returns true for number object and number literal that are the same number");
+        test.assertTrue(Obj.equals(new Number(123), new Number(123)),
+            "Assert equals returns true for two number objects that are the same number");
+        test.assertTrue(Obj.equals(new Boolean(true), new Boolean(true)),
+            "Assert equals returns true for two Boolean objects that are the same value");
+        test.assertTrue(Obj.equals(new Date(time), new Date(time)),
+            "Assert equals returns true for two Dates that are the same time");
         test.assertFalse(Obj.equals(this.testObject1, this.testObject2),
             "Assert two different Obj instances are not equal");
     }
 };
 bugmeta.annotate(objEqualsTest).with(
-    test().name("Obj equals test")
+    test().name("Obj - #equals test")
 );
 
 
@@ -267,10 +269,8 @@ var objCloneDateTest = {
         var cloneDateObject = Obj.clone(this.testDate);
         test.assertTrue(Class.doesExtend(cloneDateObject, Date),
             "Assert that the clone is an instance of Date");
-        test.assertNotEqual(cloneDateObject, this.testDate,
-            "Assert that the date objects are not the same object");
-        test.assertEqual(cloneDateObject.getTime(), this.testDate.getTime(),
-            "Assert that the Date objects have the same time");
+        test.assertEqual(cloneDateObject, this.testDate,
+            "Assert that the Dates are equal");
     }
 };
 bugmeta.annotate(objCloneDateTest).with(
@@ -296,7 +296,8 @@ var objClonePassThroughTest = {
             123,
             true,
             false,
-            new String("another string")
+            new String("another string"),
+            new Date(0)
         ]
     },
 

@@ -42,7 +42,8 @@ var ObjectCalculator = Class.extend(DeltaCalculator, {
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @constructs
+     * @param {DeltaBuilder} deltaBuilder
      */
     _constructor: function(deltaBuilder) {
 
@@ -93,7 +94,7 @@ var ObjectCalculator = Class.extend(DeltaCalculator, {
                     delta.addDeltaChange(new ObjectChange(ObjectChange.ChangeTypes.PROPERTY_SET, currentPath,
                         propertyName, currentPropertyValue, previousPropertyValue));
                 } else {
-                    var deltaCalculator = _this.deltaBuilder.getCalculatorResolver().resolveCalculator(currentPropertyValue);
+                    var deltaCalculator = _this.getDeltaBuilder().getCalculatorResolver().resolveCalculator(currentPropertyValue);
                     if (deltaCalculator) {
                         var propertyPath = (currentPath ? currentPath + ".": "") + propertyName;
                         deltaCalculator.calculateDelta(delta, propertyPath, currentPropertyValue, previousPropertyValue);

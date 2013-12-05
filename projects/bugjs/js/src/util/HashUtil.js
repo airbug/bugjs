@@ -43,29 +43,41 @@ var HashUtil = {};
  * speed: O(1)
  */
 HashUtil.hash = function(value) {
-    var key = "";
-    if (TypeUtil.isArray(value)) {
-        IdGenerator.ensureId(value);
-        key += "a_" + value._internalId;
-    } else if (TypeUtil.isBoolean(value)) {
-        key += "b_" + value;
-    } else if (TypeUtil.isFunction(value)) {
-        IdGenerator.ensureId(value);
-        key += "f_" + value._internalId;
-    } else if (TypeUtil.isNumber(value)) {
-        key += "n_" + value;
-    } else if (TypeUtil.isNull(value)) {
-        key += "null";
-    } else if (TypeUtil.isObject(value)) {
-        IdGenerator.ensureId(value);
-        key += "o_" + value._internalId;
-    } else if (TypeUtil.isString(value)) {
-        key += "s_" + value;
-    } else if (TypeUtil.isUndefined(value)) {
-        key += "undefined";
-    }
-    else {
-        throw new Error("Unrecognized type to hash: " + value);
+    var key     = "";
+    var type    = TypeUtil.toType(value);
+    switch (type) {
+        case "array":
+            IdGenerator.ensureId(value);
+            key += "a_" + value._internalId;
+            break;
+        case "boolean":
+            key += "b_" + value;
+            break;
+        case "date":
+            key += "d_" + value;
+            break;
+        case "function":
+            IdGenerator.ensureId(value);
+            key += "f_" + value._internalId;
+            break;
+        case "number":
+            key += "n_" + value;
+            break;
+        case "null":
+            key += "null";
+            break;
+        case "object":
+            IdGenerator.ensureId(value);
+            key += "o_" + value._internalId;
+            break;
+        case "string":
+            key += "s_" + value;
+            break;
+        case "undefined":
+            key += "undefined";
+            break;
+        default:
+            throw new Error("Unrecognized type to hash: " + value);
     }
 
     var hash = 0;

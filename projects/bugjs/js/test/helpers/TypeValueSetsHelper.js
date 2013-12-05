@@ -37,6 +37,9 @@ var TypeValueSetsHelper = {
                 {name: "Boolean object false", value: new Boolean(false)},
                 {name: "Boolean object true", value: new Boolean(true)}
             ],
+            date: [
+                {name: "Date object", value: new Date(Date.now())}
+            ],
             function: [
                 {name: "function literal", value: function() {}},
                 {name: "Function object", value: new Function()}

@@ -111,10 +111,50 @@ var typeUtilToTypeTest = {
     //-------------------------------------------------------------------------------
 
     setup: function() {
-        this.testBoolean    = false;
-        this.testNumber     = 123;
-        this.testString     = "test";
-        this.testSet        = new Set();
+        this.testArrays     = [
+            [],
+            new Array()
+        ];
+        this.testBooleans   = [
+            false,
+            true,
+            new Boolean(true),
+            new Boolean(false)
+        ];
+        this.testDates = [
+            new Date(Date.now()),
+            new Date(0)
+        ];
+        this.testFunctions = [
+            new Function(),
+            function() {}
+        ];
+        this.testNumbers     = [
+            123,
+            0,
+            -123,
+            123.1,
+            -123.1,
+            new Number(0),
+            new Number(123)
+        ];
+        this.testObjects    = [
+            {},
+            new Object(),
+
+            //NOTE BRN: All class instances should return as 'object' types
+
+            new Set()
+        ];
+        this.testStrings    = [
+            "test",
+            new String("test2"),
+            new String(),
+            ""
+        ];
+
+        this.testNull = null;
+        this.testUndefined = undefined;
     },
 
 
@@ -122,17 +162,38 @@ var typeUtilToTypeTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
-        test.assertEqual(TypeUtil.toType(this.testBoolean), "boolean",
-            "Assert toType returns 'boolean' for boolean");
-        test.assertEqual(TypeUtil.toType(this.testNumber), "number",
-            "Assert toType returns 'number' for number");
-        test.assertEqual(TypeUtil.toType(this.testString), "string",
-            "Assert toType returns 'string' for string");
-
-        //NOTE BRN: All class instances should return as 'object' types
-
-        test.assertEqual(TypeUtil.toType(this.testSet), "object",
-            "Assert toType returns 'object' for Set instance");
+        this.testArrays.forEach(function(value) {
+            test.assertEqual(TypeUtil.toType(value), "array",
+                "Assert toType returns 'array' for value - value:" + value);
+        });
+        this.testBooleans.forEach(function(value) {
+            test.assertEqual(TypeUtil.toType(value), "boolean",
+                "Assert toType returns 'boolean' for value - value:" + value);
+        });
+        this.testDates.forEach(function(value) {
+            test.assertEqual(TypeUtil.toType(value), "date",
+                "Assert toType returns 'date' for value - value:" + value);
+        });
+        this.testFunctions.forEach(function(value) {
+            test.assertEqual(TypeUtil.toType(value), "function",
+                "Assert toType returns 'function' for value - value:" + value);
+        });
+        this.testNumbers.forEach(function(value) {
+            test.assertEqual(TypeUtil.toType(value), "number",
+                "Assert toType returns 'number' for value - value:" + value);
+        });
+        this.testStrings.forEach(function(value) {
+            test.assertEqual(TypeUtil.toType(value), "string",
+                "Assert toType returns 'string' for value - value:" + value);
+        });
+        this.testObjects.forEach(function(value) {
+            test.assertEqual(TypeUtil.toType(value), "object",
+                "Assert toType returns 'object' for value:" + value);
+        });
+        test.assertEqual(TypeUtil.toType(this.testNull), "null",
+            "Assert null returns type 'null'");
+        test.assertEqual(TypeUtil.toType(this.testUndefined), "undefined",
+            "Assert null returns type 'undefined'");
     }
 
 };

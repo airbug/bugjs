@@ -57,16 +57,12 @@ LiteralUtil.convertToLiteral = function(value) {
     }
 
     if (TypeUtil.isObject(value)) {
-         if (Class.doesExtend(value, Date)) {
-            literal = value;
-        } else {
-            literal = {};
-            Obj.forIn(value, function(propertyName, propertyValue) {
-                if (!TypeUtil.isFunction(propertyValue)) {
-                    literal[propertyName] = LiteralUtil.convertToLiteral(propertyValue);
-                }
-            });
-        }
+        literal = {};
+        Obj.forIn(value, function(propertyName, propertyValue) {
+            if (!TypeUtil.isFunction(propertyValue)) {
+                literal[propertyName] = LiteralUtil.convertToLiteral(propertyValue);
+            }
+        });
     } else if (TypeUtil.isArray(value)) {
         literal = [];
         for (var i = 0, size = value.length; i < size; i++) {
