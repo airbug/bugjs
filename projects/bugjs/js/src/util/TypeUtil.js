@@ -105,9 +105,31 @@ TypeUtil.isUndefined = function(value) {
 TypeUtil.toType = function(value) {
     var type = typeof value;
     if (type === "object") {
-        type = Object.prototype.toString.call(value).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
+        var objectType = Object.prototype.toString.call(value).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
+        var coreType = TypeUtil.coreTypes[objectType];
+        return coreType || "object";
     }
     return type;
+};
+
+
+//-------------------------------------------------------------------------------
+// Static Variables
+//-------------------------------------------------------------------------------
+
+/**
+ * @static
+ * @enum {string}
+ */
+TypeUtil.coreTypes = {
+    array: "array",
+    boolean: "boolean",
+    date: "date",
+    function: "function",
+    null: "null",
+    number: "number",
+    string: "string",
+    undefined: "undefined"
 };
 
 

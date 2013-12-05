@@ -141,7 +141,7 @@ var typeUtilToTypeTest = {
         this.testObjects    = [
             {},
             new Object(),
-
+            new Error(),
             //NOTE BRN: All class instances should return as 'object' types
 
             new Set()

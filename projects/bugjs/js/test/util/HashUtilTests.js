@@ -83,3 +83,33 @@ var hashRepeatTest = {
 bugmeta.annotate(hashRepeatTest).with(
     test().name("Hash repeat test")
 );
+
+/**
+ *
+ */
+var hashNativeTypesTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.native1 = new Error();
+        this.native2 = new Error();
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        var nativeHash1 = HashUtil.hash(this.native1);
+        var nativeHash2 = HashUtil.hash(this.native2);
+        test.assertNotEqual(nativeHash1, nativeHash2,
+            "Assert that nativeHash1 and nativeHash2 are not equal");
+        test.assertEqual(nativeHash1, HashUtil.hash(this.native1),
+            "Assert that the same hash is given for rehash");
+    }
+};
+bugmeta.annotate(hashNativeTypesTest).with(
+    test().name("Hash - native types test")
+);
