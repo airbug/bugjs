@@ -4746,6 +4746,7 @@ exports.loadModule = function(moduleName, onLoad) {
     }
 
     try {
+        console.log("loading module:", moduleName);
         module = require(moduleName);
     } catch (e) {};
     if (module && !exports.$loading[moduleName])

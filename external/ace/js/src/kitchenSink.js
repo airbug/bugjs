@@ -56,11 +56,11 @@ var Ace = bugpack.require('ace.Ace');
 
 var KitchenSink = {};
 KitchenSink.load = function(){
-    var define  = Ace.define;
-    var require = Ace.require;
 
-    define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbrowsers', 'ace/config', 'ace/lib/dom', 'ace/lib/net', 'ace/lib/lang', 'ace/lib/useragent', 'ace/lib/event', 'ace/theme/textmate', 'ace/edit_session', 'ace/undomanager', 'ace/keyboard/hash_handler', 'ace/virtual_renderer', 'ace/editor', 'ace/multi_select', 'ace/ext/whitespace', 'kitchen-sink/doclist', 'ace/ext/modelist', 'kitchen-sink/layout', 'kitchen-sink/token_tooltip', 'kitchen-sink/util', 'ace/ext/elastic_tabstops_lite', 'ace/incremental_search', 'ace/worker/worker_client', 'ace/split', 'ace/keyboard/vim', 'ace/ext/statusbar', 'ace/ext/emmet', 'ace/snippets', 'ace/ext/language_tools'], function(require, exports, module) {
+var define  = Ace.define;
+var require = Ace.require;
 
+define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbrowsers', 'ace/config', 'ace/lib/dom', 'ace/lib/net', 'ace/lib/lang', 'ace/lib/useragent', 'ace/lib/event', 'ace/theme/textmate', 'ace/edit_session', 'ace/undomanager', 'ace/keyboard/hash_handler', 'ace/virtual_renderer', 'ace/editor', 'ace/multi_select', 'ace/ext/whitespace', 'ace/ext/modelist', 'kitchen-sink/layout', 'kitchen-sink/token_tooltip', 'kitchen-sink/util', 'ace/ext/elastic_tabstops_lite', 'ace/incremental_search', 'ace/worker/worker_client', 'ace/split', 'ace/keyboard/vim', 'ace/ext/statusbar', 'ace/ext/emmet', 'ace/snippets', 'ace/ext/language_tools'], function(require, exports, module) {
 
     require("ace/lib/fixoldbrowsers");
     var config = require("ace/config");
@@ -104,7 +104,7 @@ KitchenSink.load = function(){
     if (location.href.indexOf("noworker") !== -1) {
         workerModule.WorkerClient = workerModule.UIWorkerClient;
     }
-    var container = document.getElementById("editor-container");
+    var container = document.getElementById("code-editor-container-body"); //Overridden with our own id. Old id: editor-container
     var Split = require("ace/split").Split;
     var split = new Split(container, theme, 1);
     env.editor = split.getEditor(0);
@@ -165,16 +165,6 @@ KitchenSink.load = function(){
         name: "focusCommandLine",
         bindKey: "shift-esc|ctrl-`",
         exec: function(editor, needle) { editor.cmdLine.focus(); },
-        readOnly: true
-    }, {
-        name: "nextFile",
-        bindKey: "Ctrl-tab",
-        exec: function(editor) { doclist.cycleOpen(editor, 1); },
-        readOnly: true
-    }, {
-        name: "previousFile",
-        bindKey: "Ctrl-shift-tab",
-        exec: function(editor) { doclist.cycleOpen(editor, -1); },
         readOnly: true
     }, {
         name: "execute",
@@ -292,7 +282,6 @@ KitchenSink.load = function(){
 
     window.onresize = onResize;
     onResize();
-    var docEl = document.getElementById("doc");
     var modeEl = document.getElementById("mode");
     var wrapModeEl = document.getElementById("soft_wrap");
     var themeEl = document.getElementById("theme");
@@ -309,51 +298,14 @@ KitchenSink.load = function(){
     var softTabEl = document.getElementById("soft_tab");
     var behavioursEl = document.getElementById("enable_behaviours");
 
-    fillDropdown(docEl, doclist.all);
-
     fillDropdown(modeEl, modelist.modes);
     var modesByName = modelist.modesByName;
     bindDropdown("mode", function(value) {
-        env.editor.session.setMode(modesByName[value].mode || modesByName.text.mode);
-        env.editor.session.modeName = value;
-    });
-
-    doclist.history = doclist.docs.map(function(doc) {
-        return doc.name;
-    });
-    doclist.history.index = 0;
-    doclist.cycleOpen = function(editor, dir) {
-        var h = this.history
-        h.index += dir;
-        if (h.index >= h.length)
-            h.index = 0;
-        else if (h.index <= 0)
-            h.index = h.length - 1;
-        var s = h[h.index];
-        docEl.value = s;
-        docEl.onchange();
-        h.index
-    }
-    doclist.addToHistory = function(name) {
-        var h = this.history
-        var i = h.indexOf(name);
-        if (i != h.index) {
-            if (i != -1)
-                h.splice(i, 1);
-            h.index = h.push(name);
-        }
-    }
-
-    bindDropdown("doc", function(name) {
-        doclist.loadDoc(name, function(session) {
-            if (!session)
-                return;
-            doclist.addToHistory(session.name);
-            session = env.split.setSession(session);
-            whitespace.detectIndentation(session);
-            updateUIEditorOptions();
-            env.editor.focus();
-        });
+        console.log("value:", value);
+        console.log("mode:", modesByName[value].mode);
+        console.log("module:", require(modesByName[value].mode)); //new require(modesByName[value].mode).Mode()
+        env.editor.session.setMode(modesByName[value].mode || modesByName.text.mode); //
+        env.editor.session.modeName = value; //
     });
 
 
@@ -398,6 +350,7 @@ KitchenSink.load = function(){
     };
 
     bindDropdown("theme", function(value) {
+        console.log("setting theme:", value);
         if (!value)
             return;
         env.editor.setTheme(value);
@@ -626,140 +579,6 @@ KitchenSink.load = function(){
 
     });
 
-    define('ace/theme/textmate', ['require', 'exports', 'module' , 'ace/lib/dom'], function(require, exports, module) {
-
-
-    exports.isDark = false;
-    exports.cssClass = "ace-tm";
-    exports.cssText = ".ace-tm .ace_gutter {\
-    background: #f0f0f0;\
-    color: #333;\
-    }\
-    .ace-tm .ace_print-margin {\
-    width: 1px;\
-    background: #e8e8e8;\
-    }\
-    .ace-tm .ace_fold {\
-    background-color: #6B72E6;\
-    }\
-    .ace-tm {\
-    background-color: #FFFFFF;\
-    }\
-    .ace-tm .ace_cursor {\
-    border-left: 2px solid black;\
-    }\
-    .ace-tm .ace_overwrite-cursors .ace_cursor {\
-    border-left: 0px;\
-    border-bottom: 1px solid black;\
-    }\
-    .ace-tm .ace_invisible {\
-    color: rgb(191, 191, 191);\
-    }\
-    .ace-tm .ace_storage,\
-    .ace-tm .ace_keyword {\
-    color: blue;\
-    }\
-    .ace-tm .ace_constant {\
-    color: rgb(197, 6, 11);\
-    }\
-    .ace-tm .ace_constant.ace_buildin {\
-    color: rgb(88, 72, 246);\
-    }\
-    .ace-tm .ace_constant.ace_language {\
-    color: rgb(88, 92, 246);\
-    }\
-    .ace-tm .ace_constant.ace_library {\
-    color: rgb(6, 150, 14);\
-    }\
-    .ace-tm .ace_invalid {\
-    background-color: rgba(255, 0, 0, 0.1);\
-    color: red;\
-    }\
-    .ace-tm .ace_support.ace_function {\
-    color: rgb(60, 76, 114);\
-    }\
-    .ace-tm .ace_support.ace_constant {\
-    color: rgb(6, 150, 14);\
-    }\
-    .ace-tm .ace_support.ace_type,\
-    .ace-tm .ace_support.ace_class {\
-    color: rgb(109, 121, 222);\
-    }\
-    .ace-tm .ace_keyword.ace_operator {\
-    color: rgb(104, 118, 135);\
-    }\
-    .ace-tm .ace_string {\
-    color: rgb(3, 106, 7);\
-    }\
-    .ace-tm .ace_comment {\
-    color: rgb(76, 136, 107);\
-    }\
-    .ace-tm .ace_comment.ace_doc {\
-    color: rgb(0, 102, 255);\
-    }\
-    .ace-tm .ace_comment.ace_doc.ace_tag {\
-    color: rgb(128, 159, 191);\
-    }\
-    .ace-tm .ace_constant.ace_numeric {\
-    color: rgb(0, 0, 205);\
-    }\
-    .ace-tm .ace_variable {\
-    color: rgb(49, 132, 149);\
-    }\
-    .ace-tm .ace_xml-pe {\
-    color: rgb(104, 104, 91);\
-    }\
-    .ace-tm .ace_entity.ace_name.ace_function {\
-    color: #0000A2;\
-    }\
-    .ace-tm .ace_heading {\
-    color: rgb(12, 7, 255);\
-    }\
-    .ace-tm .ace_list {\
-    color:rgb(185, 6, 144);\
-    }\
-    .ace-tm .ace_meta.ace_tag {\
-    color:rgb(0, 22, 142);\
-    }\
-    .ace-tm .ace_string.ace_regex {\
-    color: rgb(255, 0, 0)\
-    }\
-    .ace-tm .ace_marker-layer .ace_selection {\
-    background: rgb(181, 213, 255);\
-    }\
-    .ace-tm.ace_multiselect .ace_selection.ace_start {\
-    box-shadow: 0 0 3px 0px white;\
-    border-radius: 2px;\
-    }\
-    .ace-tm .ace_marker-layer .ace_step {\
-    background: rgb(252, 255, 0);\
-    }\
-    .ace-tm .ace_marker-layer .ace_stack {\
-    background: rgb(164, 229, 101);\
-    }\
-    .ace-tm .ace_marker-layer .ace_bracket {\
-    margin: -1px 0 0 -1px;\
-    border: 1px solid rgb(192, 192, 192);\
-    }\
-    .ace-tm .ace_marker-layer .ace_active-line {\
-    background: rgba(0, 0, 0, 0.07);\
-    }\
-    .ace-tm .ace_gutter-active-line {\
-    background-color : #dcdcdc;\
-    }\
-    .ace-tm .ace_marker-layer .ace_selected-word {\
-    background: rgb(250, 250, 255);\
-    border: 1px solid rgb(200, 200, 250);\
-    }\
-    .ace-tm .ace_indent-guide {\
-    background: url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAE0lEQVQImWP4////f4bLly//BwAmVgd1/w11/gAAAABJRU5ErkJggg==\") right repeat-y;\
-    }\
-    ";
-
-    var dom = require("../lib/dom");
-    dom.importCssString(exports.cssText, exports.cssClass);
-    });
-
     define('ace/ext/whitespace', ['require', 'exports', 'module' , 'ace/lib/lang'], function(require, exports, module) {
 
 
@@ -937,208 +756,8 @@ KitchenSink.load = function(){
 
     });
 
-     define('kitchen-sink/doclist', ['require', 'exports', 'module' , 'ace/edit_session', 'ace/undomanager', 'ace/lib/net', 'ace/ext/modelist'], function(require, exports, module) {
-
-
-    var EditSession = require("ace/edit_session").EditSession;
-    var UndoManager = require("ace/undomanager").UndoManager;
-    var net = require("ace/lib/net");
-
-    var modelist = require("ace/ext/modelist");
-    var fileCache = {};
-
-    function initDoc(file, path, doc) {
-        if (doc.prepare)
-            file = doc.prepare(file);
-
-        var session = new EditSession(file);
-        session.setUndoManager(new UndoManager());
-        doc.session = session;
-        doc.path = path;
-        session.name = doc.name;
-        if (doc.wrapped) {
-            session.setUseWrapMode(true);
-            session.setWrapLimitRange(80, 80);
-        }
-        var mode = modelist.getModeForPath(path);
-        session.modeName = mode.name;
-        session.setMode(mode.mode);
-        return session;
-    }
-
-
-    function makeHuge(txt) {
-        for (var i = 0; i < 5; i++)
-            txt += txt;
-        return txt;
-    }
-
-    var docs = {
-        "docs/javascript.js": "JavaScript",
-        "docs/AsciiDoc.asciidoc": "AsciiDoc",
-        "docs/clojure.clj": "Clojure",
-        "docs/coffeescript.coffee": "CoffeeScript",
-        "docs/coldfusion.cfm": "ColdFusion",
-        "docs/cpp.cpp": "C/C++",
-        "docs/csharp.cs": "C#",
-        "docs/css.css": "CSS",
-        "docs/curly.curly": "Curly",
-        "docs/dart.dart": "Dart",
-        "docs/diff.diff": "Diff",
-        "docs/dot.dot": "Dot",
-        "docs/freemarker.ftl" : "FreeMarker",
-        "docs/glsl.glsl": "Glsl",
-        "docs/golang.go": "Go",
-        "docs/groovy.groovy": "Groovy",
-        "docs/haml.haml": "Haml",
-        "docs/Haxe.hx": "haXe",
-        "docs/html.html": "HTML",
-        "docs/html_ruby.erb": "HTML (Ruby)",
-        "docs/jade.jade": "Jade",
-        "docs/java.java": "Java",
-        "docs/jsp.jsp": "JSP",
-        "docs/json.json": "JSON",
-        "docs/jsx.jsx": "JSX",
-        "docs/latex.tex": {name: "LaTeX", wrapped: true},
-        "docs/less.less": "LESS",
-        "docs/lisp.lisp": "Lisp",
-        "docs/lsl.lsl": "LSL",
-        "docs/scheme.scm": "Scheme",
-        "docs/livescript.ls": "LiveScript",
-        "docs/liquid.liquid": "Liquid",
-        "docs/logiql.logic": "LogiQL",
-        "docs/lua.lua": "Lua",
-        "docs/lucene.lucene": "Lucene",
-        "docs/luapage.lp": "LuaPage",
-        "docs/Makefile": "Makefile",
-        "docs/markdown.md": {name: "Markdown", wrapped: true},
-        "docs/mushcode.mc": {name: "MUSHCode", wrapped: true},
-        "docs/objectivec.m": {name: "Objective-C"},
-        "docs/ocaml.ml": "OCaml",
-        "docs/OpenSCAD.scad": "OpenSCAD",
-        "docs/pascal.pas": "Pascal",
-        "docs/perl.pl": "Perl",
-        "docs/pgsql.pgsql": {name: "pgSQL", wrapped: true},
-        "docs/php.php": "PHP",
-        "docs/plaintext.txt": {name: "Plain Text", prepare: makeHuge, wrapped: true},
-        "docs/powershell.ps1": "Powershell",
-        "docs/properties.properties": "Properties",
-        "docs/python.py": "Python",
-        "docs/r.r": "R",
-        "docs/rdoc.Rd": "RDoc",
-        "docs/rhtml.rhtml": "RHTML",
-        "docs/ruby.rb": "Ruby",
-        "docs/abap.abap": "SAP - ABAP",
-        "docs/scala.scala": "Scala",
-        "docs/scss.scss": "SCSS",
-        "docs/sass.sass": "SASS",
-        "docs/sh.sh": "SH",
-        "docs/stylus.styl": "Stylus",
-        "docs/sql.sql": {name: "SQL", wrapped: true},
-        "docs/svg.svg": "SVG",
-        "docs/tcl.tcl": "Tcl",
-        "docs/tex.tex": "Tex",
-        "docs/textile.textile": {name: "Textile", wrapped: true},
-        "docs/snippets.snippets": "snippets",
-        "docs/toml.toml": "TOML",
-        "docs/typescript.ts": "Typescript",
-        "docs/vbscript.vbs": "VBScript",
-        "docs/velocity.vm": "Velocity",
-        "docs/xml.xml": "XML",
-        "docs/xquery.xq": "XQuery",
-        "docs/yaml.yaml": "YAML",
-        "docs/c9search.c9search_results": "C9 Search Results",
-
-        "docs/actionscript.as": "ActionScript",
-        "docs/assembly_x86.asm": "Assembly_x86",
-        "docs/autohotkey.ahk": "AutoHotKey",
-        "docs/batchfile.bat": "BatchFile",
-        "docs/erlang.erl": "Erlang",
-        "docs/forth.frt": "Forth",
-        "docs/haskell.hs": "Haskell",
-        "docs/julia.js": "Julia",
-        "docs/prolog.plg": "Prolog",
-        "docs/rust.rs": "Rust",
-        "docs/twig.twig": "Twig",
-        "docs/Nix.nix": "Nix",
-        "docs/protobuf.proto": "Protobuf"
-    };
-
-    var ownSource = {
-    };
-
-    var hugeDocs = {
-        "src/ace.js": "",
-        "src-min/ace.js": ""
-    };
-
-    if (window.require && window.require.s) try {
-        for (var path in window.require.s.contexts._.defined) {
-            if (path.indexOf("!") != -1)
-                path = path.split("!").pop();
-            else
-                path = path + ".js";
-            ownSource[path] = "";
-        }
-    } catch(e) {}
-
-    function prepareDocList(docs) {
-        var list = [];
-        for (var path in docs) {
-            var doc = docs[path];
-            if (typeof doc != "object")
-                doc = {name: doc || path};
-
-            doc.path = path;
-            doc.desc = doc.name.replace(/^(ace|docs|demo|build)\//, "");
-            if (doc.desc.length > 18)
-                doc.desc = doc.desc.slice(0, 7) + ".." + doc.desc.slice(-9);
-
-            fileCache[doc.name] = doc;
-            list.push(doc);
-        }
-
-        return list;
-    }
-
-    function loadDoc(name, callback) {
-        var doc = fileCache[name];
-        if (!doc)
-            return callback(null);
-
-        if (doc.session)
-            return callback(doc.session);
-        var path = doc.path;
-        var parts = path.split("/");
-        if (parts[0] == "docs")
-            path = "kitchen-sink/" + path;
-        else if (parts[0] == "ace")
-            path = "lib/" + path;
-
-        net.get(path, function(x) {
-            initDoc(x, path, doc);
-            callback(doc.session);
-        });
-    }
-
-    module.exports = {
-        fileCache: fileCache,
-        docs: prepareDocList(docs),
-        ownSource: prepareDocList(ownSource),
-        hugeDocs: prepareDocList(hugeDocs),
-        initDoc: initDoc,
-        loadDoc: loadDoc
-    };
-    module.exports.all = {
-        "Mode Examples": module.exports.docs,
-        "Huge documents": module.exports.hugeDocs,
-        "own source": module.exports.ownSource
-    };
-
-    });
 
     define('ace/ext/modelist', ['require', 'exports', 'module' ], function(require, exports, module) {
-
 
     var modes = [];
     function getModeForPath(path) {
@@ -6384,6 +6003,7 @@ KitchenSink.load = function(){
         };
     });
 };
+
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
