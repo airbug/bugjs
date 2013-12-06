@@ -48,7 +48,7 @@ var spyOnFunction   = BugDouble.spyOnFunction;
  * 2) acquiring the lock
  * 3) Ensuring that the lock does not execute other acquiring methods when it is locked
  */
-var lockTest = {
+var lockWaitLockTest = {
 
     async: true,
 
@@ -96,16 +96,16 @@ var lockTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
-        this.testLock.tryLock(this.testMethod1Spy);
+        this.testLock.waitLock(this.testMethod1Spy);
         test.assertTrue(this.testMethod2Spy.wasNotCalled(),
             "Assert testMethod2 was not called");
 
-        this.testLock.tryLock(this.testMethod2Spy);
-        this.testLock.tryLock(this.testMethod3Spy);
+        this.testLock.waitLock(this.testMethod2Spy);
+        this.testLock.waitLock(this.testMethod3Spy);
     }
 };
-bugmeta.annotate(lockTest).with(
-    test().name("Lock test")
+bugmeta.annotate(lockWaitLockTest).with(
+    test().name("Lock - #waitLock test")
 );
 
 //TODO BRN: Write a stack overflow test

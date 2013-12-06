@@ -96,7 +96,7 @@ var LockOperator = Class.extend(Obj, {
                 _this.lockTypeToLockStripedMap.put(type, lockStriped);
             }
             lock = lockStriped.getForKey(key);
-            lock.tryLock(function() {
+            lock.waitLock(function() {
                 flow.complete();
             });
         }).execute(function() {

@@ -89,11 +89,15 @@ var Lock = Class.extend(EventDispatcher, {
     },
 
     /**
-     * @param {function()} method
+     * @return {boolean}
      */
-    tryLock: function(method) {
-        this.queueAcquisition(method);
-        this.processQueue();
+    tryLock: function() {
+        if (this.isLocked()) {
+            return false;
+        } else {
+            this.acquireLock();
+            return true;
+        }
     },
 
     /**
@@ -103,6 +107,14 @@ var Lock = Class.extend(EventDispatcher, {
         this.releaseLock();
     },
 
+    /**
+     * @param {function(*=)=} method
+     */
+    waitLock: function(method) {
+        this.queueAcquisition(method);
+        this.processQueue();
+    },
+
 
     //-------------------------------------------------------------------------------
     // Private Class Methods
@@ -110,10 +122,13 @@ var Lock = Class.extend(EventDispatcher, {
 
     /**
      * @private
+     * @param {function(*=)=} method
      */
     acquireLock: function(method) {
         this.locked = true;
-        method();
+        if (method) {
+            method();
+        }
     },
 
     /**
