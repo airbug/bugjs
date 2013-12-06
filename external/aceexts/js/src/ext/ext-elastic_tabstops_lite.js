@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aceext')
+//@Package('aceexts')
 
 //@Export('ElasticTabstopsLite')
 
@@ -334,4 +334,4 @@ ElasticTabstopsLite.load = function() {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('aceext.ElasticTabstopsLite', ElasticTabstopsLite);
+bugpack.export('aceexts.ElasticTabstopsLite', ElasticTabstopsLite);

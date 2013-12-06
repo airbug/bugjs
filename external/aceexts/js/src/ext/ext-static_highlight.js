@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aceext')
+//@Package('aceexts')
 
 //@Export('StaticHighlight')
 
@@ -158,4 +158,4 @@ StaticHighlight.load = function() {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('aceext.StaticHighlight', StaticHighlight);
+bugpack.export('aceexts.StaticHighlight', StaticHighlight);

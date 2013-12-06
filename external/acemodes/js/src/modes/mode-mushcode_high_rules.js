@@ -4,7 +4,7 @@
 
 //@Package('acemodes')
 
-//@Export('Mushcode_high_rules')
+//@Export('MushcodeHighRules')
 
 //@Require('ace.Ace')
 
@@ -24,8 +24,8 @@ var ace = bugpack.require('ace.Ace');
 //
 //-------------------------------------------------------------------------------
 
-var Mushcode_high_rules = {};
-Mushcode_high_rules.load = function() {
+var MushcodeHighRules = {};
+MushcodeHighRules.load = function() {
 
     /*
          * MUSHCodeMode
@@ -603,4 +603,4 @@ Mushcode_high_rules.load = function() {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('acemodes.Mushcode_high_rules', Mushcode_high_rules);
+bugpack.export('acemodes.MushcodeHighRules', MushcodeHighRules);

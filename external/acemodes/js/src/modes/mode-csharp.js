@@ -4,7 +4,7 @@
 
 //@Package('acemodes')
 
-//@Export('CSharp')
+//@Export('Csharp')
 
 //@Require('ace.Ace')
 
@@ -24,8 +24,8 @@ var ace = bugpack.require('ace.Ace');
 // 
 //-------------------------------------------------------------------------------
 
-var cSharp = {};
-cSharp.load = function(){
+var Csharp = {};
+Csharp.load = function(){
 
 
     ace.define('ace/mode/csharp', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/csharp_highlight_rules', 'ace/mode/matching_brace_outdent', 'ace/mode/behaviour/cstyle', 'ace/mode/folding/cstyle'], function(require, exports, module) {
@@ -649,4 +649,4 @@ cSharp.load = function(){
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('acemodes.CSharp', cSharp);
+bugpack.export('acemodes.Csharp', Csharp);

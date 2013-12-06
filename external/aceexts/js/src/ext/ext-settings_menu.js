@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aceext')
+//@Package('aceexts')
 
 //@Export('SettingsMenu')
 
@@ -661,4 +661,4 @@ SettingsMenu.load = function() {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('aceext.SettingsMenu', SettingsMenu);
+bugpack.export('aceexts.SettingsMenu', SettingsMenu);

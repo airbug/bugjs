@@ -34,7 +34,7 @@
 
 //@Package('acethemes')
 
-//@Export('TextMate')
+//@Export('Textmate')
 
 //@Require('ace.Ace')
 
@@ -54,8 +54,8 @@ var ace = bugpack.require('ace.Ace');
 //
 //-------------------------------------------------------------------------------
 
-var TextMate = {};
-TextMate.load = function() {
+var Textmate = {};
+Textmate.load = function() {
 
     ace.define('ace/theme/textmate', ['require', 'exports', 'module' , 'ace/lib/dom'], function(require, exports, module) {
 
@@ -196,4 +196,4 @@ TextMate.load = function() {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('acethemes.TextMate', TextMate);
+bugpack.export('acethemes.Textmate', Textmate);

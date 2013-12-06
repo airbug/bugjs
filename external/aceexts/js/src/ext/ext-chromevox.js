@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aceext')
+//@Package('aceexts')
 
 //@Export('Chromevox')
 
@@ -571,4 +571,4 @@ Chromevox.load = function() {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('aceext.Chromevox', Chromevox);
+bugpack.export('aceexts.Chromevox', Chromevox);

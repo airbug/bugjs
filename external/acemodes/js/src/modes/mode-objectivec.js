@@ -39,7 +39,7 @@
 
 //@Package('acemodes')
 
-//@Export('ObjectiveC')
+//@Export('Objectivec')
 
 //@Require('ace.Ace')
 
@@ -59,8 +59,8 @@ var ace = bugpack.require('ace.Ace');
 // 
 //-------------------------------------------------------------------------------
 
-var objectiveC = {};
-objectiveC.load = function(){
+var Objectivec = {};
+Objectivec.load = function(){
 
 
     ace.define('ace/mode/objectivec', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/objectivec_highlight_rules', 'ace/mode/folding/cstyle'], function(require, exports, module) {
@@ -694,4 +694,4 @@ objectiveC.load = function(){
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('acemodes.ObjectiveC', objectiveC);
+bugpack.export('acemodes.Objectivec', Objectivec);

@@ -54,8 +54,8 @@ var ace = bugpack.require('ace.Ace');
 // 
 //-------------------------------------------------------------------------------
 
-var javascript = {};
-javascript.load = function(){
+var Javascript = {};
+Javascript.load = function(){
 
     ace.define('ace/mode/javascript', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/javascript_highlight_rules', 'ace/mode/matching_brace_outdent', 'ace/range', 'ace/worker/worker_client', 'ace/mode/behaviour/cstyle', 'ace/mode/folding/cstyle'], function(require, exports, module) {
 
@@ -917,4 +917,4 @@ javascript.load = function(){
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('acemodes.Javascript', javascript);
+bugpack.export('acemodes.Javascript', Javascript);

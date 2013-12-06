@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aceext')
+//@Package('aceexts')
 
 //@Export('Spellcheck')
 
@@ -101,4 +101,4 @@ Spellcheck.load = function() {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('aceext.Spellcheck', Spellcheck);
+bugpack.export('aceexts.Spellcheck', Spellcheck);

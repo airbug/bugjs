@@ -4,7 +4,7 @@
 
 //@Package('acesnippets')
 
-//@Export('Html_ruby')
+//@Export('MushcodeHighRules')
 
 //@Require('ace.Ace')
 
@@ -24,14 +24,14 @@ var ace = bugpack.require('ace.Ace');
 //
 //-------------------------------------------------------------------------------
 
-var Html_ruby = {};
-Html_ruby.load = function() {
+var MushcodeHighRules = {};
+MushcodeHighRules.load = function() {
 
-    ace.define('ace/snippets/html_ruby', ['require', 'exports', 'module' ], function(require, exports, module) {
+    ace.define('ace/snippets/mushcode_high_rules', ['require', 'exports', 'module' ], function(require, exports, module) {
 
 
         exports.snippetText = "";
-        exports.scope = "html_ruby";
+        exports.scope = "mushcode_high_rules";
 
         });
 
@@ -41,4 +41,4 @@ Html_ruby.load = function() {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('acesnippets.Html_ruby', Html_ruby);
+bugpack.export('acesnippets.MushcodeHighRules', MushcodeHighRules);

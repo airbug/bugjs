@@ -54,8 +54,8 @@ var ace = bugpack.require('ace.Ace');
 // 
 //-------------------------------------------------------------------------------
 
-var css = {};
-css.load = function(){
+var Css = {};
+Css.load = function(){
     ace.define('ace/mode/css', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/css_highlight_rules', 'ace/mode/matching_brace_outdent', 'ace/worker/worker_client', 'ace/mode/behaviour/css', 'ace/mode/folding/cstyle'], function(require, exports, module) {
 
 
@@ -772,4 +772,4 @@ css.load = function(){
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('acemodes.Css', css);
+bugpack.export('acemodes.Css', Css);

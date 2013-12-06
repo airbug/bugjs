@@ -4,7 +4,7 @@
 
 //@Package('acesnippets')
 
-//@Export('Assembly_x86')
+//@Export('AssemblyX86')
 
 //@Require('ace.Ace')
 
@@ -24,8 +24,8 @@ var ace = bugpack.require('ace.Ace');
 //
 //-------------------------------------------------------------------------------
 
-var Assembly_x86 = {};
-Assembly_x86.load = function() {
+var AssemblyX86 = {};
+AssemblyX86.load = function() {
 
     ace.define('ace/snippets/assembly_x86', ['require', 'exports', 'module' ], function(require, exports, module) {
 
@@ -41,4 +41,4 @@ Assembly_x86.load = function() {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('acesnippets.Assembly_x86', Assembly_x86);
+bugpack.export('acesnippets.AssemblyX86', AssemblyX86);

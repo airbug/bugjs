@@ -53,8 +53,8 @@ var ace = bugpack.require('ace.Ace');
 // 
 //-------------------------------------------------------------------------------
 
-var python = {};
-python.load = function(){
+var Python = {};
+Python.load = function(){
     ace.define('ace/mode/python', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/python_highlight_rules', 'ace/mode/folding/pythonic', 'ace/range'], function(require, exports, module) {
 
 
@@ -328,4 +328,4 @@ python.load = function(){
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('acemodes.Python', python);
+bugpack.export('acemodes.Python', Python);

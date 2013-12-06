@@ -54,8 +54,8 @@ var ace = bugpack.require('ace.Ace');
 // 
 //-------------------------------------------------------------------------------
 
-var ruby = {};
-ruby.load = function(){
+var Ruby = {};
+Ruby.load = function(){
     ace.define('ace/mode/ruby', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/ruby_highlight_rules', 'ace/mode/matching_brace_outdent', 'ace/range', 'ace/mode/folding/coffee'], function(require, exports, module) {
 
 
@@ -466,4 +466,4 @@ ruby.load = function(){
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('acemodes.Ruby', ruby);
+bugpack.export('acemodes.Ruby', Ruby);

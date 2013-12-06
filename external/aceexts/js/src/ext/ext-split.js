@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aceext')
+//@Package('aceexts')
 
 //@Export('Split')
 
@@ -305,4 +305,4 @@ Split.load = function() {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('aceext.Split', Split);
+bugpack.export('aceexts.Split', Split);

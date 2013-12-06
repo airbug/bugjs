@@ -4,7 +4,7 @@
 
 //@Package('acesnippets')
 
-//@Export('Plain_text')
+//@Export('HtmlCompletions')
 
 //@Require('ace.Ace')
 
@@ -24,14 +24,14 @@ var ace = bugpack.require('ace.Ace');
 //
 //-------------------------------------------------------------------------------
 
-var Plain_text = {};
-Plain_text.load = function() {
+var HtmlCompletions = {};
+HtmlCompletions.load = function() {
 
-    ace.define('ace/snippets/plain_text', ['require', 'exports', 'module' ], function(require, exports, module) {
+    ace.define('ace/snippets/html_completions', ['require', 'exports', 'module' ], function(require, exports, module) {
 
 
         exports.snippetText = "";
-        exports.scope = "plain_text";
+        exports.scope = "html_completions";
 
         });
 
@@ -41,4 +41,4 @@ Plain_text.load = function() {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('acesnippets.Plain_text', Plain_text);
+bugpack.export('acesnippets.HtmlCompletions', HtmlCompletions);

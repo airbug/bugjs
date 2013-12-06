@@ -2,9 +2,9 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aceext')
+//@Package('aceexts')
 
-//@Export('Searchbox')
+//@Export('OldIe')
 
 //@Require('ace.Ace')
 
@@ -24,8 +24,8 @@ var ace = bugpack.require('ace.Ace');
 //
 //-------------------------------------------------------------------------------
 
-var Searchbox = {};
-Searchbox.load = function() {
+var OldIe = {};
+OldIe.load = function() {
 
     /* ***** BEGIN LICENSE BLOCK *****
          * Distributed under the BSD license:
@@ -56,6 +56,85 @@ Searchbox.load = function() {
          * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
          *
          * ***** END LICENSE BLOCK ***** */
+        
+        ace.define('ace/ext/old_ie', ['require', 'exports', 'module' , 'ace/lib/useragent', 'ace/tokenizer', 'ace/ext/searchbox'], function(require, exports, module) {
+        
+        var MAX_TOKEN_COUNT = 1000;
+        var useragent = require("../lib/useragent");
+        var TokenizerModule = require("../tokenizer");
+        
+        function patch(obj, name, regexp, replacement) {
+            eval("obj['" + name + "']=" + obj[name].toString().replace(
+                regexp, replacement
+            ));
+        }
+        
+        if (useragent.isIE && useragent.isIE < 10 && window.top.document.compatMode === "BackCompat")
+            useragent.isOldIE = true;
+        
+        if (typeof document != "undefined" && !document.documentElement.querySelector) {    
+            useragent.isOldIE = true;
+            var qs = function(el, selector) {
+                if (selector.charAt(0) == ".") {
+                    var classNeme = selector.slice(1);
+                } else {
+                    var m = selector.match(/(\w+)=(\w+)/);
+                    var attr = m && m[1];
+                    var attrVal = m && m[2];
+                }
+                for (var i = 0; i < el.all.length; i++) {
+                    var ch = el.all[i];
+                    if (classNeme) {
+                        if (ch.className.indexOf(classNeme) != -1)
+                            return ch;
+                    } else if (attr) {
+                        if (ch.getAttribute(attr) == attrVal)
+                            return ch;
+                    }
+                }
+            };
+            var sb = require("./searchbox").SearchBox.prototype;
+            patch(
+                sb, "$initElements",
+                /([^\s=]*).querySelector\((".*?")\)/g, 
+                "qs($1, $2)"
+            );
+        }
+            
+        var compliantExecNpcg = /()??/.exec("")[1] === undefined;
+        if (compliantExecNpcg)
+            return;
+        var proto = TokenizerModule.Tokenizer.prototype;
+        TokenizerModule.Tokenizer_orig = TokenizerModule.Tokenizer;
+        proto.getLineTokens_orig = proto.getLineTokens;
+        
+        patch(
+            TokenizerModule, "Tokenizer",
+            "ruleRegExps.push(adjustedregex);\n", 
+            function(m) {
+                return m + '\
+                if (state[i].next && RegExp(adjustedregex).test(""))\n\
+                    rule._qre = RegExp(adjustedregex, "g");\n\
+                ';
+            }
+        );
+        TokenizerModule.Tokenizer.prototype = proto;
+        patch(
+            proto, "getLineTokens",
+            /if \(match\[i \+ 1\] === undefined\)\s*continue;/, 
+            "if (!match[i + 1]) {\n\
+                if (value)continue;\n\
+                var qre = state[mapping[i]]._qre;\n\
+                if (!qre) continue;\n\
+                qre.lastIndex = lastIndex;\n\
+                if (!qre.exec(line) || qre.lastIndex != lastIndex)\n\
+                    continue;\n\
+            }"
+        );
+        
+        useragent.isOldIE = true;
+        
+        });
         
         ace.define('ace/ext/searchbox', ['require', 'exports', 'module' , 'ace/lib/dom', 'ace/lib/lang', 'ace/lib/event', 'ace/keyboard/hash_handler', 'ace/lib/keys'], function(require, exports, module) {
         
@@ -454,4 +533,4 @@ Searchbox.load = function() {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('aceext.Searchbox', Searchbox);
+bugpack.export('aceexts.OldIe', OldIe);

@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aceext')
+//@Package('aceexts')
 
 //@Export('Modelist')
 
@@ -194,4 +194,4 @@ Modelist.load = function() {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('aceext.Modelist', Modelist);
+bugpack.export('aceexts.Modelist', Modelist);

@@ -2,9 +2,9 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aceext')
+//@Package('aceexts')
 
-//@Export('Emmet')
+//@Export('LanguageTools')
 
 //@Require('ace.Ace')
 
@@ -24,13 +24,13 @@ var ace = bugpack.require('ace.Ace');
 //
 //-------------------------------------------------------------------------------
 
-var Emmet = {};
-Emmet.load = function() {
+var LanguageTools = {};
+LanguageTools.load = function() {
 
     /* ***** BEGIN LICENSE BLOCK *****
          * Distributed under the BSD license:
          *
-         * Copyright (c) 2010, Ajax.org B.V.
+         * Copyright (c) 2012, Ajax.org B.V.
          * All rights reserved.
          *
          * Redistribution and use in source and binary forms, with or without
@@ -57,269 +57,104 @@ Emmet.load = function() {
          *
          * ***** END LICENSE BLOCK ***** */
         
-        ace.define('ace/ext/emmet', ['require', 'exports', 'module' , 'ace/keyboard/hash_handler', 'ace/editor', 'ace/snippets', 'ace/range', 'ace/config'], function(require, exports, module) {
+        ace.define('ace/ext/language_tools', ['require', 'exports', 'module' , 'ace/snippets', 'ace/autocomplete', 'ace/config', 'ace/autocomplete/text_completer', 'ace/editor'], function(require, exports, module) {
         
-        var HashHandler = require("ace/keyboard/hash_handler").HashHandler;
-        var Editor = require("ace/editor").Editor;
-        var snippetManager = require("ace/snippets").snippetManager;
-        var Range = require("ace/range").Range;
-        var emmet;
         
-        Editor.prototype.indexToPosition = function(index) {
-            return this.session.doc.indexToPosition(index);
+        var snippetManager = require("../snippets").snippetManager;
+        var Autocomplete = require("../autocomplete").Autocomplete;
+        var config = require("../config");
+        
+        var textCompleter = require("../autocomplete/text_completer");
+        var keyWordCompleter = {
+            getCompletions: function(editor, session, pos, prefix, callback) {
+                var state = editor.session.getState(pos.row);
+                var completions = session.$mode.getCompletions(state, session, pos, prefix);
+                callback(null, completions);
+            }
         };
         
-        Editor.prototype.positionToIndex = function(pos) {
-            return this.session.doc.positionToIndex(pos);
-        };
-        function AceEmmetEditor() {}
-        
-        AceEmmetEditor.prototype = {
-            setupContext: function(editor) {
-                this.ace = editor;
-                this.indentation = editor.session.getTabString();
-                if (!emmet)
-                    emmet = window.emmet;
-                emmet.require("resources").setVariable("indentation", this.indentation);
-                this.$syntax = null;
-                this.$syntax = this.getSyntax();
-            },
-            getSelectionRange: function() {
-                var range = this.ace.getSelectionRange();
-                return {
-                    start: this.ace.positionToIndex(range.start),
-                    end: this.ace.positionToIndex(range.end)
-                };
-            },
-            createSelection: function(start, end) {
-                this.ace.selection.setRange({
-                    start: this.ace.indexToPosition(start),
-                    end: this.ace.indexToPosition(end)
-                });
-            },
-            getCurrentLineRange: function() {
-                var row = this.ace.getCursorPosition().row;
-                var lineLength = this.ace.session.getLine(row).length;
-                var index = this.ace.positionToIndex({row: row, column: 0});
-                return {
-                    start: index,
-                    end: index + lineLength
-                };
-            },
-            getCaretPos: function(){
-                var pos = this.ace.getCursorPosition();
-                return this.ace.positionToIndex(pos);
-            },
-            setCaretPos: function(index){
-                var pos = this.ace.indexToPosition(index);
-                this.ace.clearSelection();
-                this.ace.selection.moveCursorToPosition(pos);
-            },
-            getCurrentLine: function() {
-                var row = this.ace.getCursorPosition().row;
-                return this.ace.session.getLine(row);
-            },
-            replaceContent: function(value, start, end, noIndent) {
-                if (end == null)
-                    end = start == null ? this.getContent().length : start;
-                if (start == null)
-                    start = 0;        
-                
-                var editor = this.ace;
-                var range = Range.fromPoints(editor.indexToPosition(start), editor.indexToPosition(end));
-                editor.session.remove(range);
-                
-                range.end = range.start;
-                
-                value = this.$updateTabstops(value);
-                snippetManager.insertSnippet(editor, value)
-            },
-            getContent: function(){
-                return this.ace.getValue();
-            },
-            getSyntax: function() {
-                if (this.$syntax)
-                    return this.$syntax;
-                var syntax = this.ace.session.$modeId.split("/").pop();
-                if (syntax == "html" || syntax == "php") {
-                    var cursor = this.ace.getCursorPosition();
-                    var state = this.ace.session.getState(cursor.row);
-                    if (typeof state != "string")
-                        state = state[0];
-                    if (state) {
-                        state = state.split("-");
-                        if (state.length > 1)
-                            syntax = state[0];
-                        else if (syntax == "php")
-                            syntax = "html";
+        var snippetCompleter = {
+            getCompletions: function(editor, session, pos, prefix, callback) {
+                var scope = snippetManager.$getScope(editor);
+                var snippetMap = snippetManager.snippetMap;
+                var completions = [];
+                [scope, "_"].forEach(function(scope) {
+                    var snippets = snippetMap[scope] || [];
+                    for (var i = snippets.length; i--;) {
+                        var s = snippets[i];
+                        var caption = s.name || s.tabTrigger;
+                        if (!caption)
+                            continue;
+                        completions.push({
+                            caption: caption,
+                            snippet: s.content,
+                            meta: s.tabTrigger && !s.name ? s.tabTrigger + "\u21E5 " : "snippet"
+                        });
                     }
-                }
-                return syntax;
-            },
-            getProfileName: function() {
-                switch(this.getSyntax()) {
-                  case "css": return "css";
-                  case "xml":
-                  case "xsl":
-                    return "xml";
-                  case "html":
-                    var profile = emmet.require("resources").getVariable("profile");
-                    if (!profile)
-                        profile = this.ace.session.getLines(0,2).join("").search(/<!DOCTYPE[^>]+XHTML/i) != -1 ? "xhtml": "html";
-                    return profile;
-                }
-                return "xhtml";
-            },
-            prompt: function(title) {
-                return prompt(title);
-            },
-            getSelection: function() {
-                return this.ace.session.getTextRange();
-            },
-            getFilePath: function() {
-                return "";
-            },
-            $updateTabstops: function(value) {
-                var base = 1000;
-                var zeroBase = 0;
-                var lastZero = null;
-                var range = emmet.require('range');
-                var ts = emmet.require('tabStops');
-                var settings = emmet.require('resources').getVocabulary("user");
-                var tabstopOptions = {
-                    tabstop: function(data) {
-                        var group = parseInt(data.group, 10);
-                        var isZero = group === 0;
-                        if (isZero)
-                            group = ++zeroBase;
-                        else
-                            group += base;
-        
-                        var placeholder = data.placeholder;
-                        if (placeholder) {
-                            placeholder = ts.processText(placeholder, tabstopOptions);
-                        }
-        
-                        var result = '${' + group + (placeholder ? ':' + placeholder : '') + '}';
-        
-                        if (isZero) {
-                            lastZero = range.create(data.start, result);
-                        }
-        
-                        return result
-                    },
-                    escape: function(ch) {
-                        if (ch == '$') return '\\$';
-                        if (ch == '\\') return '\\\\';
-                        return ch;
-                    }
-                };
-        
-                value = ts.processText(value, tabstopOptions);
-        
-                if (settings.variables['insert_final_tabstop'] && !/\$\{0\}$/.test(value)) {
-                    value += '${0}';
-                } else if (lastZero) {
-                    value = emmet.require('utils').replaceSubstring(value, '${0}', lastZero);
-                }
-                
-                return value;
+                }, this);
+                callback(null, completions);
             }
         };
         
-        
-        var keymap = {
-            expand_abbreviation: {"mac": "ctrl+alt+e", "win": "alt+e"},
-            match_pair_outward: {"mac": "ctrl+d", "win": "ctrl+,"},
-            match_pair_inward: {"mac": "ctrl+j", "win": "ctrl+shift+0"},
-            matching_pair: {"mac": "ctrl+alt+j", "win": "alt+j"},
-            next_edit_point: "alt+right",
-            prev_edit_point: "alt+left",
-            toggle_comment: {"mac": "command+/", "win": "ctrl+/"},
-            split_join_tag: {"mac": "shift+command+'", "win": "shift+ctrl+`"},
-            remove_tag: {"mac": "command+'", "win": "shift+ctrl+;"},
-            evaluate_math_expression: {"mac": "shift+command+y", "win": "shift+ctrl+y"},
-            increment_number_by_1: "ctrl+up",
-            decrement_number_by_1: "ctrl+down",
-            increment_number_by_01: "alt+up",
-            decrement_number_by_01: "alt+down",
-            increment_number_by_10: {"mac": "alt+command+up", "win": "shift+alt+up"},
-            decrement_number_by_10: {"mac": "alt+command+down", "win": "shift+alt+down"},
-            select_next_item: {"mac": "shift+command+.", "win": "shift+ctrl+."},
-            select_previous_item: {"mac": "shift+command+,", "win": "shift+ctrl+,"},
-            reflect_css_value: {"mac": "shift+command+r", "win": "shift+ctrl+r"},
-        
-            encode_decode_data_url: {"mac": "shift+ctrl+d", "win": "ctrl+'"},
-            expand_abbreviation_with_tab: "Tab",
-            wrap_with_abbreviation: {"mac": "shift+ctrl+a", "win": "shift+ctrl+a"}
+        var completers = [snippetCompleter, textCompleter, keyWordCompleter];
+        exports.addCompleter = function(completer) {
+            completers.push(completer);
         };
         
-        var editorProxy = new AceEmmetEditor();
-        exports.commands = new HashHandler();
-        exports.runEmmetCommand = function(editor) {
-            editorProxy.setupContext(editor);
-            if (editorProxy.getSyntax() == "php")
-                return false;
-            var actions = emmet.require("actions");
-        
-            if (this.action == "expand_abbreviation_with_tab") {
-                if (!editor.selection.isEmpty())
-                    return false;
-            }
-            
-            if (this.action == "wrap_with_abbreviation") {
-                return setTimeout(function() {
-                    actions.run("wrap_with_abbreviation", editorProxy);
-                }, 0);
-            }
-            
-            try {
-                var result = actions.run(this.action, editorProxy);
-            } catch(e) {
-                editor._signal("changeStatus", typeof e == "string" ? e : e.message);
-                console.log(e);
-            }
-            return result;
-        };
-        
-        for (var command in keymap) {
-            exports.commands.addCommand({
-                name: "emmet:" + command,
-                action: command,
-                bindKey: keymap[command],
-                exec: exports.runEmmetCommand,
-                multiSelectAction: "forEach"
-            });
+        var expandSnippet = {
+            name: "expandSnippet",
+            exec: function(editor) {
+                var success = snippetManager.expandWithTab(editor);
+                if (!success)
+                    editor.execCommand("indent");
+            },
+            bindKey: "tab"
         }
         
-        var onChangeMode = function(e, target) {
-            var editor = target;
-            if (!editor)
-                return;
-            var modeId = editor.session.$modeId;
-            var enabled = modeId && /css|less|scss|sass|stylus|html|php/.test(modeId);
-            if (e.enableEmmet === false)
-                enabled = false;
-            if (enabled)
-                editor.keyBinding.addKeyboardHandler(exports.commands);
-            else
-                editor.keyBinding.removeKeyboardHandler(exports.commands);
+        var onChangeMode = function(e, editor) {
+            var mode = editor.session.$mode;
+            var id = mode.$id
+            if (!snippetManager.files) snippetManager.files = {};
+            if (id && !snippetManager.files[id]) {
+                var snippetFilePath = id.replace("mode", "snippets");
+                config.loadModule(snippetFilePath, function(m) {
+                    if (m) {
+                        snippetManager.files[id] = m;
+                        m.snippets = snippetManager.parseSnippetFile(m.snippetText);
+                        snippetManager.register(m.snippets, m.scope);
+                    }
+                });
+            }
         };
         
-        
-        exports.AceEmmetEditor = AceEmmetEditor;
-        require("ace/config").defineOptions(Editor.prototype, "editor", {
-            enableEmmet: {
+        var Editor = require("../editor").Editor;
+        require("../config").defineOptions(Editor.prototype, "editor", {
+            enableBasicAutocompletion: {
                 set: function(val) {
-                    this[val ? "on" : "removeListener"]("changeMode", onChangeMode);
-                    onChangeMode({enableEmmet: !!val}, this);
+                    if (val) {
+                        this.completers = completers
+                        this.commands.addCommand(Autocomplete.startCommand);
+                    } else {
+                        this.commands.removeCommand(Autocomplete.startCommand);
+                    }
                 },
-                value: true
+                value: false
+            },
+            enableSnippets: {
+                set: function(val) {
+                    if (val) {
+                        this.commands.addCommand(expandSnippet);
+                        this.on("changeMode", onChangeMode);
+                        onChangeMode(null, this)
+                    } else {
+                        this.commands.removeCommand(expandSnippet);
+                        this.off("changeMode", onChangeMode);
+                    }
+                },
+                value: false
             }
         });
         
-        
-        exports.setCore = function(e) {emmet = e;};
         });
         
         ace.define('ace/snippets', ['require', 'exports', 'module' , 'ace/lib/lang', 'ace/range', 'ace/keyboard/hash_handler', 'ace/tokenizer', 'ace/lib/dom'], function(require, exports, module) {
@@ -1116,10 +951,648 @@ Emmet.load = function() {
         
         });
         
+        ace.define('ace/autocomplete', ['require', 'exports', 'module' , 'ace/keyboard/hash_handler', 'ace/autocomplete/popup', 'ace/autocomplete/util', 'ace/lib/event', 'ace/lib/lang', 'ace/snippets'], function(require, exports, module) {
+        
+        
+        var HashHandler = require("./keyboard/hash_handler").HashHandler;
+        var AcePopup = require("./autocomplete/popup").AcePopup;
+        var util = require("./autocomplete/util");
+        var event = require("./lib/event");
+        var lang = require("./lib/lang");
+        var snippetManager = require("./snippets").snippetManager;
+        
+        var Autocomplete = function() {
+            this.keyboardHandler = new HashHandler();
+            this.keyboardHandler.bindKeys(this.commands);
+        
+            this.blurListener = this.blurListener.bind(this);
+            this.changeListener = this.changeListener.bind(this);
+            this.mousedownListener = this.mousedownListener.bind(this);
+            this.mousewheelListener = this.mousewheelListener.bind(this);
+            
+            this.changeTimer = lang.delayedCall(function() {
+                this.updateCompletions(true);
+            }.bind(this))
+        };
+        
+        (function() {
+            this.$init = function() {
+                this.popup = new AcePopup(document.body || document.documentElement);
+                this.popup.on("click", function(e) {
+                    this.insertMatch();
+                    e.stop();
+                }.bind(this));
+            };
+        
+            this.openPopup = function(editor, prefix, keepPopupPosition) {
+                if (!this.popup)
+                    this.$init();
+        
+                this.popup.setData(this.completions.filtered);
+        
+                var renderer = editor.renderer;
+                if (!keepPopupPosition) {
+                    this.popup.setFontSize(editor.getFontSize());
+        
+                    var lineHeight = renderer.layerConfig.lineHeight;
+                    
+                    var pos = renderer.$cursorLayer.getPixelPosition(this.base, true);            
+                    pos.left -= this.popup.getTextLeftOffset();
+                    
+                    var rect = editor.container.getBoundingClientRect();
+                    pos.top += rect.top - renderer.layerConfig.offset;
+                    pos.left += rect.left;
+                    pos.left += renderer.$gutterLayer.gutterWidth;
+        
+                    this.popup.show(pos, lineHeight);
+                }
+                renderer.updateText();
+            };
+        
+            this.detach = function() {
+                this.editor.keyBinding.removeKeyboardHandler(this.keyboardHandler);
+                this.editor.off("changeSelection", this.changeListener);
+                this.editor.off("blur", this.changeListener);
+                this.editor.off("mousedown", this.changeListener);
+                this.editor.off("mousewheel", this.mousewheelListener);
+                this.changeTimer.cancel();
+                
+                if (this.popup)
+                    this.popup.hide();
+        
+                this.activated = false;
+                this.completions = this.base = null;
+            };
+        
+            this.changeListener = function(e) {
+                var cursor = this.editor.selection.lead;
+                if (cursor.row != this.base.row || cursor.column < this.base.column) {
+                    this.detach();
+                }
+                if (this.activated)
+                    this.changeTimer.schedule();
+                else
+                    this.detach();
+            };
+        
+            this.blurListener = function() {
+                if (document.activeElement != this.editor.textInput.getElement())
+                    this.detach();
+            };
+        
+            this.mousedownListener = function(e) {
+                this.detach();
+            };
+        
+            this.mousewheelListener = function(e) {
+                this.detach();
+            };
+        
+            this.goTo = function(where) {
+                var row = this.popup.getRow();
+                var max = this.popup.session.getLength() - 1;
+        
+                switch(where) {
+                    case "up": row = row < 0 ? max : row - 1; break;
+                    case "down": row = row >= max ? -1 : row + 1; break;
+                    case "start": row = 0; break;
+                    case "end": row = max; break;
+                }
+        
+                this.popup.setRow(row);
+            };
+        
+            this.insertMatch = function(data) {
+                if (!data)
+                    data = this.popup.getData(this.popup.getRow());
+                if (!data)
+                    return false;
+                if (data.completer && data.completer.insertMatch) {
+                    data.completer.insertMatch(this.editor);
+                } else {
+                    if (this.completions.filterText) {
+                        var ranges = this.editor.selection.getAllRanges();
+                        for (var i = 0, range; range = ranges[i]; i++) {
+                            range.start.column -= this.completions.filterText.length;
+                            this.editor.session.remove(range);
+                        }
+                    }
+                    if (data.snippet)
+                        snippetManager.insertSnippet(this.editor, data.snippet);
+                    else
+                        this.editor.execCommand("insertstring", data.value || data);
+                }
+                this.detach();
+            };
+        
+            this.commands = {
+                "Up": function(editor) { editor.completer.goTo("up"); },
+                "Down": function(editor) { editor.completer.goTo("down"); },
+                "Ctrl-Up|Ctrl-Home": function(editor) { editor.completer.goTo("start"); },
+                "Ctrl-Down|Ctrl-End": function(editor) { editor.completer.goTo("end"); },
+        
+                "Esc": function(editor) { editor.completer.detach(); },
+                "Space": function(editor) { editor.completer.detach(); editor.insert(" ");},
+                "Return": function(editor) { editor.completer.insertMatch(); },
+                "Shift-Return": function(editor) { editor.completer.insertMatch(true); },
+                "Tab": function(editor) { editor.completer.insertMatch(); },
+        
+                "PageUp": function(editor) { editor.completer.popup.gotoPageUp(); },
+                "PageDown": function(editor) { editor.completer.popup.gotoPageDown(); }
+            };
+        
+            this.gatherCompletions = function(editor, callback) {
+                var session = editor.getSession();
+                var pos = editor.getCursorPosition();
+                
+                var line = session.getLine(pos.row);
+                var prefix = util.retrievePrecedingIdentifier(line, pos.column);
+                
+                this.base = editor.getCursorPosition();
+                this.base.column -= prefix.length;
+        
+                var matches = [];
+                util.parForEach(editor.completers, function(completer, next) {
+                    completer.getCompletions(editor, session, pos, prefix, function(err, results) {
+                        if (!err)
+                            matches = matches.concat(results);
+                        next();
+                    });
+                }, function() {
+                    callback(null, {
+                        prefix: prefix,
+                        matches: matches
+                    });
+                });
+                return true;
+            };
+        
+            this.showPopup = function(editor) {
+                if (this.editor)
+                    this.detach();
+                
+                this.activated = true;
+        
+                this.editor = editor;
+                if (editor.completer != this) {
+                    if (editor.completer)
+                        editor.completer.detach();
+                    editor.completer = this;
+                }
+        
+                editor.keyBinding.addKeyboardHandler(this.keyboardHandler);
+                editor.on("changeSelection", this.changeListener);
+                editor.on("blur", this.blurListener);
+                editor.on("mousedown", this.mousedownListener);
+                editor.on("mousewheel", this.mousewheelListener);
+                
+                this.updateCompletions();
+            }
+            
+            this.updateCompletions = function(keepPopupPosition) {
+                if (keepPopupPosition && this.base && this.completions) {
+                    var pos = this.editor.getCursorPosition();
+                    var prefix = this.editor.session.getTextRange({start: this.base, end: pos});
+                    if (prefix == this.completions.filterText)
+                        return;
+                    this.completions.setFilter(prefix);
+                    if (!this.completions.filtered.length)
+                        return this.detach();
+                    this.openPopup(this.editor, prefix, keepPopupPosition);
+                    return;
+                }
+                this.gatherCompletions(this.editor, function(err, results) {
+                    var matches = results && results.matches;
+                    if (!matches || !matches.length)
+                        return this.detach();
+        
+                    this.completions = new FilteredList(matches);
+                    this.completions.setFilter(results.prefix);
+                    if (!this.completions.filtered.length)
+                        return this.detach();
+                    this.openPopup(this.editor, results.prefix, keepPopupPosition);
+                }.bind(this));
+            };
+        
+            this.cancelContextMenu = function() {
+                var stop = function(e) {
+                    this.editor.off("nativecontextmenu", stop);
+                    if (e && e.domEvent)
+                        event.stopEvent(e.domEvent);
+                }.bind(this);
+                setTimeout(stop, 10);
+                this.editor.on("nativecontextmenu", stop);
+            };
+        
+        }).call(Autocomplete.prototype);
+        
+        Autocomplete.startCommand = {
+            name: "startAutocomplete",
+            exec: function(editor) {
+                if (!editor.completer)
+                    editor.completer = new Autocomplete();
+                editor.completer.showPopup(editor);
+                editor.completer.cancelContextMenu();
+            },
+            bindKey: "Ctrl-Space|Ctrl-Shift-Space|Alt-Space"
+        };
+        
+        var FilteredList = function(array, filterText, mutateData) {
+            this.all = array;
+            this.filtered = array;
+            this.filterText = filterText || "";
+        };
+        (function(){
+            this.setFilter = function(str) {
+                if (str.length > this.filterText && str.lastIndexOf(this.filterText, 0) === 0)
+                    var matches = this.filtered;
+                else
+                    var matches = this.all;
+        
+                this.filterText = str;
+                matches = this.filterCompletions(matches, this.filterText);
+                matches = matches.sort(function(a, b) {
+                    return b.exactMatch - a.exactMatch || b.score - a.score;
+                });
+                var prev = null;
+                matches = matches.filter(function(item){
+                    var caption = item.value || item.caption || item.snippet; 
+                    if (caption === prev) return false;
+                    prev = caption;
+                    return true;
+                });
+                
+                this.filtered = matches;
+            };
+            this.filterCompletions = function(items, needle) {
+                var results = [];
+                var upper = needle.toUpperCase();
+                var lower = needle.toLowerCase();
+                loop: for (var i = 0, item; item = items[i]; i++) {
+                    var caption = item.value || item.caption || item.snippet;
+                    if (!caption) continue;
+                    var lastIndex = -1;
+                    var matchMask = 0;
+                    var penalty = 0;
+                    var index, distance;
+                    for (var j = 0; j < needle.length; j++) {
+                        var i1 = caption.indexOf(lower[j], lastIndex + 1);
+                        var i2 = caption.indexOf(upper[j], lastIndex + 1);
+                        index = (i1 >= 0) ? ((i2 < 0 || i1 < i2) ? i1 : i2) : i2;
+                        if (index < 0)
+                            continue loop;
+                        distance = index - lastIndex - 1;
+                        if (distance > 0) {
+                            if (lastIndex === -1)
+                                penalty += 10;
+                            penalty += distance;
+                        }
+                        matchMask = matchMask | (1 << index);
+                        lastIndex = index;
+                    }
+                    item.matchMask = matchMask;
+                    item.exactMatch = penalty ? 0 : 1;
+                    item.score = (item.score || 0) - penalty;
+                    results.push(item);
+                }
+                return results;
+            };
+        }).call(FilteredList.prototype);
+        
+        exports.Autocomplete = Autocomplete;
+        exports.FilteredList = FilteredList;
+        
+        });
+        
+        ace.define('ace/autocomplete/popup', ['require', 'exports', 'module' , 'ace/edit_session', 'ace/virtual_renderer', 'ace/editor', 'ace/range', 'ace/lib/event', 'ace/lib/lang', 'ace/lib/dom'], function(require, exports, module) {
+        
+        
+        var EditSession = require("../edit_session").EditSession;
+        var Renderer = require("../virtual_renderer").VirtualRenderer;
+        var Editor = require("../editor").Editor;
+        var Range = require("../range").Range;
+        var event = require("../lib/event");
+        var lang = require("../lib/lang");
+        var dom = require("../lib/dom");
+        
+        var $singleLineEditor = function(el) {
+            var renderer = new Renderer(el);
+        
+            renderer.$maxLines = 4;
+            
+            var editor = new Editor(renderer);
+        
+            editor.setHighlightActiveLine(false);
+            editor.setShowPrintMargin(false);
+            editor.renderer.setShowGutter(false);
+            editor.renderer.setHighlightGutterLine(false);
+        
+            editor.$mouseHandler.$focusWaitTimout = 0;
+        
+            return editor;
+        };
+        
+        var AcePopup = function(parentNode) {
+            var el = dom.createElement("div");
+            var popup = new $singleLineEditor(el);
+            
+            if (parentNode)
+                parentNode.appendChild(el);
+            el.style.display = "none";
+            popup.renderer.content.style.cursor = "default";
+            popup.renderer.setStyle("ace_autocomplete");
+        
+            var noop = function(){};
+        
+            popup.focus = noop;
+            popup.$isFocused = true;
+        
+            popup.renderer.$cursorLayer.restartTimer = noop;
+            popup.renderer.$cursorLayer.element.style.opacity = 0;
+        
+            popup.renderer.$maxLines = 8;
+            popup.renderer.$keepTextAreaAtCursor = false;
+        
+            popup.setHighlightActiveLine(false);
+            popup.session.highlight("");
+            popup.session.$searchHighlight.clazz = "ace_highlight-marker";
+        
+            popup.on("mousedown", function(e) {
+                var pos = e.getDocumentPosition();
+                popup.moveCursorToPosition(pos);
+                popup.selection.clearSelection();
+                selectionMarker.start.row = selectionMarker.end.row = pos.row;
+                e.stop();
+            });
+        
+            var lastMouseEvent;
+            var hoverMarker = new Range(-1,0,-1,Infinity);
+            var selectionMarker = new Range(-1,0,-1,Infinity);
+            selectionMarker.id = popup.session.addMarker(selectionMarker, "ace_active-line", "fullLine");
+            popup.setSelectOnHover = function(val) {
+                if (!val) {
+                    hoverMarker.id = popup.session.addMarker(hoverMarker, "ace_line-hover", "fullLine");
+                } else if (hoverMarker.id) {
+                    popup.session.removeMarker(hoverMarker.id);
+                    hoverMarker.id = null;
+                }
+            }
+            popup.setSelectOnHover(false)
+            popup.on("mousemove", function(e) {
+                lastMouseEvent = e;
+                lastMouseEvent.scrollTop = popup.renderer.scrollTop;
+                var row = lastMouseEvent.getDocumentPosition().row;
+                if (hoverMarker.start.row != row) {
+                    popup.session._emit("changeBackMarker");
+                    if (!hoverMarker.id)
+                        popup.setRow(row);
+                    hoverMarker.start.row = hoverMarker.end.row = row;
+                }
+            });
+            popup.renderer.on("beforeRender", function() {
+                if (lastMouseEvent && hoverMarker.start.row != -1) {
+                    lastMouseEvent.$pos = null;
+                    var row = lastMouseEvent.getDocumentPosition().row;
+                    if (!hoverMarker.id)
+                        popup.setRow(row);
+                    hoverMarker.start.row = hoverMarker.end.row = row;
+                }
+            });
+            var hideHoverMarker = function() {
+                hoverMarker.start.row = hoverMarker.end.row = -1;
+                popup.session._emit("changeBackMarker");
+            };
+            event.addListener(popup.container, "mouseout", hideHoverMarker);
+            popup.on("hide", hideHoverMarker);
+            popup.on("changeSelection", hideHoverMarker);
+            
+            popup.session.doc.getLength = function() {
+                return popup.data.length;
+            };
+            popup.session.doc.getLine = function(i) {
+                var data = popup.data[i];
+                if (typeof data == "string")
+                    return data;
+                return (data && data.value) || "";
+            };
+        
+            var bgTokenizer = popup.session.bgTokenizer;
+            bgTokenizer.$tokenizeRow = function(i) {
+                var data = popup.data[i];
+                var tokens = [];
+                if (!data)
+                    return tokens;
+                if (typeof data == "string")
+                    data = {value: data};
+                if (!data.caption)
+                    data.caption = data.value;
+        
+                var last = -1;
+                var flag, c;
+                for (var i = 0; i < data.caption.length; i++) {
+                    c = data.caption[i];
+                    flag = data.matchMask & (1 << i) ? 1 : 0;
+                    if (last !== flag) {
+                        tokens.push({type: data.className || "" + ( flag ? "completion-highlight" : ""), value: c});
+                        last = flag;
+                    } else {
+                        tokens[tokens.length - 1].value += c;
+                    }
+                }
+        
+                if (data.meta) {
+                    var maxW = popup.renderer.$size.scrollerWidth / popup.renderer.layerConfig.characterWidth;
+                    if (data.meta.length + data.caption.length < maxW - 2)
+                        tokens.push({type: "rightAlignedText", value: data.meta});
+                }
+                return tokens;
+            };
+            bgTokenizer.$updateOnChange = noop;
+            
+            popup.session.$computeWidth = function() {
+                return this.screenWidth = 0;
+            }
+            popup.data = [];
+            popup.setData = function(list) {
+                popup.data = list || [];
+                popup.setValue(lang.stringRepeat("\n", list.length), -1);
+            };
+            popup.getData = function(row) {
+                return popup.data[row];
+            };
+        
+            popup.getRow = function() {
+                return selectionMarker.start.row;
+            };
+            popup.setRow = function(line) {
+                if (selectionMarker.start.row != line) {
+                    popup.selection.clearSelection();
+                    selectionMarker.start.row = selectionMarker.end.row = line || 0;
+                    popup.session._emit("changeBackMarker");
+                    popup.moveCursorTo(line || 0, 0);
+                }
+            };
+        
+            popup.hide = function() {
+                this.container.style.display = "none";
+                this._signal("hide");
+            };
+            popup.show = function(pos, lineHeight) {
+                var el = this.container;
+                if (pos.top > window.innerHeight / 2  + lineHeight) {
+                    el.style.top = "";
+                    el.style.bottom = window.innerHeight - pos.top + "px";
+                } else {
+                    pos.top += lineHeight;
+                    el.style.top = pos.top + "px";
+                    el.style.bottom = "";
+                }
+        
+                el.style.left = pos.left + "px";
+                el.style.display = "";
+                this.renderer.$textLayer.checkForSizeChanges();
+        
+                this._signal("show");
+            };
+            
+            popup.getTextLeftOffset = function() {
+                return 1 + this.renderer.layerConfig.padding;
+            }
+        
+            return popup;
+        };
+        
+        dom.importCssString("\
+        .ace_autocomplete.ace-tm .ace_marker-layer .ace_active-line {\
+            background-color: #CAD6FA;\
+            z-index: 1;\
+        }\
+        .ace_autocomplete.ace-tm .ace_line-hover {\
+            border: 1px solid #abbffe;\
+            position: absolute;\
+            background: rgba(233,233,253,0.4);\
+            z-index: 2;\
+            margin-top: -1px;\
+        }\
+        .ace_rightAlignedText {\
+            color: gray;\
+            display: inline-block;\
+            position: absolute;\
+            right: 4px;\
+            text-align: right;\
+            z-index: -1;\
+        }\
+        .ace_autocomplete .ace_completion-highlight{\
+            color: #000;\
+            text-shadow: 0 0 0.01em;\
+        }\
+        .ace_autocomplete {\
+            width: 280px;\
+            z-index: 200000;\
+            background: #fbfbfb;\
+            color: #444;\
+            border: 1px lightgray solid;\
+            position: fixed;\
+            box-shadow: 2px 3px 5px rgba(0,0,0,.2);\
+            line-height: 1.4;\
+        }");
+        
+        exports.AcePopup = AcePopup;
+        
+        });
+        
+        ace.define('ace/autocomplete/util', ['require', 'exports', 'module' ], function(require, exports, module) {
+        
+        
+        exports.parForEach = function(array, fn, callback) {
+            var completed = 0;
+            var arLength = array.length;
+            if (arLength === 0)
+                callback();
+            for (var i = 0; i < arLength; i++) {
+                fn(array[i], function(result, err) {
+                    completed++;
+                    if (completed === arLength)
+                        callback(result, err);
+                });
+            }
+        }
+        
+        var ID_REGEX = /[a-zA-Z_0-9\$-]/;
+        
+        exports.retrievePrecedingIdentifier = function(text, pos, regex) {
+            regex = regex || ID_REGEX;
+            var buf = [];
+            for (var i = pos-1; i >= 0; i--) {
+                if (regex.test(text[i]))
+                    buf.push(text[i]);
+                else
+                    break;
+            }
+            return buf.reverse().join("");
+        }
+        
+        exports.retrieveFollowingIdentifier = function(text, pos, regex) {
+            regex = regex || ID_REGEX;
+            var buf = [];
+            for (var i = pos; i < text.length; i++) {
+                if (regex.test(text[i]))
+                    buf.push(text[i]);
+                else
+                    break;
+            }
+            return buf;
+        }
+        
+        });
+        
+        ace.define('ace/autocomplete/text_completer', ['require', 'exports', 'module' , 'ace/range'], function(require, exports, module) {
+            var Range = require("ace/range").Range;
+            
+            var splitRegex = /[^a-zA-Z_0-9\$\-]+/;
+        
+            function getWordIndex(doc, pos) {
+                var textBefore = doc.getTextRange(Range.fromPoints({row: 0, column:0}, pos));
+                return textBefore.split(splitRegex).length - 1;
+            }
+            function wordDistance(doc, pos) {
+                var prefixPos = getWordIndex(doc, pos);
+                var words = doc.getValue().split(splitRegex);
+                var wordScores = Object.create(null);
+                
+                var currentWord = words[prefixPos];
+        
+                words.forEach(function(word, idx) {
+                    if (!word || word === currentWord) return;
+        
+                    var distance = Math.abs(prefixPos - idx);
+                    var score = words.length - distance;
+                    if (wordScores[word]) {
+                        wordScores[word] = Math.max(score, wordScores[word]);
+                    } else {
+                        wordScores[word] = score;
+                    }
+                });
+                return wordScores;
+            }
+        
+            exports.getCompletions = function(editor, session, pos, prefix, callback) {
+                var wordScore = wordDistance(session, pos, prefix);
+                var wordList = Object.keys(wordScore);
+                callback(null, wordList.map(function(word) {
+                    return {
+                        name: word,
+                        value: word,
+                        score: wordScore[word],
+                        meta: "local"
+                    };
+                }));
+            };
+        });
 };
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('aceext.Emmet', Emmet);
+bugpack.export('aceexts.LanguageTools', LanguageTools);

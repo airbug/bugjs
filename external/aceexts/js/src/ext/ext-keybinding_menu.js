@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aceext')
+//@Package('aceexts')
 
 //@Export('KeybindingMenu')
 
@@ -240,4 +240,4 @@ KeybindingMenu.load = function() {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('aceext.KeybindingMenu', KeybindingMenu);
+bugpack.export('aceexts.KeybindingMenu', KeybindingMenu);

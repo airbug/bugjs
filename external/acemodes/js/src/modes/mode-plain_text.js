@@ -4,7 +4,7 @@
 
 //@Package('acemodes')
 
-//@Export('Plain_text')
+//@Export('PlainText')
 
 //@Require('ace.Ace')
 
@@ -24,8 +24,8 @@ var ace = bugpack.require('ace.Ace');
 //
 //-------------------------------------------------------------------------------
 
-var Plain_text = {};
-Plain_text.load = function() {
+var PlainText = {};
+PlainText.load = function() {
 
     /* ***** BEGIN LICENSE BLOCK *****
          * Distributed under the BSD license:
@@ -88,4 +88,4 @@ Plain_text.load = function() {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('acemodes.Plain_text', Plain_text);
+bugpack.export('acemodes.PlainText', PlainText);

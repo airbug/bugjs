@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aceext')
+//@Package('aceexts')
 
 //@Export('Whitespace')
 
@@ -240,4 +240,4 @@ Whitespace.load = function() {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('aceext.Whitespace', Whitespace);
+bugpack.export('aceexts.Whitespace', Whitespace);

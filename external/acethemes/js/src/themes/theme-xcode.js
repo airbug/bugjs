@@ -34,7 +34,7 @@
 
 //@Package('acethemes')
 
-//@Export('XCode')
+//@Export('Xcode')
 
 //@Require('ace.Ace')
 
@@ -54,8 +54,8 @@ var ace = bugpack.require('ace.Ace');
 //
 //-------------------------------------------------------------------------------
 
-var XCode = {};
-XCode.load = function() {
+var Xcode = {};
+Xcode.load = function() {
 
     ace.define('ace/theme/xcode', ['require', 'exports', 'module' , 'ace/lib/dom'], function(require, exports, module) {
 
@@ -156,4 +156,4 @@ XCode.load = function() {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('acethemes.XCode', XCode);
+bugpack.export('acethemes.Xcode', Xcode);

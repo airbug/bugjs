@@ -4,7 +4,7 @@
 
 //@Package('acesnippets')
 
-//@Export('Html_completions')
+//@Export('HtmlRuby')
 
 //@Require('ace.Ace')
 
@@ -24,14 +24,14 @@ var ace = bugpack.require('ace.Ace');
 //
 //-------------------------------------------------------------------------------
 
-var Html_completions = {};
-Html_completions.load = function() {
+var HtmlRuby = {};
+HtmlRuby.load = function() {
 
-    ace.define('ace/snippets/html_completions', ['require', 'exports', 'module' ], function(require, exports, module) {
+    ace.define('ace/snippets/html_ruby', ['require', 'exports', 'module' ], function(require, exports, module) {
 
 
         exports.snippetText = "";
-        exports.scope = "html_completions";
+        exports.scope = "html_ruby";
 
         });
 
@@ -41,4 +41,4 @@ Html_completions.load = function() {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('acesnippets.Html_completions', Html_completions);
+bugpack.export('acesnippets.HtmlRuby', HtmlRuby);

@@ -54,8 +54,8 @@ var ace = bugpack.require('ace.Ace');
 // 
 //-------------------------------------------------------------------------------
 
-var cCpp = {};
-cCpp.load = function(){
+var CCpp = {};
+CCpp.load = function(){
     ace.define('ace/mode/c_cpp', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/text', 'ace/tokenizer', 'ace/mode/c_cpp_highlight_rules', 'ace/mode/matching_brace_outdent', 'ace/range', 'ace/mode/behaviour/cstyle', 'ace/mode/folding/cstyle'], function(require, exports, module) {
 
 
@@ -773,4 +773,4 @@ cCpp.load = function(){
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('acemodes.CCpp', cCpp);
+bugpack.export('acemodes.CCpp', CCpp);

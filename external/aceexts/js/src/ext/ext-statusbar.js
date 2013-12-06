@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aceext')
+//@Package('aceexts')
 
 //@Export('Statusbar')
 
@@ -80,4 +80,4 @@ Statusbar.load = function() {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('aceext.Statusbar', Statusbar);
+bugpack.export('aceexts.Statusbar', Statusbar);

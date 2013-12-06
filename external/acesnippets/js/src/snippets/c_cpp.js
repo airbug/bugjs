@@ -4,7 +4,7 @@
 
 //@Package('acesnippets')
 
-//@Export('C_cpp')
+//@Export('CCpp')
 
 //@Require('ace.Ace')
 
@@ -24,8 +24,8 @@ var ace = bugpack.require('ace.Ace');
 //
 //-------------------------------------------------------------------------------
 
-var C_cpp = {};
-C_cpp.load = function() {
+var CCpp = {};
+CCpp.load = function() {
 
     ace.define('ace/snippets/c_cpp', ['require', 'exports', 'module' ], function(require, exports, module) {
 
@@ -172,4 +172,4 @@ C_cpp.load = function() {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('acesnippets.C_cpp', C_cpp);
+bugpack.export('acesnippets.CCpp', CCpp);

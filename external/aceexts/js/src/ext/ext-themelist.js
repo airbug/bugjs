@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aceext')
+//@Package('aceexts')
 
 //@Export('Themelist')
 
@@ -123,4 +123,4 @@ Themelist.load = function() {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('aceext.Themelist', Themelist);
+bugpack.export('aceexts.Themelist', Themelist);

@@ -4,7 +4,7 @@
 
 //@Package('acesnippets')
 
-//@Export('Mushcode_high_rules')
+//@Export('PlainText')
 
 //@Require('ace.Ace')
 
@@ -24,14 +24,14 @@ var ace = bugpack.require('ace.Ace');
 //
 //-------------------------------------------------------------------------------
 
-var Mushcode_high_rules = {};
-Mushcode_high_rules.load = function() {
+var PlainText = {};
+PlainText.load = function() {
 
-    ace.define('ace/snippets/mushcode_high_rules', ['require', 'exports', 'module' ], function(require, exports, module) {
+    ace.define('ace/snippets/plain_text', ['require', 'exports', 'module' ], function(require, exports, module) {
 
 
         exports.snippetText = "";
-        exports.scope = "mushcode_high_rules";
+        exports.scope = "plain_text";
 
         });
 
@@ -41,4 +41,4 @@ Mushcode_high_rules.load = function() {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('acesnippets.Mushcode_high_rules', Mushcode_high_rules);
+bugpack.export('acesnippets.PlainText', PlainText);

@@ -24,8 +24,8 @@ var ace = bugpack.require('ace.Ace');
 // 
 //-------------------------------------------------------------------------------
 
-var java = {};
-java.load = function(){
+var Java = {};
+Java.load = function(){
     ace.define('ace/mode/java', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/mode/javascript', 'ace/tokenizer', 'ace/mode/java_highlight_rules'], function(require, exports, module) {
 
 
@@ -1042,4 +1042,4 @@ java.load = function(){
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('acemodes.Java', java);
+bugpack.export('acemodes.Java', Java);

@@ -2,7 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aceext')
+//@Package('aceexts')
 
 //@Export('Textarea')
 
@@ -512,4 +512,4 @@ Textarea.load = function() {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('aceext.Textarea', Textarea);
+bugpack.export('aceexts.Textarea', Textarea);
