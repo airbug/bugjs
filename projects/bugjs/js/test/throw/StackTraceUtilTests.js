@@ -60,8 +60,6 @@ var generateStackFromCallerTest = {
     test: function(test) {
         function testFunction() {
             var stackTraceArray = StackTraceUtil.generateStackFromCaller();
-            console.log("stackTraceArray:", stackTraceArray);
-
             test.assertEqual(stackTraceArray[0], "function testFunction()",
                 "Assert that the 0 index function is 'testFunction'");
             test.assertEqual(stackTraceArray[1], "function ()",

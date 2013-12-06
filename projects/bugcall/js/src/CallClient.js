@@ -158,9 +158,6 @@ var CallClient = Class.extend(EventDispatcher, {
      *
      */
     closeConnection: function() {
-        //TEST
-        console.log("CallClient closeConnection - this.isConnected():", this.isConnected(), " this.callConnection.isClosing():", this.callConnection.isClosing());
-
         if (this.isConnected()) {
             if (!this.callConnection.isClosing()) {
                 this.doCloseConnection();
@@ -191,7 +188,6 @@ var CallClient = Class.extend(EventDispatcher, {
      * @param {SocketIoConnection} socketConnection
      */
     createConnection: function(socketConnection) {
-        console.log("Inside CallClient#createConnection");
         if (!this.callConnection) {
             this.callConnection     = new CallClientConnection(socketConnection);
             this.callConnection.addEventListener(CallConnection.EventTypes.CLOSED, this.hearConnectionClosed, this);
@@ -244,9 +240,6 @@ var CallClient = Class.extend(EventDispatcher, {
      * @private
      */
     doCloseConnection: function() {
-        //TEST
-        console.log("CallClient doCloseConnection");
-
         this.disconnecting = true;
         // this.socketIoClient.disconnect();
         this.callConnection.disconnect();
@@ -275,9 +268,6 @@ var CallClient = Class.extend(EventDispatcher, {
      * @private
      */
     handleConnectionFailed: function() {
-        //TEST
-        console.log("CallClient handleConnectionFailed");
-
         this.dispatchConnectionClosed(true);
         this.destroyConnection();
         this.connected = false;
@@ -289,9 +279,6 @@ var CallClient = Class.extend(EventDispatcher, {
      * @private
      */
     handleConnectionOpened: function(socketConnection) {
-        //TEST
-        console.log("CallClient handleConnectionOpened");
-
         this.createConnection(socketConnection);
         this.connected = true;
         this.connecting = false;
@@ -309,9 +296,6 @@ var CallClient = Class.extend(EventDispatcher, {
      * @private
      */
     initialize: function() {
-        console.log("xoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxoxox");
-        console.log("CallClient#initialize");
-        console.log("socketIoClient:", this.socketIoClient);
         if (!this.isInitialized()) {
             this.initialized = true;
             this.socketIoClient.addEventListener(SocketIoClient.EventTypes.CONNECTION, this.hearClientConnection, this);
@@ -323,9 +307,6 @@ var CallClient = Class.extend(EventDispatcher, {
      * @private
      */
     retryConnect: function() {
-        //TEST
-        console.log("CallClient retryConnect");
-
         if (this.retryAttempts < this.retryLimit) {
             this.retryAttempts++;
             this.doOpenConnection();
@@ -344,10 +325,6 @@ var CallClient = Class.extend(EventDispatcher, {
      * @param {Event} event
      */
     hearClientConnectError: function(event) {
-        //TEST
-        console.log("CallClient hearClientConnectError");
-        console.log("CallClient event.getData().error:", event.getData().error);
-
         this.retryConnect();
     },
 
@@ -356,9 +333,6 @@ var CallClient = Class.extend(EventDispatcher, {
      * @param {Event} event
      */
     hearClientConnection: function(event) {
-        //TEST
-        console.log("CallClient hearClientConnection");
-
         if (this.callConnection) {
             throw new Error("New connection received when a connection already existed...");
         } else {

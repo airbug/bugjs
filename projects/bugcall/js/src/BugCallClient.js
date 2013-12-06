@@ -156,8 +156,6 @@ var BugCallClient = Class.extend(EventDispatcher, {
      */
     request: function(requestType, requestData, requestCallback) {
         var callRequest = this.callManager.request(requestType, requestData);
-        console.log("Inside BugCallClient#request");
-        console.log("requestType:", requestType, "requestData", requestData);
         var callResponseHandler = new CallResponseHandler(requestCallback);
         this.callManager.sendRequest(callRequest, callResponseHandler);
     },
@@ -171,7 +169,6 @@ var BugCallClient = Class.extend(EventDispatcher, {
      * @param {string} querystring
      */
     createConnection: function(querystring) {
-        console.log("BugCallClient opening connection");
         this.doOpenConnection(querystring);
     },
 

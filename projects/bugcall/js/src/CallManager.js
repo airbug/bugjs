@@ -171,7 +171,6 @@ var CallManager = Class.extend(EventDispatcher, {
      * @return {CallRequest}
      */
     request: function(requestType, requestData) {
-        console.log("CallManager#request requestType:", requestType, "requestData:", requestData);
         return new CallRequest(requestType, requestData);
     },
 
@@ -179,8 +178,6 @@ var CallManager = Class.extend(EventDispatcher, {
      * @param {OutgoingRequest} outgoingRequest
      */
     sendOutgoingRequest: function(outgoingRequest) {
-        console.log("Inside CallManager#sendOutgoingRequest");
-        console.log("Has connection?:", this.hasConnection());
         if (!this.outgoingRequestMap.containsValue(outgoingRequest)) {
             this.outgoingRequestMap.put(outgoingRequest.getUuid(), outgoingRequest);
             if (this.hasConnection()) {
@@ -198,7 +195,6 @@ var CallManager = Class.extend(EventDispatcher, {
      * @param {CallResponseHandler} callResponseHandler
      */
     sendRequest: function(callRequest, callResponseHandler) {
-        console.log("Inside CallManager#sendRequest requestType:", callRequest.getType());
         var outgoingRequest = new OutgoingRequest(callRequest);
         this.requestUuidToResponseHandlerMap.put(callRequest.getUuid(), callResponseHandler);
         this.sendOutgoingRequest(outgoingRequest);
@@ -209,7 +205,6 @@ var CallManager = Class.extend(EventDispatcher, {
      * @param {function((Error|Exception))} callback
      */
     sendResponse: function(outgoingResponse, callback) {
-        console.log("Inside CallManager#sendResponse");
         var requestUuid     = outgoingResponse.getRequestUuid();
         var responseUuid    = outgoingResponse.getUuid();
         if (this.incomingRequestMap.containsKey(requestUuid)) {
@@ -232,7 +227,6 @@ var CallManager = Class.extend(EventDispatcher, {
      *
      */
     clearConnection: function() {
-        console.log("CallManager clearing connection");
         if (this.hasConnection()) {
             this.callConnection.removeEventListener(CallConnection.EventTypes.REQUEST,  this.hearCallConnectionRequest, this);
             this.callConnection.removeEventListener(CallConnection.EventTypes.RESPONSE, this.hearCallConnectionResponse, this);
@@ -252,7 +246,6 @@ var CallManager = Class.extend(EventDispatcher, {
      *
      */
     initializeConnection: function(){
-        console.log("CallManager#initializeConnection");
         if(this.hasConnection()){
             this.callConnection.addEventListener(CallConnection.EventTypes.REQUEST,     this.hearCallConnectionRequest, this);
             this.callConnection.addEventListener(CallConnection.EventTypes.RESPONSE,    this.hearCallConnectionResponse, this);
@@ -265,7 +258,6 @@ var CallManager = Class.extend(EventDispatcher, {
      * @param {CallConnection} callConnection
      */
     updateConnection: function(callConnection) {
-        console.log("CallManager updating connection");
         if (this.hasConnection()) {
             this.clearConnection();
         }
@@ -311,7 +303,6 @@ var CallManager = Class.extend(EventDispatcher, {
      * @param {CallConnection} callConnection
      */
     openCall: function(callConnection) {
-        console.log("Inside CallManager#openCall");
         this.updateConnection(callConnection);
         this.dispatchCallOpened();
     },
@@ -348,7 +339,6 @@ var CallManager = Class.extend(EventDispatcher, {
      * @param {boolean} failed
      */
     dispatchCallClosed: function(failed) {
-        console.log("Dispatching CallEvent.CLOSED");
         this.dispatchEvent(new CallEvent(CallEvent.CLOSED, {
             callManager: this,
             failed: failed
@@ -359,7 +349,6 @@ var CallManager = Class.extend(EventDispatcher, {
      * @private
      */
     dispatchCallOpened: function() {
-        console.log("Dispatching CallEvent.OPENED");
         this.dispatchEvent(new CallEvent(CallEvent.OPENED, {
             callManager: this
         }));
@@ -382,7 +371,6 @@ var CallManager = Class.extend(EventDispatcher, {
      * @param {OutgoingRequest} outgoingRequest
      */
     doQueueOutgoingRequest: function(outgoingRequest) {
-        console.log("doSendOutgoingRequest");
         this.outgoingRequestQueue.enqueue(outgoingRequest);
     },
 
@@ -401,9 +389,6 @@ var CallManager = Class.extend(EventDispatcher, {
     doSendOutgoingRequest: function(outgoingRequest) {
         var _this = this;
         this.callConnection.sendRequest(outgoingRequest.getCallRequest(), function(data) {
-            //TEST
-            console.log("TEST - CallManager.sendRequest callback fired - data:", data);
-
             _this.pendingOutgoingRequestSet.add(outgoingRequest);
         });
     },
@@ -413,12 +398,8 @@ var CallManager = Class.extend(EventDispatcher, {
      * @param {OutgoingResponse} outgoingResponse
      */
     doSendOutgoingResponse: function(outgoingResponse) {
-        console.log("CallManager#doSendOutgoingResponse");
         var _this = this;
         this.callConnection.sendResponse(outgoingResponse.getCallResponse(), function(data) {
-            //TEST
-            console.log("TEST - CallManager.sendResponse callback fired - data:", data);
-
             var requestUuid = outgoingResponse.getRequestUuid();
             _this.incomingRequestMap.remove(requestUuid);
             var responseUuid = outgoingResponse.getUuid();
@@ -435,7 +416,6 @@ var CallManager = Class.extend(EventDispatcher, {
      * @param {IncomingRequest} incomingRequest
      */
     processIncomingRequest: function(incomingRequest) {
-        console.log("Inside CallManager#processIncomingRequest");
         var requestUuid = incomingRequest.getUuid();
         this.incomingRequestMap.put(requestUuid, incomingRequest);
         this.dispatchEvent(new CallManagerEvent(CallManagerEvent.INCOMING_REQUEST, {
@@ -448,7 +428,6 @@ var CallManager = Class.extend(EventDispatcher, {
      * @param {IncomingResponse} incomingResponse
      */
     processIncomingResponse: function(incomingResponse) {
-        console.log("Inside CallManager#processIncomingResponse");
         var requestUuid     = incomingResponse.getRequestUuid();
         var outgoingRequest = this.outgoingRequestMap.get(requestUuid);
         if (outgoingRequest) {
@@ -490,7 +469,6 @@ var CallManager = Class.extend(EventDispatcher, {
      * @param {Event} event
      */
     hearCallConnectionRequest: function(event) {
-        console.log("Inside CallManager#hearCallConnectionRequest");
         var callRequest = event.getData().callRequest;
         if (callRequest) {
             var incomingRequest = new IncomingRequest(callRequest, this);
@@ -506,7 +484,6 @@ var CallManager = Class.extend(EventDispatcher, {
      * @param {Event} event
      */
     hearCallConnectionResponse: function(event) {
-        console.log("Inside CallManager#hearCallConnectionResponse");
         var callResponse = event.getData().callResponse;
         if (callResponse) {
             var incomingResponse = new IncomingResponse(callResponse, this);

@@ -6,6 +6,7 @@
 
 //@Export('BugCallRouter')
 
+//@Require('ArgUtil')
 //@Require('Class')
 //@Require('Exception')
 //@Require('Map')
@@ -26,6 +27,7 @@ var bugpack             = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
+var ArgUtil             = bugpack.require('ArgUtil');
 var Class               = bugpack.require('Class');
 var Exception           = bugpack.require('Exception');
 var Map                 = bugpack.require('Map');
@@ -122,8 +124,8 @@ var BugCallRouter = Class.extend(Obj, {
                 }
             });
         } else {
-            var routes = Array.prototype.slice.call(arguments);
-            this.addAll(routes);
+            var args = ArgUtil.toArray(arguments);
+            this.addAll(args);
         }
     },
 

@@ -251,27 +251,20 @@ var EntityManager = Class.extend(Obj, {
      * @param {function(Throwable)} callback
      */
     populate: function(entity, options, properties, callback) {
-        console.log("Inside EntityManager#populate");
         var _this               = this;
         var schema              = this.schemaManager.getSchemaByClass(entity.getClass());
         $forEachParallel(properties, function(flow, property) {
-            console.log("Inside EntityManager#populate forEachParallel");
             if (schema.hasProperty(property)) {
                 /** @type {SchemaProperty} */
                 var schemaProperty      = schema.getPropertyByName(property);
                 var schemaPropertyType  = schemaProperty.getType();
                 var propertyOptions     = options[property];
                 if (propertyOptions) {
-                    console.log("Inside propertyOptions if");
-
                     if (schemaProperty.isPopulates()) {
-                        console.log("Inside schemaProperty.getPopulates() if");
                         var manager             = undefined;
                         var retriever           = undefined;
-                        console.log("right before switch statement");
                         switch (schemaProperty.getType()) {
                             case "Set":
-                                console.log("Inside Set case switch");
                                 var idData              = propertyOptions.idGetter.call(entity);
                                 manager                 = _this.entityManagerStore.getEntityManagerByEntityType(schemaProperty.getCollectionOf());
                                 if (propertyOptions.retriever) {
@@ -308,7 +301,6 @@ var EntityManager = Class.extend(Obj, {
                                         if (!throwable) {
                                             setter.call(entity, retrievedData);
                                         }
-                                        if(throwable) console.log("retriever throwable:", throwable);
                                         flow.complete(throwable)
                                     });
                                 }
@@ -325,7 +317,6 @@ var EntityManager = Class.extend(Obj, {
                                 if (getterId) {
                                     if (!getterProperty || getterProperty.getId() !== getterId) {
                                         retriever.call(manager, getterId, function(throwable, retrievedEntity) {
-                                            if(throwable) console.log("default retriever throwable:", throwable);
                                             if (!throwable) {
                                                 propertyOptions.setter.call(entity, retrievedEntity);
                                             }
@@ -349,8 +340,6 @@ var EntityManager = Class.extend(Obj, {
                 flow.error(new Error("Unknown property '" + property + "'"));
             }
         }).execute(function(throwable){
-            console.log("End of EntityManager#populate");
-            if(throwable) console.log(throwable.toString());
             callback(throwable);
         });
     },
@@ -514,7 +503,6 @@ var EntityManager = Class.extend(Obj, {
      * @return {Object}
      */
     convertDbObjectToDataObject: function(dbObject, entitySchema) {
-        console.log("EntityManager#convertDbObjectToDataObject");
         var _this           = this;
         var dataObject      = {};
         entitySchema.getPropertyList().forEach(function(schemaProperty) {

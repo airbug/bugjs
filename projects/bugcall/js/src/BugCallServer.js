@@ -108,7 +108,6 @@ var BugCallServer = Class.extend(EventDispatcher, {
      * @return {CallManager}
      */
     getCallManagerForCallUuid: function(callUuid) {
-        console.log("Inside BugCallServer#getCallManagerForCallUuid");
         return this.callUuidToCallManagerMap.get(callUuid);
     },
 
@@ -217,7 +216,6 @@ var BugCallServer = Class.extend(EventDispatcher, {
      * @param {CallConnection} callConnection
      */
     handleConnectionClosed: function(callConnection) {
-        console.log("Inside BugCallServer#handleConnectionClosed");
         var callManager = this.callConnectionToCallManagerMap.get(callConnection);
         callManager.closeCall();
         this.removeCallManager(callManager);
@@ -229,7 +227,7 @@ var BugCallServer = Class.extend(EventDispatcher, {
      * @param {CallConnection} callConnection
      */
     handleConnectionEstablished: function(callConnection) {
-        console.log("Inside BugCallServer#handleConnectionEstablished");
+
         //TODO BRN: This is where we will use the callConnection's handshake data to look up a previous CallManager
         // that belonged to the same connection id. If it doesn't exist, then we create a new CallManager
 
@@ -295,7 +293,6 @@ var BugCallServer = Class.extend(EventDispatcher, {
      * @param {Event} event
      */
     hearServerConnectionEstablished: function(event) {
-        console.log("Inside BugCallServer#hearServerConnectionEstablished");
         var callConnection = event.getData().callConnection;
         this.handleConnectionEstablished(callConnection);
     },
@@ -306,7 +303,6 @@ var BugCallServer = Class.extend(EventDispatcher, {
      */
     hearCallManagerIncomingRequest: function(event) {
         var incomingRequest = event.getData().incomingRequest;
-        console.log("BugCallServer IncomingRequest Type:", incomingRequest.getType());
         this.handleIncomingRequest(incomingRequest);
     }
 });

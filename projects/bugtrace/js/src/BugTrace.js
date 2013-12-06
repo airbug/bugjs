@@ -6,6 +6,7 @@
 
 //@Export('BugTrace')
 
+//@Require('ArgUtil')
 //@Require('Class')
 //@Require('Obj')
 //@Require('Proxy')
@@ -26,6 +27,7 @@ var bugpack             = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
+var ArgUtil             = bugpack.require('ArgUtil');
 var Class               = bugpack.require('Class');
 var Obj                 = bugpack.require('Obj');
 var Proxy               = bugpack.require('Proxy');
@@ -125,9 +127,6 @@ var BugTrace = Class.extend(Obj, {
                 var stackParts = trace.split("\n").slice(2);
                 totalStack.push("-------- Async Break ---------");
                 totalStack = totalStack.concat(stackParts);
-                if (!currentNode.getParentNode()) {
-                    console.log("Node with empty parent - " + totalStack.join("\n"));
-                }
                 currentNode = currentNode.getParentNode();
             }
     
@@ -150,7 +149,7 @@ var BugTrace = Class.extend(Obj, {
         }
         var newCallback = function() {
             newCallback.aCallback = true;
-            var args = Array.prototype.slice.call(arguments);
+            var args = ArgUtil.toArray(arguments);
             _this.currentNode = newNode;
             callback.apply(null, args);
 
@@ -180,7 +179,7 @@ var BugTrace = Class.extend(Obj, {
 
         var newCallback = function() {
             newCallback.aCallback = true;
-            var args = Array.prototype.slice.call(arguments);
+            var args = ArgUtil.toArray(arguments);
             var error = args[0];
     
             if (error) {

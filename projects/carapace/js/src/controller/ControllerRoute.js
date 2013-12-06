@@ -6,6 +6,7 @@
 
 //@Export('ControllerRoute')
 
+//@Require('ArgUtil')
 //@Require('Class')
 //@Require('Event')
 //@Require('EventDispatcher')
@@ -16,17 +17,18 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =             bugpack.require('Class');
-var Event =             bugpack.require('Event');
-var EventDispatcher =   bugpack.require('EventDispatcher');
-var RoutingRequest =    bugpack.require('carapace.RoutingRequest');
+var ArgUtil             = bugpack.require('ArgUtil');
+var Class               = bugpack.require('Class');
+var Event               = bugpack.require('Event');
+var EventDispatcher     = bugpack.require('EventDispatcher');
+var RoutingRequest      = bugpack.require('carapace.RoutingRequest');
 
 
 //-------------------------------------------------------------------------------
@@ -105,7 +107,7 @@ var ControllerRoute = Class.extend(EventDispatcher, {
             this.initialized = true;
             var _this = this;
             router.route(this.route, this.routeId, function() {
-                var args = Array.prototype.slice.call(arguments, 0);
+                var args = ArgUtil.toArray(arguments);
                 _this.requestRouting(args);
             });
         }

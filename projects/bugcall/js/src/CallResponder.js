@@ -71,7 +71,6 @@ var CallResponder = Class.extend(Obj, {
      * @return {CallResponse}
      */
     response: function(responseType, responseData) {
-        console.log("Inside CallResponder#response");
         return new CallResponse(responseType, responseData, this.incomingRequest.getUuid());
     },
 

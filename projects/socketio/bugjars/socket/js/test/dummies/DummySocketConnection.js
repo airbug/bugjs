@@ -6,6 +6,7 @@
 
 //@Export('DummySocketConnection')
 
+//@Require('ArgUtil')
 //@Require('Class')
 //@Require('EventReceiver')
 //@Require('Map')
@@ -18,13 +19,14 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
+var ArgUtil         = bugpack.require('ArgUtil');
 var Class           = bugpack.require('Class');
 var EventReceiver   = bugpack.require('EventReceiver');
 var Map             = bugpack.require('Map');
@@ -191,7 +193,7 @@ var DummySocketConnection = Class.extend(EventReceiver, {
         var _this = this;
         if (!this.hasEventListenerAdapter(eventType)) {
             var eventListenerAdapter = function() {
-                var args = Array.prototype.slice.call(arguments, 0);
+                var args = ArgUtil.toArray(arguments);
                 var nodeJsEvent = new NodeJsEvent(eventType, args);
                 nodeJsEvent.setTarget(_this.getTarget());
                 _this.propagateEvent(nodeJsEvent);

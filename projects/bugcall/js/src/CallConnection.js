@@ -157,7 +157,6 @@ var CallConnection = Class.extend(EventDispatcher, {
      * @param {function(data)} callback
      */
     sendRequest: function(callRequest, callback) {
-        console.log("CallConnection sending request");
         this.socketConnection.emit("callRequest", callRequest.toObject(), callback);
     },
 
@@ -166,7 +165,6 @@ var CallConnection = Class.extend(EventDispatcher, {
      * @param {function(data)} callback
      */
     sendResponse: function(callResponse, callback) {
-        console.log("CallConnection sending response");
         this.socketConnection.emit("callResponse", callResponse.toObject(), callback);
     },
 
@@ -245,7 +243,6 @@ var CallConnection = Class.extend(EventDispatcher, {
      * @protected
      */
     doDeinitialize: function() {
-        console.log("CallConnection#doDeInitialize");
         this.socketConnection.removeEventListener(SocketIoConnection.EventTypes.DISCONNECT, this.hearDisconnect, this);
         this.socketConnection.removeEventListener("callRequest",    this.hearCallRequest,   this);
         this.socketConnection.removeEventListener("callResponse",   this.hearCallResponse,  this);
@@ -255,7 +252,6 @@ var CallConnection = Class.extend(EventDispatcher, {
      * @protected
      */
     doInitialize: function() {
-        console.log("CallConnection#doInitialize");
         this.socketConnection.addEventListener(SocketIoConnection.EventTypes.DISCONNECT, this.hearDisconnect, this);
         this.socketConnection.addEventListener("callRequest",   this.hearCallRequest,   this);
         this.socketConnection.addEventListener("callResponse",  this.hearCallResponse,  this);
@@ -268,7 +264,6 @@ var CallConnection = Class.extend(EventDispatcher, {
         if (!this.isInitialized()) {
             this.initialized = true;
             this.doInitialize();
-            console.log("CallConnection initialized")
         }
     },
 
@@ -282,9 +277,7 @@ var CallConnection = Class.extend(EventDispatcher, {
      * @param {NodeJsEvent} event
      */
     hearCallRequest: function(event) {
-        console.log("CallConnection hearCallRequest");
         var callRequestObject = event.getArguments()[0];
-        console.log("CallRequestObject:", callRequestObject);
 
         if (callRequestObject) {
             var callRequest     = new CallRequest(callRequestObject.type, callRequestObject.data);
@@ -302,10 +295,7 @@ var CallConnection = Class.extend(EventDispatcher, {
      * @param {NodeJsEvent} event
      */
     hearCallResponse: function(event) {
-        console.log("CallConnection hearCallResponse");
         var callResponseObject = event.getArguments()[0];
-        console.log("CallResponseObject:", callResponseObject);
-
         if (callResponseObject) {
             var callResponse = new CallResponse(callResponseObject.type, callResponseObject.data, callResponseObject.requestUuid);
             this.dispatchEvent(new Event(CallConnection.EventTypes.RESPONSE, {

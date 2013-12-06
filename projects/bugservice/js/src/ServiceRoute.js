@@ -6,6 +6,7 @@
 
 //@Export('ServiceRoute')
 
+//@Require('ArgUtil')
 //@Require('Class')
 //@Require('Exception')
 //@Require('Obj')
@@ -24,6 +25,7 @@ var bugpack         = require('bugpack').context();
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
+var ArgUtil         = bugpack.require('ArgUtil');
 var Class           = bugpack.require('Class');
 var Exception       = bugpack.require('Exception');
 var Obj             = bugpack.require('Obj');
@@ -113,8 +115,8 @@ var ServiceRoute = Class.extend(Obj, {
             args.push(data[param]);
         });
         args.push(function() {
-            var args = Array.prototype.slice.call(arguments, 0);
-            var error = args[0];
+            var args    = ArgUtil.toArray(arguments);
+            var error   = args[0];
 
             //TODO BRN: How do we handle other returned args?
 

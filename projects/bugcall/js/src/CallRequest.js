@@ -105,7 +105,6 @@ var CallRequest = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     toObject: function() {
-        console.log("Inside CallRequest#toObject");
         return {
             uuid: this.getUuid(),
             type: this.getType(),

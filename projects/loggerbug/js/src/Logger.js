@@ -6,6 +6,7 @@
 
 //@Export('Logger')
 
+//@Require('ArgUtil')
 //@Require('Class')
 //@Require('Map')
 //@Require('Obj')
@@ -22,6 +23,7 @@ var bugpack             = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
+var ArgUtil             = bugpack.require('ArgUtil');
 var Class               = bugpack.require('Class');
 var Map                 = bugpack.require('Map');
 var Obj                 = bugpack.require('Obj');
@@ -82,7 +84,7 @@ var Logger = Class.extend(Obj, {
      * @param {...string} message
      */
     debug: function(message) {
-        var messages = Array.prototype.slice.call(arguments);
+        var messages = ArgUtil.toArray(arguments);
         this.processLog(Logger.Type.DEBUG, Logger.Priority.DEBUG, messages);
     },
 
@@ -90,7 +92,7 @@ var Logger = Class.extend(Obj, {
      * @param {...string} message
      */
     error: function(message) {
-        var messages = Array.prototype.slice.call(arguments);
+        var messages = ArgUtil.toArray(arguments);
         this.processLog(Logger.Type.ERROR, Logger.Priority.ERROR, messages);
     },
 
@@ -98,7 +100,7 @@ var Logger = Class.extend(Obj, {
      * @param {...string} message
      */
     info: function(message) {
-        var messages = Array.prototype.slice.call(arguments);
+        var messages = ArgUtil.toArray(arguments);
         this.processLog(Logger.Type.INFO, Logger.Priority.INFO, messages);
     },
 
@@ -108,7 +110,7 @@ var Logger = Class.extend(Obj, {
      * @param {...string} message
      */
     log: function(type, priority, message) {
-        var messages = Array.prototype.slice.call(arguments);
+        var messages = ArgUtil.toArray(arguments);
         messages.shift();
         messages.shift();
         this.processLog(type, priority, message);
@@ -118,7 +120,7 @@ var Logger = Class.extend(Obj, {
      * @param {...string} message
      */
     trace: function(message) {
-        var messages = Array.prototype.slice.call(arguments);
+        var messages = ArgUtil.toArray(arguments);
         this.processLog(Logger.Type.TRACE, Logger.Priority.TRACE, messages);
     },
 
@@ -126,7 +128,7 @@ var Logger = Class.extend(Obj, {
      * @param {...string} message
      */
     warn: function(message) {
-        var messages = Array.prototype.slice.call(arguments);
+        var messages = ArgUtil.toArray(arguments);
         this.processLog(Logger.Type.WARN, Logger.Priority.WARN, messages);
     },
 

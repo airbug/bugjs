@@ -4,6 +4,7 @@
 
 //@Export('NodeJsEventEmitterAdapter')
 
+//@Require('ArgUtil')
 //@Require('Class')
 //@Require('EventDispatcher')
 //@Require('IEventDispatcher')
@@ -17,13 +18,14 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
+var ArgUtil             = bugpack.require('ArgUtil');
 var Class               = bugpack.require('Class');
 var EventDispatcher     = bugpack.require('EventDispatcher');
 var IEventDispatcher    = bugpack.require('IEventDispatcher');
@@ -230,7 +232,7 @@ var NodeJsEventEmitterAdapter = Class.extend(Obj, {
         var _this = this;
         this.adaptee.emit = (function(adaptee, originalEmit) {
             return function() {
-                var args = Array.prototype.slice.call(arguments, 0);
+                var args = ArgUtil.toArray(arguments);
                 var firstArg = args.shift();
                 var nodeJsEvent = null;
                 var emitArgs = null;

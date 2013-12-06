@@ -6,6 +6,7 @@
 
 //@Export('Handshaker')
 
+//@Require('ArgUtil')
 //@Require('Class')
 //@Require('Collection')
 //@Require('List')
@@ -27,6 +28,7 @@ var bugpack             = require('bugpack').context();
 // BugPack Modules
 //-------------------------------------------------------------------------------
 
+var ArgUtil             = bugpack.require('ArgUtil');
 var Class               = bugpack.require('Class');
 var Collection          = bugpack.require('Collection');
 var List                = bugpack.require('List');
@@ -99,7 +101,8 @@ var Handshaker = Class.extend(Obj, {
     addHands: function(hands) {
         var _this = this;
         if (!Class.doesExtend(hands, Collection) && !TypeUtil.isArray(hands)) {
-            hands = this.hands.addAll(Array.prototype.slice.call(arguments));
+            var args = ArgUtil.toArray(arguments);
+            hands = this.hands.addAll(args);
         }
         hands.forEach(function(hand) {
             _this.addHand(hand);
