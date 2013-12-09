@@ -263,7 +263,7 @@ var EntityManager = Class.extend(Obj, {
                     if (schemaProperty.isPopulates()) {
                         var manager             = undefined;
                         var retriever           = undefined;
-                        switch (schemaProperty.getType()) {
+                        switch (schemaPropertyType) {
                             case "Set":
                                 var idData              = propertyOptions.idGetter.call(entity);
                                 manager                 = _this.entityManagerStore.getEntityManagerByEntityType(schemaProperty.getCollectionOf());
@@ -308,11 +308,11 @@ var EntityManager = Class.extend(Obj, {
                             default:
                                 var getterProperty  = propertyOptions.getter.call(entity);
                                 var getterId        = propertyOptions.idGetter.call(entity);
-                                manager             = _this.entityManagerStore.getEntityManagerByEntityType(schemaProperty.getType());
+                                manager             = _this.entityManagerStore.getEntityManagerByEntityType(schemaPropertyType);
                                 if (propertyOptions.retriever) {
                                     retriever = manager[propertyOptions.retriever];
                                 } else {
-                                    retriever = manager["retrieve" + schemaProperty.getType()];
+                                    retriever = manager["retrieve" + schemaPropertyType];
                                 }
                                 if (getterId) {
                                     if (!getterProperty || getterProperty.getId() !== getterId) {
