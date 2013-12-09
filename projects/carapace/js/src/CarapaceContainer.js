@@ -326,7 +326,7 @@ var CarapaceContainer = Class.extend(Obj, {
     },
 
     /**
-     * @proetected
+     * @protected
      */
     destroyContainer: function() {
         this.viewTop.dispose();
