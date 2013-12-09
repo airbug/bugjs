@@ -238,6 +238,13 @@ var EntityManager = Class.extend(Obj, {
 
     /**
      * @param {Entity} entity
+     */
+    generate: function(entity) {
+        entity.setEntityType(this.entityType);
+    },
+
+    /**
+     * @param {Entity} entity
      * @param {{
      *      propertySchemas: {
      *          *propertyName*: {

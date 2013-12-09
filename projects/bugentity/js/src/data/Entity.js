@@ -68,6 +68,11 @@ var Entity = Class.extend(Obj, {
          */
         this.deltaDocument          = new DeltaDocument(data || {});
 
+        /**
+         * @private
+         * @type {?string}
+         */
+        this.entityType             = null;
     },
 
     //-------------------------------------------------------------------------------
@@ -93,6 +98,20 @@ var Entity = Class.extend(Obj, {
      */
     getDeltaDocument: function() {
         return this.deltaDocument;
+    },
+
+    /**
+     * @returns {string}
+     */
+    getEntityType: function() {
+        return this.entityType;
+    },
+
+    /**
+     * @param {string} entityType
+     */
+    setEntityType: function(entityType) {
+        this.entityType = entityType;
     },
 
     /**
