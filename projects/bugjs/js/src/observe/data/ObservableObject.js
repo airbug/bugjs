@@ -68,13 +68,17 @@ var ObservableObject = Class.extend(Observable, /** @lends {ObservableObject.pro
          * @private
          * @type {Object}
          */
-        this.observedObject         = observedObject || {};
+        this.observedObject         = {};
 
         /**
          * @private
          * @type {DualMap.<string, IObservable>}
          */
         this.observablePropertyMap  = new DualMap();
+
+        if (observedObject) {
+            this.observedObject = Obj.clone(observedObject, true);
+        }
     },
 
 

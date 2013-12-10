@@ -82,7 +82,10 @@ var observableObjectInstantiationWithParametersTest = {
     //-------------------------------------------------------------------------------
 
     setup: function() {
-        this.testObject             = {};
+        this.testValue              = "testValue";
+        this.testObject             = {
+            someProperty: this.testValue
+        };
         this.testObservableObject   = new ObservableObject(this.testObject);
     },
 
@@ -91,8 +94,10 @@ var observableObjectInstantiationWithParametersTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
-        test.assertEqual(this.testObservableObject.getObservedObject(), this.testObject,
-            "Assert ObservableObject.observedObject is set to the parameter")
+        test.assertTrue(TypeUtil.isObject(this.testObservableObject.getObservedObject()),
+            "Assert ObservableObject.observedObject is an object");
+        test.assertEqual(this.testObservableObject.getObservedObject().someProperty, this.testValue,
+            "Assert that the object was set correctly");
     }
 };
 bugmeta.annotate(observableObjectInstantiationWithParametersTest).with(

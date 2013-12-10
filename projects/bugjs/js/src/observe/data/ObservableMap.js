@@ -10,6 +10,7 @@
 //@Require('HashTable')
 //@Require('IMap')
 //@Require('IObjectable')
+//@Require('Map')
 //@Require('Obj')
 //@Require('Observable')
 //@Require('PutChange')
@@ -34,6 +35,7 @@ var Collection      = bugpack.require('Collection');
 var HashTable       = bugpack.require('HashTable');
 var IMap            = bugpack.require('IMap');
 var IObjectable     = bugpack.require('IObjectable');
+var Map             = bugpack.require('Map');
 var Obj             = bugpack.require('Obj');
 var Observable      = bugpack.require('Observable');
 var PutChange       = bugpack.require('PutChange');
@@ -236,16 +238,20 @@ var ObservableMap = Class.extend(Observable, /** @lends {ObservableMap.prototype
      * @returns {Object}
      */
     toObject: function() {
-        var _this   = this;
-        var object  = {};
-        var keys    = this.getKeyArray();
-        keys.forEach(function(key){
-            if(!TypeUtil.isString(key) && key.toString){
-                key = key.toString(); //NOTE: These keys may not be unique.
-            }
-            object[key] = _this.get(key);
-        });
-        return object;
+        this.observed.toObject();
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Protected Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     * @param {IMap=} map
+     */
+    factoryObserved: function(map) {
+        return new Map(map);
     }
 });
 

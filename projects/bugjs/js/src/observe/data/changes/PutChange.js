@@ -41,7 +41,7 @@ var PutChange = Class.extend(ObservableChange, /** @lends {PutChange.prototype} 
      * @constructs
      * @param {string} objectPath
      * @param {*} value
-     * @param {*} previousValue
+     * @param {*=} previousValue
      */
     _constructor: function(objectPath, key, value, previousValue) {
 
@@ -110,7 +110,7 @@ var PutChange = Class.extend(ObservableChange, /** @lends {PutChange.prototype} 
 
         //TODO BRN: Implement deep cloning
 
-        var cloneChange = new PutChange(this.getObjectPath(), this.getKey(), this.getValue(), this.getPreviousValue);
+        var cloneChange = new PutChange(this.getObjectPath(), this.getKey(), this.getValue(), this.getPreviousValue());
         cloneChange.setChangingObservable(this.getChangingObservable());
         cloneChange.setReportingObservable(this.getReportingObservable());
         return cloneChange;
