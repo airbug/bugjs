@@ -67,7 +67,7 @@ var CallResponder = Class.extend(Obj, {
 
     /**
      * @param {string} responseType
-     * @param {*} responseData
+     * @param {*=} responseData
      * @return {CallResponse}
      */
     response: function(responseType, responseData) {
@@ -76,7 +76,7 @@ var CallResponder = Class.extend(Obj, {
 
     /**
      * @param {CallResponse} callResponse
-     * @param {function(Error)} callback
+     * @param {function(Throwable=)} callback
      */
     sendResponse: function(callResponse, callback) {
         var outgoingResponse = new OutgoingResponse(callResponse);
