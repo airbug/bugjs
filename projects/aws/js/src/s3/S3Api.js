@@ -208,6 +208,7 @@ var S3Api = Class.extend(Obj, {
      * @param {S3Bucket} s3Bucket
      * @param {{
      *     acl: ?string,
+     *     encrypt: ?boolean,
      *     grantFullControl: ?string,
      *     grantRead: ?string,
      *     grantReadACP: ?string,
@@ -215,7 +216,7 @@ var S3Api = Class.extend(Obj, {
      *     gzip: ?boolean,
      *     storageClass: ?string
      * }} options
-     * @param {function(Error, S3Object)} callback
+     * @param {function(Throwable, S3Object=)} callback
      */
     putFile: function(filePath, s3Bucket, options, callback) {
         var _this = this;
@@ -269,6 +270,9 @@ var S3Api = Class.extend(Obj, {
                     });
                     if (options.gzip) {
                         s3Object.setContentEncoding(S3Api.ContentEncoding.GZIP);
+                    }
+                    if (options.encrypt) {
+                        s3Object.setServerSideEncryption("AES256");
                     }
                     _this.putObject(s3Object, s3Bucket, options, function(error) {
                         flow.complete(error);
