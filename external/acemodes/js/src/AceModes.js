@@ -461,6 +461,7 @@ var AceModes    = Class.extend(Obj, {
         for(var propertyName in this){
             if(this[propertyName] && this[propertyName].load){
                 console.log("loading", propertyName);
+                console.log("module:", this[propertyName]);
                 this[propertyName].load();
             }
         }

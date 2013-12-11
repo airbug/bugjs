@@ -1,3 +1,35 @@
+//-------------------------------------------------------------------------------
+// Annotations
+//-------------------------------------------------------------------------------
+
+//@Package('ace')
+
+//@Export('KitchenSink')
+
+//@Require('ace.Ace')
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var bugpack = require('bugpack').context();
+
+//-------------------------------------------------------------------------------
+// Common Modules
+//-------------------------------------------------------------------------------
+
+var Ace = bugpack.require('ace.Ace');
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var KitchenSink = {};
+KitchenSink.load = function(){
+
+    var define  = Ace.define;
+    var require = Ace.require;
+
 /* ***** BEGIN LICENSE BLOCK *****
  * Distributed under the BSD license:
  *
@@ -28,39 +60,9 @@
  *
  * ***** END LICENSE BLOCK ***** */
 
-//-------------------------------------------------------------------------------
-// Annotations
-//-------------------------------------------------------------------------------
 
-//@Package('ace')
+define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbrowsers', 'ace/config', 'ace/lib/dom', 'ace/lib/net', 'ace/lib/lang', 'ace/lib/useragent', 'ace/lib/event', 'ace/theme/textmate', 'ace/edit_session', 'ace/undomanager', 'ace/keyboard/hash_handler', 'ace/virtual_renderer', 'ace/editor', 'ace/multi_select', 'ace/ext/whitespace', 'kitchen-sink/doclist', 'ace/ext/modelist', 'kitchen-sink/layout', 'kitchen-sink/token_tooltip', 'kitchen-sink/util', 'ace/ext/elastic_tabstops_lite', 'ace/incremental_search', 'ace/worker/worker_client', 'ace/split', 'ace/keyboard/vim', 'ace/ext/statusbar', 'ace/ext/emmet', 'ace/snippets', 'ace/ext/language_tools'], function(require, exports, module) {
 
-//@Export('KitchenSink')
-
-//@Require('ace.Ace')
-
-//-------------------------------------------------------------------------------
-// Common Modules
-//-------------------------------------------------------------------------------
-
-var bugpack = require('bugpack').context();
-
-//-------------------------------------------------------------------------------
-// Common Modules
-//-------------------------------------------------------------------------------
-
-var Ace = bugpack.require('ace.Ace');
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var KitchenSink = {};
-KitchenSink.load = function(){
-
-var define  = Ace.define;
-var require = Ace.require;
-
-define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbrowsers', 'ace/config', 'ace/lib/dom', 'ace/lib/net', 'ace/lib/lang', 'ace/lib/useragent', 'ace/lib/event', 'ace/theme/textmate', 'ace/edit_session', 'ace/undomanager', 'ace/keyboard/hash_handler', 'ace/virtual_renderer', 'ace/editor', 'ace/multi_select', 'ace/ext/whitespace', 'ace/ext/modelist', 'kitchen-sink/layout', 'kitchen-sink/token_tooltip', 'kitchen-sink/util', 'ace/ext/elastic_tabstops_lite', 'ace/incremental_search', 'ace/worker/worker_client', 'ace/split', 'ace/keyboard/vim', 'ace/ext/statusbar', 'ace/ext/emmet', 'ace/snippets', 'ace/ext/language_tools'], function(require, exports, module) {
 
     require("ace/lib/fixoldbrowsers");
     var config = require("ace/config");
@@ -167,6 +169,16 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
         exec: function(editor, needle) { editor.cmdLine.focus(); },
         readOnly: true
     }, {
+//        name: "nextFile",
+//        bindKey: "Ctrl-tab",
+//        exec: function(editor) { doclist.cycleOpen(editor, 1); },
+//        readOnly: true
+//    }, {
+//        name: "previousFile",
+//        bindKey: "Ctrl-shift-tab",
+//        exec: function(editor) { doclist.cycleOpen(editor, -1); },
+//        readOnly: true
+//    }, {
         name: "execute",
         bindKey: "ctrl+enter",
         exec: function(editor) {
@@ -282,6 +294,7 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
 
     window.onresize = onResize;
     onResize();
+    var docEl = document.getElementById("doc");
     var modeEl = document.getElementById("mode");
     var wrapModeEl = document.getElementById("soft_wrap");
     var themeEl = document.getElementById("theme");
@@ -298,15 +311,55 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
     var softTabEl = document.getElementById("soft_tab");
     var behavioursEl = document.getElementById("enable_behaviours");
 
+//    fillDropdown(docEl, doclist.all);
+
     fillDropdown(modeEl, modelist.modes);
     var modesByName = modelist.modesByName;
     bindDropdown("mode", function(value) {
         console.log("value:", value);
         console.log("mode:", modesByName[value].mode);
-        console.log("module:", require(modesByName[value].mode)); //new require(modesByName[value].mode).Mode()
+        console.log("module:", require(modesByName[value].mode));
         env.editor.session.setMode(modesByName[value].mode || modesByName.text.mode); //
         env.editor.session.modeName = value; //
     });
+
+    doclist.history = doclist.docs.map(function(doc) {
+        return doc.name;
+    });
+    doclist.history.index = 0;
+    doclist.cycleOpen = function(editor, dir) {
+        var h = this.history
+        h.index += dir;
+        if (h.index >= h.length)
+            h.index = 0;
+        else if (h.index <= 0)
+            h.index = h.length - 1;
+        var s = h[h.index];
+        docEl.value = s;
+        docEl.onchange();
+        h.index
+    }
+    doclist.addToHistory = function(name) {
+        var h = this.history
+        var i = h.indexOf(name);
+        if (i != h.index) {
+            if (i != -1)
+                h.splice(i, 1);
+            h.index = h.push(name);
+        }
+    }
+
+//    bindDropdown("doc", function(name) {
+//        doclist.loadDoc(name, function(session) {
+//            if (!session)
+//                return;
+//            doclist.addToHistory(session.name);
+//            session = env.split.setSession(session);
+//            whitespace.detectIndentation(session);
+//            updateUIEditorOptions();
+//            env.editor.focus();
+//        });
+//    });
 
 
     function updateUIEditorOptions() {
@@ -350,7 +403,6 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
     };
 
     bindDropdown("theme", function(value) {
-        console.log("setting theme:", value);
         if (!value)
             return;
         env.editor.setTheme(value);
@@ -577,9 +629,143 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
         enableSnippets: true
     })
 
-    });
+});
 
-    define('ace/ext/whitespace', ['require', 'exports', 'module' , 'ace/lib/lang'], function(require, exports, module) {
+//define('ace/theme/textmate', ['require', 'exports', 'module' , 'ace/lib/dom'], function(require, exports, module) {
+//
+//
+//    exports.isDark = false;
+//    exports.cssClass = "ace-tm";
+//    exports.cssText = ".ace-tm .ace_gutter {\
+//background: #f0f0f0;\
+//color: #333;\
+//}\
+//.ace-tm .ace_print-margin {\
+//width: 1px;\
+//background: #e8e8e8;\
+//}\
+//.ace-tm .ace_fold {\
+//background-color: #6B72E6;\
+//}\
+//.ace-tm {\
+//background-color: #FFFFFF;\
+//}\
+//.ace-tm .ace_cursor {\
+//border-left: 2px solid black;\
+//}\
+//.ace-tm .ace_overwrite-cursors .ace_cursor {\
+//border-left: 0px;\
+//border-bottom: 1px solid black;\
+//}\
+//.ace-tm .ace_invisible {\
+//color: rgb(191, 191, 191);\
+//}\
+//.ace-tm .ace_storage,\
+//.ace-tm .ace_keyword {\
+//color: blue;\
+//}\
+//.ace-tm .ace_constant {\
+//color: rgb(197, 6, 11);\
+//}\
+//.ace-tm .ace_constant.ace_buildin {\
+//color: rgb(88, 72, 246);\
+//}\
+//.ace-tm .ace_constant.ace_language {\
+//color: rgb(88, 92, 246);\
+//}\
+//.ace-tm .ace_constant.ace_library {\
+//color: rgb(6, 150, 14);\
+//}\
+//.ace-tm .ace_invalid {\
+//background-color: rgba(255, 0, 0, 0.1);\
+//color: red;\
+//}\
+//.ace-tm .ace_support.ace_function {\
+//color: rgb(60, 76, 114);\
+//}\
+//.ace-tm .ace_support.ace_constant {\
+//color: rgb(6, 150, 14);\
+//}\
+//.ace-tm .ace_support.ace_type,\
+//.ace-tm .ace_support.ace_class {\
+//color: rgb(109, 121, 222);\
+//}\
+//.ace-tm .ace_keyword.ace_operator {\
+//color: rgb(104, 118, 135);\
+//}\
+//.ace-tm .ace_string {\
+//color: rgb(3, 106, 7);\
+//}\
+//.ace-tm .ace_comment {\
+//color: rgb(76, 136, 107);\
+//}\
+//.ace-tm .ace_comment.ace_doc {\
+//color: rgb(0, 102, 255);\
+//}\
+//.ace-tm .ace_comment.ace_doc.ace_tag {\
+//color: rgb(128, 159, 191);\
+//}\
+//.ace-tm .ace_constant.ace_numeric {\
+//color: rgb(0, 0, 205);\
+//}\
+//.ace-tm .ace_variable {\
+//color: rgb(49, 132, 149);\
+//}\
+//.ace-tm .ace_xml-pe {\
+//color: rgb(104, 104, 91);\
+//}\
+//.ace-tm .ace_entity.ace_name.ace_function {\
+//color: #0000A2;\
+//}\
+//.ace-tm .ace_heading {\
+//color: rgb(12, 7, 255);\
+//}\
+//.ace-tm .ace_list {\
+//color:rgb(185, 6, 144);\
+//}\
+//.ace-tm .ace_meta.ace_tag {\
+//color:rgb(0, 22, 142);\
+//}\
+//.ace-tm .ace_string.ace_regex {\
+//color: rgb(255, 0, 0)\
+//}\
+//.ace-tm .ace_marker-layer .ace_selection {\
+//background: rgb(181, 213, 255);\
+//}\
+//.ace-tm.ace_multiselect .ace_selection.ace_start {\
+//box-shadow: 0 0 3px 0px white;\
+//border-radius: 2px;\
+//}\
+//.ace-tm .ace_marker-layer .ace_step {\
+//background: rgb(252, 255, 0);\
+//}\
+//.ace-tm .ace_marker-layer .ace_stack {\
+//background: rgb(164, 229, 101);\
+//}\
+//.ace-tm .ace_marker-layer .ace_bracket {\
+//margin: -1px 0 0 -1px;\
+//border: 1px solid rgb(192, 192, 192);\
+//}\
+//.ace-tm .ace_marker-layer .ace_active-line {\
+//background: rgba(0, 0, 0, 0.07);\
+//}\
+//.ace-tm .ace_gutter-active-line {\
+//background-color : #dcdcdc;\
+//}\
+//.ace-tm .ace_marker-layer .ace_selected-word {\
+//background: rgb(250, 250, 255);\
+//border: 1px solid rgb(200, 200, 250);\
+//}\
+//.ace-tm .ace_indent-guide {\
+//background: url(\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAACCAYAAACZgbYnAAAAE0lEQVQImWP4////f4bLly//BwAmVgd1/w11/gAAAABJRU5ErkJggg==\") right repeat-y;\
+//}\
+//";
+//
+//    var dom = require("../lib/dom");
+//    dom.importCssString(exports.cssText, exports.cssClass);
+//});
+
+define('ace/ext/whitespace', ['require', 'exports', 'module' , 'ace/lib/lang'], function(require, exports, module) {
 
 
     var lang = require("../lib/lang");
@@ -754,10 +940,210 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
         }
     }];
 
-    });
+});
+
+define('kitchen-sink/doclist', ['require', 'exports', 'module' , 'ace/edit_session', 'ace/undomanager', 'ace/lib/net', 'ace/ext/modelist'], function(require, exports, module) {
 
 
-    define('ace/ext/modelist', ['require', 'exports', 'module' ], function(require, exports, module) {
+    var EditSession = require("ace/edit_session").EditSession;
+    var UndoManager = require("ace/undomanager").UndoManager;
+    var net = require("ace/lib/net");
+
+    var modelist = require("ace/ext/modelist");
+    var fileCache = {};
+
+    function initDoc(file, path, doc) {
+        if (doc.prepare)
+            file = doc.prepare(file);
+
+        var session = new EditSession(file);
+        session.setUndoManager(new UndoManager());
+        doc.session = session;
+        doc.path = path;
+        session.name = doc.name;
+        if (doc.wrapped) {
+            session.setUseWrapMode(true);
+            session.setWrapLimitRange(80, 80);
+        }
+        var mode = modelist.getModeForPath(path);
+        session.modeName = mode.name;
+        session.setMode(mode.mode);
+        return session;
+    }
+
+
+    function makeHuge(txt) {
+        for (var i = 0; i < 5; i++)
+            txt += txt;
+        return txt;
+    }
+
+    var docs = {
+        "docs/javascript.js": "JavaScript",
+        "docs/AsciiDoc.asciidoc": "AsciiDoc",
+        "docs/clojure.clj": "Clojure",
+        "docs/coffeescript.coffee": "CoffeeScript",
+        "docs/coldfusion.cfm": "ColdFusion",
+        "docs/cpp.cpp": "C/C++",
+        "docs/csharp.cs": "C#",
+        "docs/css.css": "CSS",
+        "docs/curly.curly": "Curly",
+        "docs/dart.dart": "Dart",
+        "docs/diff.diff": "Diff",
+        "docs/dot.dot": "Dot",
+        "docs/freemarker.ftl" : "FreeMarker",
+        "docs/glsl.glsl": "Glsl",
+        "docs/golang.go": "Go",
+        "docs/groovy.groovy": "Groovy",
+        "docs/haml.haml": "Haml",
+        "docs/Haxe.hx": "haXe",
+        "docs/html.html": "HTML",
+        "docs/html_ruby.erb": "HTML (Ruby)",
+        "docs/jade.jade": "Jade",
+        "docs/java.java": "Java",
+        "docs/jsp.jsp": "JSP",
+        "docs/json.json": "JSON",
+        "docs/jsx.jsx": "JSX",
+        "docs/latex.tex": {name: "LaTeX", wrapped: true},
+        "docs/less.less": "LESS",
+        "docs/lisp.lisp": "Lisp",
+        "docs/lsl.lsl": "LSL",
+        "docs/scheme.scm": "Scheme",
+        "docs/livescript.ls": "LiveScript",
+        "docs/liquid.liquid": "Liquid",
+        "docs/logiql.logic": "LogiQL",
+        "docs/lua.lua": "Lua",
+        "docs/lucene.lucene": "Lucene",
+        "docs/luapage.lp": "LuaPage",
+        "docs/Makefile": "Makefile",
+        "docs/markdown.md": {name: "Markdown", wrapped: true},
+        "docs/mushcode.mc": {name: "MUSHCode", wrapped: true},
+        "docs/objectivec.m": {name: "Objective-C"},
+        "docs/ocaml.ml": "OCaml",
+        "docs/OpenSCAD.scad": "OpenSCAD",
+        "docs/pascal.pas": "Pascal",
+        "docs/perl.pl": "Perl",
+        "docs/pgsql.pgsql": {name: "pgSQL", wrapped: true},
+        "docs/php.php": "PHP",
+        "docs/plaintext.txt": {name: "Plain Text", prepare: makeHuge, wrapped: true},
+        "docs/powershell.ps1": "Powershell",
+        "docs/properties.properties": "Properties",
+        "docs/python.py": "Python",
+        "docs/r.r": "R",
+        "docs/rdoc.Rd": "RDoc",
+        "docs/rhtml.rhtml": "RHTML",
+        "docs/ruby.rb": "Ruby",
+        "docs/abap.abap": "SAP - ABAP",
+        "docs/scala.scala": "Scala",
+        "docs/scss.scss": "SCSS",
+        "docs/sass.sass": "SASS",
+        "docs/sh.sh": "SH",
+        "docs/stylus.styl": "Stylus",
+        "docs/sql.sql": {name: "SQL", wrapped: true},
+        "docs/svg.svg": "SVG",
+        "docs/tcl.tcl": "Tcl",
+        "docs/tex.tex": "Tex",
+        "docs/textile.textile": {name: "Textile", wrapped: true},
+        "docs/snippets.snippets": "snippets",
+        "docs/toml.toml": "TOML",
+        "docs/typescript.ts": "Typescript",
+        "docs/vbscript.vbs": "VBScript",
+        "docs/velocity.vm": "Velocity",
+        "docs/xml.xml": "XML",
+        "docs/xquery.xq": "XQuery",
+        "docs/yaml.yaml": "YAML",
+        "docs/c9search.c9search_results": "C9 Search Results",
+
+        "docs/actionscript.as": "ActionScript",
+        "docs/assembly_x86.asm": "Assembly_x86",
+        "docs/autohotkey.ahk": "AutoHotKey",
+        "docs/batchfile.bat": "BatchFile",
+        "docs/erlang.erl": "Erlang",
+        "docs/forth.frt": "Forth",
+        "docs/haskell.hs": "Haskell",
+        "docs/julia.js": "Julia",
+        "docs/prolog.plg": "Prolog",
+        "docs/rust.rs": "Rust",
+        "docs/twig.twig": "Twig",
+        "docs/Nix.nix": "Nix",
+        "docs/protobuf.proto": "Protobuf"
+    };
+
+    var ownSource = {
+    };
+
+    var hugeDocs = {
+        "src/ace.js": "",
+        "src-min/ace.js": ""
+    };
+
+    if (window.require && window.require.s) try {
+        for (var path in window.require.s.contexts._.defined) {
+            if (path.indexOf("!") != -1)
+                path = path.split("!").pop();
+            else
+                path = path + ".js";
+            ownSource[path] = "";
+        }
+    } catch(e) {}
+
+    function prepareDocList(docs) {
+        var list = [];
+        for (var path in docs) {
+            var doc = docs[path];
+            if (typeof doc != "object")
+                doc = {name: doc || path};
+
+            doc.path = path;
+            doc.desc = doc.name.replace(/^(ace|docs|demo|build)\//, "");
+            if (doc.desc.length > 18)
+                doc.desc = doc.desc.slice(0, 7) + ".." + doc.desc.slice(-9);
+
+            fileCache[doc.name] = doc;
+            list.push(doc);
+        }
+
+        return list;
+    }
+
+    function loadDoc(name, callback) {
+        var doc = fileCache[name];
+        if (!doc)
+            return callback(null);
+
+        if (doc.session)
+            return callback(doc.session);
+        var path = doc.path;
+        var parts = path.split("/");
+        if (parts[0] == "docs")
+            path = "kitchen-sink/" + path;
+        else if (parts[0] == "ace")
+            path = "lib/" + path;
+
+        net.get(path, function(x) {
+            initDoc(x, path, doc);
+            callback(doc.session);
+        });
+    }
+
+    module.exports = {
+        fileCache: fileCache,
+        docs: prepareDocList(docs),
+        ownSource: prepareDocList(ownSource),
+        hugeDocs: prepareDocList(hugeDocs),
+        initDoc: initDoc,
+        loadDoc: loadDoc
+    };
+    module.exports.all = {
+        "Mode Examples": module.exports.docs,
+        "Huge documents": module.exports.hugeDocs,
+        "own source": module.exports.ownSource
+    };
+
+});
+
+define('ace/ext/modelist', ['require', 'exports', 'module' ], function(require, exports, module) {
+
 
     var modes = [];
     function getModeForPath(path) {
@@ -914,10 +1300,10 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
         modesByName: modesByName
     };
 
-    });
+});
 
 
-    define('kitchen-sink/layout', ['require', 'exports', 'module' , 'ace/lib/dom', 'ace/lib/event', 'ace/edit_session', 'ace/undomanager', 'ace/virtual_renderer', 'ace/editor', 'ace/multi_select', 'ace/theme/textmate'], function(require, exports, module) {
+define('kitchen-sink/layout', ['require', 'exports', 'module' , 'ace/lib/dom', 'ace/lib/event', 'ace/edit_session', 'ace/undomanager', 'ace/virtual_renderer', 'ace/editor', 'ace/multi_select', 'ace/theme/textmate'], function(require, exports, module) {
 
 
     var dom = require("ace/lib/dom");
@@ -930,17 +1316,17 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
     var MultiSelect = require("ace/multi_select").MultiSelect;
 
     dom.importCssString("\
-    splitter {\
-        border: 1px solid #C6C6D2;\
-        width: 0px;\
-        cursor: ew-resize;\
-        z-index:10}\
-    splitter:hover {\
-        margin-left: -2px;\
-        width:3px;\
-        border-color: #B5B4E0;\
-    }\
-    ", "splitEditor");
+splitter {\
+    border: 1px solid #C6C6D2;\
+    width: 0px;\
+    cursor: ew-resize;\
+    z-index:10}\
+splitter:hover {\
+    margin-left: -2px;\
+    width:3px;\
+    border-color: #B5B4E0;\
+}\
+", "splitEditor");
 
     exports.edit = function(el) {
         if (typeof(el) == "string")
@@ -1043,9 +1429,9 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
 
 
 
-    });
+});
 
-    define('kitchen-sink/token_tooltip', ['require', 'exports', 'module' , 'ace/lib/dom', 'ace/lib/event', 'ace/range'], function(require, exports, module) {
+define('kitchen-sink/token_tooltip', ['require', 'exports', 'module' , 'ace/lib/dom', 'ace/lib/event', 'ace/range'], function(require, exports, module) {
 
 
     var dom = require("ace/lib/dom");
@@ -1196,9 +1582,9 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
 
     exports.TokenTooltip = TokenTooltip;
 
-    });
+});
 
-    define('kitchen-sink/util', ['require', 'exports', 'module' , 'ace/lib/dom', 'ace/lib/event', 'ace/edit_session', 'ace/undomanager', 'ace/virtual_renderer', 'ace/editor', 'ace/multi_select'], function(require, exports, module) {
+define('kitchen-sink/util', ['require', 'exports', 'module' , 'ace/lib/dom', 'ace/lib/event', 'ace/edit_session', 'ace/undomanager', 'ace/virtual_renderer', 'ace/editor', 'ace/multi_select'], function(require, exports, module) {
 
 
     var dom = require("ace/lib/dom");
@@ -1401,9 +1787,9 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
     }
 
 
-    });
+});
 
-    define('ace/ext/elastic_tabstops_lite', ['require', 'exports', 'module' , 'ace/editor', 'ace/config'], function(require, exports, module) {
+define('ace/ext/elastic_tabstops_lite', ['require', 'exports', 'module' , 'ace/editor', 'ace/config'], function(require, exports, module) {
 
 
     var ElasticTabstopsLite = function(editor) {
@@ -1673,9 +2059,9 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
         }
     });
 
-    });
+});
 
-    define('ace/incremental_search', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/range', 'ace/search', 'ace/search_highlight', 'ace/commands/incremental_search_commands', 'ace/lib/dom', 'ace/commands/command_manager', 'ace/editor', 'ace/config'], function(require, exports, module) {
+define('ace/incremental_search', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/range', 'ace/search', 'ace/search_highlight', 'ace/commands/incremental_search_commands', 'ace/lib/dom', 'ace/commands/command_manager', 'ace/editor', 'ace/config'], function(require, exports, module) {
 
 
     var oop = require("./lib/oop");
@@ -1818,22 +2204,22 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
 
     var dom = require('./lib/dom');
     dom.importCssString && dom.importCssString("\
-    .ace_marker-layer .ace_isearch-result {\
-      position: absolute;\
-      z-index: 6;\
-      -moz-box-sizing: border-box;\
-      -webkit-box-sizing: border-box;\
-      box-sizing: border-box;\
-    }\
-    div.ace_isearch-result {\
-      border-radius: 4px;\
-      background-color: rgba(255, 200, 0, 0.5);\
-      box-shadow: 0 0 4px rgb(255, 200, 0);\
-    }\
-    .ace_dark div.ace_isearch-result {\
-      background-color: rgb(100, 110, 160);\
-      box-shadow: 0 0 4px rgb(80, 90, 140);\
-    }", "incremental-search-highlighting");
+.ace_marker-layer .ace_isearch-result {\
+  position: absolute;\
+  z-index: 6;\
+  -moz-box-sizing: border-box;\
+  -webkit-box-sizing: border-box;\
+  box-sizing: border-box;\
+}\
+div.ace_isearch-result {\
+  border-radius: 4px;\
+  background-color: rgba(255, 200, 0, 0.5);\
+  box-shadow: 0 0 4px rgb(255, 200, 0);\
+}\
+.ace_dark div.ace_isearch-result {\
+  background-color: rgb(100, 110, 160);\
+  box-shadow: 0 0 4px rgb(80, 90, 140);\
+}", "incremental-search-highlighting");
     var commands = require("./commands/command_manager");
     (function() {
         this.setupIncrementalSearch = function(editor, val) {
@@ -1858,9 +2244,9 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
         }
     });
 
-    });
+});
 
-    define('ace/commands/incremental_search_commands', ['require', 'exports', 'module' , 'ace/config', 'ace/lib/oop', 'ace/keyboard/hash_handler', 'ace/commands/occur_commands'], function(require, exports, module) {
+define('ace/commands/incremental_search_commands', ['require', 'exports', 'module' , 'ace/config', 'ace/lib/oop', 'ace/keyboard/hash_handler', 'ace/commands/occur_commands'], function(require, exports, module) {
 
     var config = require("../config");
     var oop = require("../lib/oop");
@@ -2005,9 +2391,9 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
 
     exports.IncrementalSearchKeyboardHandler = IncrementalSearchKeyboardHandler;
 
-    });
+});
 
-    define('ace/commands/occur_commands', ['require', 'exports', 'module' , 'ace/config', 'ace/occur', 'ace/keyboard/hash_handler', 'ace/lib/oop'], function(require, exports, module) {
+define('ace/commands/occur_commands', ['require', 'exports', 'module' , 'ace/config', 'ace/occur', 'ace/keyboard/hash_handler', 'ace/lib/oop'], function(require, exports, module) {
 
     var config = require("../config"),
         Occur = require("../occur").Occur;
@@ -2084,9 +2470,9 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
 
     exports.occurStartCommand = occurStartCommand;
 
-    });
+});
 
-    define('ace/occur', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/range', 'ace/search', 'ace/edit_session', 'ace/search_highlight', 'ace/lib/dom'], function(require, exports, module) {
+define('ace/occur', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/range', 'ace/search', 'ace/edit_session', 'ace/search_highlight', 'ace/lib/dom'], function(require, exports, module) {
 
 
     var oop = require("./lib/oop");
@@ -2118,7 +2504,7 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
 
         this.highlight = function(sess, regexp) {
             var hl = sess.$occurHighlight = sess.$occurHighlight || sess.addDynamicMarker(
-                    new SearchHighlight(null, "ace_occur-highlight", "text"));
+                new SearchHighlight(null, "ace_occur-highlight", "text"));
             hl.setRegexp(regexp);
             sess._emit("changeBackMarker"); // force highlight layer redraw
         }
@@ -2173,25 +2559,25 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
 
     var dom = require('./lib/dom');
     dom.importCssString(".ace_occur-highlight {\n\
-        border-radius: 4px;\n\
-        background-color: rgba(87, 255, 8, 0.25);\n\
-        position: absolute;\n\
-        z-index: 4;\n\
-        -moz-box-sizing: border-box;\n\
-        -webkit-box-sizing: border-box;\n\
-        box-sizing: border-box;\n\
-        box-shadow: 0 0 4px rgb(91, 255, 50);\n\
-    }\n\
-    .ace_dark .ace_occur-highlight {\n\
-        background-color: rgb(80, 140, 85);\n\
-        box-shadow: 0 0 4px rgb(60, 120, 70);\n\
-    }\n", "incremental-occur-highlighting");
+    border-radius: 4px;\n\
+    background-color: rgba(87, 255, 8, 0.25);\n\
+    position: absolute;\n\
+    z-index: 4;\n\
+    -moz-box-sizing: border-box;\n\
+    -webkit-box-sizing: border-box;\n\
+    box-sizing: border-box;\n\
+    box-shadow: 0 0 4px rgb(91, 255, 50);\n\
+}\n\
+.ace_dark .ace_occur-highlight {\n\
+    background-color: rgb(80, 140, 85);\n\
+    box-shadow: 0 0 4px rgb(60, 120, 70);\n\
+}\n", "incremental-occur-highlighting");
 
     exports.Occur = Occur;
 
-    });
+});
 
-    define('ace/split', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/lib/lang', 'ace/lib/event_emitter', 'ace/editor', 'ace/virtual_renderer', 'ace/edit_session'], function(require, exports, module) {
+define('ace/split', ['require', 'exports', 'module' , 'ace/lib/oop', 'ace/lib/lang', 'ace/lib/event_emitter', 'ace/editor', 'ace/virtual_renderer', 'ace/edit_session'], function(require, exports, module) {
 
 
     var oop = require("./lib/oop");
@@ -2305,7 +2691,7 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
         this.setFontSize = function(size) {
             this.$fontSize = size;
             this.forEach(function(editor) {
-               editor.setFontSize(size);
+                editor.setFontSize(size);
             });
         };
 
@@ -2325,7 +2711,7 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
             s.setUseWrapMode(session.getUseWrapMode());
             s.setUseWorker(session.getUseWorker());
             s.setWrapLimitRange(session.$wrapLimitRange.min,
-                                session.$wrapLimitRange.max);
+                session.$wrapLimitRange.max);
             s.$foldData = session.$cloneFoldData();
 
             return s;
@@ -2338,7 +2724,7 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
                 editor = this.$editors[idx];
             }
             var isUsed = this.$editors.some(function(editor) {
-               return editor.session === session;
+                return editor.session === session;
             });
 
             if (isUsed) {
@@ -2426,9 +2812,9 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
     }).call(UndoManagerProxy.prototype);
 
     exports.Split = Split;
-    });
+});
 
-    define('ace/keyboard/vim', ['require', 'exports', 'module' , 'ace/keyboard/vim/commands', 'ace/keyboard/vim/maps/util', 'ace/lib/useragent'], function(require, exports, module) {
+define('ace/keyboard/vim', ['require', 'exports', 'module' , 'ace/keyboard/vim/commands', 'ace/keyboard/vim/maps/util', 'ace/lib/useragent'], function(require, exports, module) {
 
 
     var cmds = require("./vim/commands");
@@ -2585,9 +2971,9 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
         exports.onCursorMove.scheduled = false;
     };
 
-    });
+});
 
-    define('ace/keyboard/vim/commands', ['require', 'exports', 'module' , 'ace/lib/lang', 'ace/keyboard/vim/maps/util', 'ace/keyboard/vim/maps/motions', 'ace/keyboard/vim/maps/operators', 'ace/keyboard/vim/maps/aliases', 'ace/keyboard/vim/registers'], function(require, exports, module) {
+define('ace/keyboard/vim/commands', ['require', 'exports', 'module' , 'ace/lib/lang', 'ace/keyboard/vim/maps/util', 'ace/keyboard/vim/maps/motions', 'ace/keyboard/vim/maps/operators', 'ace/keyboard/vim/maps/aliases', 'ace/keyboard/vim/registers'], function(require, exports, module) {
 
     "never use strict";
 
@@ -3156,22 +3542,22 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
             handleCursorMove.running = false;
         }
     };
-    });
-    define('ace/keyboard/vim/maps/util', ['require', 'exports', 'module' , 'ace/keyboard/vim/registers', 'ace/lib/dom'], function(require, exports, module) {
+});
+define('ace/keyboard/vim/maps/util', ['require', 'exports', 'module' , 'ace/keyboard/vim/registers', 'ace/lib/dom'], function(require, exports, module) {
     var registers = require("../registers");
 
     var dom = require("../../../lib/dom");
     dom.importCssString('.insert-mode .ace_cursor{\
-        border-left: 2px solid #333333;\
-    }\
-    .ace_dark.insert-mode .ace_cursor{\
-        border-left: 2px solid #eeeeee;\
-    }\
-    .normal-mode .ace_cursor{\
-        border: 0!important;\
-        background-color: red;\
-        opacity: 0.5;\
-    }', 'vimMode');
+    border-left: 2px solid #333333;\
+}\
+.ace_dark.insert-mode .ace_cursor{\
+    border-left: 2px solid #eeeeee;\
+}\
+.normal-mode .ace_cursor{\
+    border: 0!important;\
+    background-color: red;\
+    opacity: 0.5;\
+}', 'vimMode');
 
     module.exports = {
         onVisualMode: false,
@@ -3236,8 +3622,8 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
         visualMode: function(editor, lineMode) {
             if (
                 (this.onVisualLineMode && lineMode)
-                || (this.onVisualMode && !lineMode)
-            ) {
+                    || (this.onVisualMode && !lineMode)
+                ) {
                 this.normalMode(editor);
                 return;
             }
@@ -3285,9 +3671,9 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
             editor.moveCursorTo(pos.row, pos.column);
         }
     };
-    });
+});
 
-    define('ace/keyboard/vim/registers', ['require', 'exports', 'module' ], function(require, exports, module) {
+define('ace/keyboard/vim/registers', ['require', 'exports', 'module' ], function(require, exports, module) {
 
     "never use strict";
 
@@ -3298,10 +3684,10 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
         }
     };
 
-    });
+});
 
 
-    define('ace/keyboard/vim/maps/motions', ['require', 'exports', 'module' , 'ace/keyboard/vim/maps/util', 'ace/search', 'ace/range'], function(require, exports, module) {
+define('ace/keyboard/vim/maps/motions', ['require', 'exports', 'module' , 'ace/keyboard/vim/maps/util', 'ace/search', 'ace/range'], function(require, exports, module) {
 
 
     var util = require("./util");
@@ -3928,9 +4314,9 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
     module.exports.pagedown = module.exports["ctrl-d"];
     module.exports.pageup = module.exports["ctrl-u"];
 
-    });
+});
 
-    define('ace/keyboard/vim/maps/operators', ['require', 'exports', 'module' , 'ace/keyboard/vim/maps/util', 'ace/keyboard/vim/registers'], function(require, exports, module) {
+define('ace/keyboard/vim/maps/operators', ['require', 'exports', 'module' , 'ace/keyboard/vim/maps/util', 'ace/keyboard/vim/registers'], function(require, exports, module) {
 
 
 
@@ -4091,11 +4477,11 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
             }
         }
     };
-    });
+});
 
-    "use strict"
+"use strict"
 
-    define('ace/keyboard/vim/maps/aliases', ['require', 'exports', 'module' ], function(require, exports, module) {
+define('ace/keyboard/vim/maps/aliases', ['require', 'exports', 'module' ], function(require, exports, module) {
     module.exports = {
         "x": {
             operator: {
@@ -4155,9 +4541,9 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
             param: "c"
         }
     };
-    });
+});
 
-    define('ace/ext/statusbar', ['require', 'exports', 'module' , 'ace/lib/dom', 'ace/lib/lang'], function(require, exports, module) {
+define('ace/ext/statusbar', ['require', 'exports', 'module' , 'ace/lib/dom', 'ace/lib/lang'], function(require, exports, module) {
     var dom = require("ace/lib/dom");
     var lang = require("ace/lib/lang");
 
@@ -4203,9 +4589,9 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
 
     exports.StatusBar = StatusBar;
 
-    });
+});
 
-    define('ace/ext/emmet', ['require', 'exports', 'module' , 'ace/keyboard/hash_handler', 'ace/editor', 'ace/snippets', 'ace/range', 'ace/config'], function(require, exports, module) {
+define('ace/ext/emmet', ['require', 'exports', 'module' , 'ace/keyboard/hash_handler', 'ace/editor', 'ace/snippets', 'ace/range', 'ace/config'], function(require, exports, module) {
 
     var HashHandler = require("ace/keyboard/hash_handler").HashHandler;
     var Editor = require("ace/editor").Editor;
@@ -4306,15 +4692,15 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
         },
         getProfileName: function() {
             switch(this.getSyntax()) {
-              case "css": return "css";
-              case "xml":
-              case "xsl":
-                return "xml";
-              case "html":
-                var profile = emmet.require("resources").getVariable("profile");
-                if (!profile)
-                    profile = this.ace.session.getLines(0,2).join("").search(/<!DOCTYPE[^>]+XHTML/i) != -1 ? "xhtml": "html";
-                return profile;
+                case "css": return "css";
+                case "xml":
+                case "xsl":
+                    return "xml";
+                case "html":
+                    var profile = emmet.require("resources").getVariable("profile");
+                    if (!profile)
+                        profile = this.ace.session.getLines(0,2).join("").search(/<!DOCTYPE[^>]+XHTML/i) != -1 ? "xhtml": "html";
+                    return profile;
             }
             return "xhtml";
         },
@@ -4468,9 +4854,9 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
 
 
     exports.setCore = function(e) {emmet = e;};
-    });
+});
 
-    define('ace/snippets', ['require', 'exports', 'module' , 'ace/lib/lang', 'ace/range', 'ace/keyboard/hash_handler', 'ace/tokenizer', 'ace/lib/dom'], function(require, exports, module) {
+define('ace/snippets', ['require', 'exports', 'module' , 'ace/lib/lang', 'ace/range', 'ace/keyboard/hash_handler', 'ace/tokenizer', 'ace/lib/dom'], function(require, exports, module) {
 
     var lang = require("./lib/lang")
     var Range = require("./range").Range
@@ -4538,16 +4924,16 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
                         stack[0].choices = val.slice(1, -1).split(",");
                     }, next: "start"},
                     {regex: "/(" + escape("/") + "+)/(?:(" + escape("/") + "*)/)(\\w*):?",
-                     onMatch: function(val, state, stack) {
-                        var ts = stack[0];
-                        ts.fmtString = val;
+                        onMatch: function(val, state, stack) {
+                            var ts = stack[0];
+                            ts.fmtString = val;
 
-                        val = this.splitRegex.exec(val);
-                        ts.guard = val[1];
-                        ts.fmt = val[2];
-                        ts.flag = val[3];
-                        return "";
-                    }, next: "start"},
+                            val = this.splitRegex.exec(val);
+                            ts.guard = val[1];
+                            ts.fmt = val[2];
+                            ts.flag = val[3];
+                            return "";
+                        }, next: "start"},
                     {regex: "`" + escape("`") + "*`", onMatch: function(val, state, stack) {
                         stack[0].code = val.splice(1, -1);
                         return "";
@@ -5251,20 +5637,20 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
 
 
     require("./lib/dom").importCssString("\
-    .ace_snippet-marker {\
-        -moz-box-sizing: border-box;\
-        box-sizing: border-box;\
-        background: rgba(194, 193, 208, 0.09);\
-        border: 1px dotted rgba(211, 208, 235, 0.62);\
-        position: absolute;\
-    }");
+.ace_snippet-marker {\
+    -moz-box-sizing: border-box;\
+    box-sizing: border-box;\
+    background: rgba(194, 193, 208, 0.09);\
+    border: 1px dotted rgba(211, 208, 235, 0.62);\
+    position: absolute;\
+}");
 
     exports.snippetManager = new SnippetManager();
 
 
-    });
+});
 
-    define('ace/ext/language_tools', ['require', 'exports', 'module' , 'ace/snippets', 'ace/autocomplete', 'ace/config', 'ace/autocomplete/text_completer', 'ace/editor'], function(require, exports, module) {
+define('ace/ext/language_tools', ['require', 'exports', 'module' , 'ace/snippets', 'ace/autocomplete', 'ace/config', 'ace/autocomplete/text_completer', 'ace/editor'], function(require, exports, module) {
 
 
     var snippetManager = require("../snippets").snippetManager;
@@ -5362,9 +5748,9 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
         }
     });
 
-    });
+});
 
-    define('ace/autocomplete', ['require', 'exports', 'module' , 'ace/keyboard/hash_handler', 'ace/autocomplete/popup', 'ace/autocomplete/util', 'ace/lib/event', 'ace/lib/lang', 'ace/snippets'], function(require, exports, module) {
+define('ace/autocomplete', ['require', 'exports', 'module' , 'ace/keyboard/hash_handler', 'ace/autocomplete/popup', 'ace/autocomplete/util', 'ace/lib/event', 'ace/lib/lang', 'ace/snippets'], function(require, exports, module) {
 
 
     var HashHandler = require("./keyboard/hash_handler").HashHandler;
@@ -5675,9 +6061,9 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
     exports.Autocomplete = Autocomplete;
     exports.FilteredList = FilteredList;
 
-    });
+});
 
-    define('ace/autocomplete/popup', ['require', 'exports', 'module' , 'ace/edit_session', 'ace/virtual_renderer', 'ace/editor', 'ace/range', 'ace/lib/event', 'ace/lib/lang', 'ace/lib/dom'], function(require, exports, module) {
+define('ace/autocomplete/popup', ['require', 'exports', 'module' , 'ace/edit_session', 'ace/virtual_renderer', 'ace/editor', 'ace/range', 'ace/lib/event', 'ace/lib/lang', 'ace/lib/dom'], function(require, exports, module) {
 
 
     var EditSession = require("../edit_session").EditSession;
@@ -5876,132 +6262,132 @@ define('kitchen-sink/demo', ['require', 'exports', 'module' , 'ace/lib/fixoldbro
     };
 
     dom.importCssString("\
-    .ace_autocomplete.ace-tm .ace_marker-layer .ace_active-line {\
-        background-color: #CAD6FA;\
-        z-index: 1;\
-    }\
-    .ace_autocomplete.ace-tm .ace_line-hover {\
-        border: 1px solid #abbffe;\
-        position: absolute;\
-        background: rgba(233,233,253,0.4);\
-        z-index: 2;\
-        margin-top: -1px;\
-    }\
-    .ace_rightAlignedText {\
-        color: gray;\
-        display: inline-block;\
-        position: absolute;\
-        right: 4px;\
-        text-align: right;\
-        z-index: -1;\
-    }\
-    .ace_autocomplete .ace_completion-highlight{\
-        color: #000;\
-        text-shadow: 0 0 0.01em;\
-    }\
-    .ace_autocomplete {\
-        width: 280px;\
-        z-index: 200000;\
-        background: #fbfbfb;\
-        color: #444;\
-        border: 1px lightgray solid;\
-        position: fixed;\
-        box-shadow: 2px 3px 5px rgba(0,0,0,.2);\
-        line-height: 1.4;\
-    }");
+.ace_autocomplete.ace-tm .ace_marker-layer .ace_active-line {\
+    background-color: #CAD6FA;\
+    z-index: 1;\
+}\
+.ace_autocomplete.ace-tm .ace_line-hover {\
+    border: 1px solid #abbffe;\
+    position: absolute;\
+    background: rgba(233,233,253,0.4);\
+    z-index: 2;\
+    margin-top: -1px;\
+}\
+.ace_rightAlignedText {\
+    color: gray;\
+    display: inline-block;\
+    position: absolute;\
+    right: 4px;\
+    text-align: right;\
+    z-index: -1;\
+}\
+.ace_autocomplete .ace_completion-highlight{\
+    color: #000;\
+    text-shadow: 0 0 0.01em;\
+}\
+.ace_autocomplete {\
+    width: 280px;\
+    z-index: 200000;\
+    background: #fbfbfb;\
+    color: #444;\
+    border: 1px lightgray solid;\
+    position: fixed;\
+    box-shadow: 2px 3px 5px rgba(0,0,0,.2);\
+    line-height: 1.4;\
+}");
 
     exports.AcePopup = AcePopup;
 
-    });
+});
 
-    define('ace/autocomplete/util', ['require', 'exports', 'module' ], function(require, exports, module) {
+define('ace/autocomplete/util', ['require', 'exports', 'module' ], function(require, exports, module) {
 
 
-        exports.parForEach = function(array, fn, callback) {
-            var completed = 0;
-            var arLength = array.length;
-            if (arLength === 0)
-                callback();
-            for (var i = 0; i < arLength; i++) {
-                fn(array[i], function(result, err) {
-                    completed++;
-                    if (completed === arLength)
-                        callback(result, err);
-                });
-            }
-        }
-
-        var ID_REGEX = /[a-zA-Z_0-9\$-]/;
-
-        exports.retrievePrecedingIdentifier = function(text, pos, regex) {
-            regex = regex || ID_REGEX;
-            var buf = [];
-            for (var i = pos-1; i >= 0; i--) {
-                if (regex.test(text[i]))
-                    buf.push(text[i]);
-                else
-                    break;
-            }
-            return buf.reverse().join("");
-        }
-
-        exports.retrieveFollowingIdentifier = function(text, pos, regex) {
-            regex = regex || ID_REGEX;
-            var buf = [];
-            for (var i = pos; i < text.length; i++) {
-                if (regex.test(text[i]))
-                    buf.push(text[i]);
-                else
-                    break;
-            }
-            return buf;
-        }
-
-    });
-
-    define('ace/autocomplete/text_completer', ['require', 'exports', 'module' , 'ace/range'], function(require, exports, module) {
-        var Range = require("ace/range").Range;
-
-        var splitRegex = /[^a-zA-Z_0-9\$\-]+/;
-
-        function getWordIndex(doc, pos) {
-            var textBefore = doc.getTextRange(Range.fromPoints({row: 0, column:0}, pos));
-            return textBefore.split(splitRegex).length - 1;
-        }
-        function wordDistance(doc, pos) {
-            var prefixPos = getWordIndex(doc, pos);
-            var words = doc.getValue().split(splitRegex);
-            var wordScores = Object.create(null);
-
-            var currentWord = words[prefixPos];
-
-            words.forEach(function(word, idx) {
-                if (!word || word === currentWord) return;
-
-                var distance = Math.abs(prefixPos - idx);
-                var score = words.length - distance;
-                if (wordScores[word]) {
-                    wordScores[word] = Math.max(score, wordScores[word]);
-                } else {
-                    wordScores[word] = score;
-                }
+    exports.parForEach = function(array, fn, callback) {
+        var completed = 0;
+        var arLength = array.length;
+        if (arLength === 0)
+            callback();
+        for (var i = 0; i < arLength; i++) {
+            fn(array[i], function(result, err) {
+                completed++;
+                if (completed === arLength)
+                    callback(result, err);
             });
-            return wordScores;
         }
+    }
 
-        exports.getCompletions = function(editor, session, pos, prefix, callback) {
-            var wordScore = wordDistance(session, pos, prefix);
-            var wordList = Object.keys(wordScore);
-            callback(null, wordList.map(function(word) {
-                return {
-                    name: word,
-                    value: word,
-                    score: wordScore[word],
-                    meta: "local"
-                };
-            }));
-        };
-    });
+    var ID_REGEX = /[a-zA-Z_0-9\$-]/;
+
+    exports.retrievePrecedingIdentifier = function(text, pos, regex) {
+        regex = regex || ID_REGEX;
+        var buf = [];
+        for (var i = pos-1; i >= 0; i--) {
+            if (regex.test(text[i]))
+                buf.push(text[i]);
+            else
+                break;
+        }
+        return buf.reverse().join("");
+    }
+
+    exports.retrieveFollowingIdentifier = function(text, pos, regex) {
+        regex = regex || ID_REGEX;
+        var buf = [];
+        for (var i = pos; i < text.length; i++) {
+            if (regex.test(text[i]))
+                buf.push(text[i]);
+            else
+                break;
+        }
+        return buf;
+    }
+
+});
+
+define('ace/autocomplete/text_completer', ['require', 'exports', 'module' , 'ace/range'], function(require, exports, module) {
+    var Range = require("ace/range").Range;
+
+    var splitRegex = /[^a-zA-Z_0-9\$\-]+/;
+
+    function getWordIndex(doc, pos) {
+        var textBefore = doc.getTextRange(Range.fromPoints({row: 0, column:0}, pos));
+        return textBefore.split(splitRegex).length - 1;
+    }
+    function wordDistance(doc, pos) {
+        var prefixPos = getWordIndex(doc, pos);
+        var words = doc.getValue().split(splitRegex);
+        var wordScores = Object.create(null);
+
+        var currentWord = words[prefixPos];
+
+        words.forEach(function(word, idx) {
+            if (!word || word === currentWord) return;
+
+            var distance = Math.abs(prefixPos - idx);
+            var score = words.length - distance;
+            if (wordScores[word]) {
+                wordScores[word] = Math.max(score, wordScores[word]);
+            } else {
+                wordScores[word] = score;
+            }
+        });
+        return wordScores;
+    }
+
+    exports.getCompletions = function(editor, session, pos, prefix, callback) {
+        var wordScore = wordDistance(session, pos, prefix);
+        var wordList = Object.keys(wordScore);
+        callback(null, wordList.map(function(word) {
+            return {
+                name: word,
+                value: word,
+                score: wordScore[word],
+                meta: "local"
+            };
+        }));
+    };
+});
 };
 
 //-------------------------------------------------------------------------------
