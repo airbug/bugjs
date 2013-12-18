@@ -8,7 +8,6 @@
 
 //@Require('Class')
 //@Require('EventDispatcher')
-//@Require('Proxy')
 //@Require('redis.RedisEvent')
 
 
@@ -25,7 +24,6 @@ var bugpack             = require('bugpack').context();
 
 var Class               = bugpack.require('Class');
 var EventDispatcher     = bugpack.require('EventDispatcher');
-var Proxy               = bugpack.require('Proxy');
 var RedisEvent          = bugpack.require('redis.RedisEvent');
 
 
@@ -77,12 +75,6 @@ var RedisClient = Class.extend(EventDispatcher, {
          * @type {*}
          */
         this.client         = null;
-
-        Proxy.proxy(this, this.client, [
-            "get",
-            "getrange",
-            "set"
-        ]);
     },
 
 
@@ -147,10 +139,28 @@ var RedisClient = Class.extend(EventDispatcher, {
                 _this.dispatchEvent(new RedisEvent(RedisEvent.EventTypes.IDLE));
             });
             this.client.on("ready", function() {
+                console.log("Connected to redis server on port ", _this.config.getPort());
                 _this.dispatchEvent(new RedisEvent(RedisEvent.EventTypes.READY));
                 callback();
             });
         }
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Proxy Methods
+    //-------------------------------------------------------------------------------
+
+    get: function() {
+        return this.client.get.apply(this.client, arguments);
+    },
+
+    getRange: function() {
+        return this.client.getrange.apply(this.client, arguments);
+    },
+
+    set: function() {
+        return this.client.set.apply(this.client, arguments);
     }
 });
 
