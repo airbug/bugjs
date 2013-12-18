@@ -2,9 +2,12 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Autoload
+//@Package('fileupload')
+//@Export('FileUpload')
 
 //@Require('jquery.JQuery')
+//@Require('jqueryplugin.Widget')
+//@Require('fileupload.IframeTransport')
 
 //-------------------------------------------------------------------------------
 // Common Modules

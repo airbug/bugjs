@@ -2,7 +2,8 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Autoload
+//@Package('fileupload')
+//@Export('IframeTransport')
 
 //@Require('jquery.JQuery')
 
