@@ -209,7 +209,7 @@ var deferredResolveWithAPromiseTest = {
             _this.testPromise.resolvePromise([_this.testValue]);
 
             //TODO BRN: This is a bit of a broken test
-            
+
             promise.then(function() {
                 test.assertTrue(_this.testFunctionSpy.wasCalled(),
                     "Assert that the testFunction was called");
