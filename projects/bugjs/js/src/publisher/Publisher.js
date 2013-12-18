@@ -67,12 +67,6 @@ var Publisher = Class.extend(Obj, {
          * @type {Map<string, List<PublisherSubscription>>}
          */
         this.topicToPublisherSubscriptionListMap = new Map();
-
-        /**
-         * @private
-         * @type {Map<string, PublisherSubscription>}
-         */
-        this.publisherSubscriptionIdToPublisherSubscriptionMap = new Map();
     },
 
 
@@ -167,20 +161,8 @@ var Publisher = Class.extend(Obj, {
      * @return {boolean}
      */
     unsubscribe: function(topic, subscriberFunction, subscriberContext) {
-        var publisherSubscription = new PublisherSubscription(topic, subscriberFunction, subscriberContext, true);
+        var publisherSubscription = new PublisherSubscription(topic, subscriberFunction, subscriberContext, false);
         return this.removePublisherSubscription(publisherSubscription);
-    },
-
-    /**
-     * @param {string} id
-     * @return {boolean}
-     */
-    unsubscribeBySubscriptionId: function(id) {
-        var publisherSubscription = this.publisherSubscriptionIdToPublisherSubscriptionMap.get(id);
-        if (publisherSubscription) {
-            return this.removePublisherSubscription(publisherSubscription);
-        }
-        return false;
     },
 
 
@@ -193,20 +175,12 @@ var Publisher = Class.extend(Obj, {
      * @param {PublisherSubscription} publisherSubscription
      */
     addPublisherSubscription: function(publisherSubscription) {
-
-        // TODO BRN (QUESTION) Do we want multiple publisherSubscriptions of the same function and context to be able to
-        // subscribe to a topic? If so we'd need to remove the hashCode override of the PublisherSubscription class.
-
-        if (!this.publisherSubscriptionIdToPublisherSubscriptionMap.containsKey(publisherSubscription.getInternalId())) {
-            var publisherSubscriptionList = this.topicToPublisherSubscriptionListMap.get(publisherSubscription.getTopic());
-            if (publisherSubscriptionList === undefined) {
-                publisherSubscriptionList = new List();
-                this.topicToPublisherSubscriptionListMap.put(publisherSubscription.getTopic(), publisherSubscriptionList);
-            }
-            publisherSubscriptionList.add(publisherSubscription);
-            this.publisherSubscriptionIdToPublisherSubscriptionMap.put(publisherSubscription.getInternalId(), publisherSubscription);
+        var publisherSubscriptionList = this.topicToPublisherSubscriptionListMap.get(publisherSubscription.getTopic());
+        if (publisherSubscriptionList === undefined) {
+            publisherSubscriptionList = new List();
+            this.topicToPublisherSubscriptionListMap.put(publisherSubscription.getTopic(), publisherSubscriptionList);
         }
-        return publisherSubscription.getInternalId();
+        publisherSubscriptionList.add(publisherSubscription);
     },
 
     /**
@@ -214,11 +188,9 @@ var Publisher = Class.extend(Obj, {
      * @param {PublisherSubscription} publisherSubscription
      */
     removePublisherSubscription: function(publisherSubscription) {
-        if (this.publisherSubscriptionIdToPublisherSubscriptionMap.containsKey(publisherSubscription.getInternalId())) {
-            this.publisherSubscriptionIdToPublisherSubscriptionMap.remove(publisherSubscription.getInternalId());
-            var publisherSubscriptionList = this.topicToPublisherSubscriptionListMap.get(publisherSubscription.getTopic());
-            publisherSubscriptionList.remove(publisherSubscription);
-            return true;
+        var publisherSubscriptionList = this.topicToPublisherSubscriptionListMap.get(publisherSubscription.getTopic());
+        if (publisherSubscriptionList) {
+            return publisherSubscriptionList.remove(publisherSubscription);
         }
         return false;
     }
