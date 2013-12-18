@@ -49,11 +49,10 @@ var $task       = BugFlow.$task;
 //-------------------------------------------------------------------------------
 
 /**
- * @constructor
+ * @class
  * @extends {Obj}
  */
 var Configbug = Class.extend(Obj, {
-
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -61,6 +60,7 @@ var Configbug = Class.extend(Obj, {
 
     /**
      * @constructs
+     * @param {string} configPath
      */
     _constructor: function(configPath) {
 

@@ -97,6 +97,7 @@ var ArgumentBug = Class.extend(Bug, {
 //-------------------------------------------------------------------------------
 
 /**
+ * @static
  * @const {string}
  */
 ArgumentBug.ILLEGAL = "ArgumentBug:Illegal";
