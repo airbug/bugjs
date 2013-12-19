@@ -33,6 +33,7 @@ var StringUtil = {};
 //-------------------------------------------------------------------------------
 
 /**
+ * @static
  * @param {string} value
  * @return {string}
  */
@@ -53,6 +54,7 @@ StringUtil.capitalize = function(value) {
 };
 
 /**
+ * @static
  * @param {string} value
  * @return {string}
  */
@@ -61,6 +63,7 @@ StringUtil.escapeString = function(value) {
 };
 
 /**
+ * @static
  * @param {string} value
  * @param {string} pad
  * @param {number} size
@@ -76,6 +79,7 @@ StringUtil.pad = function(value, pad, size) {
 };
 
 /**
+ * @static
  * @param {string} value
  * @return {string}
  */
@@ -92,6 +96,7 @@ StringUtil.pluralize = function(value) {
 };
 
 /**
+ * @static
  * @param {string} value
  * @return {string}
  */
@@ -106,6 +111,7 @@ StringUtil.trim = function(value) {
 };
 
 /**
+ * @static
  * @param {string} value
  * @return {string}
  */
