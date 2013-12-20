@@ -151,6 +151,26 @@ var CarapaceView = Class.adapt(Backbone.View, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @param {string} name
+     * @returns {*}
+     */
+    getAttribute: function(name) {
+        return this.attributes[name];
+    },
+
+    /**
+     * @param {string} name
+     * @param {*} value
+     */
+    setAttribute: function(name, value) {
+        var currentAttribute = this.getAttribute(name);
+        if (currentAttribute !== value) {
+            this.attributes[name] = value;
+            this.renderView();
+        }
+    },
+
+    /**
      * @returns {string}
      */
     getCid: function() {
