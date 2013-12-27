@@ -60,9 +60,11 @@ var CallManager = Class.extend(EventDispatcher, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {?string} callUuid
+     * @constructs
+     * @param {string} callUuid
+     * @param {boolean} reconnect
      */
-    _constructor: function(callUuid) {
+    _constructor: function(callUuid, reconnect) {
 
         this._super();
 
@@ -114,6 +116,12 @@ var CallManager = Class.extend(EventDispatcher, {
 
         /**
          * @private
+         * @type {boolean}
+         */
+        this.reconnect                          = reconnect;
+
+        /**
+         * @private
          * @type {Map.<string, CallResponseHandler>}
          */
         this.requestUuidToResponseHandlerMap    = new Map();
@@ -158,6 +166,13 @@ var CallManager = Class.extend(EventDispatcher, {
      */
     hasConnection: function() {
         return !!(this.callConnection);
+    },
+
+    /**
+     * @return {boolean}
+     */
+    isReconnect: function() {
+        return this.reconnect;
     },
 
 

@@ -65,43 +65,49 @@ var CallClient = Class.extend(EventDispatcher, {
          * @private
          * @type {boolean}
          */
-        this.closing    = false;
+        this.closing        = false;
 
         /**
          * @private
          * @type {boolean}
          */
-        this.connected = false;
+        this.connected      = false;
 
         /**
          * @private
          * @type {boolean}
          */
-        this.connecting = false;
+        this.connectedOnce  = false;
 
         /**
          * @private
          * @type {boolean}
          */
-        this.initialized = false;
+        this.connecting     = false;
+
+        /**
+         * @private
+         * @type {boolean}
+         */
+        this.initialized    = false;
 
         /**
          * @private
          * @type {?string}
          */
-        this.querystring = null;
+        this.querystring    = null;
 
         /**
          * @private
          * @type {number}
          */
-        this.retryAttempts = 0;
+        this.retryAttempts  = 0;
 
         /**
          * @private
          * @type {number}
          */
-        this.retryLimit = 3;
+        this.retryLimit     = 3;
 
         /**
          * @private
@@ -126,6 +132,13 @@ var CallClient = Class.extend(EventDispatcher, {
      */
     getConnection: function() {
         return this.callConnection;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    hasConnectedOnce: function() {
+        return this.connectedOnce;
     },
 
     /**
@@ -173,6 +186,11 @@ var CallClient = Class.extend(EventDispatcher, {
             if (!this.isConnecting()) {
                 this.retryAttempts = 0;
                 this.querystring = querystring;
+                if (this.hasConnectedOnce()) {
+                    this.querystring += "&reconnect=true"
+                } else {
+                    this.querystring += "&reconnect=false"
+                }
                 this.doOpenConnection();
             }
         }
@@ -280,8 +298,9 @@ var CallClient = Class.extend(EventDispatcher, {
      */
     handleConnectionOpened: function(socketConnection) {
         this.createConnection(socketConnection);
-        this.connected = true;
-        this.connecting = false;
+        this.connected      = true;
+        this.connecting     = false;
+        this.connectedOnce  = true;
         this.dispatchConnectionOpened();
     },
 

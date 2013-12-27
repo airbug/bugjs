@@ -175,10 +175,11 @@ var BugCallServer = Class.extend(EventDispatcher, {
     /**
      * @private
      * @param {string} callUuid
+     * @param {boolean} reconnect
      * @return {CallManager}
      */
-    createCallManager: function(callUuid) {
-        return new CallManager(callUuid);
+    createCallManager: function(callUuid, reconnect) {
+        return new CallManager(callUuid, reconnect);
     },
 
     /**
@@ -233,10 +234,12 @@ var BugCallServer = Class.extend(EventDispatcher, {
 
         /** @type {string}*/
         var callUuid        = callConnection.getHandshake().query.callUuid; //NOTE this is where the callUuid from the query is used
+        /** @type {boolean} */
+        var reconnect       = callConnection.getHandshake().query.reconnect;
         /** @type {CallManager} */
         var callManager     = this.getCallManagerForCallUuid(callUuid);
         if (!callManager) {
-            callManager = this.createCallManager(callUuid);
+            callManager = this.createCallManager(callUuid, reconnect);
             this.addCallManager(callManager);
         }
         this.mapCallConnectionToCallManager(callConnection, callManager);
