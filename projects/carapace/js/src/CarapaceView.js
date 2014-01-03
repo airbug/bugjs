@@ -272,6 +272,23 @@ var CarapaceView = Class.adapt(Backbone.View, {
         targetEl.append(viewChild.el);
     },
 
+    prependViewChildTo: function(viewChild, domQuery) {
+        if (!this.isCreated()) {
+            this.create();
+        }
+        if (!viewChild.isCreated()) {
+            viewChild.create();
+        }
+        viewChild.setParentPropagator(this.eventDispatcher);
+        viewChild.viewParent = this;
+        this.viewChildList.add(viewChild);
+        var targetEl = domQuery ? this.findElement(domQuery) : this.$el;
+        if (targetEl.length == 0) {
+            throw new Error("No DOM element found for domQuery (" + domQuery + " )");
+        }
+        targetEl.prepend(viewChild.el);
+    },
+
     /**
      * @param {CarapaceView} viewChild
      * @return {boolean}
