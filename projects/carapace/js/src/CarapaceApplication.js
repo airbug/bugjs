@@ -7,6 +7,7 @@
 //@Export('CarapaceApplication')
 
 //@Require('Class')
+//@Require('Event')
 //@Require('EventDispatcher')
 //@Require('Set')
 //@Require('backbone.Backbone')
@@ -27,6 +28,7 @@ var bugpack                 = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                   = bugpack.require('Class');
+var Event                   = bugpack.require('Event');
 var EventDispatcher         = bugpack.require('EventDispatcher');
 var Set                     = bugpack.require('Set');
 var Backbone                = bugpack.require('backbone.Backbone');
@@ -145,8 +147,8 @@ var CarapaceApplication = Class.extend(EventDispatcher, {
         console.log("Routing request accepted!");
 
         var routingArgs = routingRequest.getArgs();
-        var route = routingRequest.getRoute();
-        var controller = route.getController();
+        var route       = routingRequest.getRoute();
+        var controller  = route.getController();
         this.startController(controller, routingArgs);
     },
 
@@ -159,7 +161,7 @@ var CarapaceApplication = Class.extend(EventDispatcher, {
         console.log("Routing request forwarded!");
 
         var forwardFragment = routingRequest.getForwardFragment();
-        var forwardOptions = routingRequest.getForwardOptions();
+        var forwardOptions  = routingRequest.getForwardOptions();
         this.router.navigate(forwardFragment, forwardOptions);
     },
 
@@ -185,7 +187,9 @@ var CarapaceApplication = Class.extend(EventDispatcher, {
      * @param {RoutingRequest} routingRequest
      */
     processRoutingRequestResults: function(routingRequest) {
-        switch (routingRequest.getResult()) {
+        var result  = routingRequest.getResult();
+
+        switch (result) {
             case RoutingRequest.Result.ACCEPTED:
                 this.acceptRoutingRequest(routingRequest);
                 break;
@@ -229,8 +233,8 @@ var CarapaceApplication = Class.extend(EventDispatcher, {
      */
     hearControllerRouteRoutingRequestedEvent: function(event) {
         var controllerRoute = event.getTarget();
-        var routingRequest = event.getData().routingRequest;
-        var controller = controllerRoute.getController();
+        var routingRequest  = event.getData().routingRequest;
+        var controller      = controllerRoute.getController();
         this.listenToRoutingRequest(routingRequest);
         controller.route(routingRequest);
     },
