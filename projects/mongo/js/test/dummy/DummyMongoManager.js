@@ -14,6 +14,7 @@
 //@Require('mongo.DummyFindByIdAndRemoveQuery')
 //@Require('mongo.DummyFindByIdAndUpdateQuery')
 //@Require('mongo.DummyFindOneQuery')
+//@Require('mongo.DummyWhereQuery')
 
 
 //-------------------------------------------------------------------------------
@@ -35,6 +36,7 @@ var DummyFindByIdQuery              = bugpack.require('mongo.DummyFindByIdQuery'
 var DummyFindByIdAndRemoveQuery     = bugpack.require('mongo.DummyFindByIdAndRemoveQuery');
 var DummyFindByIdAndUpdateQuery     = bugpack.require('mongo.DummyFindByIdAndUpdateQuery');
 var DummyFindOneQuery               = bugpack.require('mongo.DummyFindOneQuery');
+var DummyWhereQuery                 = bugpack.require('mongo.DummyWhereQuery');
 
 
 //-------------------------------------------------------------------------------
@@ -222,8 +224,13 @@ var DummyMongoManager = Class.extend(Obj, {
     update: function() {
 
     },
-    where: function() {
-
+    where: function(queryParams, callback) {
+        var query = new DummyWhereQuery(this, queryParams);
+        if (callback) {
+            query.exec(callback);
+        } else {
+            return query;
+        }
     },
     pre: function() {
 
