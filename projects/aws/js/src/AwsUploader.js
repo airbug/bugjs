@@ -101,6 +101,23 @@ var AwsUploader = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @returns {{
+     *      awsConfig: {
+     *          accessKeyId: string,
+     *          region: string,
+     *          secretAccessKey: string
+     *      },
+     *      sourcePaths: Array.<string>,
+     *      local-bucket: string,
+     *      bucket: string,
+     *      options: {*}
+     *  }}
+     */
+    getProps: function() {
+        return this.props;
+    },
+
+    /**
      * @param {function(error)=} callback
      */
     initialize: function(callback) {
@@ -140,11 +157,11 @@ var AwsUploader = Class.extend(Obj, {
      * @param {string} outputFilePath
      * @param {string} s3Key
      * @param {string} contentType
-     * @param {function(error)} callback
+     * @param {function(error, S3Object)} callback
      */
     upload: function(outputFilePath, s3Key, contentType, callback) {
         var _this = this;
-
+        var returnedS3Object = null;
         $series([
             $task(function(flow) {
                 if (!_this.isBucketEnsured) {
@@ -156,7 +173,8 @@ var AwsUploader = Class.extend(Obj, {
                 }
             }),
             $task(function(flow) {
-                _this.s3PutFile(outputFilePath, s3Key, contentType, function(error) {
+                _this.s3PutFile(outputFilePath, s3Key, contentType, function(error, s3Object) {
+                    returnedS3Object = s3Object;
                     if (!error) {
                         BugFs.deleteFile(outputFilePath, function() {
                             if (!error) {
@@ -169,7 +187,13 @@ var AwsUploader = Class.extend(Obj, {
                     }
                 });
             })
-        ]).execute(callback);
+        ]).execute(function(throwable) {
+            if (throwable) {
+                callback(throwable, undefined);
+            } else {
+                callback(undefined, returnedS3Object);
+            }
+        });
     },
 
     /**
@@ -260,6 +284,7 @@ var AwsUploader = Class.extend(Obj, {
          });
          var options = props.options || {acl: ''}; // Test this change
          var s3Api = new S3Api(awsConfig);
+         var returnedS3Object = null;
 
          $if(function(flow) {
                 filePath.exists(function(exists) {
@@ -268,6 +293,7 @@ var AwsUploader = Class.extend(Obj, {
             },
             $task(function(flow) {
                 s3Api.putFile(filePath, s3Key, contentType, s3Bucket, options, function(error, s3Object) {
+                    returnedS3Object = s3Object;
                     if (!error) {
                         console.log("Successfully uploaded file to S3 '" + s3Api.getObjectURL(s3Object, s3Bucket) + "'");
                         // _this.registerURL(filePath, s3Api.getObjectURL(s3Object, s3Bucket));
@@ -282,7 +308,13 @@ var AwsUploader = Class.extend(Obj, {
             $task(function(flow) {
                 flow.error(new Error("Cannot find file '" + filePath.getAbsolutePath() + "'"));
             })
-        ).execute(callback);
+        ).execute(function(throwable) {
+             if (throwable) {
+                 callback(throwable, undefined);
+             } else {
+                 callback(undefined, returnedS3Object);
+             }
+        });
     }
 });
 
