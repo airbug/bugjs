@@ -138,9 +138,11 @@ var AwsUploader = Class.extend(Obj, {
 
     /**
      * @param {string} outputFilePath
+     * @param {string} s3Key
+     * @param {string} contentType
      * @param {function(error)} callback
      */
-    upload: function(outputFilePath, callback) {
+    upload: function(outputFilePath, s3Key, contentType, callback) {
         var _this = this;
 
         $series([
@@ -154,7 +156,7 @@ var AwsUploader = Class.extend(Obj, {
                 }
             }),
             $task(function(flow) {
-                _this.s3PutFile(outputFilePath, function(error) {
+                _this.s3PutFile(outputFilePath, s3Key, contentType, function(error) {
                     if (!error) {
                         BugFs.deleteFile(outputFilePath, function() {
                             if (!error) {
@@ -197,7 +199,8 @@ var AwsUploader = Class.extend(Obj, {
                     } else if (files.length > 0) {
                         $forEachParallel(files, function(flow, file) {
                             var outputFilePath = file.givenPath;
-                            _this.upload(outputFilePath, function(error) {
+                            var filePath = new Path(outputFilePath);
+                            _this.upload(outputFilePath, filePath.getName(), null, function(error) {
                                 flow.complete(error);
                             });
                         }).execute(function(error) {
@@ -244,9 +247,11 @@ var AwsUploader = Class.extend(Obj, {
      /**
       * @private
       * @param {string} file
-      * @param {function(Error)} callback
+      * @param {string} s3Key
+      * @param {string} contentType
+      * @param {function(Error, S3Object)} callback
       */
-     s3PutFile: function(file, callback) {
+     s3PutFile: function(file, s3Key, contentType, callback) {
          var props = this.props;
          var awsConfig = new AwsConfig(props.awsConfig);
          var filePath = new Path(file);
@@ -262,7 +267,7 @@ var AwsUploader = Class.extend(Obj, {
                 });
             },
             $task(function(flow) {
-                s3Api.putFile(filePath, s3Bucket, options, function(error, s3Object) {
+                s3Api.putFile(filePath, s3Key, contentType, s3Bucket, options, function(error, s3Object) {
                     if (!error) {
                         console.log("Successfully uploaded file to S3 '" + s3Api.getObjectURL(s3Object, s3Bucket) + "'");
                         // _this.registerURL(filePath, s3Api.getObjectURL(s3Object, s3Bucket));

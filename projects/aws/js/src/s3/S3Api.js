@@ -205,6 +205,7 @@ var S3Api = Class.extend(Obj, {
 
     /**
      * @param {Path} filePath
+     * @param {string}
      * @param {S3Bucket} s3Bucket
      * @param {{
      *     acl: ?string,
@@ -218,7 +219,7 @@ var S3Api = Class.extend(Obj, {
      * }} options
      * @param {function(Throwable, S3Object=)} callback
      */
-    putFile: function(filePath, s3Bucket, options, callback) {
+    putFile: function(filePath, s3Key, contentType, s3Bucket, options, callback) {
         var _this = this;
         var fileData = null;
         var s3Object = null;
@@ -263,10 +264,13 @@ var S3Api = Class.extend(Obj, {
                     }
                 }),
                 $task(function(flow) {
+                    if (! contentType) {
+                        contentType = _this.autoDiscoverContentType(filePath);
+                    }
                     s3Object = new S3Object({
                         body: fileData,
-                        key: filePath.getName(),
-                        contentType: _this.autoDiscoverContentType(filePath)
+                        key: s3Key,
+                        contentType: contentType
                     });
                     if (options.gzip) {
                         s3Object.setContentEncoding(S3Api.ContentEncoding.GZIP);
