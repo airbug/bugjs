@@ -58,7 +58,7 @@ var AwsUploader = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(propertiesFilePath){
+    _constructor: function(propertiesFilePath) {
 
         this._super();
 
@@ -103,7 +103,7 @@ var AwsUploader = Class.extend(Obj, {
     /**
      * @param {function(error)=} callback
      */
-    initialize: function(callback){
+    initialize: function(callback) {
         console.log('AwsUploader initializing...');
         var _this = this;
         var propertiesFilePath = this.propertiesFilePath;
@@ -111,13 +111,13 @@ var AwsUploader = Class.extend(Obj, {
 
         $series([
             $task(function(flow) {
-                try{
+                try {
                     _this.isBucketEnsured        = false;
                     _this.props                  = JSON.parse(BugFs.readFileSync(propertiesFilePath));
-                } catch(error) {
+                } catch (error) {
                     flow.error(error);
                 } finally {
-                    flow.complete()
+                    flow.complete();
                 }
             }),
             // Synchronize ensure bucket function
@@ -127,7 +127,7 @@ var AwsUploader = Class.extend(Obj, {
                 });
             })
         ]).execute(function(error) {
-            if(!error){
+            if (!error) {
                 console.log('AwsUploader successfully initialized');
             } else {
                 console.log('AwsUploader failed to initialize');
@@ -140,24 +140,24 @@ var AwsUploader = Class.extend(Obj, {
      * @param {string} outputFilePath
      * @param {function(error)} callback
      */
-    upload: function(outputFilePath, callback){
+    upload: function(outputFilePath, callback) {
         var _this = this;
 
         $series([
-            $task(function(flow){
-                if(!_this.isBucketEnsured){
-                    _this.s3EnsureBucket(function(error){
+            $task(function(flow) {
+                if (!_this.isBucketEnsured) {
+                    _this.s3EnsureBucket(function(error) {
                         flow.complete(error);
                     });
                 } else {
                     flow.complete();
                 }
             }),
-            $task(function(flow){
-                _this.s3PutFile(outputFilePath, function(error){
-                    if(!error){
-                        BugFs.deleteFile(outputFilePath, function(){
-                            if(!error){
+            $task(function(flow) {
+                _this.s3PutFile(outputFilePath, function(error) {
+                    if (!error) {
+                        BugFs.deleteFile(outputFilePath, function() {
+                            if (!error) {
                                   console.log('File', outputFilePath, 'successfully removed');
                             }
                             flow.complete(error);
@@ -174,34 +174,34 @@ var AwsUploader = Class.extend(Obj, {
      * @param {string} outputDirectoryPath
      * @param {function(error)} callback
      */
-    uploadEach: function(outputDirectoryPath, callback){
+    uploadEach: function(outputDirectoryPath, callback) {
         var _this = this;
 
         $series([
-            $task(function(flow){
-                if(!_this.isBucketEnsured){
-                    _this.s3EnsureBucket(function(error){
+            $task(function(flow) {
+                if (!_this.isBucketEnsured) {
+                    _this.s3EnsureBucket(function(error) {
                         flow.complete(error);
                     });
                 } else {
                     flow.complete();
                 }
             }),
-            $task(function(flow){
-                BugFs.readDirectory(outputDirectoryPath, function(error, files){
-                    if(error){
+            $task(function(flow) {
+                BugFs.readDirectory(outputDirectoryPath, function(error, files) {
+                    if (error) {
                         flow.error(error);
-                    } else if(files.length === 0){
+                    } else if (files.length === 0) {
                         console.log("There are no files to upload in", outputDirectoryPath);
                         flow.complete();
-                    } else if(files.length > 0){
-                        $forEachParallel(files, function(flow, file){
+                    } else if (files.length > 0) {
+                        $forEachParallel(files, function(flow, file) {
                             var outputFilePath = file.givenPath;
-                            _this.upload(outputFilePath, function(error){
+                            _this.upload(outputFilePath, function(error) {
                                 flow.complete(error);
                             });
-                        }).execute(function(error){
-                            if(!error){
+                        }).execute(function(error) {
+                            if (!error) {
                                 console.log("Successfully uploaded each file in", outputDirectoryPath);
                             }
                             flow.complete(error);
@@ -256,7 +256,7 @@ var AwsUploader = Class.extend(Obj, {
          var options = props.options || {acl: ''}; // Test this change
          var s3Api = new S3Api(awsConfig);
 
-         $if (function(flow) {
+         $if(function(flow) {
                 filePath.exists(function(exists) {
                     flow.assert(exists);
                 });
