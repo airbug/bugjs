@@ -4,6 +4,7 @@
 
 //@Export('Document')
 
+//@Require('ArgUtil')
 //@Require('Bug')
 //@Require('Class')
 //@Require('IClone')
@@ -27,6 +28,7 @@ var bugpack             = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
+var ArgUtil             = bugpack.require('ArgUtil');
 var Bug                 = bugpack.require('Bug');
 var Class               = bugpack.require('Class');
 var IClone              = bugpack.require('IClone');
@@ -71,7 +73,7 @@ var Document = Class.extend(Obj, {
          * @private
          * @type {*}
          */
-        this.data               = data;
+        this.data = data;
     },
 
 
@@ -118,6 +120,10 @@ var Document = Class.extend(Obj, {
      * @return {*}
      */
     getPath: function(path) {
+        var args = ArgUtil.process(arguments, [
+            {name: "path", optional: false, type: "string"}
+        ]);
+        path  = args.path;
         var pathParts = path.split(".");
         var target = undefined;
         var currentData = this.data;
@@ -133,7 +139,7 @@ var Document = Class.extend(Obj, {
                     target      = currentData[pathPart];
                     currentData = currentData[pathPart];
                 } else {
-                    return null;
+                    return undefined;
                 }
             }
 
