@@ -14,7 +14,7 @@
 //@Require('bugflow.BugFlow')
 //@Require('bugioc.IConfiguration')
 //@Require('bugioc.IInitializeModule')
-//@Require('bugioc.IPostProcessModule')
+//@Require('bugioc.IProcessModule')
 //@Require('bugioc.IPreProcessModule')
 //@Require('bugioc.IocModule')
 //@Require('bugioc.PrototypeScope')
@@ -40,7 +40,7 @@ var Set                     = bugpack.require('Set');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
 var IConfiguration          = bugpack.require('bugioc.IConfiguration');
 var IInitializeModule       = bugpack.require('bugioc.IInitializeModule');
-var IPostProcessModule      = bugpack.require('bugioc.IPostProcessModule');
+var IProcessModule      = bugpack.require('bugioc.IProcessModule');
 var IPreProcessModule       = bugpack.require('bugioc.IPreProcessModule');
 var IocModule               = bugpack.require('bugioc.IocModule');
 var PrototypeScope          = bugpack.require('bugioc.PrototypeScope');
@@ -80,49 +80,74 @@ var IocContext = Class.extend(Obj, {
          * @private
          * @type {DependencyGraph}
          */
-        this.dependencyGraph                = new DependencyGraph();
+        this.dependencyGraph                        = new DependencyGraph();
 
         /**
          * @private
-         * @type {Set.<IInitializeModule}
+         * @type {Set.<IInitializeModule>}
          */
-        this.initializingModuleSet          = new Set();
+        this.initializedModuleSet                   = new Set();
+
+        /**
+         * @private
+         * @type {Set.<IInitializeModule>}
+         */
+        this.initializingModuleSet                  = new Set();
 
         /**
          * @private
          * @type {Map<IocModule, Scope>}
          */
-        this.iocModuleToScopeMap            = new Map();
+        this.iocModuleToScopeMap                    = new Map();
 
         /**
          * @private
-         * @type {Map<string, IocModule>}
+         * @type {Map.<string, IocModule>}
          */
-        this.moduleNameToIocModuleMap       = new Map();
+        this.moduleNameToIocModuleMap               = new Map();
 
         /**
          * @private
          * @type {Set.<*>}
          */
-        this.processedModuleSet             = new Set();
+        this.processedModuleSet                     = new Set();
 
         /**
          * @private
-         * @type {List.<*>}
+         * @type {List.<IocModule>}
          */
-        this.registeredConfigurationSet     = new Set();
+        this.registeredConfigurationIocModuleSet    = new Set();
 
         /**
          * @private
-         * @type {Set}
+         * @type {Set.<IocModule>}
          */
-        this.registeredIocModuleSet         = new Set();
+        this.registeredIocModuleSet                 = new Set();
     },
 
 
     //-------------------------------------------------------------------------------
-    // Public Class Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
+
+    /**
+     * @param {function(Throwable=)} callback
+     */
+    deinitialze: function(callback) {
+        var _this = this;
+        $series([
+            $task(function(flow) {
+                _this.deinitializeModules(function(throwable) {
+                    flow.complete(throwable);
+                });
+            }),
+            $task(function(flow) {
+                _this.deinitializeConfigurations(function(throwable) {
+                    flow.complete(throwable);
+                });
+            })
+        ]).execute(callback);
+    },
 
     /**
      * @param {string} name
@@ -142,7 +167,7 @@ var IocContext = Class.extend(Obj, {
     },
 
     /**
-     * @param {function(Throwable)} callback
+     * @param {function(Throwable=)} callback
      */
     initialize: function(callback) {
         var _this = this;
@@ -169,11 +194,12 @@ var IocContext = Class.extend(Obj, {
     },
 
     /**
-     * @param {*} configuration
+     * @param {IocModule} configurationIocModule
      */
-    registerConfiguration: function(configuration) {
-        if (!this.registeredConfigurationSet.contains(configuration)) {
-            this.registeredConfigurationSet.add(configuration);
+    registerConfigurationIocModule: function(configurationIocModule) {
+        if (!this.registeredConfigurationIocModuleSet.contains(configurationIocModule)) {
+            this.registeredConfigurationIocModuleSet.add(configurationIocModule);
+            this.registerIocModule(configurationIocModule);
         }
     },
 
@@ -216,19 +242,51 @@ var IocContext = Class.extend(Obj, {
                         throw new Error("Could not find IocModule by the name '" + iocArg.getRef() + "'");
                     }
                     _this.dependencyGraph.addDependency(iocModule, refIocModule);
-                } else {
-                    throw new Error("IocArg at index " + index + " in IocModule '" + iocModule.getName() + "' did not specify reference");
                 }
             });
             var iocPropertySet = iocModule.getIocPropertySet();
             iocPropertySet.forEach(function(iocProperty) {
-                var refIocModule = _this.findIocModuleByName(iocProperty.getRef());
-                if (!refIocModule) {
-                    throw new Error("Could not find IocModule by the name '" + iocProperty.getRef() + "'");
+                if (iocProperty.getRef()) {
+                    var refIocModule = _this.findIocModuleByName(iocProperty.getRef());
+                    if (!refIocModule) {
+                        throw new Error("Could not find IocModule by the name '" + iocProperty.getRef() + "'");
+                    }
+                    _this.dependencyGraph.addDependency(iocModule, refIocModule);
                 }
-                _this.dependencyGraph.addDependency(iocModule, refIocModule);
             });
         });
+    },
+
+    /**
+     * @private
+     * @param {function(Throwable)} callback
+     */
+    deinitializeConfigurations: function(callback) {
+        var _this = this;
+        $iterableParallel(this.registeredConfigurationIocModuleSet, function(flow, configurationIocModule) {
+            var configuration = _this.generateModule(configurationIocModule);
+            if (Class.doesImplement(configuration, IConfiguration)) {
+                configuration.deinitializeConfiguration(function(error) {
+                    flow.complete(error);
+                });
+            } else {
+                flow.complete();
+            }
+        }).execute(callback);
+    },
+
+    /**
+     * @private
+     * @param {function(Throwable)} callback
+     */
+    deinitializeModules: function(callback) {
+        var _this = this;
+        $iterableSeries(this.initializedModuleSet.clone(), function(flow, module) {
+            module.deinitializeModule(function(throwable) {
+                _this.initializedModuleSet.remove(module);
+                flow.complete(throwable);
+            });
+        }).execute(callback);
     },
 
     /**
@@ -263,9 +321,8 @@ var IocContext = Class.extend(Obj, {
      * @return {*}
      */
     generateModule: function(iocModule) {
-        var _this           = this;
-        var scope           = this.generateScope(iocModule);
-        var module = scope.generateModule();
+        var scope       = this.generateScope(iocModule);
+        var module      = scope.generateModule();
         if (!this.hasProcessedModule(module)) {
             this.processModule(iocModule, module);
         }
@@ -305,10 +362,12 @@ var IocContext = Class.extend(Obj, {
 
     /**
      * @private
-     * @param {function(Throwable)} callback
+     * @param {function(Throwable=)} callback
      */
     initializeConfigurations: function(callback) {
-        $iterableParallel(this.registeredConfigurationSet, function(flow, configuration) {
+        var _this = this;
+        $iterableParallel(this.registeredConfigurationIocModuleSet, function(flow, configurationIocModule) {
+            var configuration = _this.generateModule(configurationIocModule);
             if (Class.doesImplement(configuration, IConfiguration)) {
                 configuration.initializeConfiguration(function(error) {
                     flow.complete(error);
@@ -328,6 +387,7 @@ var IocContext = Class.extend(Obj, {
         $iterableSeries(this.initializingModuleSet.clone(), function(flow, module) {
             module.initializeModule(function(throwable) {
                 _this.initializingModuleSet.remove(module);
+                _this.initializedModuleSet.add(module);
                 flow.complete(throwable);
             });
         }).execute(callback);
@@ -359,12 +419,15 @@ var IocContext = Class.extend(Obj, {
      * @param {*} module
      */
     processModule: function(iocModule, module) {
+
+        //TODO BRN: Make this code async
+
         if (Class.doesImplement(module, IPreProcessModule)) {
             module.preProcessModule();
         }
         this.wireModuleProperties(iocModule, module);
-        if (Class.doesImplement(module, IPostProcessModule)) {
-            module.postProcessModule();
+        if (Class.doesImplement(module, IProcessModule)) {
+            module.processModule();
         }
         if (Class.doesImplement(module, IInitializeModule)) {
             this.initializingModuleSet.add(module);
@@ -380,7 +443,11 @@ var IocContext = Class.extend(Obj, {
         var _this           = this;
         var iocPropertySet  = iocModule.getIocPropertySet();
         iocPropertySet.forEach(function(iocProperty) {
-            module[iocProperty.getName()] = _this.getModuleByName(iocProperty.getRef());
+            if (iocProperty.getRef()) {
+                module[iocProperty.getName()] = _this.getModuleByName(iocProperty.getRef());
+            } else {
+                module[iocProperty.getName()] = iocProperty.getValue();
+            }
         });
     }
 });

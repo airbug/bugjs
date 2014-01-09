@@ -86,6 +86,15 @@ var SchemaManager = Class.extend(EventDispatcher, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @param {function(Throwable=)} callback
+     */
+    deinitializeModule: function(callback) {
+        this.classToSchemaMap.clear();
+        this.nameToSchemaMap.clear();
+        callback();
+    },
+
+    /**
      * @param {function(Throwable)} callback
      */
     initializeModule: function(callback) {

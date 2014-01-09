@@ -7,37 +7,37 @@
 //@Export('ConfigurationAnnotation')
 
 //@Require('Class')
-//@Require('bugmeta.Annotation')
+//@Require('bugioc.ModuleAnnotation')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var Annotation      = bugpack.require('bugmeta.Annotation');
+var Class               = bugpack.require('Class');
+var ModuleAnnotation    = bugpack.require('bugioc.ModuleAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var ConfigurationAnnotation = Class.extend(Annotation, {
+var ConfigurationAnnotation = Class.extend(ModuleAnnotation, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(moduleName) {
 
-        this._super("Configuration");
+        this._super(moduleName, ConfigurationAnnotation.TYPE);
 
 
         //-------------------------------------------------------------------------------
@@ -79,14 +79,27 @@ var ConfigurationAnnotation = Class.extend(Annotation, {
 
 
 //-------------------------------------------------------------------------------
+// Static Properties
+//-------------------------------------------------------------------------------
+
+/**
+ * @static
+ * @const {string}
+ */
+ConfigurationAnnotation.TYPE = "Configuration";
+
+
+//-------------------------------------------------------------------------------
 // Static Methods
 //-------------------------------------------------------------------------------
 
 /**
+ * @static
+ * @param {string} moduleName
  * @return {ConfigurationAnnotation}
  */
-ConfigurationAnnotation.configuration = function() {
-    return new ConfigurationAnnotation();
+ConfigurationAnnotation.configuration = function(moduleName) {
+    return new ConfigurationAnnotation(moduleName);
 };
 
 

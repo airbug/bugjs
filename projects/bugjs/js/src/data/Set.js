@@ -53,7 +53,7 @@ var Set = Class.extend(Collection, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {boolean} deep
+     * @param {boolean=} deep
      * @return {Set.<D>}
      */
     clone: function(deep) {

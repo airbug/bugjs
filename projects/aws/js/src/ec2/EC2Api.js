@@ -145,16 +145,7 @@ var EC2Api = Class.extend(Obj, {
                 IpPermissions: ipPermissions
             };
 
-            //TEST
-            console.log("About to try and authorize security group");
-            console.log(params);
-
             this._authorizeSecurityGroupIngress(params, function(error, data) {
-                //TEST
-                console.log("_authorizeSecurityGroupIngress complete");
-                console.log(error);
-                console.log(data);
-
                 if (!error) {
                     callback();
                 } else {
@@ -216,12 +207,6 @@ var EC2Api = Class.extend(Obj, {
             ]
         };
         this._describeSecurityGroups(params, function(error, data) {
-
-            //TEST
-            console.log("_describeSecurityGroups complete");
-            console.log(error);
-            console.log(data);
-
             if (!error) {
                 var ec2SecurityGroup = null;
                 for (var i = 0, size = data.SecurityGroups.length; i < size; i++) {

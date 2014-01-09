@@ -106,8 +106,8 @@ var BugTrace = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Error} error
-     * @return {Error}
+     * @param {Throwable} error
+     * @return {Throwable}
      */
     $error: function(error) {
         if (!error.bugTraced) {

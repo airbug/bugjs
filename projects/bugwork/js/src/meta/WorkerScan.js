@@ -2,72 +2,55 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('cookies')
+//@Package('bugwork')
 
-//@Export('CookieParser')
+//@Export('WorkerScan')
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('bugmeta.AnnotationScan')
+//@Require('bugwork.WorkerAnnotation')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-var cookie              = require('cookie');
+var bugpack                     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// BugPack
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var Obj         = bugpack.require('Obj');
+var Class                       = bugpack.require('Class');
+var Obj                         = bugpack.require('Obj');
+var AnnotationScan              = bugpack.require('bugmeta.AnnotationScan');
+var WorkerAnnotation            = bugpack.require('bugwork.WorkerAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var CookieParser = Class.extend(Obj, {
-
+var WorkerScan = Class.extend(AnnotationScan, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @constructs
+     * @param {AnnotationProcessor} processor
      */
-    _constructor: function() {
-
-        this._super();
-
-
-        //-------------------------------------------------------------------------------
-        // Private Properties
-        //-------------------------------------------------------------------------------
-
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {string} cookieString
-     * @return {Object}
-     */
-    parse: function (cookieString) {
-        return cookie.parse(cookieString);
+    _constructor: function(processor) {
+        this._super(processor, WorkerAnnotation.TYPE);
     }
 });
 
 
 //-------------------------------------------------------------------------------
-// Export
+// Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('cookies.CookieParser', CookieParser);
+bugpack.export('bugwork.WorkerScan', WorkerScan);

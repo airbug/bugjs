@@ -99,9 +99,7 @@ var S3Api = Class.extend(Obj, {
         this.initialize();
         this.headBucket(s3Bucket, function(error, data) {
             if (error) {
-                //TEST
                 //TODO BRN: What other codes?
-                console.log(error);
                 callback(null, false);
             } else {
                 callback(null, true);

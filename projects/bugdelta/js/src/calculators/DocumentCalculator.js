@@ -4,13 +4,13 @@
 
 //@Package('bugdelta')
 
-//@Export('DeltaDocumentCalculator')
+//@Export('DocumentCalculator')
 
 //@Require('Class')
+//@Require('IDocument')
 //@Require('TypeUtil')
 //@Require('bugdelta.DeltaCalculator')
-//@Require('bugdelta.DeltaDocument')
-//@Require('bugdelta.DeltaDocumentChange')
+//@Require('bugdelta.DocumentChange')
 
 
 //-------------------------------------------------------------------------------
@@ -25,17 +25,17 @@ var bugpack                         = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                           = bugpack.require('Class');
+var IDocument                        = bugpack.require('IDocument');
 var TypeUtil                        = bugpack.require('TypeUtil');
 var DeltaCalculator                 = bugpack.require('bugdelta.DeltaCalculator');
-var DeltaDocument                   = bugpack.require('bugdelta.DeltaDocument');
-var DeltaDocumentChange             = bugpack.require('bugdelta.DeltaDocumentChange');
+var DocumentChange                  = bugpack.require('bugdelta.DocumentChange');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var DeltaDocumentCalculator = Class.extend(DeltaCalculator, {
+var DocumentCalculator = Class.extend(DeltaCalculator, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -66,16 +66,16 @@ var DeltaDocumentCalculator = Class.extend(DeltaCalculator, {
      * @param {*} previousValue
      */
     calculateDelta: function(delta, currentPath, currentValue, previousValue) {
-        if (currentValue && Class.doesExtend(currentValue, DeltaDocument)) {
+        if (currentValue && Class.doesImplement(currentValue, IDocument)) {
             if (!(TypeUtil.isUndefined(previousValue) || TypeUtil.isNull(previousValue))) {
-                if (Class.doesExtend(currentValue, DeltaDocument)) {
+                if (Class.doesImplement(currentValue, IDocument)) {
                     var currentData = currentValue.getData();
                     var previousData = previousValue.getData();
                     if (TypeUtil.toType(currentData) !== TypeUtil.toType(previousData)) {
-                        delta.addDeltaChange(new DeltaDocumentChange(DeltaDocumentChange.ChangeTypes.DATA_SET, currentPath,
+                        delta.addDeltaChange(new DocumentChange(DocumentChange.ChangeTypes.DATA_SET, currentPath,
                             currentValue.getData(), previousValue.getData()));
                     } else if (TypeUtil.isObject(currentData) && TypeUtil.isFunction(currentData.getClass) && !Class.doesExtend(previousData, currentData.getClass())) {
-                        delta.addDeltaChange(new DeltaDocumentChange(DeltaDocumentChange.ChangeTypes.DATA_SET, currentPath,
+                        delta.addDeltaChange(new DocumentChange(DocumentChange.ChangeTypes.DATA_SET, currentPath,
                             currentValue.getData(), previousValue.getData()));
                     } else {
                         var deltaCalculator = this.getDeltaBuilder().getCalculatorResolver().resolveCalculator(currentData);
@@ -83,18 +83,18 @@ var DeltaDocumentCalculator = Class.extend(DeltaCalculator, {
                             deltaCalculator.calculateDelta(delta, currentPath, currentData, previousData);
                         } else {
                             throw new Error("Unsupported data type '" + TypeUtil.toType(currentData) +
-                                "' found in DeltaDocument");
+                                "' found in Document");
                         }
                     }
                 } else {
-                    throw new Error("DeltaDocumentCalculator expects previousValue to be a DeltaDocument");
+                    throw new Error("DocumentCalculator expects previousValue to be a Document");
                 }
             } else {
-                delta.addDeltaChange(new DeltaDocumentChange(DeltaDocumentChange.ChangeTypes.DATA_SET, currentPath,
+                delta.addDeltaChange(new DocumentChange(DocumentChange.ChangeTypes.DATA_SET, currentPath,
                     currentValue.getData(), previousValue));
             }
         } else {
-            throw new Error("DeltaDocumentCalculator expects currentValue to be a DeltaDocument");
+            throw new Error("DocumentCalculator expects currentValue to be a Document");
         }
     }
 });
@@ -104,4 +104,4 @@ var DeltaDocumentCalculator = Class.extend(DeltaCalculator, {
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugdelta.DeltaDocumentCalculator', DeltaDocumentCalculator);
+bugpack.export('bugdelta.DocumentCalculator', DocumentCalculator);

@@ -72,6 +72,13 @@ var EntityManagerStore = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @param {EntityManager} entityManager
+     */
+    deregisterEntityManager: function(entityManager) {
+        this.entityTypeToEntityManagerMap.remove(entityManager.getEntityType());
+    },
+
+    /**
      * @param {string} entityType
      * @return {EntityManager}
      */

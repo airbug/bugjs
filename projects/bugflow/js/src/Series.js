@@ -70,7 +70,7 @@ var Series = Class.extend(Flow, {
 
     /**
      * @protected
-     * @param {Array<*>} args
+     * @param {Array.<*>} args
      */
     executeFlow: function(args) {
         this._super(args);

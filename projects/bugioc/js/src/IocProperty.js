@@ -14,28 +14,38 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var Obj =   bugpack.require('Obj');
+var Class       = bugpack.require('Class');
+var Obj         = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Obj}
+ */
 var IocProperty = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(name, ref) {
+    /**
+     * @constructs
+     * @param {string} name
+     * @param {string} ref
+     * @param {*} value
+     */
+    _constructor: function(name, ref, value) {
 
         this._super();
 
@@ -48,13 +58,19 @@ var IocProperty = Class.extend(Obj, {
          * @private
          * @type {string}
          */
-        this.name = name;
+        this.name       = name;
 
         /**
          * @private
          * @type {string}
          */
-        this.ref = ref;
+        this.ref        = ref;
+
+        /**
+         * @private
+         * @type {*}
+         */
+        this.value      = value;
     },
 
 
@@ -76,9 +92,16 @@ var IocProperty = Class.extend(Obj, {
         return this.ref;
     },
 
+    /**
+     * @return {*}
+     */
+    getValue: function() {
+        return this.value;
+    },
+
 
     //-------------------------------------------------------------------------------
-    // Object Implementation
+    // Obj Methods
     //-------------------------------------------------------------------------------
 
     /**

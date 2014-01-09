@@ -64,3 +64,30 @@ var annotationInstantiationTest = {
 bugmeta.annotate(annotationInstantiationTest).with(
     test().name("Annotation - instantiation Test")
 );
+
+
+var annotationSetAnnotationReferenceTest = {
+
+    //-------------------------------------------------------------------------------
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function(test) {
+        this.testAnnotationType         = "testAnnotationType";
+        this.testAnnotationReference    = {};
+        this.testAnnotation             = new Annotation(this.testAnnotationType);
+    },
+
+    //-------------------------------------------------------------------------------
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        this.testAnnotation.setAnnotationReference(this.testAnnotationReference);
+        test.assertEqual(this.testAnnotation.getAnnotationReference(), this.testAnnotationReference,
+            "Assert #getAnnotationReference returns 'testAnnotationReference'");
+    }
+};
+bugmeta.annotate(annotationSetAnnotationReferenceTest).with(
+    test().name("Annotation - #setAnnotationReference Test")
+);

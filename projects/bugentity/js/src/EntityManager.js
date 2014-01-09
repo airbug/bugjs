@@ -13,7 +13,7 @@
 //@Require('Set')
 //@Require('StringUtil')
 //@Require('TypeUtil')
-//@Require('bugdelta.DeltaDocumentChange')
+//@Require('bugdelta.DocumentChange')
 //@Require('bugdelta.ObjectChange')
 //@Require('bugdelta.SetChange')
 //@Require('bugflow.BugFlow')
@@ -39,7 +39,7 @@ var Obj                     = bugpack.require('Obj');
 var Set                     = bugpack.require('Set');
 var StringUtil              = bugpack.require('StringUtil');
 var TypeUtil                = bugpack.require('TypeUtil');
-var DeltaDocumentChange     = bugpack.require('bugdelta.DeltaDocumentChange');
+var DocumentChange          = bugpack.require('bugdelta.DocumentChange');
 var ObjectChange            = bugpack.require('bugdelta.ObjectChange');
 var SetChange               = bugpack.require('bugdelta.SetChange');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
@@ -140,7 +140,7 @@ var EntityManager = Class.extend(Obj, {
 
     /**
      * @param {Entity} entity
-     * @param {{*}} options
+     * @param {*} options
      * @param {Array.<string>} dependencies
      * @param {function(Throwable, Entity=)} callback
      */
@@ -426,6 +426,15 @@ var EntityManager = Class.extend(Obj, {
     /**
      * @param {function(Throwable=)} callback
      */
+    deinitializeModule: function(callback) {
+        this.entityManagerStore.deregisterEntityManager(this);
+        this.dataStore = null;
+        callback();
+    },
+
+    /**
+     * @param {function(Throwable=)} callback
+     */
     initializeModule: function(callback) {
         this.dataStore = this.mongoDataStore.generateManager(this.entityType);
         this.entityManagerStore.registerEntityManager(this);
@@ -448,7 +457,7 @@ var EntityManager = Class.extend(Obj, {
         var entitySchema    = this.schemaManager.getSchemaByClass(entity.getClass());
         delta.getDeltaChangeList().forEach(function(deltaChange) {
             switch (deltaChange.getChangeType()) {
-                case DeltaDocumentChange.ChangeTypes.DATA_SET:
+                case DocumentChange.ChangeTypes.DATA_SET:
                     var dbObject = _this.convertDataObjectToDbObject(deltaChange.getData(), entitySchema);
                     Obj.forIn(dbObject, function(name, value) {
                         updateChanges.putSetChange(name, value);

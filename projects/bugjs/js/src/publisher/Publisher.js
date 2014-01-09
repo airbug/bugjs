@@ -64,7 +64,7 @@ var Publisher = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {Map<string, List<PublisherSubscription>>}
+         * @type {Map.<string, List.<PublisherSubscription>>}
          */
         this.topicToPublisherSubscriptionListMap = new Map();
     },

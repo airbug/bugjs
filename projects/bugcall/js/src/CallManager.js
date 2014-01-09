@@ -92,6 +92,24 @@ var CallManager = Class.extend(EventDispatcher, {
 
         /**
          * @private
+         * @type {Queue.<OutgoingRequest>}
+         */
+        this.incomingRequestQueue               = new Queue();
+
+        /**
+         * @private
+         * @type {Queue.<OutgoingResponse>}
+         */
+        this.incomingResponseQueue              = new Queue();
+
+        /**
+         * @private
+         * @type {boolean}
+         */
+        this.open                               = false;
+
+        /**
+         * @private
          * @type {Map.<string, OutgoingRequest>}
          */
         this.outgoingRequestMap                 = new Map();
@@ -104,7 +122,7 @@ var CallManager = Class.extend(EventDispatcher, {
 
         /**
          * @private
-         * @type {Queue.<OutgoingResponse}
+         * @type {Queue.<OutgoingResponse>}
          */
         this.outgoingResponseQueue              = new Queue();
 
@@ -128,11 +146,9 @@ var CallManager = Class.extend(EventDispatcher, {
 
         /**
          * @private
-         * @type {Map.<string, function(Error|Exception)}
+         * @type {Map.<string, function(Throwable=)>}
          */
         this.responseUuidToResponseCallbackMap  = new Map();
-
-        this.initializeConnection();
     },
 
 
@@ -171,6 +187,13 @@ var CallManager = Class.extend(EventDispatcher, {
     /**
      * @return {boolean}
      */
+    isOpen: function() {
+        return this.open;
+    },
+
+    /**
+     * @return {boolean}
+     */
     isReconnect: function() {
         return this.reconnect;
     },
@@ -195,7 +218,7 @@ var CallManager = Class.extend(EventDispatcher, {
     sendOutgoingRequest: function(outgoingRequest) {
         if (!this.outgoingRequestMap.containsValue(outgoingRequest)) {
             this.outgoingRequestMap.put(outgoingRequest.getUuid(), outgoingRequest);
-            if (this.hasConnection()) {
+            if (this.isOpen()) {
                 this.doSendOutgoingRequest(outgoingRequest)
             } else {
                 this.doQueueOutgoingRequest(outgoingRequest);
@@ -217,14 +240,16 @@ var CallManager = Class.extend(EventDispatcher, {
 
     /**
      * @param {OutgoingResponse} outgoingResponse
-     * @param {function((Error|Exception))} callback
+     * @param {function(Throwable=)} callback
      */
     sendResponse: function(outgoingResponse, callback) {
         var requestUuid     = outgoingResponse.getRequestUuid();
         var responseUuid    = outgoingResponse.getUuid();
         if (this.incomingRequestMap.containsKey(requestUuid)) {
-            if(TypeUtil.isFunction(callback)) this.responseUuidToResponseCallbackMap.put(responseUuid, callback);
-            if (this.hasConnection()) {
+            if (TypeUtil.isFunction(callback)) {
+                this.responseUuidToResponseCallbackMap.put(responseUuid, callback);
+            }
+            if (this.isOpen()) {
                 this.doSendOutgoingResponse(outgoingResponse);
             } else {
                 this.doQueueOutgoingResponse(outgoingResponse);
@@ -249,8 +274,11 @@ var CallManager = Class.extend(EventDispatcher, {
         }
     },
 
+    /**
+     *
+     */
     disconnect: function() {
-        if (this.hasConnection()){
+        if (this.hasConnection()) {
             var callConnection = this.callConnection;
             callConnection.close();
         }
@@ -261,11 +289,9 @@ var CallManager = Class.extend(EventDispatcher, {
      *
      */
     initializeConnection: function(){
-        if(this.hasConnection()){
+        if (this.hasConnection()) {
             this.callConnection.addEventListener(CallConnection.EventTypes.REQUEST,     this.hearCallConnectionRequest, this);
             this.callConnection.addEventListener(CallConnection.EventTypes.RESPONSE,    this.hearCallConnectionResponse, this);
-            this.processOutgoingRequestQueue();
-            this.processOutgoingResponseQueue();
         }
     },
 
@@ -289,11 +315,14 @@ var CallManager = Class.extend(EventDispatcher, {
      */
     closeCall: function() {
         var _this = this;
-        this.clearConnection();
-        this.pendingOutgoingRequestSet.forEach(function(outgoingRequest) {
-            _this.doFailOutgoingRequest(outgoingRequest);
-        });
-        this.dispatchCallClosed(false);
+        if (this.isOpen()) {
+            this.open = false;
+            this.clearConnection();
+            this.pendingOutgoingRequestSet.forEach(function(outgoingRequest) {
+                _this.doFailOutgoingRequest(outgoingRequest);
+            });
+            this.dispatchCallClosed(false);
+        }
     },
 
     /**
@@ -307,24 +336,36 @@ var CallManager = Class.extend(EventDispatcher, {
         // We send an error to all open requests and let the application logic determine what to do with an incomplete request.
 
         var _this = this;
-        this.clearConnection();
-        this.pendingOutgoingRequestSet.forEach(function(outgoingRequest) {
-            _this.doFailOutgoingRequest(outgoingRequest);
-        });
-        this.dispatchCallClosed(true);
+        if (this.isOpen()) {
+            this.open = false;
+            this.clearConnection();
+            this.pendingOutgoingRequestSet.forEach(function(outgoingRequest) {
+                _this.doFailOutgoingRequest(outgoingRequest);
+            });
+            this.dispatchCallClosed(true);
+        }
     },
 
     /**
-     * @param {CallConnection} callConnection
+     * @param {CallConnection=} callConnection
      */
     openCall: function(callConnection) {
-        this.updateConnection(callConnection);
-        this.dispatchCallOpened();
+        if (!this.isOpen()) {
+            this.open = true;
+            if (callConnection) {
+                this.updateConnection(callConnection);
+            }
+            this.dispatchCallOpened();
+            this.processOutgoingRequestQueue();
+            this.processOutgoingResponseQueue();
+            this.processIncomingRequestQueue();
+            this.processIncomingResponseQueue();
+        }
     },
 
 
     //-------------------------------------------------------------------------------
-    // Private Instance Methods
+    // Private Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -383,6 +424,50 @@ var CallManager = Class.extend(EventDispatcher, {
 
     /**
      * @private
+     * @param {IncomingRequest} incomingRequest
+     */
+    doProcessIncomingRequest: function(incomingRequest) {
+        var requestUuid = incomingRequest.getUuid();
+        this.incomingRequestMap.put(requestUuid, incomingRequest);
+        this.dispatchEvent(new CallManagerEvent(CallManagerEvent.INCOMING_REQUEST, {
+            incomingRequest: incomingRequest
+        }));
+    },
+
+    /**
+     * @private
+     * @param {IncomingResponse} incomingResponse
+     */
+    doProcessIncomingResponse: function(incomingResponse) {
+        var requestUuid     = incomingResponse.getRequestUuid();
+        var outgoingRequest = this.outgoingRequestMap.get(requestUuid);
+        if (outgoingRequest) {
+            this.outgoingRequestMap.remove(requestUuid);
+            this.pendingOutgoingRequestSet.remove(outgoingRequest);
+            this.routeResponse(requestUuid, null, incomingResponse);
+        } else {
+            throw new Error("Could not find outgoingRequest for this incomingResponse. IncomingResponse:" + incomingResponse.toObject());
+        }
+    },
+
+    /**
+     * @private
+     * @param {IncomingRequest} incomingRequest
+     */
+    doQueueIncomingRequest: function(incomingRequest) {
+        this.incomingRequestQueue.enqueue(incomingRequest);
+    },
+
+    /**
+     * @private
+     * @param {IncomingResponse} incomingResponse
+     */
+    doQueueIncomingResponse: function(incomingResponse) {
+        this.incomingResponseQueue.enqueue(incomingResponse);
+    },
+
+    /**
+     * @private
      * @param {OutgoingRequest} outgoingRequest
      */
     doQueueOutgoingRequest: function(outgoingRequest) {
@@ -422,7 +507,9 @@ var CallManager = Class.extend(EventDispatcher, {
 
             //TODO BRN: Figure out if there's any error that can occur to pass in here...
 
-            if(callback) callback();
+            if (callback) {
+                callback();
+            }
         });
     },
 
@@ -431,11 +518,11 @@ var CallManager = Class.extend(EventDispatcher, {
      * @param {IncomingRequest} incomingRequest
      */
     processIncomingRequest: function(incomingRequest) {
-        var requestUuid = incomingRequest.getUuid();
-        this.incomingRequestMap.put(requestUuid, incomingRequest);
-        this.dispatchEvent(new CallManagerEvent(CallManagerEvent.INCOMING_REQUEST, {
-            incomingRequest: incomingRequest
-        }));
+        if (this.isOpen()) {
+            this.doProcessIncomingRequest(incomingRequest);
+        } else {
+            this.doQueueIncomingRequest(incomingRequest);
+        }
     },
 
     /**
@@ -443,14 +530,30 @@ var CallManager = Class.extend(EventDispatcher, {
      * @param {IncomingResponse} incomingResponse
      */
     processIncomingResponse: function(incomingResponse) {
-        var requestUuid     = incomingResponse.getRequestUuid();
-        var outgoingRequest = this.outgoingRequestMap.get(requestUuid);
-        if (outgoingRequest) {
-            this.outgoingRequestMap.remove(requestUuid);
-            this.pendingOutgoingRequestSet.remove(outgoingRequest);
-            this.routeResponse(requestUuid, null, incomingResponse);
+        if (this.isOpen()) {
+            this.doProcessIncomingResponse(incomingResponse);
         } else {
-            throw new Error("Could not find outgoingRequest for this incomingResponse. IncomingResponse:" + incomingResponse.toObject());
+            this.doQueueIncomingResponse(incomingResponse);
+        }
+    },
+
+    /**
+     * @private
+     */
+    processIncomingRequestQueue: function() {
+        while (!this.incomingRequestQueue.isEmpty()) {
+            var incomingRequest = this.incomingRequestQueue.dequeue();
+            this.doProcessIncomingRequest(incomingRequest);
+        }
+    },
+
+    /**
+     * @private
+     */
+    processIncomingResponseQueue: function() {
+        while (!this.incomingResponseQueue.isEmpty()) {
+            var incomingResponse = this.incomingResponseQueue.dequeue();
+            this.doProcessIncomingResponse(incomingResponse);
         }
     },
 

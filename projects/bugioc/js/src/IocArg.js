@@ -29,13 +29,22 @@ var Obj =   bugpack.require('Obj');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Obj}
+ */
 var IocArg = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(ref) {
+    /**
+     * @constructs
+     * @param {string} ref
+     * @param {*} value
+     */
+    _constructor: function(ref, value) {
 
         this._super();
 
@@ -48,7 +57,13 @@ var IocArg = Class.extend(Obj, {
          * @private
          * @type {string}
          */
-        this.ref = ref;
+        this.ref        = ref;
+
+        /**
+         * @private
+         * @type {*}
+         */
+        this.value      = value;
     },
 
 
@@ -61,6 +76,13 @@ var IocArg = Class.extend(Obj, {
      */
     getRef: function() {
         return this.ref;
+    },
+
+    /**
+     * @return {*}
+     */
+    getValue: function() {
+        return this.value;
     }
 });
 

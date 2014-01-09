@@ -54,13 +54,13 @@ var MetaContext = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {Map<string, List.<Annotation>>}
+         * @type {Map.<string, List.<Annotation>>}
          */
         this.annotationMap                  = new Map();
 
         /**
          * @private
-         * @type {Map<string, List<AnnotationProcessor>>}
+         * @type {Map.<string, List.<AnnotationProcessor>>}
          */
         this.annotationProcessorMap         = new Map();
 
@@ -73,7 +73,32 @@ var MetaContext = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {Map.<string, List.<Annotation>>}
+     */
+    getAnnotationMap: function() {
+        return this.annotationMap;
+    },
+
+    /**
+     * @return {Map.<string, List.<AnnotationProcessor>>}
+     */
+    getAnnotationProcessorMap: function() {
+        return this.annotationProcessorMap;
+    },
+
+    /**
+     * @return {Map.<*, List.<Annotation>>}
+     */
+    getReferenceToAnnotationListMap: function() {
+        return this.referenceToAnnotationListMap;
+    },
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -99,6 +124,7 @@ var MetaContext = Class.extend(Obj, {
             annotationReferenceList = new List();
             this.referenceToAnnotationListMap.put(annotation.getAnnotationReference(), annotationReferenceList);
         }
+        annotationReferenceList.add(annotation);
         this.processAnnotation(annotation);
     },
 

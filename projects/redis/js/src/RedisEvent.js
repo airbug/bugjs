@@ -46,7 +46,10 @@ RedisEvent.EventTypes = {
     END: "RedisEvent:End",
     ERROR: "RedisEvent:Error",
     IDLE: "RedisEvent:Idle",
-    READY: "RedisEvent:Ready"
+    MESSAGE: "RedisEvent:Message",
+    READY: "RedisEvent:Ready",
+    SUBSCRIBE: "RedisEvent:Subscribe",
+    UNSUBSCRIBE: "RedisEvent:Unsubscribe"
 };
 
 

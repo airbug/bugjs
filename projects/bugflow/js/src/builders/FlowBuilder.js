@@ -2,62 +2,61 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugdelta')
+//@Package('bugflow')
 
-//@Export('DeltaDocumentChange')
+//@Export('FlowBuilder')
 
+//@Require('ArgUtil')
 //@Require('Class')
-//@Require('bugdelta.DeltaChange')
+//@Require('Obj')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
+var bugpack     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class           = bugpack.require('Class');
-var DeltaChange     = bugpack.require('bugdelta.DeltaChange');
+var ArgUtil     = bugpack.require('ArgUtil');
+var Class       = bugpack.require('Class');
+var Obj         = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var DeltaDocumentChange = Class.extend(DeltaChange, {
+var FlowBuilder = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    /**
-     *
-     */
-    _constructor: function(changeType, path, data, previousData) {
+    _constructor: function(flowClass, flowConstructorArgs) {
 
-        this._super(changeType, path);
+        this._super();
 
 
         //-------------------------------------------------------------------------------
-        // Properties
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {*}
+         * @type {Class}
          */
-        this.data           = data;
+        this.flowClass              = flowClass;
 
         /**
          * @private
-         * @type {*}
+         * @type {Array.<*>}
          */
-        this.previousData   = previousData;
+        this.flowConstructorArgs    = flowConstructorArgs;
     },
 
 
@@ -66,36 +65,43 @@ var DeltaDocumentChange = Class.extend(DeltaChange, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {*}
+     * @return {Array.<*>}
      */
-    getData: function() {
-        return this.data;
+    getFlowConstructorArgs: function() {
+        return this.flowConstructorArgs;
     },
 
     /**
-     * @return {*}
+     * @return {Class}
      */
-    getPreviousData: function() {
-        return this.previousData;
+    getFlowClass: function() {
+        return this.flowClass;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {(Array.<*> | function(Throwable=))} flowArgs
+     * @param {function(Throwable=)=} callback
+     */
+    execute: function(flowArgs, callback) {
+        var args = ArgUtil.process(arguments, [
+            {name: "flowArgs", optional: true, type: "array", default: []},
+            {name: "callback", optional: false, type: "function"}
+        ]);
+        flowArgs    = args.flowArgs;
+        callback    = args.callback;
+        var flow    = this.flowClass.create(this.flowConstructorArgs);
+        flow.execute(flowArgs, callback);
     }
 });
 
 
 //-------------------------------------------------------------------------------
-// Static Variables
+// Export
 //-------------------------------------------------------------------------------
 
-/**
- * @static
- * @enum {string}
- */
-DeltaDocumentChange.ChangeTypes = {
-    DATA_SET: "DeltaDocumentChange:DataSet"
-};
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugdelta.DeltaDocumentChange', DeltaDocumentChange);
+bugpack.export('bugflow.FlowBuilder', FlowBuilder);

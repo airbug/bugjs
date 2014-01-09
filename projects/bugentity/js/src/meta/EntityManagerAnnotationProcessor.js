@@ -83,11 +83,11 @@ var EntityManagerAnnotationProcessor = Class.extend(ModuleAnnotationProcessor, {
     processEntityManagerAnnotation: function(entityManagerAnnotation) {
         if (!this.processedEntityManagerAnnotationSet.contains(entityManagerAnnotation)) {
             var entityManagerClass      = entityManagerAnnotation.getAnnotationReference();
-            var iocModule               = this.createIocModule(entityManagerAnnotation);
-            var factory                 = new EntityManagerModuleFactory(this.iocContext, iocModule, entityManagerClass,
+            var iocModule               = this.factoryIocModule(entityManagerAnnotation);
+            var factory                 = new EntityManagerModuleFactory(this.getIocContext(), iocModule, entityManagerClass,
                                             entityManagerAnnotation.getEntityType());
             iocModule.setModuleFactory(factory);
-            this.iocContext.registerIocModule(iocModule);
+            this.getIocContext().registerIocModule(iocModule);
             this.processedEntityManagerAnnotationSet.add(entityManagerAnnotation);
         }
     }

@@ -7,24 +7,24 @@
 //@Export('ConfigurationScan')
 
 //@Require('Class')
-//@Require('Obj')
-//@Require('bugmeta.BugMeta')
+//@Require('bugioc.ConfigurationAnnotation')
+//@Require('bugmeta.AnnotationScan')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
+var bugpack                     = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var Obj                 = bugpack.require('Obj');
-var BugMeta             = bugpack.require('bugmeta.BugMeta');
+var Class                       = bugpack.require('Class');
+var ConfigurationAnnotation     = bugpack.require('bugioc.ConfigurationAnnotation');
+var AnnotationScan              = bugpack.require('bugmeta.AnnotationScan');
 
 
 //-------------------------------------------------------------------------------
@@ -32,10 +32,10 @@ var BugMeta             = bugpack.require('bugmeta.BugMeta');
 //-------------------------------------------------------------------------------
 
 /**
- * @constructor
- * @extends {Obj}
+ * @class
+ * @extends {AnnotationScan}
  */
-var ConfigurationScan = Class.extend(Obj, {
+var ConfigurationScan = Class.extend(AnnotationScan, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -46,38 +46,7 @@ var ConfigurationScan = Class.extend(Obj, {
      * @param {ConfigurationAnnotationProcessor} processor
      */
     _constructor: function(processor) {
-
-        this._super();
-
-
-        //-------------------------------------------------------------------------------
-        // Private Properties
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {ConfigurationAnnotationProcessor}
-         */
-        this.processor = processor;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     *
-     */
-    scanAll: function() {
-        var _this = this;
-        var bugmeta = BugMeta.context();
-        var configurationAnnotations = bugmeta.getAnnotationsByType("Configuration");
-        if (configurationAnnotations) {
-            configurationAnnotations.forEach(function(annotation) {
-                _this.processor.process(annotation);
-            });
-        }
+        this._super(processor, ConfigurationAnnotation.TYPE);
     }
 });
 

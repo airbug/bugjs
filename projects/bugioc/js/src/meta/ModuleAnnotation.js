@@ -37,7 +37,7 @@ var ModuleAnnotation = Class.extend(Annotation, {
 
     _constructor: function(moduleName, annotationType) {
 
-        annotationType = annotationType ? annotationType : "Module";
+        annotationType = annotationType ? annotationType : ModuleAnnotation.TYPE;
         this._super(annotationType);
 
 
@@ -140,6 +140,17 @@ var ModuleAnnotation = Class.extend(Annotation, {
         return this;
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Static Properties
+//-------------------------------------------------------------------------------
+
+/**
+ * @static
+ * @const {string}
+ */
+ModuleAnnotation.TYPE = "Module";
 
 
 //-------------------------------------------------------------------------------

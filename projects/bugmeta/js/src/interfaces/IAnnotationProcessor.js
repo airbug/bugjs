@@ -2,9 +2,9 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugioc')
+//@Package('bugmeta')
 
-//@Export('IInitializeModule')
+//@Export('IAnnotationProcessor')
 
 //@Require('Interface')
 
@@ -27,16 +27,19 @@ var Interface = bugpack.require('Interface');
 // Declare Interface
 //-------------------------------------------------------------------------------
 
-var IInitializeModule = Interface.declare({
+/**
+ * @interface
+ */
+var IAnnotationProcessor = Interface.declare({
 
     //-------------------------------------------------------------------------------
     // Interface Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {function(Throwable)}
+     * @param {Annotation} annotation
      */
-    initializeModule: function(callback) {}
+    process: function(annotation) {}
 });
 
 
@@ -44,4 +47,4 @@ var IInitializeModule = Interface.declare({
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugioc.IInitializeModule', IInitializeModule);
+bugpack.export('bugmeta.IAnnotationProcessor', IAnnotationProcessor);

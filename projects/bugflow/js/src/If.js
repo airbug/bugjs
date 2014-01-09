@@ -15,29 +15,33 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var List =  bugpack.require('List');
-var Flow =  bugpack.require('bugflow.Flow');
+var Class           = bugpack.require('Class');
+var List            = bugpack.require('List');
+var Flow            = bugpack.require('bugflow.Flow');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Flow}
+ */
 var If = Class.extend(Flow, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(ifMethod, successFlow) {
+    _constructor: function(ifMethod, ifFlow) {
 
         this._super();
 
@@ -74,7 +78,42 @@ var If = Class.extend(Flow, {
          * @private
          * @type {Flow}
          */
-        this.successFlow = successFlow;
+        this.ifFlow = ifFlow;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {(Array.<If> | ICollection.<If>)} elseIfFlows
+     */
+    addAllElseIf: function(elseIfFlows) {
+        if (this.elseFlow) {
+            throw new Error("IfFlow already has an ElseFlow");
+        }
+        this.elseIfList.addAll(elseIfFlows);
+    },
+
+    /**
+     * @param {If} elseIfFlow
+     */
+    addElseIf: function(elseIfFlow) {
+        if (this.elseFlow) {
+            throw new Error("IfFlow already has an ElseFlow");
+        }
+        this.elseIfList.add(elseIfFlow);
+    },
+
+    /**
+     * @param {Flow} elseFlow
+     */
+    setElse: function(elseFlow) {
+        if (this.elseFlow) {
+            throw new Error("IfFlow already has an ElseFlow");
+        }
+        this.elseFlow = elseFlow;
     },
 
 
@@ -88,12 +127,16 @@ var If = Class.extend(Flow, {
     executeFlow: function(args) {
         this._super(args);
         this.execArgs = args;
-        this.ifMethod.apply(null, ([this]).concat(args));
+        try {
+            this.ifMethod.apply(null, ([this]).concat(args));
+        } catch(throwable) {
+            this.errorFlow(throwable);
+        }
     },
 
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -102,42 +145,17 @@ var If = Class.extend(Flow, {
     assert: function(bool) {
         var _this = this;
         if (bool) {
-            this.successFlow.execute(this.execArgs, function(error) {
-                _this.complete(error, bool);
+            this.ifFlow.execute(this.execArgs, function(throwable) {
+                _this.complete(throwable, bool);
             });
         } else {
             this.nextElseFlow();
         }
     },
 
-    /**
-     * @param {function()} ifMethod
-     * @param {Flow} successFlow
-     * @return {?function(Flow)}
-     */
-    $elseIf: function(ifMethod, successFlow) {
-        if (this.elseFlow) {
-            throw new Error("IfFlow already has an ElseFlow");
-        }
-        var elseIfFlow = new If(ifMethod, successFlow);
-        this.elseIfList.add(elseIfFlow);
-        return this;
-    },
-
-    /**
-     * @param {Flow} elseFlow
-     */
-    $else: function(elseFlow) {
-        if (this.elseFlow) {
-            throw new Error("IfFlow already has an ElseFlow");
-        }
-        this.elseFlow = elseFlow;
-        return this;
-    },
-
 
     //-------------------------------------------------------------------------------
-    // Private Class Methods
+    // Private Methods
     //-------------------------------------------------------------------------------
 
     /**

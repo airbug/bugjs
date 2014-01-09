@@ -7,10 +7,8 @@
 //@Export('DeltaDocument')
 
 //@Require('Class')
-//@Require('IClone')
-//@Require('IObjectable')
+//@Require('Document')
 //@Require('Obj')
-//@Require('TypeUtil')
 
 
 //-------------------------------------------------------------------------------
@@ -25,10 +23,8 @@ var bugpack             = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
-var IClone              = bugpack.require('IClone');
-var IObjectable         = bugpack.require('IObjectable');
+var Document            = bugpack.require('Document');
 var Obj                 = bugpack.require('Obj');
-var TypeUtil            = bugpack.require('TypeUtil');
 
 
 //-------------------------------------------------------------------------------
@@ -37,9 +33,9 @@ var TypeUtil            = bugpack.require('TypeUtil');
 
 /**
  * @class
- * @extends {Obj}
+ * @extends {Document}
  */
-var DeltaDocument = Class.extend(Obj, {
+var DeltaDocument = Class.extend(Document, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -51,7 +47,7 @@ var DeltaDocument = Class.extend(Obj, {
      */
     _constructor: function(data) {
 
-        this._super();
+        this._super(data);
 
 
         //-------------------------------------------------------------------------------
@@ -60,13 +56,7 @@ var DeltaDocument = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {*}
-         */
-        this.data               = data;
-
-        /**
-         * @private
-         * @type {DeltaDocument}
+         * @type {Document}
          */
         this.previousDocument   = undefined;
     },
@@ -77,73 +67,10 @@ var DeltaDocument = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {*}
-     */
-    getData: function() {
-        return this.data;
-    },
-
-    /**
-     * @param {*} data
-     */
-    setData: function(data) {
-        this.data = data;
-    },
-
-    /**
-     * @param {string} path
-     */
-    getPath: function(path) {
-        var pathParts = path.split(".");
-        var target = undefined;
-        var currentData = this.data;
-        pathParts.forEach(function(pathPart) {
-            if (pathPart === "") {
-                target = currentData;
-            } else {
-                if (TypeUtil.isObject(currentData)) {
-                    target      = currentData[pathPart];
-                    currentData = currentData[pathPart];
-                } else {
-                    throw new Error("Unsupported type in path retrieval");
-                }
-            }
-
-            //TODO BRN: implement support for "[somevalue]"
-        });
-        return target;
-    },
-
-    /**
-     * @return {DeltaDocument}
+     * @return {Document}
      */
     getPreviousDocument: function() {
         return this.previousDocument;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // IObjectable Implementation
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @returns {Object}
-     */
-    toObject: function() {
-        return this.data;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Obj Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {boolean} deep
-     * @return {*}
-     */
-    clone: function(deep) {
-        return new DeltaDocument(Obj.clone(this.getData(), deep));
     },
 
 
@@ -155,16 +82,9 @@ var DeltaDocument = Class.extend(Obj, {
      *
      */
     commitDelta: function() {
-        this.previousDocument = this.clone(true);
+        this.previousDocument = new Document(Obj.clone(this.getData(), true));
     }
 });
-
-
-//-------------------------------------------------------------------------------
-// Implement Interfaces
-//-------------------------------------------------------------------------------
-
-Class.implement(DeltaDocument, IObjectable);
 
 
 //-------------------------------------------------------------------------------

@@ -397,6 +397,7 @@ Obj.getProperties = function(object) {
 };
 
 /**
+ * @static
  * @param {*} value
  * @return {Iterator}
  */
@@ -406,6 +407,7 @@ Obj.iterator = function(value) {
 
 //TODO BRN: Think through this function a bit. Should the from object be cloned?
 /**
+ * @static
  * @param {*} from
  * @param {*} into
  * @return {*} into
@@ -419,6 +421,28 @@ Obj.merge = function(from, into) {
     } else {
         throw new Error("both from and into parameters must be objects");
     }
+};
+
+/**
+ * @static
+ * @param {Object} object
+ * @param {Array.<string>} properties
+ * @return {Object}
+ */
+Obj.pick = function(object, properties) {
+    if (!TypeUtil.isObject(object)) {
+        throw new Error("parameter 'object' must be an object");
+    }
+    if (!TypeUtil.isArray(properties)) {
+        throw new Error("parameter 'properties' must be an array");
+    }
+    var picked = {};
+    properties.forEach(function(property) {
+        if (Obj.hasProperty(object, property)) {
+            picked[property] = object[property];
+        }
+    });
+    return picked;
 };
 
 

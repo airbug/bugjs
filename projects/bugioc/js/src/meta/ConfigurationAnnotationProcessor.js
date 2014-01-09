@@ -40,6 +40,7 @@ var ConfigurationAnnotationProcessor = Class.extend(ModuleAnnotationProcessor, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @constructs
      * @param {IocContext} iocContext
      */
     _constructor: function(iocContext) {
@@ -82,18 +83,16 @@ var ConfigurationAnnotationProcessor = Class.extend(ModuleAnnotationProcessor, {
     processConfigurationAnnotation: function(configurationAnnotation) {
         var _this                   = this;
         if (!this.processedConfigurationAnnotationSet.contains(configurationAnnotation)) {
-            var configurationClass      = configurationAnnotation.getAnnotationReference();
+            var configurationIocModule  = this.buildIocModule(configurationAnnotation);
             var moduleAnnotationArray   = configurationAnnotation.getConfigurationModules();
-            var configuration           = new configurationClass();
-
             moduleAnnotationArray.forEach(function(moduleAnnotation) {
-                var iocModule   = _this.createIocModule(moduleAnnotation);
-                var factory     = new ConfigurationModuleFactory(_this.iocContext, iocModule, configuration);
+                var iocModule   = _this.factoryIocModule(moduleAnnotation);
+                var factory     = new ConfigurationModuleFactory(_this.getIocContext(), iocModule, configurationIocModule);
                 iocModule.setModuleFactory(factory);
-                _this.iocContext.registerIocModule(iocModule);
+                _this.getIocContext().registerIocModule(iocModule);
             });
+            this.getIocContext().registerConfigurationIocModule(configurationIocModule);
             this.processedConfigurationAnnotationSet.add(configurationAnnotation);
-            this.iocContext.registerConfiguration(configuration);
         }
     }
 });

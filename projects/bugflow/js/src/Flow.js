@@ -6,7 +6,7 @@
 
 //@Export('Flow')
 
-
+//@Require('ArgUtil')
 //@Require('Bug')
 //@Require('Class')
 //@Require('Obj')
@@ -25,6 +25,7 @@ var bugpack     = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
+var ArgUtil     = bugpack.require('ArgUtil');
 var Bug         = bugpack.require('Bug');
 var Class       = bugpack.require('Class');
 var Obj         = bugpack.require('Obj');
@@ -61,27 +62,33 @@ var Flow = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {function(Error)}
+         * @type {function(Throwable=)}
          */
-        this.callback = null;
-
-        /**
-         * @privte
-         * @type {boolean}
-         */
-        this.completed = false;
+        this.callback       = null;
 
         /**
          * @private
          * @type {boolean}
          */
-        this.errored = false;
+        this.completed      = false;
 
         /**
          * @private
          * @type {boolean}
          */
-        this.executed = false;
+        this.errored        = false;
+
+        /**
+         * @private
+         * @type {boolean}
+         */
+        this.executed       = false;
+
+        /**
+         * @private
+         * @type {Throwable}
+         */
+        this.throwable      = null;
     },
 
 
@@ -112,11 +119,11 @@ var Flow = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Throwable} throwable
+     * @param {Throwable=} throwable
      * @param {...*} var_args
      */
     complete: function(throwable) {
@@ -124,12 +131,12 @@ var Flow = Class.extend(Obj, {
         if (throwable) {
             this.error(throwable);
         } else {
-            var args = arguments;
+            var args = ArgUtil.toArray(arguments);
             if (this.hasErrored()) {
-                throw new Bug("DuplicateFlow", {}, "Cannot complete flow. Flow has already errored out.");
+                this.throwBug(new Bug("DuplicateFlow", {}, "Cannot complete flow. Flow has already errored out."));
             }
             if (this.hasCompleted()) {
-                throw new Bug("DuplicateFlow", {}, "Can only complete a flow once.");
+                this.throwBug(new Bug("DuplicateFlow", {}, "Can only complete a flow once."));
             }
             _this.completeFlow(args);
         }
@@ -140,17 +147,17 @@ var Flow = Class.extend(Obj, {
      */
     error: function(throwable) {
         if (this.hasErrored()) {
-            throw new Bug("DuplicateFlow", {}, "Can only error flow once.", [throwable]);
+            this.throwBug(new Bug("DuplicateFlow", {}, "Can only error flow once.", [throwable]));
         }
         if (this.hasCompleted()) {
-            throw new Bug("DuplicateFlow", {}, "Cannot error flow. Flow has already completed.", [throwable]);
+            this.throwBug(new Bug("DuplicateFlow", {}, "Cannot error flow. Flow has already completed.", [throwable]));
         }
         this.errorFlow($error(throwable));
     },
 
     /**
-     * @param {Array<*>} args
-     * @param {function(Error)} callback
+     * @param {(Array.<*> | function(Throwable=))} args
+     * @param {function(Throwable=)=} callback
      */
     execute: function(args, callback) {
         if (TypeUtil.isFunction(args)) {
@@ -161,21 +168,22 @@ var Flow = Class.extend(Obj, {
         if (!this.executed) {
             try {
                 this.executeFlow(args);
-            } catch(error) {
-                this.error(error);
+            } catch(throwable) {
+                this.error(throwable);
             }
         } else {
-            throw new Error("A flow can only be executed once.");
+            throw new Bug("IllegalState", {}, "A flow can only be executed once.");
         }
     },
 
 
     //-------------------------------------------------------------------------------
-    // Protected Class Methods
+    // Protected Methods
     //-------------------------------------------------------------------------------
 
     /**
      * @protected
+     * @param  {Array.<*>} args
      */
     completeFlow: function(args) {
         var _this = this;
@@ -189,22 +197,35 @@ var Flow = Class.extend(Obj, {
 
     /**
      * @protected
-     * @param {Error} error
+     * @param {Throwable} throwable
      */
-    errorFlow: function(error) {
-        this.errored = true;
+    errorFlow: function(throwable) {
+        this.errored    = true;
+        this.throwable  = throwable;
         if (this.callback) {
-            this.callback(error);
+            this.callback(throwable);
         } else {
-            throw error;
+            throw throwable;
         }
     },
 
     /**
-     * @param {Array<*>} args
+     * @protected
+     * @param {Array.<*>} args
      */
     executeFlow: function(args) {
         this.executed = true;
+    },
+
+    /**
+     * @protected
+     * @param {Bug} bug
+     */
+    throwBug: function(bug) {
+        if (this.throwable) {
+            bug.addCause(this.throwable);
+        }
+        throw bug;
     }
 });
 

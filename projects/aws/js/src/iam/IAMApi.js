@@ -91,11 +91,6 @@ var IAMApi = Class.extend(Obj, {
             ]
         };
         this._getUser(params, function(error, data) {
-            //TEST
-            console.log("_getUser call complete");
-            console.log(error);
-            console.log(data);
-
             if (!error) {
                 var iamUser = null;
                 for (var i = 0, size = data.SecurityGroups.length; i < size; i++) {

@@ -199,7 +199,7 @@ Class.doesExtend = function(value, _class) {
 /**
  * @static
  * @param {*} value
- * @param {new:Interface} _interface
+ * @param {Interface} _interface
  * @return {boolean}
  */
 Class.doesImplement = function(value, _interface) {

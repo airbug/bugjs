@@ -7,9 +7,8 @@
 //@Export('EntityManagerScan')
 
 //@Require('Class')
-//@Require('Obj')
 //@Require('bugentity.EntityManagerAnnotation')
-//@Require('bugmeta.BugMeta')
+//@Require('bugmeta.AnnotationScan')
 
 
 //-------------------------------------------------------------------------------
@@ -24,74 +23,30 @@ var bugpack                     = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                       = bugpack.require('Class');
-var Obj                         = bugpack.require('Obj');
 var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
-var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+var AnnotationScan              = bugpack.require('bugmeta.AnnotationScan');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var EntityManagerScan = Class.extend(Obj, {
+/**
+ * @class
+ * @extends {AnnotationScan}
+ */
+var EntityManagerScan = Class.extend(AnnotationScan, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
     /**
+     * @constructs
      * @param {EntityManagerAnnotationProcessor} processor
      */
     _constructor: function(processor) {
-
-        this._super();
-
-
-        //-------------------------------------------------------------------------------
-        // Private Properties
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {EntityManagerAnnotationProcessor}
-         */
-        this.processor = processor;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     *
-     */
-    scanAll: function() {
-        var _this       = this;
-        var bugmeta     = BugMeta.context();
-        var entityManagerAnnotations = bugmeta.getAnnotationsByType("EntityManager");
-        if (entityManagerAnnotations) {
-            entityManagerAnnotations.forEach(function(annotation) {
-                _this.processor.process(annotation);
-            });
-        }
-    },
-
-    /**
-     * @param {Class} _class
-     */
-    scanClass: function(_class) {
-        var _this       = this;
-        var bugmeta     = BugMeta.context();
-        var annotations = bugmeta.getAnnotationsByReference(_class);
-        var entityManagerAnnotation = null;
-        if (annotations) {
-            annotations.forEach(function(annotation) {
-                if (Class.doesExtend(annotation, EntityManagerAnnotation)) {
-                    _this.processor.process(annotation);
-                }
-            });
-        }
+        this._super(processor, EntityManagerAnnotation.TYPE);
     }
 });
 

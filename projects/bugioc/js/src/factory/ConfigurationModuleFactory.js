@@ -36,11 +36,12 @@ var ConfigurationModuleFactory = Class.extend(ModuleFactory, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @constructs
      * @param {IocContext} iocContext
      * @param {IocModule} iocModule
-     * @param {*} configuration
+     * @param {IocModule} configurationIocModule
      */
-    _constructor: function(iocContext, iocModule, configuration) {
+    _constructor: function(iocContext, iocModule, configurationIocModule) {
 
         this._super(iocContext, iocModule);
 
@@ -51,26 +52,27 @@ var ConfigurationModuleFactory = Class.extend(ModuleFactory, {
 
         /**
          * @private
-         * @type {*}
+         * @type {IocModule}
          */
-        this.configuration = configuration;
+        this.configurationIocModule = configurationIocModule;
     },
 
 
     //-------------------------------------------------------------------------------
-    // ModuleFactory Implementation
+    // ModuleFactory Methods
     //-------------------------------------------------------------------------------
 
     /**
      * @return {*}
      */
     factoryModule: function() {
-        var moduleMethod    = this.configuration[this.iocModule.getName()];
+        var configuration   = this.getIocContext().getModuleByName(this.configurationIocModule.getName());
+        var moduleMethod    = configuration[this.getIocModule().getName()];
         if (!moduleMethod) {
-            throw new Error("Cannot find module method in configuration that matches '" + this.iocModule.getName() + "'");
+            throw new Error("Cannot find module method in configuration that matches '" + this.getIocModule().getName() + "'");
         }
         var moduleArgs      = this.buildModuleArgs();
-        return moduleMethod.apply(this.configuration, moduleArgs);
+        return moduleMethod.apply(configuration, moduleArgs);
     }
 });
 

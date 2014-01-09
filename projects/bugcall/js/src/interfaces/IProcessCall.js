@@ -2,9 +2,9 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugioc')
+//@Package('bugcall')
 
-//@Export('IPostProcessModule')
+//@Export('IProcessCall')
 
 //@Require('Interface')
 
@@ -27,16 +27,20 @@ var Interface = bugpack.require('Interface');
 // Declare Interface
 //-------------------------------------------------------------------------------
 
-var IPostProcessModule = Interface.declare({
+/**
+ * @interface
+ */
+var IProcessCall = Interface.declare({
 
     //-------------------------------------------------------------------------------
     // Interface Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {function(Throwable)} callback
+     * @param {CallManager} callManager
+     * @param {function(Throwable)}  callback
      */
-    postProcessModule: function(callback) {}
+    processCall: function(callManager, callback) {}
 });
 
 
@@ -44,4 +48,4 @@ var IPostProcessModule = Interface.declare({
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('bugioc.IPostProcessModule', IPostProcessModule);
+bugpack.export('bugcall.IProcessCall', IProcessCall);

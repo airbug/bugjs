@@ -93,7 +93,11 @@ var AutowiredAnnotationProcessor = Class.extend(Obj, {
                 var instance = this;
                 currentConstructor.apply(this, arguments);
                 propertyAnnotationArray.forEach(function(propertyAnnotation) {
-                    instance[propertyAnnotation.getPropertyName()] = _this.iocContext.getModuleByName(propertyAnnotation.getPropertyRef());
+                    if (propertyAnnotation.getPropertyRef()) {
+                        instance[propertyAnnotation.getPropertyName()] = _this.iocContext.getModuleByName(propertyAnnotation.getPropertyRef());
+                    } else {
+                        instance[propertyAnnotation.getPropertyName()] = propertyAnnotation.getPropertyValue();
+                    }
                 });
             };
         }

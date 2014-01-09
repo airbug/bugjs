@@ -37,7 +37,7 @@ var EntityManagerAnnotation = Class.extend(ModuleAnnotation, {
 
     _constructor: function(moduleName) {
 
-        this._super(moduleName, "EntityManager");
+        this._super(moduleName, EntityManagerAnnotation.TYPE);
 
 
         //-------------------------------------------------------------------------------
@@ -77,6 +77,17 @@ var EntityManagerAnnotation = Class.extend(ModuleAnnotation, {
         return this;
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Static Properties
+//-------------------------------------------------------------------------------
+
+/**
+ * @static
+ * @const {string}
+ */
+EntityManagerAnnotation.TYPE = "EntityManager";
 
 
 //-------------------------------------------------------------------------------

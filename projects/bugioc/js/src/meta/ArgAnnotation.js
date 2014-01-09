@@ -48,7 +48,13 @@ var ArgAnnotation = Class.extend(Annotation, {
          * @private
          * @type {string}
          */
-        this.argRef = null;
+        this.argRef     = null;
+
+        /**
+         * @private
+         * @type {*}
+         */
+        this.argValue   = null;
     },
 
 
@@ -63,6 +69,13 @@ var ArgAnnotation = Class.extend(Annotation, {
         return this.argRef;
     },
 
+    /**
+     * @return {*}
+     */
+    getArgValue: function() {
+        return this.argValue;
+    },
+
 
     //-------------------------------------------------------------------------------
     // Class Methods
@@ -70,9 +83,19 @@ var ArgAnnotation = Class.extend(Annotation, {
 
     /**
      * @param {string} argRef
+     * @return {ArgAnnotation}
      */
     ref: function(argRef) {
         this.argRef = argRef;
+        return this;
+    },
+
+    /**
+     * @param {*} argValue
+     * @return {ArgAnnotation}
+     */
+    value: function(argValue) {
+        this.argValue = argValue;
         return this;
     }
 });

@@ -34,7 +34,12 @@ var IConfiguration = Interface.declare({
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {function(Error)}
+     * @param {function(Throwable=)} callback
+     */
+    deinitializeConfiguration: function(callback) {},
+
+    /**
+     * @param {function(Throwable=)} callback
      */
     initializeConfiguration: function(callback) {}
 });

@@ -48,7 +48,7 @@ var test                        = TestAnnotation.test;
 /**
  *
  */
-var moduleAnnotationProcessorCreateIocModuleTest = {
+var moduleAnnotationProcessorFactoryIocModuleTest = {
 
     // Setup Test
     //-------------------------------------------------------------------------------
@@ -74,7 +74,7 @@ var moduleAnnotationProcessorCreateIocModuleTest = {
 
     test: function(test) {
         /** @type {IocModule} */
-        var iocModule = this.moduleAnnotationProcessor.createIocModule(this.moduleAnnotation);
+        var iocModule = this.moduleAnnotationProcessor.factoryIocModule(this.moduleAnnotation);
 
         test.assertEqual(iocModule.getName(), this.testModuleName,
             "Assert moduleName was successfully set");
@@ -98,6 +98,6 @@ var moduleAnnotationProcessorCreateIocModuleTest = {
         }
     }
 };
-bugmeta.annotate(moduleAnnotationProcessorCreateIocModuleTest).with(
-    test().name("ModuleAnnotationProcessor - createIocModule test")
+bugmeta.annotate(moduleAnnotationProcessorFactoryIocModuleTest).with(
+    test().name("ModuleAnnotationProcessor - factoryIocModule test")
 );

@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('EventDispatcher')
+//@Require('Exception')
 //@Require('Map')
 //@Require('Set')
 //@Require('bugcall.CallEvent')
@@ -32,6 +33,7 @@ var bugpack                     = require('bugpack').context();
 
 var Class                       = bugpack.require('Class');
 var EventDispatcher             = bugpack.require('EventDispatcher');
+var Exception                   = bugpack.require('Exception');
 var Map                         = bugpack.require('Map');
 var Set                         = bugpack.require('Set');
 var CallEvent                   = bugpack.require('bugcall.CallEvent');
@@ -57,9 +59,16 @@ var BugCallServer = Class.extend(EventDispatcher, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(callServer, requestProcessor) {
+    /**
+     * @constructs
+     * @param {CallServer} callServer
+     * @param {BugCallRequestProcessor} requestProcessor
+     * @param {BugCallCallProcessor} callProcessor
+     */
+    _constructor: function(callServer, requestProcessor, callProcessor) {
 
         this._super();
+
 
         //-------------------------------------------------------------------------------
         // Private Properties
@@ -70,6 +79,12 @@ var BugCallServer = Class.extend(EventDispatcher, {
          * @type {Map.<CallConnection, CallManager>}
          */
         this.callConnectionToCallManagerMap = new Map();
+
+        /**
+         * @private
+         * @type {BugCallCallProcessor}
+         */
+        this.callProcessor                  = callProcessor;
 
         /**
          * @private
@@ -112,6 +127,13 @@ var BugCallServer = Class.extend(EventDispatcher, {
     },
 
     /**
+     * @return {BugCallCallProcessor}
+     */
+    getCallProcessor: function() {
+        return this.callProcessor;
+    },
+
+    /**
      * @return {CallServer}
      */
     getCallServer: function() {
@@ -130,19 +152,39 @@ var BugCallServer = Class.extend(EventDispatcher, {
     // Public Methods
     //-------------------------------------------------------------------------------
 
+    /**
+     * @param {CallConnection} callConnection
+     */
+    closeConnection: function(callConnection) {
+        callConnection.closeConnection();
+    },
+
+    /**
+     * @param {IPreProcessCall} preProcessor
+     */
+    registerCallPreProcessor: function(preProcessor) {
+        this.callProcessor.registerCallPreProcessor(preProcessor);
+    },
+
+    /**
+     * @param {IProcessCall} processor
+     */
+    registerCallProcessor: function(processor) {
+        this.callProcessor.registerCallProcessor(processor);
+    },
+
+    /**
+     * @param {IPreProcessRequest} preprocessor
+     */
     registerRequestPreProcessor: function(preprocessor) {
         this.requestProcessor.registerRequestPreProcessor(preprocessor);
     },
 
+    /**
+     * @param {IProcessRequest} processor
+     */
     registerRequestProcessor: function(processor) {
         this.requestProcessor.registerRequestProcessor(processor);
-    },
-
-    /**
-     * @param {} callConnection
-     */
-    closeConnection: function(callConnection) {
-        callConnection.closeConnection();
     },
 
     /**
@@ -159,7 +201,7 @@ var BugCallServer = Class.extend(EventDispatcher, {
 
 
     //-------------------------------------------------------------------------------
-    // Private Instance Methods
+    // Private Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -228,14 +270,11 @@ var BugCallServer = Class.extend(EventDispatcher, {
      * @param {CallConnection} callConnection
      */
     handleConnectionEstablished: function(callConnection) {
-
-        //TODO BRN: This is where we will use the callConnection's handshake data to look up a previous CallManager
-        // that belonged to the same connection id. If it doesn't exist, then we create a new CallManager
-
+        var _this           = this;
         /** @type {string}*/
         var callUuid        = callConnection.getHandshake().query.callUuid; //NOTE this is where the callUuid from the query is used
         /** @type {boolean} */
-        var reconnect       = callConnection.getHandshake().query.reconnect;
+        var reconnect       = callConnection.getHandshake().query.reconnect === "true";
         /** @type {CallManager} */
         var callManager     = this.getCallManagerForCallUuid(callUuid);
         if (!callManager) {
@@ -243,7 +282,19 @@ var BugCallServer = Class.extend(EventDispatcher, {
             this.addCallManager(callManager);
         }
         this.mapCallConnectionToCallManager(callConnection, callManager);
-        callManager.openCall(callConnection);
+        callManager.updateConnection(callConnection);
+        this.callProcessor.processCall(callManager, function(throwable) {
+            if (!throwable) {
+                callManager.openCall();
+            } else {
+                if (Class.doesExtend(throwable, Exception)) {
+                    console.warn(throwable);
+                    callConnection.disconnect();
+                } else {
+                    throw throwable;
+                }
+            }
+        });
     },
 
     /**

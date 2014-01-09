@@ -55,6 +55,12 @@ var PropertyAnnotation = Class.extend(Annotation, {
          * @type {string}
          */
         this.propertyRef    = null;
+
+        /**
+         * @private
+         * @type {*}
+         */
+        this.propertyValue  = null;
     },
 
 
@@ -76,6 +82,13 @@ var PropertyAnnotation = Class.extend(Annotation, {
         return this.propertyRef;
     },
 
+    /**
+     * @return {*}
+     */
+    getPropertyValue: function() {
+        return this.propertyValue;
+    },
+
 
     //-------------------------------------------------------------------------------
     // Class Methods
@@ -83,9 +96,19 @@ var PropertyAnnotation = Class.extend(Annotation, {
 
     /**
      * @param {string} propertyRef
+     * @return {PropertyAnnotation}
      */
     ref: function(propertyRef) {
         this.propertyRef = propertyRef;
+        return this;
+    },
+
+    /**
+     * @param {*} propertyValue
+     * @return {PropertyAnnotation}
+     */
+    value: function(propertyValue) {
+        this.propertyValue = propertyValue;
         return this;
     }
 });

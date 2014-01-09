@@ -43,6 +43,12 @@ var TypeUtil        = bugpack.require('TypeUtil');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Obj}
+ * @implements {IMap.<K,V>}
+ * @template K, V
+ */
 var Map = Class.extend(Obj, /** @lends {Map.prototype} */ {
 
     //-------------------------------------------------------------------------------
@@ -52,9 +58,6 @@ var Map = Class.extend(Obj, /** @lends {Map.prototype} */ {
     /**
      * @constructs
      * @param {Map.<K, V>} map
-     * @extends {Obj}
-     * @implements {IMap.<K,V>}
-     * @template K, V
      */
     _constructor: function(map) {
 
@@ -246,10 +249,11 @@ var Map = Class.extend(Obj, /** @lends {Map.prototype} */ {
         var object  = {};
         var keys    = this.getKeyArray();
         keys.forEach(function(key){
-            if(!TypeUtil.isString(key) && key.toString){
-                key = key.toString(); //NOTE: These keys may not be unique.
+            var stringKey = key;
+            if (!TypeUtil.isString(key) && TypeUtil.isObject(key) && TypeUtil.isFunction(key.toString)) {
+                stringKey = key.toString(); //NOTE: These keys may not be unique.
             }
-            object[key] = _this.get(key);
+            object[stringKey] = _this.get(key);
         });
         return object;
     }

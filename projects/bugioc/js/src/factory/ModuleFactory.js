@@ -36,6 +36,7 @@ var ModuleFactory = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @constructs
      * @param {IocContext} iocContext
      * @param {IocModule} iocModule
      */
@@ -54,12 +55,30 @@ var ModuleFactory = Class.extend(Obj, {
          */
         this.iocContext     = iocContext;
 
-
         /**
          * @private
          * @type {IocModule}
          */
         this.iocModule      = iocModule;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {IocContext}
+     */
+    getIocContext: function() {
+        return this.iocContext;
+    },
+
+    /**
+     * @return {IocModule}
+     */
+    getIocModule: function() {
+        return this.iocModule;
     },
 
 
@@ -77,7 +96,7 @@ var ModuleFactory = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // Protected Class Methods
+    // Protected Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -89,8 +108,12 @@ var ModuleFactory = Class.extend(Obj, {
         var moduleArgs      = [];
         var iocArgList      = this.iocModule.getIocArgList();
         iocArgList.forEach(function(iocArg) {
-            var refModule = _this.iocContext.getModuleByName(iocArg.getRef());
-            moduleArgs.push(refModule);
+            if (iocArg.getRef()) {
+                var refModule = _this.iocContext.getModuleByName(iocArg.getRef());
+                moduleArgs.push(refModule);
+            } else {
+                moduleArgs.push(iocArg.getValue());
+            }
         });
         return moduleArgs;
     }

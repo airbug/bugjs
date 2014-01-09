@@ -20,22 +20,22 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var AWS         = require('aws-sdk');
-var bugpack     = require('bugpack').context();
+var AWS                 = require('aws-sdk');
+var bugpack             = require('bugpack').context();
 
 
 // -------------------------------------------------------------------------------
 // Bugpack
 // -------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var Obj         = bugpack.require('Obj');
-var AwsConfig   = bugpack.require('aws.AwsConfig');
-var S3Api       = bugpack.require('aws.S3Api');
-var S3Bucket    = bugpack.require('aws.S3Bucket');
-var BugFlow     = bugpack.require('bugflow.BugFlow');
-var BugFs       = bugpack.require('bugfs.BugFs');
-var Path        = bugpack.require('bugfs.Path');
+var Class               = bugpack.require('Class');
+var Obj                 = bugpack.require('Obj');
+var AwsConfig           = bugpack.require('aws.AwsConfig');
+var S3Api               = bugpack.require('aws.S3Api');
+var S3Bucket            = bugpack.require('aws.S3Bucket');
+var BugFlow             = bugpack.require('bugflow.BugFlow');
+var BugFs               = bugpack.require('bugfs.BugFs');
+var Path                = bugpack.require('bugfs.Path');
 
 
 //-------------------------------------------------------------------------------

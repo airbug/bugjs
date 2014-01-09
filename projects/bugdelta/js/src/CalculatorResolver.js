@@ -62,6 +62,12 @@ var CalculatorResolver = Class.extend(Obj, {
          * @type {Map.<string, DeltaCalculator>}
          */
         this.dataTypeCalculatorMap  = new Map();
+
+        /**
+         * @private
+         * @type {Map.<string, DeltaCalculator>}
+         */
+        this.interfaceCalculatorMap = new Map();
     },
 
 
@@ -75,6 +81,14 @@ var CalculatorResolver = Class.extend(Obj, {
      */
     registerCalculatorForClass: function(_class, calculator) {
         this.classCalculatorMap.put(_class, calculator);
+    },
+
+    /**
+     * @param {Interface} _interface
+     * @param {DeltaCalculator} calculator
+     */
+    registerCalculatorForInterface: function(_interface, calculator) {
+        this.interfaceCalculatorMap.put(_interface, calculator);
     },
 
     /**
@@ -94,6 +108,13 @@ var CalculatorResolver = Class.extend(Obj, {
             var _class = value.getClass();
             if (this.classCalculatorMap.containsKey(_class)) {
                 return this.classCalculatorMap.get(_class);
+            } else {
+                for (var i = 0, size = value.getClass().getInterfaces().length; i < size; i++) {
+                    var _interface = value.getClass().getInterfaces()[i];
+                    if (this.interfaceCalculatorMap.containsKey(_interface)) {
+                        return this.interfaceCalculatorMap.get(_interface);
+                    }
+                }
             }
         } else {
             var dataType = TypeUtil.toType(value);
@@ -101,7 +122,7 @@ var CalculatorResolver = Class.extend(Obj, {
                 return this.dataTypeCalculatorMap.get(dataType);
             }
         }
-        return undefined;
+        return null;
     }
 });
 

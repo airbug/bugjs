@@ -5,7 +5,7 @@
 //@TestFile
 
 //@Require('Class')
-//@Require('bugdelta.DeltaDocumentChange')
+//@Require('bugdelta.DocumentChange')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
@@ -22,7 +22,7 @@ var bugpack                 = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                   = bugpack.require('Class');
-var DeltaDocumentChange     = bugpack.require('bugdelta.DeltaDocumentChange');
+var DocumentChange          = bugpack.require('bugdelta.DocumentChange');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
 
@@ -46,7 +46,7 @@ var deltaDocumentChangeInstantiationWithoutParametersTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        this.testDeltaDocumentChange    = new DeltaDocumentChange();
+        this.testDocumentChange    = new DocumentChange();
     },
 
 
@@ -55,20 +55,20 @@ var deltaDocumentChangeInstantiationWithoutParametersTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
-        test.assertTrue(Class.doesExtend(this.testDeltaDocumentChange, DeltaDocumentChange),
-            "Assert testDeltaDocumentChange is an instance of DeltaDocumentChange");
-        test.assertEqual(this.testDeltaDocumentChange.getChangeType(), undefined,
-            "Assert DeltaDocumentChange.changeType was NOT set");
-        test.assertEqual(this.testDeltaDocumentChange.getPath(), undefined,
-            "Assert DeltaDocumentChange.path was NOT set");
-        test.assertEqual(this.testDeltaDocumentChange.getData(), undefined,
-            "Assert DeltaDocumentChange.data was NOT set");
-        test.assertEqual(this.testDeltaDocumentChange.getPreviousData(), undefined,
-            "Assert DeltaDocumentChange.previousData was Not set");
+        test.assertTrue(Class.doesExtend(this.testDocumentChange, DocumentChange),
+            "Assert testDocumentChange is an instance of DocumentChange");
+        test.assertEqual(this.testDocumentChange.getChangeType(), undefined,
+            "Assert DocumentChange.changeType was NOT set");
+        test.assertEqual(this.testDocumentChange.getPath(), undefined,
+            "Assert DocumentChange.path was NOT set");
+        test.assertEqual(this.testDocumentChange.getData(), undefined,
+            "Assert DocumentChange.data was NOT set");
+        test.assertEqual(this.testDocumentChange.getPreviousData(), undefined,
+            "Assert DocumentChange.previousData was Not set");
     }
 };
 bugmeta.annotate(deltaDocumentChangeInstantiationWithoutParametersTest).with(
-    test().name("DeltaDocumentChange - instantiation without parameters test")
+    test().name("DocumentChange - instantiation without parameters test")
 );
 
 
@@ -79,11 +79,11 @@ var deltaDocumentChangeInstantiationWithParametersTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        this.testChangeType             = DeltaDocumentChange.ChangeTypes.DATA_SET;
+        this.testChangeType             = DocumentChange.ChangeTypes.DATA_SET;
         this.testPath                   = "some.path";
         this.testData                   = "data";
         this.testPreviousData           = "previousData";
-        this.testDeltaDocumentChange    = new DeltaDocumentChange(this.testChangeType, this.testPath, this.testData, this.testPreviousData);
+        this.testDocumentChange         = new DocumentChange(this.testChangeType, this.testPath, this.testData, this.testPreviousData);
     },
 
 
@@ -92,16 +92,16 @@ var deltaDocumentChangeInstantiationWithParametersTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
-        test.assertEqual(this.testDeltaDocumentChange.getChangeType(), this.testChangeType,
-            "Assert DeltaDocumentChange.changeType was set correctly");
-        test.assertEqual(this.testDeltaDocumentChange.getPath(), this.testPath,
-            "Assert DeltaDocumentChange.path was set correctly");
-        test.assertEqual(this.testDeltaDocumentChange.getData(), this.testData,
-            "Assert DeltaDocumentChange.data was set correctly");
-        test.assertEqual(this.testDeltaDocumentChange.getPreviousData(), this.testPreviousData,
-            "Assert DeltaDocumentChange.previousData was set correctly");
+        test.assertEqual(this.testDocumentChange.getChangeType(), this.testChangeType,
+            "Assert DocumentChange.changeType was set correctly");
+        test.assertEqual(this.testDocumentChange.getPath(), this.testPath,
+            "Assert DocumentChange.path was set correctly");
+        test.assertEqual(this.testDocumentChange.getData(), this.testData,
+            "Assert DocumentChange.data was set correctly");
+        test.assertEqual(this.testDocumentChange.getPreviousData(), this.testPreviousData,
+            "Assert DocumentChange.previousData was set correctly");
     }
 };
 bugmeta.annotate(deltaDocumentChangeInstantiationWithParametersTest).with(
-    test().name("DeltaDocumentChange - instantiation with parameters test")
+    test().name("DocumentChange - instantiation with parameters test")
 );
