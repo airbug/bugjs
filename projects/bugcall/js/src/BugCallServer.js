@@ -320,7 +320,12 @@ var BugCallServer = Class.extend(EventDispatcher, {
         var callManager     = incomingRequest.getCallManager();
         var callResponder   = new CallResponder(callManager, incomingRequest);
         this.requestProcessor.processRequest(incomingRequest, callResponder, function(throwable) {
-            //TODO BRN: Any last minute handling we need to do?
+
+            //NOTE BRN: Unhandled throwable. At this point we should try to kill the program.
+            
+            if (throwable) {
+                throw throwable;
+            }
         });
     },
 

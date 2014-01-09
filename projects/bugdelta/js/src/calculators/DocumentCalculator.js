@@ -8,6 +8,7 @@
 
 //@Require('Class')
 //@Require('IDocument')
+//@Require('Obj')
 //@Require('TypeUtil')
 //@Require('bugdelta.DeltaCalculator')
 //@Require('bugdelta.DocumentChange')
@@ -25,7 +26,8 @@ var bugpack                         = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class                           = bugpack.require('Class');
-var IDocument                        = bugpack.require('IDocument');
+var IDocument                       = bugpack.require('IDocument');
+var Obj                             = bugpack.require('Obj');
 var TypeUtil                        = bugpack.require('TypeUtil');
 var DeltaCalculator                 = bugpack.require('bugdelta.DeltaCalculator');
 var DocumentChange                  = bugpack.require('bugdelta.DocumentChange');
@@ -73,17 +75,27 @@ var DocumentCalculator = Class.extend(DeltaCalculator, {
                     var previousData = previousValue.getData();
                     if (TypeUtil.toType(currentData) !== TypeUtil.toType(previousData)) {
                         delta.addDeltaChange(new DocumentChange(DocumentChange.ChangeTypes.DATA_SET, currentPath,
-                            currentValue.getData(), previousValue.getData()));
+                            currentData, previousData));
                     } else if (TypeUtil.isObject(currentData) && TypeUtil.isFunction(currentData.getClass) && !Class.doesExtend(previousData, currentData.getClass())) {
                         delta.addDeltaChange(new DocumentChange(DocumentChange.ChangeTypes.DATA_SET, currentPath,
-                            currentValue.getData(), previousValue.getData()));
+                            currentData, previousData));
                     } else {
                         var deltaCalculator = this.getDeltaBuilder().getCalculatorResolver().resolveCalculator(currentData);
                         if (deltaCalculator) {
                             deltaCalculator.calculateDelta(delta, currentPath, currentData, previousData);
                         } else {
-                            throw new Error("Unsupported data type '" + TypeUtil.toType(currentData) +
-                                "' found in Document");
+                            if (TypeUtil.toType(currentData) !== "object") {
+                                if (!Obj.equals(previousData, currentData)) {
+                                    delta.addDeltaChange(new DocumentChange(DocumentChange.ChangeTypes.DATA_SET, currentPath,
+                                        currentData, previousData));
+                                }
+                            } else {
+                                //TEST
+                                console.log("Unsupported data type found - TypeUtil.toType(currentData):", TypeUtil.toType(currentData), " TypeUtil.toType(previousData):", TypeUtil.toType(previousData));
+
+                                throw new Error("Unsupported data type '" + TypeUtil.toType(currentData) +
+                                    "' found in Document");
+                            }
                         }
                     }
                 } else {

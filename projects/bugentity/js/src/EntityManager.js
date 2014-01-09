@@ -157,46 +157,22 @@ var EntityManager = Class.extend(Obj, {
                 _this.dataStore.create(dbObject, function(throwable, dbObject) {
                     if (!throwable) {
                         entity.setId(dbObject._id.toString());
+                        entity.commitDelta();
                     }
                     flow.complete(throwable);
                 });
             }),
-            $forEachParallel(dependencies, function(flow, dependency) {
-                var dependencyOptions = options[dependency];
-                if (dependencyOptions) {
-                    var schema              = _this.schemaManager.getSchemaByClass(entity.getClass());
-                    var schemaProperty      = schema.getPropertyByName(dependency);
-                    if (schemaProperty) {
-                        var schemaPropertyType  = schemaProperty.getType();
-                        var manager             = _this.entityManagerStore.getEntityManagerByEntityType(schemaPropertyType);
-                        var data                = {};
-                        data[dependencyOptions.ownerIdProperty] = entity.getId();
-                        var generatedDependency = manager["generate" + schemaPropertyType](data);
-                        manager["create" + schemaPropertyType](generatedDependency, function(throwable, returnedDependency){
-                            var idSetter    = dependencyOptions.idSetter;
-                            var setter      = dependencyOptions.setter;
-                            var ownerProperty = dependencyOptions.ownerProperty;
-                            if (idSetter) {
-                                idSetter.call(entity, generatedDependency.getId());
-                            }
-                            if (setter) {
-                                setter.call(entity, generatedDependency);
-                            }
-                            if (ownerProperty) {
-                                generatedDependency["set" + StringUtil.capitalize(ownerProperty)](entity);
-                            }
-                            flow.complete(throwable);
-                        });
-                    } else {
-                        flow.error(new Bug("EntityManager", {}, "Unknown dependency '" + dependency + "'"));
-                    }
+            $task(function(flow) {
+                if (dependencies && dependencies.length > 0) {
+                    _this.createDependencies(entity, options, dependencies, function(throwable) {
+                        flow.complete(throwable);
+                    })
                 } else {
-                    flow.error(new Bug("EntityManager", {}, "Cannot find options for dependency '" + dependency + "'"));
+                    flow.complete();
                 }
             })
         ]).execute(function(throwable){
             if (!throwable) {
-                entity.commitDelta();
                 callback(null, entity);
             } else {
                 callback(throwable);
@@ -635,6 +611,61 @@ var EntityManager = Class.extend(Obj, {
                     return propertyValue;
                 }
         }
+    },
+
+    /**
+     * @private
+     * @param entity
+     * @param options
+     * @param dependencies
+     * @param callback
+     */
+    createDependencies: function(entity, options, dependencies, callback) {
+        var _this = this;
+        $series([
+            $task(function(flow) {
+                $forEachParallel(dependencies, function(flow, dependency) {
+                    var dependencyOptions = options[dependency];
+                    if (dependencyOptions) {
+                        var schema              = _this.schemaManager.getSchemaByClass(entity.getClass());
+                        var schemaProperty      = schema.getPropertyByName(dependency);
+                        if (schemaProperty) {
+                            var schemaPropertyType  = schemaProperty.getType();
+                            var manager             = _this.entityManagerStore.getEntityManagerByEntityType(schemaPropertyType);
+                            var data                = {};
+                            data[dependencyOptions.ownerIdProperty] = entity.getId();
+                            var generatedDependency = manager["generate" + schemaPropertyType](data);
+                            manager["create" + schemaPropertyType](generatedDependency, function(throwable, returnedDependency){
+                                var idSetter    = dependencyOptions.idSetter;
+                                var setter      = dependencyOptions.setter;
+                                var ownerProperty = dependencyOptions.ownerProperty;
+                                if (idSetter) {
+                                    idSetter.call(entity, generatedDependency.getId());
+                                }
+                                if (setter) {
+                                    setter.call(entity, generatedDependency);
+                                }
+                                if (ownerProperty) {
+                                    generatedDependency["set" + StringUtil.capitalize(ownerProperty)](entity);
+                                }
+                                flow.complete(throwable);
+                            });
+                        } else {
+                            flow.error(new Bug("EntityManager", {}, "Unknown dependency '" + dependency + "'"));
+                        }
+                    } else {
+                        flow.error(new Bug("EntityManager", {}, "Cannot find options for dependency '" + dependency + "'"));
+                    }
+                }).execute(function(throwable) {
+                    flow.complete(throwable);
+                })
+            }),
+            $task(function(flow) {
+                _this.update(entity, function(throwable) {
+                    flow.complete(throwable);
+                });
+            })
+        ]).execute(callback);
     },
 
     /**
