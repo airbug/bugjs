@@ -173,7 +173,7 @@ var Document = Class.extend(Obj, {
                         //TODO BRN: implement support for "[someValue]"
 
                         throw new Bug("UnsupportedType", {}, "Unsupported List in path");
-                    }else if (Class.doesImplement(currentData, ISet)) {
+                    } else if (Class.doesImplement(currentData, ISet)) {
 
                         //TODO BRN: Figure out how to support Set
 

@@ -8,6 +8,7 @@
 //@Require('Document')
 //@Require('IDocument')
 //@Require('Obj')
+//@Require('TypeUtil')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
 
@@ -27,6 +28,7 @@ var Class           = bugpack.require('Class');
 var Document        = bugpack.require('Document');
 var IDocument       = bugpack.require('IDocument');
 var Obj             = bugpack.require('Obj');
+var TypeUtil        = bugpack.require('TypeUtil');
 var BugMeta         = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation  = bugpack.require('bugunit-annotate.TestAnnotation');
 
@@ -130,7 +132,7 @@ bugmeta.annotate(documentGetPathNoStringThrowsTest).with(
     test().name("Document - getPath with non string test")
 );
 
-var documentGetPathNullDocTest = {
+var documentGetPathUndefinedDocTest = {
 
     // Setup Test
     //-------------------------------------------------------------------------------
@@ -154,11 +156,11 @@ var documentGetPathNullDocTest = {
             "Assert triple path path is undefined");
     }
 };
-bugmeta.annotate(documentGetPathNullDocTest).with(
-    test().name("Document - #getPath with null doc test")
+bugmeta.annotate(documentGetPathUndefinedDocTest).with(
+    test().name("Document - #getPath with undefined doc test")
 );
 
-var documentGetPathSimpleTestTest = {
+var documentGetPathSimpleTest = {
 
     // Setup Test
     //-------------------------------------------------------------------------------
@@ -166,8 +168,20 @@ var documentGetPathSimpleTestTest = {
     setup: function() {
         this.testPath  = "testPath";
         this.testValue = "abc123";
+        this.testDoublePath = "testDoublePath.testSubPath";
+        this.testDoubleValue = "bcd234";
+        this.testTriplePath = "testTriplePath.testSubPath.testSubSubPath";
+        this.testTripleValue = "cde345";
         this.testData = {
-            testPath: this.testValue
+            testPath: this.testValue,
+            testDoublePath: {
+                testSubPath: this.testDoubleValue
+            },
+            testTriplePath: {
+                testSubPath: {
+                    testSubSubPath: this.testTripleValue
+                }
+            }
         };
         this.document = new Document(this.testData);
     },
@@ -180,7 +194,11 @@ var documentGetPathSimpleTestTest = {
         test.assertEqual(this.document.getPath(""), this.testData,
             "Assert blank path path is testData");
         test.assertEqual(this.document.getPath(this.testPath), this.testValue,
-            "Assert testPath is testValue")
+            "Assert testPath is testValue");
+        test.assertEqual(this.document.getPath(this.testDoublePath), this.testDoubleValue,
+            "Assert testDoublePath is testDoubleValue");
+        test.assertEqual(this.document.getPath(this.testTriplePath), this.testTripleValue,
+            "Assert testTriplePath is testTripleValue");
         test.assertEqual(this.document.getPath("abc"), undefined,
             "Assert single path path is undefined");
         test.assertEqual(this.document.getPath("abc.edf"), undefined,
@@ -189,6 +207,93 @@ var documentGetPathSimpleTestTest = {
             "Assert triple path path is undefined");
     }
 };
-bugmeta.annotate(documentGetPathSimpleTestTest).with(
+bugmeta.annotate(documentGetPathSimpleTest).with(
     test().name("Document - #getPath simple test")
+);
+
+var documentSetPathUndefinedDocTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.testPath = "";
+        this.testValue = "testValue";
+        this.document = new Document();
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        this.document.setPath(this.testPath, this.testValue);
+        test.assertEqual(this.document.getPath(this.testPath), this.testValue,
+            "Assert value was set correctly at base path");
+    }
+};
+bugmeta.annotate(documentSetPathUndefinedDocTest).with(
+    test().name("Document - #setPath undefined doc test")
+);
+
+var documentSetPathSimpleTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.testPath = "abc.def.ghi";
+        this.testValue = "testValue";
+        this.document = new Document();
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        this.document.setPath(this.testPath, this.testValue);
+        test.assertEqual(this.document.getPath(this.testPath), this.testValue,
+            "Assert value was set correctly at triple path");
+        test.assertTrue(TypeUtil.isObject(this.document.getPath("abc")),
+            "Assert object was created at path 'abc'");
+        test.assertTrue(TypeUtil.isObject(this.document.getPath("abc")),
+            "Assert object was created at path 'abc.def'");
+    }
+};
+bugmeta.annotate(documentSetPathSimpleTest).with(
+    test().name("Document - #setPath simple test")
+);
+
+var documentSetPathExistingPathTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.testPath = "abc.def.ghi";
+        this.testValue = "testValue";
+        this.document = new Document({
+            abc: {
+                def: {
+                    ghi: "existingValue"
+                }
+            }
+        });
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        test.assertEqual(this.document.getPath(this.testPath), "existingValue",
+            "Assert value is existing value");
+        this.document.setPath(this.testPath, this.testValue);
+        test.assertEqual(this.document.getPath(this.testPath), this.testValue,
+            "Assert value was updated correctly at path");
+    }
+};
+bugmeta.annotate(documentSetPathExistingPathTest).with(
+    test().name("Document - #setPath existing path test")
 );
