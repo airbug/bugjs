@@ -17,7 +17,7 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 /**
- * @type {{generateUuid: Function}}
+ * @class
  */
 var UuidGenerator = {
 
@@ -26,6 +26,7 @@ var UuidGenerator = {
     //-------------------------------------------------------------------------------
 
     /**
+     * @static
      * @return {string}
      */
     generateHex4: function() {
@@ -35,6 +36,7 @@ var UuidGenerator = {
     },
 
     /**
+     * @static
      * @return {string}
      */
     generateHexUuid: function() {
@@ -44,6 +46,15 @@ var UuidGenerator = {
     },
 
     /**
+     * @static
+     * @return {string}
+     */
+    generateShortHexUuid: function() {
+        return UuidGenerator.generateHex4() + UuidGenerator.generateHex4();
+    },
+
+    /**
+     * @static
      * @return {string}
      */
     generateUuid: function() {
