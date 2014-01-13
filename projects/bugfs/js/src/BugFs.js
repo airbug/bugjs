@@ -41,10 +41,10 @@ var BugFs = {};
 /**
  * @param {(string|Path)} fromPath
  * @param {(string|Path)} intoPath
- * @param {?(boolean|function(Error))=} recursive (defaults to true)
- * @param {?(Path.SyncMode|function(Error))=} syncMode (defaults to Path.SyncMode.STOP)
- * @param {?(boolean|function(Error, Path))=} resolveSymlink (defaults to false)
- * @param {?function(Error, Path)} callback
+ * @param {(boolean|function(Throwable=))} recursive (defaults to true)
+ * @param {(Path.SyncMode|function(Throwable=))=} syncMode (defaults to Path.SyncMode.STOP)
+ * @param {(boolean|function(Throwable, Path=))=} resolveSymlink (defaults to false)
+ * @param {function(Throwable, Path=)=} callback
  */
 BugFs.copy = function(fromPath, intoPath, recursive, syncMode, resolveSymlink, callback) {
     fromPath = TypeUtil.isString(fromPath) ? new Path(fromPath) : fromPath;
@@ -62,6 +62,19 @@ BugFs.copy = function(fromPath, intoPath, recursive, syncMode, resolveSymlink, c
 BugFs.copySync = function(fromPath, intoPath, recursive, syncMode, resolveSymlink) {
     fromPath = TypeUtil.isString(fromPath) ? new Path(fromPath) : fromPath;
     return fromPath.copySync(intoPath, recursive, syncMode, resolveSymlink);
+};
+
+/**
+ * @param {(string|Path)} fromPath
+ * @param {(string|Path)} intoPath
+ * @param {(boolean|function(Throwable=))} recursive (defaults to true)
+ * @param {(Path.SyncMode|function(Throwable=))=} syncMode (defaults to Path.SyncMode.STOP)
+ * @param {(boolean|function(Throwable, Path=))=} resolveSymlink (defaults to false)
+ * @param {function(Throwable, Path=)=} callback
+ */
+BugFs.copyContents = function(fromPath, intoPath, recursive, syncMode, resolveSymlink, callback) {
+    fromPath = TypeUtil.isString(fromPath) ? new Path(fromPath) : fromPath;
+    fromPath.copyContents(intoPath, recursive, syncMode, resolveSymlink, callback);
 };
 
 /**

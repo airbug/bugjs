@@ -232,6 +232,59 @@ var Path = Class.extend(Obj, {
         });
     },
 
+    copyContents: function(intoPath, recursive, syncMode, resolveSymlink, callback) {
+        if (TypeUtil.isFunction(resolveSymlink)) {
+            callback = resolveSymlink;
+        }
+        if (TypeUtil.isFunction(syncMode)) {
+            callback = syncMode;
+        }
+        if (TypeUtil.isFunction(recursive)) {
+            callback = recursive;
+        }
+        intoPath = TypeUtil.isString(intoPath) ? new Path(intoPath) : intoPath;
+        recursive = TypeUtil.isBoolean(recursive) ? recursive : true;
+        syncMode = TypeUtil.isString(syncMode) ? syncMode : Path.SyncMode.STOP;
+        resolveSymlink = TypeUtil.isBoolean(resolveSymlink) ? resolveSymlink : false;
+
+        var _this = this;
+
+
+        Path.transactionSemaphore.acquire(function() {
+            $series([
+                $task(function(flow) {
+                    _this._exists(resolveSymlink, function(exists) {
+                        if (!exists) {
+                            flow.error(new Error("Cannot copy path contents '" + _this.getAbsolutePath() + "' because it does " +
+                                "not exist."));
+                        } else {
+                            flow.complete();
+                        }
+                    });
+                }),
+                $task(function(flow) {
+                    _this.ensurePath(intoPath, function(error) {
+                        flow.complete(error);
+                    });
+                }),
+                $task(function(flow) {
+                    _this._copyContents(intoPath, recursive, syncMode, resolveSymlink, function(error) {
+                        flow.complete(error);
+                    });
+                })
+            ]).execute(function(error) {
+                    Path.transactionSemaphore.release();
+                    if (callback) {
+                        if (!error) {
+                            callback(null, intoPath);
+                        } else {
+                            callback(error);
+                        }
+                    }
+                });
+        });
+    },
+
     /**
      * @param {(string|Path)} intoPath
      * @param {?boolean=} recursive
@@ -2324,7 +2377,7 @@ var Path = Class.extend(Obj, {
      * @param {boolean} recursive (defaults to true)
      * @param {Path.SyncMode} syncMode (defaults to Path.SyncMode.STOP)
      * @param {boolean} resolveSymlink
-     * @param {?function(Error)} callback
+     * @param {function(Throwable=)=} callback
      */
     _copy: function(copyPath, recursive, syncMode, resolveSymlink, callback) {
         var _this = this;
@@ -2382,10 +2435,10 @@ var Path = Class.extend(Obj, {
      * @private
      * @param {Path} copyPath
      * @param {boolean} recursive
-     * @param {boolean} resolveSymlink
      * @param {Path.SyncMode} syncMode
+     * @param {boolean} resolveSymlink
      */
-    _copySync: function(copyPath, recursive, resolveSymlink, syncMode) {
+    _copySync: function(copyPath, recursive, syncMode, resolveSymlink) {
         if (this._isDirectorySync(resolveSymlink)) {
             this._copyDirectorySync(copyPath, recursive, syncMode);
         } else if (this._isFileSync(resolveSymlink)) {
@@ -2395,6 +2448,79 @@ var Path = Class.extend(Obj, {
         }else {
             throw new Error("Cannot copy path '" + this.getAbsolutePath() + "' because it is an unknown type.");
         }
+    },
+
+    /**
+     * @private
+     * @param {Path} intoPath
+     * @param {boolean} recursive
+     * @param {Path.SyncMode} syncMode
+     * @param {boolean} resolveSymlink
+     * @param {function(Throwable=)} callback
+     */
+    _copyContents: function(intoPath, recursive, syncMode, resolveSymlink, callback) {
+        var _this = this;
+        var copyPath = null;
+        $if (function(flow) {
+                _this._isDirectory(resolveSymlink, function(error, isDirectory) {
+                    if (!error) {
+                        flow.assert(isDirectory);
+                    } else {
+                        flow.error(error);
+                    }
+                });
+            },
+            $task(function(flow) {
+                _this._copyDirectoryContents(intoPath, recursive, syncMode, function(error) {
+                    flow.complete(error);
+                });
+            })
+        ).$elseIf (function(flow) {
+                _this._isFile(resolveSymlink, function(error, isFile) {
+                    if (!error) {
+                        flow.assert(isFile);
+                    } else {
+                        flow.error(error);
+                    }
+                });
+            },
+            $task(function(flow) {
+                _this._generateTargetPath(intoPath, resolveSymlink, function(error, targetPath) {
+                    copyPath = targetPath;
+                    flow.complete(error);
+                });
+            }),
+            $task(function(flow) {
+                _this._copyFile(copyPath, syncMode, function(error) {
+                    flow.complete(error);
+                });
+            })
+        ).$elseIf (function(flow) {
+                _this._isSymlink(function(error, isSymlink) {
+                    if (!error) {
+                        flow.assert(isSymlink);
+                    } else {
+                        flow.error(error);
+                    }
+                });
+            },
+            $task(function(flow) {
+                _this._generateTargetPath(intoPath, resolveSymlink, function(error, targetPath) {
+                    copyPath = targetPath;
+                    flow.complete(error);
+                });
+            }),
+            $task(function(flow) {
+                _this._copySymlink(copyPath, syncMode, function(error) {
+                    flow.complete(error);
+                });
+            })
+        ).$else (
+            $task(function(flow) {
+                flow.error(new Error("Cannot copy path '" + _this.getAbsolutePath() + "' because it is an " +
+                    "unknown type."));
+            })
+        ).execute(callback);
     },
 
     /**
