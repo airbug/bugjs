@@ -107,6 +107,11 @@ var WorkerProcessStarter = Class.extend(Obj, {
         console.log("WorkerProcessStarter#sartWorkerProcess - this.isStarted():", this.isStarted());
 
         if (!this.isStarted()) {
+            var logMessage = "Starting worker '" + workerName + "'";
+            if (this.workerProcess.isDebug()) {
+                logMessage += " in debug mode running on port " + this.workerProcess.getDebugPort();
+            }
+            console.log(logMessage);
             this.created        = true;
             this.callback       = callback;
             this.addProcessListeners();

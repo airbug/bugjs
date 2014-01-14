@@ -106,15 +106,19 @@ var WorkerManager = Class.extend(Obj, {
 
     /**
      * @param {string} workerName
-     * @param {number} maxConcurrency
+     * @param {{
+     *      maxConcurrency: number,
+     *      debug: boolean=
+     * }} options
      * @param {function(Throwable=)} callback
      */
-    createWorker: function(workerName, maxConcurrency, callback) {
-        var workerMaster = this.factoryWorkerMaster(workerName, maxConcurrency);
+    createWorker: function(workerName, options, callback) {
+        var debug = (process.execArgv.indexOf("--debug") >= 0);
+        var workerMaster = this.factoryWorkerMaster(workerName, options.maxConcurrency, debug);
         this.workerMasterSet.add(workerMaster);
 
         //TEST
-        console.log("WorkerManager#createWorker - workerName:", workerName, " maxConcurrency:", maxConcurrency);
+        console.log("WorkerManager#createWorker - workerName:", workerName, " maxConcurrency:", options.maxConcurrency, " debug:", debug);
 
         //TODO BRN: For now we simply auto start. If needed we can split this out and delay the start process.
         $series([
@@ -176,10 +180,11 @@ var WorkerManager = Class.extend(Obj, {
      * @private
      * @param {string} workerName
      * @param {number} maxConcurrency
+     * @param {boolean} debug
      * @returns {WorkerMaster}
      */
-    factoryWorkerMaster: function(workerName, maxConcurrency) {
-        return new WorkerMaster(workerName, maxConcurrency);
+    factoryWorkerMaster: function(workerName, maxConcurrency, debug) {
+        return new WorkerMaster(workerName, maxConcurrency, debug);
     }
 });
 

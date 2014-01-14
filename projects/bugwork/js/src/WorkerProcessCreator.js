@@ -39,7 +39,7 @@ var WorkerProcessCreator = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(debug, debugPort) {
 
         this._super();
 
@@ -65,6 +65,18 @@ var WorkerProcessCreator = Class.extend(Obj, {
          * @type {boolean}
          */
         this.created        = false;
+
+        /**
+         * @private
+         * @type {boolean}
+         */
+        this.debug          = debug;
+
+        /**
+         * @private
+         * @type {number}
+         */
+        this.debugPort      = debugPort;
 
         /**
          * @private
@@ -108,7 +120,7 @@ var WorkerProcessCreator = Class.extend(Obj, {
         if (!this.isCreated()) {
             this.created        = true;
             this.callback       = callback;
-            this.workerProcess  = this.factoryWorkerProcess();
+            this.workerProcess  = this.factoryWorkerProcess(this.debug, this.debugPort);
             this.addProcessListeners();
             this.workerProcess.createProcess();
         } else {
@@ -159,10 +171,12 @@ var WorkerProcessCreator = Class.extend(Obj, {
 
     /**
      * @private
+     * @param {boolean} debug
+     * @param {number} debugPort
      * @returns {WorkerProcess}
      */
-    factoryWorkerProcess: function() {
-        return new WorkerProcess();
+    factoryWorkerProcess: function(debug, debugPort) {
+        return new WorkerProcess(debug, debugPort);
     },
 
     /**

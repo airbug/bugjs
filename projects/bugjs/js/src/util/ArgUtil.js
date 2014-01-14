@@ -87,14 +87,20 @@ ArgUtil.process = function(rawArgs, descriptions) {
                 neededDescriptions.push(description);
             }
         } else {
-            if (neededDescriptions.length > 0) {
-                var neededDescription = neededDescriptions.shift();
-                ArgUtil.setArgOnArgsObject(args[i], argsObject, neededDescription);
+            if (!TypeUtil.isUndefined(args[i])) {
+                if (neededDescriptions.length > 0) {
+                    var neededDescription = neededDescriptions.shift();
+                    ArgUtil.setArgOnArgsObject(args[i], argsObject, neededDescription);
+                    if (!description.optional) {
+                        neededDescriptions.push(description);
+                    }
+                } else {
+                    ArgUtil.setArgOnArgsObject(args[i], argsObject, description);
+                }
+            } else {
                 if (!description.optional) {
                     neededDescriptions.push(description);
                 }
-            } else {
-                ArgUtil.setArgOnArgsObject(args[i], argsObject, description);
             }
         }
     }

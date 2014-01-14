@@ -58,8 +58,10 @@ var WorkerProcess = Class.extend(EventDispatcher, {
 
     /**
      * @constructs
+     * @param {boolean=} debug
+     * @param {number=} debugPort
      */
-    _constructor: function() {
+    _constructor: function(debug, debugPort) {
 
         this._super();
 
@@ -79,6 +81,18 @@ var WorkerProcess = Class.extend(EventDispatcher, {
          * @type {boolean}
          */
         this.created            = false;
+
+        /**
+         * @private
+         * @type {boolean}
+         */
+        this.debug              = debug;
+
+        /**
+         * @private
+         * @type {number}
+         */
+        this.debugPort          = debugPort;
 
         /**
          * @private
@@ -117,6 +131,20 @@ var WorkerProcess = Class.extend(EventDispatcher, {
     /**
      * @return {boolean}
      */
+    isDebug: function() {
+        return this.debug;
+    },
+
+    /**
+     * @return {number}
+     */
+    getDebugPort: function() {
+        return this.debugPort;
+    },
+
+    /**
+     * @return {boolean}
+     */
     isReady: function() {
         return this.ready;
     },
@@ -131,9 +159,16 @@ var WorkerProcess = Class.extend(EventDispatcher, {
      */
     createProcess: function() {
         if (!this.isCreated()) {
-            this.created = true;
+            this.created    = true;
+            var params      = [];
+            var options     = {
+                stdio: 'inherit'
+            };
+            if (this.debug) {
+                options.execArgv = ["--debug=" + this.debugPort];
+            }
             var processPath     = BugFs.resolvePaths([__dirname, "../scripts/worker-application-start.js"]);
-            this.childProcess   = child_process.fork(processPath.getAbsolutePath(), [], {stdio: 'inherit'});
+            this.childProcess   = child_process.fork(processPath.getAbsolutePath(), params, options);
             this.childProcess.on('message', this.hearChildProcessMessage);
             this.childProcess.on('close', this.hearProcessClose);
         } else {

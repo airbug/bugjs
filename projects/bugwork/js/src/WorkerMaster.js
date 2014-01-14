@@ -54,7 +54,7 @@ var WorkerMaster = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(workerName, maxConcurrency) {
+    _constructor: function(workerName, maxConcurrency, debug) {
 
         this._super();
 
@@ -62,6 +62,12 @@ var WorkerMaster = Class.extend(Obj, {
         //-------------------------------------------------------------------------------
         // Private Properties
         //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {boolean}
+         */
+        this.debug              = debug;
 
         /**
          * @private
@@ -108,6 +114,13 @@ var WorkerMaster = Class.extend(Obj, {
     /**
      * @return {boolean}
      */
+    isDebug: function() {
+        return this.debug;
+    },
+
+    /**
+     * @return {boolean}
+     */
     isStarted: function() {
         return this.started;
     },
@@ -142,7 +155,8 @@ var WorkerMaster = Class.extend(Obj, {
             },
             $task(function(flow) {
                 i++;
-                var workerProcessCreator = _this.factoryWorkerProcessCreator();
+                WorkerMaster.lastDebugPort++;
+                var workerProcessCreator = _this.factoryWorkerProcessCreator(_this.isDebug(), WorkerMaster.lastDebugPort);
                 workerProcessCreator.createWorkerProcess(function(throwable, workerProcess) {
 
                     if (throwable) {
@@ -150,8 +164,7 @@ var WorkerMaster = Class.extend(Obj, {
                         console.log("createWorkerProcess callback throwable:", throwable)
                     }
 
-                    //TEST
-                    console.log("WorkerProcess created");
+                   console.log("WorkerProcess created");
 
                     //TODO BRN: What do we do if we received a throwable?
                     if (!throwable) {
@@ -210,12 +223,25 @@ var WorkerMaster = Class.extend(Obj, {
 
     /**
      * @private
+     * @param {boolean} debug
+     * @param {number} debugPort
      * @return {WorkerProcessCreator}
      */
-    factoryWorkerProcessCreator: function() {
-        return new WorkerProcessCreator();
+    factoryWorkerProcessCreator: function(debug, debugPort) {
+        return new WorkerProcessCreator(debug, debugPort);
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Static Properties
+//-------------------------------------------------------------------------------
+
+/**
+ * @static
+ * @type {number}
+ */
+WorkerMaster.lastDebugPort = 5858;
 
 
 //-------------------------------------------------------------------------------
