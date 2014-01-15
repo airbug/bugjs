@@ -104,7 +104,6 @@ var CarapaceApplication = Class.extend(EventDispatcher, {
             controllerRoute.setupRoute(this.router);
             controllerRoute.addEventListener(ControllerRoute.EventType.ROUTING_REQUESTED,
                 this.hearControllerRouteRoutingRequestedEvent, this);
-
         }
     },
 
@@ -170,11 +169,11 @@ var CarapaceApplication = Class.extend(EventDispatcher, {
      * @param {RoutingRequest} routingRequest
      */
     rejectRoutingRequest: function(routingRequest) {
-        //TEST
-        console.log("Routing request rejected!");
-
         var rejectedReason = routingRequest.getRejectedReason();
 
+        //TODO BRN: Build an annotation for adding rejection handlers to controllers
+
+        console.error("Routing request was rejected!");
     },
 
 

@@ -164,9 +164,16 @@ var WorkerProcess = Class.extend(EventDispatcher, {
             var options     = {
                 stdio: 'inherit'
             };
+            var execArgv = [];
             if (this.debug) {
-                options.execArgv = ["--debug=" + this.debugPort];
+                execArgv.push("--debug=" + this.debugPort);
             }
+            var configIndex = process.execArgv.indexOf("--config");
+            if (configIndex > -1) {
+                execArgv.push("--config");
+                execArgv.push(process.execArgv[configIndex + 1]);
+            }
+            options.execArgv = execArgv;
             var processPath     = BugFs.resolvePaths([__dirname, "../scripts/worker-application-start.js"]);
             this.childProcess   = child_process.fork(processPath.getAbsolutePath(), params, options);
             this.childProcess.on('message', this.hearChildProcessMessage);

@@ -138,6 +138,7 @@ var RedisClient = Class.extend(EventDispatcher, {
      */
     connect: function(callback) {
         var _this = this;
+        var cbFired = false;
         if (!this.getConnected() && !this.getConnecting()) {
             this.connecting = true;
             this.client     = this.redis.createClient(this.config.getPort(), this.config.getHost());
@@ -151,7 +152,11 @@ var RedisClient = Class.extend(EventDispatcher, {
                 _this.connected = false;
                 _this.dispatchEvent(new RedisEvent(RedisEvent.EventTypes.END));
             });
-            this.client.on("error", function() {
+            this.client.on("error", function(error) {
+                if (!cbFired) {
+                    cbFired = true;
+                    callback(error);
+                }
                 _this.dispatchEvent(new RedisEvent(RedisEvent.EventTypes.ERROR));
             });
             this.client.on("idle", function() {
@@ -162,7 +167,10 @@ var RedisClient = Class.extend(EventDispatcher, {
                 _this.connected = true;
                 console.log("Connected to redis server on port ", _this.config.getPort());
                 _this.dispatchEvent(new RedisEvent(RedisEvent.EventTypes.READY));
-                callback();
+                if (!cbFired) {
+                    cbFired = true;
+                    callback();
+                }
             });
             this.client.on("message", function(channel, message) {
                 _this.dispatchEvent(new RedisEvent(RedisEvent.EventTypes.MESSAGE, {

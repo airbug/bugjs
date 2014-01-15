@@ -70,6 +70,13 @@ var ControllerAnnotation = Class.extend(Annotation, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @param {string} controllerCatch
+     */
+    catch: function(controllerCatch) {
+        //TODO BRN
+    },
+
+    /**
      * @param {string} controllerRoute
      */
     route: function(controllerRoute) {
