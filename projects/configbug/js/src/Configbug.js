@@ -234,8 +234,12 @@ var Configbug = Class.extend(Obj, {
         var loadedConfig = undefined;
         $series([
             $if(function(flow) {
-                    BugFs.exists(configPath, function(exists) {
-                        flow.assert(exists);
+                    BugFs.exists(configPath, function(throwable, exists) {
+                        if (!throwable) {
+                            flow.assert(exists);
+                        } else {
+                            flow.error(throwable);
+                        }
                     });
                 },
                 $task(function(flow) {

@@ -106,10 +106,10 @@ BugFs.copyDirectorySync = function(fromPath, intoPath, recursive, syncMode, reso
 /**
  * @param {(string|Path)} fromPath
  * @param {(string|Path)} intoPath
- * @param {?(boolean|function(Error))=} recursive (defaults to true)
- * @param {?(Path.SyncMode|function(Error))=} syncMode (defaults to Path.SyncMode.STOP)
- * @param {?(boolean|function(Error))=} resolveSymlink (defaults to false)
- * @param {?function(Error)} callback
+ * @param {(boolean|function(Throwable=))} recursive (defaults to true)
+ * @param {(Path.SyncMode|function(Throwable=))=} syncMode (defaults to Path.SyncMode.STOP)
+ * @param {(boolean|function(Throwable=))=} resolveSymlink (defaults to false)
+ * @param {function(Throwable=)=} callback
  */
 BugFs.copyDirectoryContents = function(fromPath, intoPath, recursive, syncMode, resolveSymlink, callback) {
     fromPath = TypeUtil.isString(fromPath) ? new Path(fromPath) : fromPath;
@@ -301,7 +301,7 @@ BugFs.deleteFileSync = function(filePath, resolveSymlink) {
  * @static
  * @param {(string | Path)} aPath
  * @param {?(boolean|function(boolean))=} resolveSymlink (defaults to false)
- * @param {?function(boolean)=} callback
+ * @param {function(Throwable, boolean=)=} callback
  */
 BugFs.exists = function(aPath, resolveSymlink, callback) {
     aPath = TypeUtil.isString(aPath) ? new Path(aPath) : aPath;

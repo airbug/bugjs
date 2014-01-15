@@ -6,6 +6,7 @@
 
 //@Require('Class')
 //@Require('Collection')
+//@Require('Exception')
 //@Require('Obj')
 
 
@@ -20,9 +21,10 @@ var bugpack = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =         bugpack.require('Class');
-var Collection =    bugpack.require('Collection');
-var Obj =           bugpack.require('Obj');
+var Class           = bugpack.require('Class');
+var Collection      = bugpack.require('Collection');
+var Exception       = bugpack.require('Exception')
+var Obj             =  bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
@@ -147,7 +149,7 @@ var Queue = Class.extend(Collection, {
         if (this.getCount() > 0) {
             return this.removeAt(0);
         } else {
-            throw new Error("Queue is empty")
+            throw new Exception("Empty", {}, "Queue is empty");
         }
     },
 
@@ -199,7 +201,6 @@ var Queue = Class.extend(Collection, {
         var value = this.getAt(index);
         var result = this.hashStore.removeValue(value);
         if (result) {
-            this.count--;
             this.valueArray.splice(index, 1);
         }
         return value;

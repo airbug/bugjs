@@ -194,12 +194,16 @@ var Path = Class.extend(Obj, {
         Path.transactionSemaphore.acquire(function() {
             $series([
                 $task(function(flow) {
-                    _this._exists(resolveSymlink, function(exists) {
-                        if (!exists) {
-                            flow.error(new Error("Cannot copy path '" + _this.getAbsolutePath() + "' because it does " +
-                                "not exist."));
+                    _this._exists(resolveSymlink, function(throwable, exists) {
+                        if (!throwable) {
+                            if (!exists) {
+                                flow.error(new Error("Cannot copy path '" + _this.getAbsolutePath() + "' because it does " +
+                                    "not exist."));
+                            } else {
+                                flow.complete();
+                            }
                         } else {
-                            flow.complete();
+                            flow.error(throwable);
                         }
                     });
                 }),
@@ -253,12 +257,16 @@ var Path = Class.extend(Obj, {
         Path.transactionSemaphore.acquire(function() {
             $series([
                 $task(function(flow) {
-                    _this._exists(resolveSymlink, function(exists) {
-                        if (!exists) {
-                            flow.error(new Error("Cannot copy path contents '" + _this.getAbsolutePath() + "' because it does " +
-                                "not exist."));
+                    _this._exists(resolveSymlink, function(throwable, exists) {
+                        if (!throwable) {
+                            if (!exists) {
+                                flow.error(new Error("Cannot copy path contents '" + _this.getAbsolutePath() + "' because it does " +
+                                    "not exist."));
+                            } else {
+                                flow.complete();
+                            }
                         } else {
-                            flow.complete();
+                            flow.error(throwable);
                         }
                     });
                 }),
@@ -362,11 +370,15 @@ var Path = Class.extend(Obj, {
         Path.transactionSemaphore.acquire(function() {
             $series([
                 $task(function(flow) {
-                    _this._exists(resolveSymlink, function(exists) {
-                        if (!exists) {
-                            flow.error(new Error("Cannot copy directory '" + _this.getAbsolutePath() + "' because it does not exist."));
+                    _this._exists(resolveSymlink, function(throwable, exists) {
+                        if (!throwable) {
+                            if (!exists) {
+                                flow.error(new Error("Cannot copy directory '" + _this.getAbsolutePath() + "' because it does not exist."));
+                            } else {
+                                flow.complete();
+                            }
                         } else {
-                            flow.complete();
+                            flow.error(throwable);
                         }
                     });
                 }),
@@ -443,10 +455,10 @@ var Path = Class.extend(Obj, {
      * 3) If the intoPath does not exist, this function will attempt to create the intoPath and then copy the contents.
      * 4) This will not copy files recursively unless the "recursive" option is set to true.
      * @param {(string|Path)} intoPath
-     * @param {?(boolean|function(Error))=} recursive (defaults to true)
-     * @param {?(Path.SyncMode|function(Error))=} syncMode (defaults to Path.SyncMode.STOP)
-     * @param {?(boolean|function(Error))=} resolveSymlink (defaults to false)
-     * @param {?function(Error)} callback
+     * @param {(boolean|function(Throwable=))=} recursive (defaults to true)
+     * @param {(Path.SyncMode|function(Throwable=))=} syncMode (defaults to Path.SyncMode.STOP)
+     * @param {(boolean|function(Throwable=))=} resolveSymlink (defaults to false)
+     * @param {function(Throwable=)=} callback
      */
     copyDirectoryContents: function(intoPath, recursive, syncMode, resolveSymlink, callback) {
         if (TypeUtil.isFunction(resolveSymlink)) {
@@ -468,12 +480,16 @@ var Path = Class.extend(Obj, {
         Path.transactionSemaphore.acquire(function() {
             $series([
                 $task(function(flow) {
-                    _this._exists(resolveSymlink, function(exists) {
-                        if (!exists) {
-                            flow.error(new Error("Cannot copy contents of directory '" + _this.getAbsolutePath() + "' " +
-                                "because it does not exist."));
+                    _this._exists(resolveSymlink, function(throwable, exists) {
+                        if (!throwable) {
+                            if (!exists) {
+                                flow.error(new Error("Cannot copy contents of directory '" + _this.getAbsolutePath() + "' " +
+                                    "because it does not exist."));
+                            } else {
+                                flow.complete();
+                            }
                         } else {
-                            flow.complete();
+                            flow.error(throwable);
                         }
                     });
                 }),
@@ -580,12 +596,16 @@ var Path = Class.extend(Obj, {
         Path.transactionSemaphore.acquire(function() {
             $series([
                 $task(function(flow) {
-                    _this._exists(resolveSymlink, function(exists) {
-                        if (!exists) {
-                            flow.error(new Error("Cannot copy file '" + _this.getAbsolutePath() + "' because it does " +
-                                "not exist."));
+                    _this._exists(resolveSymlink, function(throwable, exists) {
+                        if (!throwable) {
+                            if (!exists) {
+                                flow.error(new Error("Cannot copy file '" + _this.getAbsolutePath() + "' because it does " +
+                                    "not exist."));
+                            } else {
+                                flow.complete();
+                            }
                         } else {
-                            flow.complete();
+                            flow.error(throwable);
                         }
                     });
                 }),
@@ -678,12 +698,16 @@ var Path = Class.extend(Obj, {
         Path.transactionSemaphore.acquire(function() {
             $series([
                 $task(function(flow) {
-                    _this._exists(false, function(exists) {
-                        if (!exists) {
-                            flow.error(new Error("Cannot copy symlink '" + _this.getAbsolutePath() + "' because it does " +
-                                "not exist."));
+                    _this._exists(false, function(throwable, exists) {
+                        if (!throwable) {
+                            if (!exists) {
+                                flow.error(new Error("Cannot copy symlink '" + _this.getAbsolutePath() + "' because it does " +
+                                    "not exist."));
+                            } else {
+                                flow.complete();
+                            }
                         } else {
-                            flow.complete();
+                            flow.error(throwable);
                         }
                     });
                 }),
@@ -774,8 +798,12 @@ var Path = Class.extend(Obj, {
 
         Path.transactionSemaphore.acquire(function() {
             $if (function(flow) {
-                    _this._exists(false, function(exists) {
-                        flow.assert(!exists);
+                    _this._exists(false, function(throwable, exists) {
+                        if (!throwable) {
+                            flow.assert(!exists);
+                        } else {
+                            flow.error(throwable);
+                        }
                     });
                 },
                 $task(function(flow) {
@@ -849,8 +877,12 @@ var Path = Class.extend(Obj, {
 
         Path.transactionSemaphore.acquire(function() {
             $if (function(flow) {
-                    _this._exists(false, function(exists) {
-                        flow.assert(!exists);
+                    _this._exists(false, function(throwable, exists) {
+                        if (!throwable) {
+                            flow.assert(!exists);
+                        } else {
+                            flow.error(throwable);
+                        }
                     });
                 },
                 $task(function(flow) {
@@ -903,7 +935,7 @@ var Path = Class.extend(Obj, {
 
     //TODO BRN: Figure out how to integrate the file handle semaphore in to these stream functions.
     /**
-     * @param {Object} options
+     * @param {Object=} options
      * @return {ReadStream}
      */
     createReadStream: function(options) {
@@ -911,7 +943,7 @@ var Path = Class.extend(Obj, {
     },
 
     /**
-     * @param {Object} options
+     * @param {Object=} options
      * @return {WriteStream}
      */
     createWriteStream: function(options) {
@@ -936,8 +968,12 @@ var Path = Class.extend(Obj, {
         var _this = this;
         Path.transactionSemaphore.acquire(function() {
             $if (function(flow) {
-                    _this._exists(resolveSymlink, function(exists) {
-                        flow.assert(exists);
+                    _this._exists(resolveSymlink, function(throwable, exists) {
+                        if (!throwable) {
+                            flow.assert(exists);
+                        } else {
+                            flow.error(throwable);
+                        }
                     });
                 },
                 $task(function(flow) {
@@ -983,8 +1019,12 @@ var Path = Class.extend(Obj, {
 
         Path.transactionSemaphore.acquire(function() {
             $if (function(flow) {
-                    _this._exists(resolveSymlink, function(exists) {
-                        flow.assert(exists);
+                    _this._exists(resolveSymlink, function(throwable, exists) {
+                        if (!throwable) {
+                            flow.assert(exists);
+                        } else {
+                            flow.error(throwable);
+                        }
                     });
                 },
                 $series([
@@ -1043,8 +1083,12 @@ var Path = Class.extend(Obj, {
         var _this = this;
         Path.transactionSemaphore.acquire(function() {
             $if (function(flow) {
-                    _this._exists(resolveSymlink, function(exists) {
-                        flow.assert(exists);
+                    _this._exists(resolveSymlink, function(throwable, exists) {
+                        if (!throwable) {
+                            flow.assert(exists);
+                        } else {
+                            flow.error(throwable);
+                        }
                     });
                 },
                 $series([
@@ -1096,8 +1140,12 @@ var Path = Class.extend(Obj, {
         var _this = this;
         Path.transactionSemaphore.acquire(function() {
             $if (function(flow) {
-                    _this._exists(false, function(exists) {
-                        flow.assert(exists);
+                    _this._exists(false, function(throwable, exists) {
+                        if (!throwable) {
+                            flow.assert(exists);
+                        } else {
+                            flow.error(throwable);
+                        }
                     });
                 },
                 $series([
@@ -1143,7 +1191,7 @@ var Path = Class.extend(Obj, {
 
     /**
      * @param {(boolean|function(boolean))} resolveSymlink (defaults to false)
-     * @param {?function(boolean)=} callback
+     * @param {?function(Throwable, boolean=)=} callback
      */
     exists: function(resolveSymlink, callback) {
         if (TypeUtil.isFunction(resolveSymlink)) {
@@ -1152,9 +1200,9 @@ var Path = Class.extend(Obj, {
         resolveSymlink = TypeUtil.isBoolean(resolveSymlink) ? resolveSymlink : false;
         var _this = this;
         Path.transactionSemaphore.acquire(function() {
-            _this._exists(resolveSymlink, function(result) {
+            _this._exists(resolveSymlink, function(throwable, result) {
                 Path.transactionSemaphore.release();
-                callback(result);
+                callback(throwable, result);
             })
         });
     },
@@ -1211,12 +1259,16 @@ var Path = Class.extend(Obj, {
         Path.transactionSemaphore.acquire(function() {
             $series([
                 $task(function(flow) {
-                    _this._exists(resolveSymlink, function(exists) {
-                        if (!exists) {
-                            flow.error(new Error("Cannot check if directory '" + _this.getAbsolutePath() + "' is empty because it " +
-                                "does not exist."));
+                    _this._exists(resolveSymlink, function(throwable, exists) {
+                        if (!throwable) {
+                            if (!exists) {
+                                flow.error(new Error("Cannot check if directory '" + _this.getAbsolutePath() + "' is empty because it " +
+                                    "does not exist."));
+                            } else {
+                                flow.complete();
+                            }
                         } else {
-                            flow.complete();
+                            flow.error(throwable);
                         }
                     });
                 }),
@@ -1356,12 +1408,16 @@ var Path = Class.extend(Obj, {
         Path.transactionSemaphore.acquire(function() {
             $series([
                 $task(function(flow) {
-                    _this._exists(resolveSymlink, function(exists) {
-                        if (!exists) {
-                            flow.error(new Error("Cannot move path '" + _this.getAbsolutePath() + "' because it does " +
-                                "not exist."));
+                    _this._exists(resolveSymlink, function(throwable, exists) {
+                        if (!throwable) {
+                            if (!exists) {
+                                flow.error(new Error("Cannot move path '" + _this.getAbsolutePath() + "' because it does " +
+                                    "not exist."));
+                            } else {
+                                flow.complete();
+                            }
                         } else {
-                            flow.complete();
+                            flow.error(throwable);
                         }
                     });
                 }),
@@ -1448,12 +1504,16 @@ var Path = Class.extend(Obj, {
         Path.transactionSemaphore.acquire(function() {
             $series([
                 $task(function(flow) {
-                    _this._exists(resolveSymlink, function(exists) {
-                        if (!exists) {
-                            flow.error(new Error("Cannot move directory '" + _this.getAbsolutePath() + "' because it " +
-                                "does not exist."));
+                    _this._exists(resolveSymlink, function(throwable, exists) {
+                        if (!throwable) {
+                            if (!exists) {
+                                flow.error(new Error("Cannot move directory '" + _this.getAbsolutePath() + "' because it " +
+                                    "does not exist."));
+                            } else {
+                                flow.complete();
+                            }
                         } else {
-                            flow.complete();
+                            flow.error(throwable);
                         }
                     });
                 }),
@@ -1552,12 +1612,16 @@ var Path = Class.extend(Obj, {
         Path.transactionSemaphore.acquire(function() {
             $series([
                 $task(function(flow) {
-                    _this._exists(resolveSymlink, function(exists) {
-                        if (!exists) {
-                            flow.error(new Error("Cannot move contents of directory '" + _this.getAbsolutePath() + "' " +
-                                "because it does not exist."));
+                    _this._exists(resolveSymlink, function(throwable, exists) {
+                        if (!throwable) {
+                            if (!exists) {
+                                flow.error(new Error("Cannot move contents of directory '" + _this.getAbsolutePath() + "' " +
+                                    "because it does not exist."));
+                            } else {
+                                flow.complete();
+                            }
                         } else {
-                            flow.complete();
+                            flow.error(throwable);
                         }
                     });
                 }),
@@ -1636,12 +1700,16 @@ var Path = Class.extend(Obj, {
         Path.transactionSemaphore.acquire(function() {
             $series([
                 $task(function(flow) {
-                    _this._exists(resolveSymlink, function(exists) {
-                        if (!exists) {
-                            flow.error(new Error("Cannot move file '" + _this.getAbsolutePath() + "' because it does " +
-                                "not exist."));
+                    _this._exists(resolveSymlink, function(throwable, exists) {
+                        if (!throwable) {
+                            if (!exists) {
+                                flow.error(new Error("Cannot move file '" + _this.getAbsolutePath() + "' because it does " +
+                                    "not exist."));
+                            } else {
+                                flow.complete();
+                            }
                         } else {
-                            flow.complete();
+                            flow.error(throwable);
                         }
                     });
                 }),
@@ -1732,12 +1800,16 @@ var Path = Class.extend(Obj, {
         Path.transactionSemaphore.acquire(function() {
             $series([
                 $task(function(flow) {
-                    _this._exists(false, function(exists) {
-                        if (!exists) {
-                            flow.error(new Error("Cannot move symlink '" + _this.getAbsolutePath() + "' because it does " +
-                                "not exist."));
+                    _this._exists(false, function(throwable, exists) {
+                        if (!throwable) {
+                            if (!exists) {
+                                flow.error(new Error("Cannot move symlink '" + _this.getAbsolutePath() + "' because it does " +
+                                    "not exist."));
+                            } else {
+                                flow.complete();
+                            }
                         } else {
-                            flow.complete();
+                            flow.error(throwable);
                         }
                     });
                 }),
@@ -1815,12 +1887,16 @@ var Path = Class.extend(Obj, {
         Path.transactionSemaphore.acquire(function() {
             $series([
                 $task(function(flow) {
-                    _this._exists(resolveSymlink, function(exists) {
-                        if (!exists) {
-                            flow.error(new Error("Cannot read directory '" + _this.getAbsolutePath() + "' because it " +
-                                "does not exist."));
+                    _this._exists(resolveSymlink, function(throwable, exists) {
+                        if (!throwable) {
+                            if (!exists) {
+                                flow.error(new Error("Cannot read directory '" + _this.getAbsolutePath() + "' because it " +
+                                    "does not exist."));
+                            } else {
+                                flow.complete();
+                            }
                         } else {
-                            flow.complete();
+                            flow.error(throwable);
                         }
                     });
                 }),
@@ -1896,12 +1972,16 @@ var Path = Class.extend(Obj, {
         Path.transactionSemaphore.acquire(function() {
             $series([
                 $task(function(flow) {
-                    _this._exists(resolveSymlink, function(exists) {
-                        if (!exists) {
-                            flow.error(new Error("Cannot read file '" + _this.getAbsolutePath() + "' because it " +
-                                "does not exist."));
+                    _this._exists(resolveSymlink, function(throwable, exists) {
+                        if (!throwable) {
+                            if (!exists) {
+                                flow.error(new Error("Cannot read file '" + _this.getAbsolutePath() + "' because it " +
+                                    "does not exist."));
+                            } else {
+                                flow.complete();
+                            }
                         } else {
-                            flow.complete();
+                            flow.error(throwable);
                         }
                     });
                 }),
@@ -1988,12 +2068,16 @@ var Path = Class.extend(Obj, {
         Path.transactionSemaphore.acquire(function() {
             $series([
                 $task(function(flow) {
-                    _this._exists(false, function(exists) {
-                        if (!exists) {
-                            flow.error(new Error("Cannot symlink path '" + _this.getAbsolutePath() + "' because it does " +
-                                "not exist."));
+                    _this._exists(false, function(throwable, exists) {
+                        if (!throwable) {
+                            if (!exists) {
+                                flow.error(new Error("Cannot symlink path '" + _this.getAbsolutePath() + "' because it does " +
+                                    "not exist."));
+                            } else {
+                                flow.complete();
+                            }
                         } else {
-                            flow.complete();
+                            flow.error(throwable);
                         }
                     });
                 }),
@@ -2056,12 +2140,16 @@ var Path = Class.extend(Obj, {
         Path.transactionSemaphore.acquire(function() {
             $series([
                 $task(function(flow) {
-                    _this._exists(false, function(exists) {
-                        if (!exists) {
-                            flow.error(new Error("Cannot symlink directory '" + _this.getAbsolutePath() + "' because it " +
-                                "does not exist."));
+                    _this._exists(false, function(throwable, exists) {
+                        if (!throwable) {
+                            if (!exists) {
+                                flow.error(new Error("Cannot symlink directory '" + _this.getAbsolutePath() + "' because it " +
+                                    "does not exist."));
+                            } else {
+                                flow.complete();
+                            }
                         } else {
-                            flow.complete();
+                            flow.error(throwable);
                         }
                     });
                 }),
@@ -2141,12 +2229,16 @@ var Path = Class.extend(Obj, {
         Path.transactionSemaphore.acquire(function() {
             $series([
                 $task(function(flow) {
-                    _this._exists(false, function(exists) {
-                        if (!exists) {
-                            flow.error(new Error("Cannot symlink contents of directory '" + _this.getAbsolutePath() + "' " +
-                                "because the directory does not exist."));
+                    _this._exists(false, function(throwable, exists) {
+                        if (!throwable) {
+                            if (!exists) {
+                                flow.error(new Error("Cannot symlink contents of directory '" + _this.getAbsolutePath() + "' " +
+                                    "because the directory does not exist."));
+                            } else {
+                                flow.complete();
+                            }
                         } else {
-                            flow.complete();
+                            flow.error(throwable);
                         }
                     });
                 }),
@@ -2219,12 +2311,16 @@ var Path = Class.extend(Obj, {
         Path.transactionSemaphore.acquire(function() {
             $series([
                 $task(function(flow) {
-                    _this._exists(false, function(exists) {
-                        if (!exists) {
-                            flow.error(new Error("Cannot symlink file '" + _this.getAbsolutePath() + "' because it " +
-                                "does not exist."));
+                    _this._exists(false, function(throwable, exists) {
+                        if (!throwable) {
+                            if (!exists) {
+                                flow.error(new Error("Cannot symlink file '" + _this.getAbsolutePath() + "' because it " +
+                                    "does not exist."));
+                            } else {
+                                flow.complete();
+                            }
                         } else {
-                            flow.complete();
+                            flow.error(throwable);
                         }
                     });
                 }),
@@ -2308,12 +2404,16 @@ var Path = Class.extend(Obj, {
         Path.transactionSemaphore.acquire(function() {
             $series([
                 $task(function(flow) {
-                    _this._exists(resolveSymlink, function(exists) {
-                        if (!exists) {
-                            flow.error(new Error("Cannot write to file '" + _this.getAbsolutePath() + "' because it " +
-                                "does not exist."));
+                    _this._exists(resolveSymlink, function(throwable, exists) {
+                        if (!throwable) {
+                            if (!exists) {
+                                flow.error(new Error("Cannot write to file '" + _this.getAbsolutePath() + "' because it " +
+                                    "does not exist."));
+                            } else {
+                                flow.complete();
+                            }
                         } else {
-                            flow.complete();
+                            flow.error(throwable);
                         }
                     });
                 }),
@@ -2533,8 +2633,12 @@ var Path = Class.extend(Obj, {
     _copyDirectory: function(copyPath, recursive, syncMode, callback) {
         var _this = this;
         $if (function(flow) {
-                copyPath._exists(false, function(exists) {
-                    flow.assert(exists);
+                copyPath._exists(false, function(throwable, exists) {
+                    if (!throwable) {
+                        flow.assert(exists);
+                    } else {
+                        flow.error(throwable);
+                    }
                 });
             },
             $task(function(flow) {
@@ -2964,8 +3068,12 @@ var Path = Class.extend(Obj, {
     _copyFile: function(copyPath, syncMode, callback) {
         var _this = this;
         $if (function(flow) {
-                copyPath._exists(false, function(exists) {
-                    flow.assert(exists);
+                copyPath._exists(false, function(throwable, exists) {
+                    if (!throwable) {
+                        flow.assert(exists);
+                    } else {
+                        flow.error(throwable);
+                    }
                 });
             },
             $task(function(flow) {
@@ -3245,31 +3353,27 @@ var Path = Class.extend(Obj, {
         //TODO BRN: Not sure if this counts as a file handle. Need to look in to this.
 
         Path.fileHandleSemaphore.acquire(function() {
-            readStream.pipe(writeStream);
-            readStream.on('end', function() {
+            var cbCalled = false;
+
+            var done = function(error) {
                 readStream.removeAllListeners();
                 writeStream.removeAllListeners();
                 Path.fileHandleSemaphore.release();
-                if (callback) {
-                    callback();
+                if (!cbCalled) {
+                    callback(error);
+                    cbCalled = true;
                 }
+            };
+            writeStream.on('close', function(error) {
+                done();
             });
             readStream.on('error', function(error) {
-                readStream.removeAllListeners();
-                writeStream.removeAllListeners();
-                Path.fileHandleSemaphore.release();
-                if (callback) {
-                    callback(error);
-                }
+                done(error);
             });
             writeStream.on('error', function(error) {
-                readStream.removeAllListeners();
-                writeStream.removeAllListeners();
-                Path.fileHandleSemaphore.release();
-                if (callback) {
-                    callback(error);
-                }
+                done(error);
             });
+            readStream.pipe(writeStream);
         });
     },
 
@@ -3302,8 +3406,12 @@ var Path = Class.extend(Obj, {
     _copySymlink: function(copyPath, syncMode, callback) {
         var _this = this;
         $if (function(flow) {
-                copyPath._exists(false, function(exists) {
-                    flow.assert(exists);
+                copyPath._exists(false, function(throwable, exists) {
+                    if (!throwable) {
+                        flow.assert(exists);
+                    } else {
+                        flow.error(throwable);
+                    }
                 });
             },
             $task(function(flow) {
@@ -3601,13 +3709,16 @@ var Path = Class.extend(Obj, {
                 }
             }),
             $task(function(flow) {
-                fs.mkdir(_this.getAbsolutePath(), mode, $traceWithError(function(error) {
-                    if (!error) {
-                        flow.complete();
-                    } else {
-                        flow.error(new Error(error));
-                    }
-                }));
+                Path.fileHandleSemaphore.acquire(function() {
+                    fs.mkdir(_this.getAbsolutePath(), mode, $traceWithError(function(error) {
+                        Path.fileHandleSemaphore.release();
+                        if (!error) {
+                            flow.complete();
+                        } else {
+                            flow.error(new Error(error));
+                        }
+                    }));
+                });
             })
         ]).execute(callback);
     },
@@ -3832,12 +3943,15 @@ var Path = Class.extend(Obj, {
      * @param {?function(Error)} callback
      */
     _deleteSymlink: function(callback) {
-        fs.unlink(this.getAbsolutePath(), $traceWithError(function(error) {
-            if (error) {
-                error = new Error(error.message);
-            }
-            callback(error);
-        }));
+        Path.fileHandleSemaphore.acquire(function() {
+            fs.unlink(_this.getAbsolutePath(), $traceWithError(function(error) {
+                Path.fileHandleSemaphore.release();
+                if (error) {
+                    error = new Error(error.message);
+                }
+                callback(error);
+            }));
+        });
     },
 
     _deleteSymlinkSync: function() {
@@ -3847,7 +3961,7 @@ var Path = Class.extend(Obj, {
     /**
      * @private
      * @param {boolean} resolveSymlink
-     * @param {function(boolean)} callback
+     * @param {function(Throwable, boolean=)} callback
      */
     _exists: function(resolveSymlink, callback) {
 
@@ -3857,23 +3971,30 @@ var Path = Class.extend(Obj, {
         // there is a symlink but it points to a file/dir that no longer exists.
         // http://stackoverflow.com/questions/14193926/in-node-js-cannot-get-rid-of-a-bad-symlink
 
-        fs.lstat(this.getAbsolutePath(), $trace(function(error, stats) {
-            if (error) {
-                callback(false);
-            } else {
-                if (stats.isSymbolicLink() && resolveSymlink) {
-                    _this._readSymlink(function(error, pointedLinkPath) {
-                        if (!error) {
-                            pointedLinkPath._exists(false, callback);
-                        } else {
-                            callback(false);
-                        }
-                    });
+        Path.fileHandleSemaphore.acquire(function() {
+            fs.lstat(_this.getAbsolutePath(), $traceWithError(function(error, stats) {
+                Path.fileHandleSemaphore.release();
+                if (error) {
+                    if (error.code === "ENOENT") {
+                        callback(null, false);
+                    } else {
+                        callback(error);
+                    }
                 } else {
-                    callback(true);
+                    if (stats.isSymbolicLink() && resolveSymlink) {
+                        _this._readSymlink(function(error, pointedLinkPath) {
+                            if (!error) {
+                                pointedLinkPath._exists(false, callback);
+                            } else {
+                                callback(error);
+                            }
+                        });
+                    } else {
+                        callback(null, true);
+                    }
                 }
-            }
-        }));
+            }));
+        });
     },
 
     /**
@@ -3940,23 +4061,26 @@ var Path = Class.extend(Obj, {
      */
     _isDirectory: function(resolveSymlink, callback) {
         var _this = this;
-        fs.lstat(this.getAbsolutePath(), $traceWithError(function(error, stats) {
-            if (!error) {
-                if (stats.isSymbolicLink() && resolveSymlink) {
-                    _this._readSymlink(function(error, symlinkedPath) {
-                        if (!error) {
-                            symlinkedPath._isDirectory(false, callback);
-                        } else {
-                            callback(error);
-                        }
-                    });
+        Path.fileHandleSemaphore.acquire(function() {
+            fs.lstat(_this.getAbsolutePath(), $traceWithError(function(error, stats) {
+                Path.fileHandleSemaphore.release();
+                if (!error) {
+                    if (stats.isSymbolicLink() && resolveSymlink) {
+                        _this._readSymlink(function(error, symlinkedPath) {
+                            if (!error) {
+                                symlinkedPath._isDirectory(false, callback);
+                            } else {
+                                callback(error);
+                            }
+                        });
+                    } else {
+                        callback(undefined, stats.isDirectory());
+                    }
                 } else {
-                    callback(undefined, stats.isDirectory());
+                    callback(error);
                 }
-            } else {
-                callback(error);
-            }
-        }));
+            }));
+        });
     },
 
     /**
@@ -4000,27 +4124,30 @@ var Path = Class.extend(Obj, {
     /**
      * @private
      * @param {boolean} resolveSymlink
-     * @param {function(Error, boolean)} callback
+     * @param {function(Throwable, boolean=)} callback
      */
     _isFile: function(resolveSymlink, callback) {
         var _this = this;
-        fs.lstat(this.getAbsolutePath(), $traceWithError(function(error, stats) {
-            if (error) {
-                callback(new Error(error.message));
-            } else {
-                if (stats.isSymbolicLink() && resolveSymlink) {
-                    _this._readSymlink(function(error, symlinkedPath) {
-                        if (!error) {
-                            symlinkedPath._isFile(false, callback);
-                        } else {
-                            callback(error);
-                        }
-                    });
+        Path.fileHandleSemaphore.acquire(function() {
+            fs.lstat(_this.getAbsolutePath(), $traceWithError(function(error, stats) {
+                Path.fileHandleSemaphore.release();
+                if (error) {
+                    callback(new Error(error.message));
                 } else {
-                    callback(undefined, stats.isFile());
+                    if (stats.isSymbolicLink() && resolveSymlink) {
+                        _this._readSymlink(function(error, symlinkedPath) {
+                            if (!error) {
+                                symlinkedPath._isFile(false, callback);
+                            } else {
+                                callback(error);
+                            }
+                        });
+                    } else {
+                        callback(null, stats.isFile());
+                    }
                 }
-            }
-        }));
+            }));
+        });
     },
 
     /**
@@ -4042,13 +4169,17 @@ var Path = Class.extend(Obj, {
      * @param {function(Error, boolean)} callback
      */
     _isSymlink: function(callback) {
-        fs.lstat(this.getAbsolutePath(), $traceWithError(function(error, stats) {
-            if (error) {
-                callback(new Error(error.message), false);
-            } else {
-                callback(null, stats.isSymbolicLink());
-            }
-        }));
+        var _this = this;
+        Path.fileHandleSemaphore.acquire(function() {
+            fs.lstat(_this.getAbsolutePath(), $traceWithError(function(error, stats) {
+                Path.fileHandleSemaphore.release();
+                if (error) {
+                    callback(new Error(error.message), false);
+                } else {
+                    callback(null, stats.isSymbolicLink());
+                }
+            }));
+        });
     },
 
     /**
@@ -4145,8 +4276,12 @@ var Path = Class.extend(Obj, {
     _moveDirectory: function(movePath, syncMode, callback) {
         var _this = this;
         $if (function(flow) {
-                movePath._exists(false, function(exists) {
-                    flow.assert(exists);
+                movePath._exists(false, function(throwable, exists) {
+                    if (!throwable) {
+                        flow.assert(exists);
+                    } else {
+                        flow.error(throwable);
+                    }
                 });
             },
             $task(function(flow) {
@@ -4481,8 +4616,12 @@ var Path = Class.extend(Obj, {
                 //TODO BRN: If the path we're targeting is a symlink and resolveSymlink is true, should we be trying to
                 //move the file in place of the file that the symlink points to? or the symlink itself?
 
-                movePath._exists(false, function(exists) {
-                    flow.assert(exists);
+                movePath._exists(false, function(throwable, exists) {
+                    if (!throwable) {
+                        flow.assert(exists);
+                    } else {
+                        flow.error(throwable);
+                    }
                 });
             },
             $task(function(flow) {
@@ -4732,8 +4871,12 @@ var Path = Class.extend(Obj, {
                 //TODO BRN: If the path we're targeting is a symlink and resolveSymlink is true, should we be trying to
                 //move the file in place of the file that the symlink points to? or the symlink itself?
 
-                movePath._exists(false, function(exists) {
-                    flow.assert(exists);
+                movePath._exists(false, function(throwable, exists) {
+                    if (!throwable) {
+                        flow.assert(exists);
+                    } else {
+                        flow.error(throwable);
+                    }
                 });
             },
             $task(function(flow) {
@@ -4976,18 +5119,21 @@ var Path = Class.extend(Obj, {
      */
     _readDirectory: function(callback) {
         var _this = this;
-        fs.readdir(this.getAbsolutePath(), $traceWithError(function(error, files) {
-            if (!error) {
-                var pathArray = [];
-                files.forEach(function(name) {
-                    var childPathString = _this.getAbsolutePath() + path.sep + name;
-                    pathArray.push(new Path(childPathString));
-                });
-                callback(null, pathArray);
-            } else {
-                callback(new Error(error.message));
-            }
-        }));
+        Path.fileHandleSemaphore.acquire(function() {
+            fs.readdir(_this.getAbsolutePath(), $traceWithError(function(error, files) {
+                Path.fileHandleSemaphore.release();
+                if (!error) {
+                    var pathArray = [];
+                    files.forEach(function(name) {
+                        var childPathString = _this.getAbsolutePath() + path.sep + name;
+                        pathArray.push(new Path(childPathString));
+                    });
+                    callback(null, pathArray);
+                } else {
+                    callback(new Error(error.message));
+                }
+            }));
+        });
     },
 
     /**
@@ -5030,16 +5176,20 @@ var Path = Class.extend(Obj, {
 
     /**
      * @private
-     * @param {function(Error, Path)} callback
+     * @param {function(Throwable, Path=)} callback
      */
     _readSymlink: function(callback) {
-        fs.readlink(this.getAbsolutePath(), $traceWithError(function(error, symlinkedPathString) {
-            if (!error) {
-                callback(undefined, new Path(symlinkedPathString));
-            } else {
-                callback(error);
-            }
-        }));
+        var _this = this;
+        Path.fileHandleSemaphore.acquire(function() {
+            fs.readlink(_this.getAbsolutePath(), $traceWithError(function(error, symlinkedPathString) {
+                Path.fileHandleSemaphore.release();
+                if (!error) {
+                    callback(null, new Path(symlinkedPathString));
+                } else {
+                    callback(error);
+                }
+            }));
+        });
     },
 
     /**
@@ -5052,7 +5202,7 @@ var Path = Class.extend(Obj, {
 
     /**
      * @private
-     * @param {function(Error)} callback
+     * @param {function(Throwable=)} callback
      */
     _removeDirectoryOrRemoveSymlinkedDirectory: function(callback) {
         var _this = this;
@@ -5085,13 +5235,16 @@ var Path = Class.extend(Obj, {
             ])
         ).$else(
             $task(function(flow) {
-                fs.rmdir(_this.getAbsolutePath(), $traceWithError(function(error) {
-                    if (!error) {
-                        flow.complete();
-                    } else {
-                        flow.error(new Error(error.message));
-                    }
-                }));
+                Path.fileHandleSemaphore.acquire(function() {
+                    fs.rmdir(_this.getAbsolutePath(), $traceWithError(function(error) {
+                        Path.fileHandleSemaphore.release();
+                        if (!error) {
+                            flow.complete();
+                        } else {
+                            flow.error(new Error(error.message));
+                        }
+                    }));
+                });
             })
         ).execute(callback);
     },
@@ -5115,9 +5268,13 @@ var Path = Class.extend(Obj, {
      * @param {function(Error)} callback
      */
     _rename: function(namePath, callback) {
-        fs.rename(this.getAbsolutePath(), namePath.getAbsolutePath(), $traceWithError(function(error) {
-            callback(error);
-        }));
+        var _this = this;
+        Path.fileHandleSemaphore.acquire(function() {
+            fs.rename(_this.getAbsolutePath(), namePath.getAbsolutePath(), $traceWithError(function(error) {
+                Path.fileHandleSemaphore.release();
+                callback(error);
+            }));
+        });
     },
 
     /**
@@ -5293,9 +5450,13 @@ var Path = Class.extend(Obj, {
      * @param {function(Error)} callback
      */
     _symlink: function(symlinkPath, callback) {
-        fs.symlink(this.getAbsolutePath(), symlinkPath.getAbsolutePath(), 'junction', $traceWithError(function(error) {
-            callback(error);
-        }));
+        var _this = this;
+        Path.fileHandleSemaphore.acquire(function() {
+            fs.symlink(_this.getAbsolutePath(), symlinkPath.getAbsolutePath(), 'junction', $traceWithError(function(error) {
+                Path.fileHandleSemaphore.release();
+                callback(error);
+            }));
+        });
     },
 
     /**
@@ -5375,8 +5536,12 @@ var Path = Class.extend(Obj, {
     _symlinkDirectoryTo: function(symlinkPath, syncMode, callback) {
         var _this = this;
         $if (function(flow) {
-                symlinkPath._exists(false, function(exists) {
-                    flow.assert(exists);
+                symlinkPath._exists(false, function(throwable, exists) {
+                    if (!throwable) {
+                        flow.assert(exists);
+                    } else {
+                        flow.error(throwable);
+                    }
                 });
             },
             $task(function(flow) {
@@ -5569,8 +5734,12 @@ var Path = Class.extend(Obj, {
     _symlinkFileTo: function(symlinkPath, syncMode, callback) {
         var _this = this;
         $if (function(flow) {
-                symlinkPath._exists(false, function(exists) {
-                    flow.assert(exists);
+                symlinkPath._exists(false, function(throwable, exists) {
+                    if (!throwable) {
+                        flow.assert(exists);
+                    } else {
+                        flow.error(throwable);
+                    }
                 });
             },
             $task(function(flow) {
@@ -5745,13 +5914,16 @@ var Path = Class.extend(Obj, {
             ])
         ).$else(
             $task(function(flow) {
-                fs.unlink(_this.getAbsolutePath(), $traceWithError(function(error) {
-                    if (!error) {
-                        flow.complete();
-                    } else {
-                        flow.error(new Error(error.message));
-                    }
-                }));
+                Path.fileHandleSemaphore.acquire(function() {
+                    fs.unlink(_this.getAbsolutePath(), $traceWithError(function(error) {
+                        Path.fileHandleSemaphore.release();
+                        if (!error) {
+                            flow.complete();
+                        } else {
+                            flow.error(new Error(error.message));
+                        }
+                    }));
+                });
             })
         ).execute(callback);
     },
@@ -5812,13 +5984,17 @@ var Path = Class.extend(Obj, {
     ensurePath: function(intoPath, callback) {
         $series([
             $task(function(flow) {
-                intoPath._exists(true, function(exists) {
-                    if (!exists) {
-                        intoPath._createDirectory(true, "0777", function(error) {
-                            flow.complete(error);
-                        });
+                intoPath._exists(true, function(throwable, exists) {
+                    if (!throwable) {
+                        if (!exists) {
+                            intoPath._createDirectory(true, "0777", function(error) {
+                                flow.complete(error);
+                            });
+                        } else {
+                            flow.complete();
+                        }
                     } else {
-                        flow.complete();
+                        flow.error(throwable);
                     }
                 })
             }),
@@ -5858,8 +6034,12 @@ var Path = Class.extend(Obj, {
     ensureParentDirectories: function(mode, callback) {
         var parentPath = this.getParentPath();
         $if (function(flow) {
-                parentPath._exists(false, function(exists) {
-                    flow.assert(!exists);
+                parentPath._exists(false, function(throwable, exists) {
+                    if (!throwable) {
+                        flow.assert(!exists);
+                    } else {
+                        flow.error(throwable);
+                    }
                 });
             },
             $task(function(flow) {

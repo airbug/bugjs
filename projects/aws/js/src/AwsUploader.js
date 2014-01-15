@@ -287,8 +287,12 @@ var AwsUploader = Class.extend(Obj, {
          var returnedS3Object = null;
 
          $if(function(flow) {
-                filePath.exists(function(exists) {
-                    flow.assert(exists);
+                filePath.exists(function(throwable, exists) {
+                    if (!throwable) {
+                        flow.assert(exists);
+                    } else {
+                        flow.error(throwable);
+                    }
                 });
             },
             $task(function(flow) {
