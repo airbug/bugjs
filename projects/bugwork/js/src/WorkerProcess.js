@@ -168,10 +168,10 @@ var WorkerProcess = Class.extend(EventDispatcher, {
             if (this.debug) {
                 execArgv.push("--debug=" + this.debugPort);
             }
-            var configIndex = process.execArgv.indexOf("--config");
+            var configIndex = process.argv.indexOf("--config");
             if (configIndex > -1) {
                 execArgv.push("--config");
-                execArgv.push(process.execArgv[configIndex + 1]);
+                execArgv.push(process.argv[configIndex + 1]);
             }
             options.execArgv = execArgv;
             var processPath     = BugFs.resolvePaths([__dirname, "../scripts/worker-application-start.js"]);

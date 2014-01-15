@@ -68,12 +68,6 @@ var AwsUploader = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {boolean}
-         */
-        this.isBucketEnsured        = null;
-
-        /**
-         * @private
          * @type {string}
          */
         this.propertiesFilePath     = propertiesFilePath;
@@ -129,19 +123,12 @@ var AwsUploader = Class.extend(Obj, {
         $series([
             $task(function(flow) {
                 try {
-                    _this.isBucketEnsured        = false;
                     _this.props                  = JSON.parse(BugFs.readFileSync(propertiesFilePath));
                 } catch (error) {
                     flow.error(error);
                 } finally {
                     flow.complete();
                 }
-            }),
-            // Synchronize ensure bucket function
-            $task(function(flow) {
-                _this.s3EnsureBucket(function(error) {
-                    flow.complete(error);
-                });
             })
         ]).execute(function(error) {
             if (!error) {
@@ -163,15 +150,6 @@ var AwsUploader = Class.extend(Obj, {
         var _this = this;
         var returnedS3Object = null;
         $series([
-            $task(function(flow) {
-                if (!_this.isBucketEnsured) {
-                    _this.s3EnsureBucket(function(error) {
-                        flow.complete(error);
-                    });
-                } else {
-                    flow.complete();
-                }
-            }),
             $task(function(flow) {
                 _this.s3PutFile(outputFilePath, s3Key, contentType, function(error, s3Object) {
                     returnedS3Object = s3Object;
@@ -205,15 +183,6 @@ var AwsUploader = Class.extend(Obj, {
 
         $series([
             $task(function(flow) {
-                if (!_this.isBucketEnsured) {
-                    _this.s3EnsureBucket(function(error) {
-                        flow.complete(error);
-                    });
-                } else {
-                    flow.complete();
-                }
-            }),
-            $task(function(flow) {
                 BugFs.readDirectory(outputDirectoryPath, function(error, files) {
                     if (error) {
                         flow.error(error);
@@ -243,30 +212,6 @@ var AwsUploader = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
     // Private Methods
     //-------------------------------------------------------------------------------
-
-     /**
-      * @private
-      * @param {function(Error)} callback
-      */
-     s3EnsureBucket: function(callback) {
-        var _this = this;
-        var props = this.props;
-        var awsConfig = new AwsConfig(props.awsConfig);
-        var s3Bucket = new S3Bucket({
-            name: props.bucket || props["local-bucket"]
-        });
-        var s3Api = new S3Api(awsConfig);
-        s3Api.ensureBucket(s3Bucket, function(error) {
-            var bucketName = s3Bucket.getName();
-            if (!error) {
-                console.log("Ensured bucket '" + bucketName + "' exists");
-                _this.isBucketEnsured = true;
-                callback(null, bucketName);
-            } else {
-                callback(error, bucketName);
-            }
-        });
-     },
 
      /**
       * @private
