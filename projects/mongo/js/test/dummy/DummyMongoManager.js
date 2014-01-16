@@ -10,6 +10,7 @@
 //@Require('Map')
 //@Require('Obj')
 //@Require('UuidGenerator')
+//@Require('mongo.DummyFindQuery')
 //@Require('mongo.DummyFindByIdQuery')
 //@Require('mongo.DummyFindByIdAndRemoveQuery')
 //@Require('mongo.DummyFindByIdAndUpdateQuery')
@@ -32,6 +33,7 @@ var Class                           = bugpack.require('Class');
 var Map                             = bugpack.require('Map');
 var Obj                             = bugpack.require('Obj');
 var UuidGenerator                   = bugpack.require('UuidGenerator');
+var DummyFindQuery                  = bugpack.require('mongo.DummyFindQuery');
 var DummyFindByIdQuery              = bugpack.require('mongo.DummyFindByIdQuery');
 var DummyFindByIdAndRemoveQuery     = bugpack.require('mongo.DummyFindByIdAndRemoveQuery');
 var DummyFindByIdAndUpdateQuery     = bugpack.require('mongo.DummyFindByIdAndUpdateQuery');
@@ -143,8 +145,19 @@ var DummyMongoManager = Class.extend(Obj, {
     ensureIndexes: function() {
 
     },
-    find: function() {
 
+    /**
+     * @param {Object} queryParams
+     * @param {function(Error, Object)} callback
+     * @returns {DummyFindQuery}
+     */
+    find: function(queryParams, callback) {
+        var query = new DummyFindQuery(this, queryParams);
+        if (callback) {
+            query.exec(callback);
+        } else {
+            return query;
+        }
     },
 
     /**
