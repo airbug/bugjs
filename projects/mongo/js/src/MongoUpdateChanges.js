@@ -112,19 +112,19 @@ var MongoUpdateChanges = Class.extend(Obj, {
             updates.$addToSet = {};
             this.addToSetChangeMap.forEach(function(value, key) {
                 if (updates.$addToSet[key]){
-                    updates.$addToSet[key].$each.push(value); //NOTE: BUGBUG Can't use $each with Array.
+                    updates.$addToSet[key].$each.push(value);
                 } else {
-                    updates.$addToSet[key] = {$each: [value]}; //NOTE: BUGBUG Can't use $each with Array.
+                    updates.$addToSet[key] = {$each: [value]};
                 }
             });
         }
         if (!this.pullChangeMap.isEmpty()) {
-            updates.$pull = {};
+            updates.$pullAll = {};
             this.pullChangeMap.forEach(function(value, key) {
-                if (updates.$pull[key]) {
-                    updates.$pull[key].$each.push(value); //NOTE: BUGBUG Can't use $each with Array.
+                if (updates.$pullAll[key]) {
+                    updates.$pullAll[key].push(value);
                 } else {
-                    updates.$pull[key] = {$each: [value]}; //NOTE: BUGBUG Can't use $each with Array.
+                    updates.$pullAll[key] = [value];
                 }
             });
         }
