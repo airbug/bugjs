@@ -27,7 +27,7 @@ var WorkerApplication           = bugpack.require('bugwork.WorkerApplication');
 var applicationDomain = domain.create();
 applicationDomain.on('error', function(error) {
     process.send({
-        type: "error",
+        type: "workerError",
         data: {
             message: error.message,
             stack: error.stack
@@ -60,7 +60,7 @@ applicationDomain.run(function() {
     });
     application.addEventListener(WorkerApplication.EventTypes.ERROR, function(event) {
         process.send({
-            type: "error",
+            type: "workerError",
             data: {
                 message: event.getData().error.message,
                 stack: event.getData().error.stack
@@ -90,7 +90,7 @@ var gracefulShutdown = function() {
         application.stop();
     } catch(error) {
         process.send({
-            type: "error",
+            type: "workerError",
             data: {
                 message: error.message,
                 stack: error.stack

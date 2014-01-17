@@ -120,6 +120,13 @@ var EntityManager = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @returns {MongoManager}
+     */
+    getDataStore: function() {
+        return this.dataStore;
+    },
+
+    /**
      * @return {string}
      */
     getEntityType: function() {

@@ -215,6 +215,13 @@ var WorkerProcess = Class.extend(EventDispatcher, {
 
     /**
      * @private
+     */
+    dispatchClosed: function() {
+        this.dispatchEvent(new Event(WorkerProcess.EventTypes.CLOSED));
+    },
+
+    /**
+     * @private
      * @param {Bug} error
      */
     dispatchError: function(error) {
@@ -246,6 +253,7 @@ var WorkerProcess = Class.extend(EventDispatcher, {
      */
     handleChildProcessClose: function(code) {
         this.resetProcessState();
+
     },
 
     /**
@@ -255,7 +263,7 @@ var WorkerProcess = Class.extend(EventDispatcher, {
     handleChildProcessMessage: function(message) {
         if (TypeUtil.isObject(message)) {
             switch (message.type) {
-                case "error":
+                case "workerError":
                     this.handleErrorMessage(message);
                     break;
                 case "workerReady":
