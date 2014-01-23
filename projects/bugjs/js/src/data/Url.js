@@ -50,7 +50,7 @@ var Url = Class.extend(Obj, {
      *      path: ?string,
      *      port: ?number,
      *      protocol: ?string,
-     *      ref
+     *      anchor: ?string
      * }} options
      */
     _constructor: function(options) {
@@ -61,6 +61,12 @@ var Url = Class.extend(Obj, {
         //-------------------------------------------------------------------------------
         // Private Properties
         //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {?string}
+         */
+        this.anchor             = "";
 
         /**
          * @private
@@ -84,13 +90,7 @@ var Url = Class.extend(Obj, {
          * @private
          * @type {?string}
          */
-        this.protocol           = "http://";
-
-        /**
-         * @private
-         * @type {?string}
-         */
-        this.ref                = "";
+        this.protocol           = "http";
 
         /**
          * @private
@@ -98,15 +98,24 @@ var Url = Class.extend(Obj, {
          */
         this.urlQueryMap        = new Map();
 
-
         if (TypeUtil.isObject(options)) {
             var _this = this;
-            this.setHost(options.host);
-            this.setPath(options.path);
-            this.setPort(options.port);
-            this.setProtocol(options.protocol);
-            this.setRef(options.ref);
-            Obj.forIn(options.urlQueryMap, function(key,value) {
+            if (TypeUtil.isString(options.anchor)) {
+                this.setAnchor(options.anchor);
+            }
+            if (TypeUtil.isString(options.host)) {
+                this.setHost(options.host);
+            }
+            if (TypeUtil.isString(options.path)) {
+                this.setPath(options.path);
+            }
+            if (TypeUtil.isNumber(options.port - 0)) {
+                this.setPort(options.port - 0);
+            }
+            if (TypeUtil.isString(options.protocol)) {
+                this.setProtocol(options.protocol);
+            }
+            Obj.forIn(options.query, function(key,value) {
                 _this.addUrlQuery(key, value);
             });
         }
@@ -116,6 +125,22 @@ var Url = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
     // Getters and Setters
     //-------------------------------------------------------------------------------
+
+    /**
+     * @returns {string}
+     */
+    getAnchor: function() {
+        return this.anchor;
+    },
+
+    /**
+     * @param {?string} anchor
+     * @return {Url}
+     */
+    setAnchor: function(anchor) {
+        this.anchor = anchor;
+        return this;
+    },
 
     /**
      * @returns {?string}
@@ -145,7 +170,6 @@ var Url = Class.extend(Obj, {
      * @return {Url}
      */
     setPath: function(path) {
-        if (!TypeUtil.is)
         this.path = path;
         return this;
     },
@@ -181,23 +205,10 @@ var Url = Class.extend(Obj, {
      * @return {Url}
      */
     setProtocol: function(protocol) {
+        if (!TypeUtil.isString(protocol) || protocol === "") {
+            protocol = "http";
+        }
         this.protocol = protocol;
-        return this;
-    },
-
-    /**
-     * @returns {string}
-     */
-    getRef: function() {
-        return this.ref;
-    },
-
-    /**
-     * @param {?string} ref
-     * @return {Url}
-     */
-    setRef: function(ref) {
-        this.ref = ref;
         return this;
     },
 
@@ -217,12 +228,12 @@ var Url = Class.extend(Obj, {
         });
 
         var options = {
+            anchor: this.getAnchor(),
             host: this.getHost(),
             path: this.getPath(),
             port: this.getPort(),
             protocol: this.getProtocol(),
-            ref: this.getRef(),
-            urlQueryMap: urlQueryMap
+            query: urlQueryMap
         };
         return new Url(options);
     },
@@ -252,9 +263,9 @@ var Url = Class.extend(Obj, {
                 }
             });
         }
-        if (this.getRef()) {
+        if (this.getAnchor()) {
             output += "#";
-            output += this.getRef();
+            output += this.getAnchor();
         }
         return output;
     },
@@ -284,10 +295,40 @@ var Url = Class.extend(Obj, {
 /**
  * @static
  * @param {string} urlString
+ * @param {Object=} options
  * @return {Url}
  */
-Url.parse = function(urlString) {
-    //TODO BRN
+Url.parse = function(urlString, options) {
+    if (!options) {
+        options = {};
+    }
+    var finalOptions = {
+        strictMode: false,
+        key: ["source","protocol","authority","userInfo","user","password","host","port","relative","path","directory","file","query","anchor"],
+        q:   {
+            name:   "queryKey",
+            parser: /(?:^|&)([^&=]*)=?([^&]*)/g
+        },
+        parser: {
+            strict: /^(?:([^:\/?#]+):)?(?:\/\/((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?))?((((?:[^?#\/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/,
+            loose:  /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/
+        }
+    };
+    Obj.merge(options, finalOptions);
+    var m = finalOptions.parser[finalOptions.strictMode ? "strict" : "loose"].exec(urlString);
+    var uri = {};
+    var i   = 14;
+
+    while (i--) {
+        uri[finalOptions.key[i]] = m[i] || "";
+    }
+
+    uri[finalOptions.q.name] = {};
+    uri[finalOptions.key[12]].replace(finalOptions.q.parser, function ($0, $1, $2) {
+        if ($1) uri[finalOptions.q.name][$1] = $2;
+    });
+
+    return new Url(uri);
 };
 
 
