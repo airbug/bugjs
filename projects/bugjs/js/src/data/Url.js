@@ -115,7 +115,7 @@ var Url = Class.extend(Obj, {
             if (TypeUtil.isString(options.protocol)) {
                 this.setProtocol(options.protocol);
             }
-            Obj.forIn(options.query, function(key,value) {
+            Obj.forIn(options.queryKey, function(key, value) {
                 _this.addUrlQuery(key, value);
             });
         }
@@ -233,7 +233,7 @@ var Url = Class.extend(Obj, {
             path: this.getPath(),
             port: this.getPort(),
             protocol: this.getProtocol(),
-            query: urlQueryMap
+            queryKey: urlQueryMap
         };
         return new Url(options);
     },
@@ -249,7 +249,7 @@ var Url = Class.extend(Obj, {
             output += ":" + this.getPort();
         }
         if (this.getPath()) {
-            output += "/" + this.getPath();
+            output += this.getPath();
         }
         if (!this.urlQueryMap.isEmpty()) {
             output += "?";
@@ -284,6 +284,26 @@ var Url = Class.extend(Obj, {
         var urlQuery    = new UrlQuery(key, value);
         this.urlQueryMap.put(key, urlQuery);
         return this;
+    },
+
+    /**
+     * @param {string} key
+     * @return {string}
+     */
+    getUrlQuery: function(key) {
+        var urlQuery = this.urlQueryMap.get(key);
+        if (urlQuery) {
+            return urlQuery.getQueryValue();
+        }
+        return null;
+    },
+
+    /**
+     * @param {string} key
+     * @return {boolean}
+     */
+    hasUrlQuery: function(key) {
+        return this.urlQueryMap.containsKey(key);
     }
 });
 

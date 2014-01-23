@@ -46,6 +46,20 @@ HtmlUtil.escapeHtml = function(value) {
 /**
  * @static
  * @param {string} value
+ * @param {function(string, Url)} replacerFunction
+ * @return {string}
+ */
+HtmlUtil.replaceUrls = function(value, replacerFunction) {
+    var regex = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/g;
+    return value.replace(regex, function(match) {
+        var url = Url.parse(match);
+        return replacerFunction(match, url);
+    });
+};
+
+/**
+ * @static
+ * @param {string} value
  * @return {string}
  */
 HtmlUtil.stringToHtml = function(value) {
@@ -63,9 +77,7 @@ HtmlUtil.stringToHtml = function(value) {
  * @return {string}
  */
 HtmlUtil.urlsToHtmlATags = function(value) {
-    var regex = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/g;
-    return value.replace(regex, function(match) {
-        var url = Url.parse(match);
+    HtmlUtil.replaceUrls(value, function(match, url) {
         return '<a href="' + url.toString() + '">' + match + '</a>';
     });
 };
