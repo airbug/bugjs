@@ -178,6 +178,13 @@ var CarapaceView = Class.adapt(Backbone.View, {
     },
 
     /**
+     * @return {CarapaceModel}
+     */
+    getModel: function() {
+        return this.model;
+    },
+
+    /**
      * @return {string}
      */
     getId: function() {
