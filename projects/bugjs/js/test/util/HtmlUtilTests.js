@@ -72,3 +72,60 @@ var htmlUtilEscapeHtmlTest = {
 bugmeta.annotate(htmlUtilEscapeHtmlTest).with(
     test().name("HtmlUtil - #escapeHtml test")
 );
+
+
+/**
+ * This tests
+ * 1) Escaping html characters
+ */
+var htmlUtilReplaceUrlsTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.testStrings = [
+            {
+                expected: "<b>http://localhost</b>",
+                value: "http://localhost"
+            },
+            {
+                expected: "test <b>http://localhost</b> test",
+                value: "test http://localhost test"
+            },
+            {
+                expected: "<b>www.airbug.com</b>",
+                value: "www.airbug.com"
+            },
+            {
+                expected: "<b>www.airbug.com:80</b>",
+                value: "www.airbug.com:80"
+            },
+            {
+                expected: "<b>http://localhost:8000/app#room/52d997cf05830c97a6a5da50</b>",
+                value: "http://localhost:8000/app#room/52d997cf05830c97a6a5da50"
+            },
+            {
+                expected: "<b>http://localhost</b>:/app#room/52d997cf05830c97a6a5da50",
+                value: "http://localhost:/app#room/52d997cf05830c97a6a5da50"
+            }
+        ];
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        this.testStrings.forEach(function(testString) {
+            var result = HtmlUtil.replaceUrls(testString.value, function(match) {
+                return "<b>" + match + "</b>";
+            });
+            test.assertEqual(result, testString.expected,
+                "Assert that result replaced url is equal to the expected value");
+        })
+    }
+};
+bugmeta.annotate(htmlUtilReplaceUrlsTest).with(
+    test().name("HtmlUtil - #replaceUrls test")
+);
