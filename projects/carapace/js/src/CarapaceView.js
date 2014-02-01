@@ -279,7 +279,20 @@ var CarapaceView = Class.adapt(Backbone.View, {
         targetEl.append(viewChild.el);
     },
 
-    prependViewChildTo: function(viewChild, domQuery) {
+    /**
+     * @param {CarapaceView} viewChild
+     * @param {?string=} domQuery
+     */
+    addViewChildTo: function(viewChild, domQuery) {
+        this.addViewChild(viewChild, domQuery);
+    },
+
+    /**
+     * @param {CarapaceView} viewChild
+     * @param {number} index
+     * @param {string} domQuery
+     */
+    addViewChildAt: function(viewChild, index, domQuery) {
         if (!this.isCreated()) {
             this.create();
         }
@@ -288,12 +301,42 @@ var CarapaceView = Class.adapt(Backbone.View, {
         }
         viewChild.setParentPropagator(this.eventDispatcher);
         viewChild.viewParent = this;
-        this.viewChildList.add(viewChild);
+        this.viewChildList.addAt(index, viewChild);
+        var targetEl = this.findElement(domQuery);
+        if (targetEl.length == 0) {
+            throw new Error("No DOM element found for domQuery (" + domQuery + " )");
+        }
+
+        targetEl.eq(index).before(viewChild.el);
+    },
+
+    /**
+     * @param {CarapaceView} viewChild
+     * @param {?string=} domQuery
+     */
+    prependViewChild: function(viewChild, domQuery) {
+        if (!this.isCreated()) {
+            this.create();
+        }
+        if (!viewChild.isCreated()) {
+            viewChild.create();
+        }
+        viewChild.setParentPropagator(this.eventDispatcher);
+        viewChild.viewParent = this;
+        this.viewChildList.prepend(viewChild); //CHECK THIS
         var targetEl = domQuery ? this.findElement(domQuery) : this.$el;
         if (targetEl.length == 0) {
             throw new Error("No DOM element found for domQuery (" + domQuery + " )");
         }
         targetEl.prepend(viewChild.el);
+    },
+
+    /**
+     * @param {CarapaceView} viewChild
+     * @param {?string=} domQuery
+     */
+    prependViewChildTo: function(viewChild, domQuery) {
+        this.prependViewChild(viewChild, domQuery);
     },
 
     /**

@@ -211,7 +211,19 @@ var CarapaceContainer = Class.extend(Obj, {
         }
     },
 
-    prependContainerChildTo: function(containerChild, domQuery) {
+    /**
+     * @param {CarapaceContainer} containerChild
+     * @param {?string=} domQuery
+     */
+    addContainerChildTo: function(containerChild, domQuery) {
+        this.addContainerChild(containerChild, domQuery);
+    },
+
+    /**
+     * @param {CarapaceContainer} containerChild
+     * @param {?string=} domQuery
+     */
+    prependContainerChild: function(containerChild, domQuery) {
         if (!this.isCreated()) {
             this.create();
         }
@@ -238,11 +250,40 @@ var CarapaceContainer = Class.extend(Obj, {
 
     /**
      * @param {CarapaceContainer} containerChild
+     * @param {?string=} domQuery
+     */
+    prependContainerChildTo: function(containerChild, domQuery) {
+        this.prependContainerChild(containerChild, domQuery);
+    },
+
+    /**
+     * @param {CarapaceContainer} containerChild
      * @param {number} index
      * @param {string} domQuery
      */
     addContainerChildAt: function(containerChild, index, domQuery) {
-        //TODO
+        if (!this.isCreated()) {
+            this.create();
+        }
+        if (!containerChild.isCreated()) {
+            containerChild.create();
+        }
+
+        // NOTE BRN: If this container child already has a parent, then remove it from that parent before adding it
+        // to this one.
+
+        if (containerChild.getContainerParent() !== null) {
+            containerChild.getContainerParent().removeContainerChild(containerChild);
+        }
+        this.containerChildList.add(containerChild);
+        containerChild.containerParent = this;
+
+        this.viewTop.addViewChildAt(containerChild.getViewTop(), index, domQuery);
+
+        if (this.isActivated()) {
+            //TODO BRN: Should we pass in the routingArgs here? How do we get a reference to those?
+            containerChild.activate([]);
+        }
     },
 
     /**
