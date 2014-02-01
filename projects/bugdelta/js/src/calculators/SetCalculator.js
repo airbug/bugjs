@@ -8,7 +8,6 @@
 
 //@Require('Class')
 //@Require('Set')
-//@Require('TypeUtil')
 //@Require('bugdelta.DeltaCalculator')
 //@Require('bugdelta.SetChange')
 
@@ -26,7 +25,6 @@ var bugpack                         = require('bugpack').context();
 
 var Class                           = bugpack.require('Class');
 var Set                             = bugpack.require('Set');
-var TypeUtil                        = bugpack.require('TypeUtil');
 var DeltaCalculator                 = bugpack.require('bugdelta.DeltaCalculator');
 var SetChange                       = bugpack.require('bugdelta.SetChange');
 
@@ -66,7 +64,6 @@ var SetCalculator = Class.extend(DeltaCalculator, {
      * @param {*} previousValue
      */
     calculateDelta: function(delta, currentPath, currentValue, previousValue) {
-        var _this = this;
         if (!currentValue || !Class.doesExtend(currentValue, Set)) {
             throw new Error("SetCalculator expects currentValue to be a Set");
         }
