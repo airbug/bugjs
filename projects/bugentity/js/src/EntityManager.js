@@ -16,6 +16,7 @@
 //@Require('bugdelta.DocumentChange')
 //@Require('bugdelta.ObjectChange')
 //@Require('bugdelta.SetChange')
+//@Require('bugentity.Entity')
 //@Require('bugflow.BugFlow')
 //@Require('bugioc.IInitializeModule')
 //@Require('mongo.MongoUpdateChanges')
@@ -42,6 +43,7 @@ var TypeUtil                = bugpack.require('TypeUtil');
 var DocumentChange          = bugpack.require('bugdelta.DocumentChange');
 var ObjectChange            = bugpack.require('bugdelta.ObjectChange');
 var SetChange               = bugpack.require('bugdelta.SetChange');
+var Entity                  = bugpack.require('bugentity.Entity');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
 var IInitializeModule       = bugpack.require('bugioc.IInitializeModule');
 var MongoUpdateChanges      = bugpack.require('mongo.MongoUpdateChanges');
@@ -146,18 +148,31 @@ var EntityManager = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Entity} entity
+     * @param {Entity | {*}} entity
      * @param {*} options
      * @param {Array.<string>} dependencies
      * @param {function(Throwable, Entity=)} callback
      */
     create: function(entity, options, dependencies, callback) {
         var _this = this;
-        if (!entity.getCreatedAt()) {
-            entity.setCreatedAt(new Date());
-            entity.setUpdatedAt(new Date());
+
+        if(Class.doesExtend(entity, Entity)) {
+            if (!entity.getCreatedAt()) {
+                entity.setCreatedAt(new Date());
+                entity.setUpdatedAt(new Date());
+            }
+
+            var dbObject = this.convertEntityToDbObject(entity);
+
+        } else {
+            if(!entity.createdAt) {
+                entity.createdAt = new Date();
+                entity.updatedAt = new Date();
+            }
+
+            var dbObject = entity;
+
         }
-        var dbObject = this.convertEntityToDbObject(entity);
 
         $series([
             $task(function(flow){
