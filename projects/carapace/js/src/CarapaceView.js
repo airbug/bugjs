@@ -319,28 +319,29 @@ var CarapaceView = Class.adapt(Backbone.View, {
         this.addViewChild(viewChild, domQuery);
     },
 
-    /**
-     * @param {CarapaceView} viewChild
-     * @param {number} index
-     * @param {string} domQuery
-     */
-    addViewChildAt: function(viewChild, index, domQuery) {
-        if (!this.isCreated()) {
-            this.create();
-        }
-        if (!viewChild.isCreated()) {
-            viewChild.create();
-        }
-        viewChild.setParentPropagator(this.eventDispatcher);
-        viewChild.viewParent = this;
-        this.viewChildList.addAt(index, viewChild);
-        var targetEl = this.findElement(domQuery);
-        if (targetEl.length == 0) {
-            throw new Error("No DOM element found for domQuery (" + domQuery + " )");
-        }
-
-        targetEl.eq(index).before(viewChild.el);
-    },
+//    BUGBUG
+//    /**
+//     * @param {CarapaceView} viewChild
+//     * @param {number} index
+//     * @param {string} domQuery
+//     */
+//    addViewChildAt: function(viewChild, index, domQuery) {
+//        if (!this.isCreated()) {
+//            this.create();
+//        }
+//        if (!viewChild.isCreated()) {
+//            viewChild.create();
+//        }
+//        viewChild.setParentPropagator(this.eventDispatcher);
+//        viewChild.viewParent = this;
+//        this.viewChildList.addAt(index, viewChild);
+//        var targetEl = this.findElement(domQuery);
+//        if (targetEl.length == 0) {
+//            throw new Error("No DOM element found for domQuery (" + domQuery + " )");
+//        }
+//
+//        targetEl.eq(index).before(viewChild.el);
+//    },
 
     /**
      * @param {CarapaceView} viewChild
