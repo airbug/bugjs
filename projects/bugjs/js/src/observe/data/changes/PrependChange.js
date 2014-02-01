@@ -4,8 +4,8 @@
 
 //@Export('PrependChange')
 
+//@Require('AddAtChange')
 //@Require('Class')
-//@Require('ObservableChange')
 
 
 //-------------------------------------------------------------------------------
@@ -19,8 +19,8 @@ var bugpack             = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
+var AddAtChange         = bugpack.require('AddAtChange');
 var Class               = bugpack.require('Class');
-var ObservableChange    = bugpack.require('ObservableChange');
 
 
 //-------------------------------------------------------------------------------
@@ -31,7 +31,7 @@ var ObservableChange    = bugpack.require('ObservableChange');
  * @class
  * @extends {AddChange}
  */
-var PrependChange = Class.extend(ObservableChange, /** @lends {PrependChange.prototype} */ {
+var PrependChange = Class.extend(AddAtChange, /** @lends {PrependChange.prototype} */ {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -44,29 +44,7 @@ var PrependChange = Class.extend(ObservableChange, /** @lends {PrependChange.pro
      */
     _constructor: function(objectPath, value) {
 
-        this._super(PrependChange.CHANGE_TYPE, objectPath);
-
-
-        //-------------------------------------------------------------------------------
-        // Private Properties
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {*}
-         */
-        this.value  = value;
-    },
-
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @return {*}
-     */
-    getValue: function() {
-        return this.value;
+        this._super(objectPath, value, 0);
     },
 
     //-------------------------------------------------------------------------------
@@ -88,15 +66,6 @@ var PrependChange = Class.extend(ObservableChange, /** @lends {PrependChange.pro
     }
 });
 
-//-------------------------------------------------------------------------------
-// Class Properties
-//-------------------------------------------------------------------------------
-
-/**
- * @static
- * @const {string}
- */
-PrependChange.CHANGE_TYPE = "Prepend";
 
 //-------------------------------------------------------------------------------
 // Exports
