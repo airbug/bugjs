@@ -2,10 +2,10 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('AddAtChange')
+//@Export('PrependChange')
 
-//@Require('AddChange')
 //@Require('Class')
+//@Require('ObservableChange')
 
 
 //-------------------------------------------------------------------------------
@@ -19,8 +19,8 @@ var bugpack             = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
-var AddChange           = bugpack.require('AddChange');
 var Class               = bugpack.require('Class');
+var ObservableChange    = bugpack.require('ObservableChange');
 
 
 //-------------------------------------------------------------------------------
@@ -31,8 +31,7 @@ var Class               = bugpack.require('Class');
  * @class
  * @extends {AddChange}
  */
-    //NOTE SUNG AddChange and PrependChange should probably extend AddAtChange not the other way around.
-var AddAtChange = Class.extend(AddChange, /** @lends {AddAtChange.prototype} */ {
+var PrependChange = Class.extend(ObservableChange, /** @lends {PrependChange.prototype} */ {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -42,11 +41,10 @@ var AddAtChange = Class.extend(AddChange, /** @lends {AddAtChange.prototype} */ 
      * @constructs
      * @param {string} objectPath
      * @param {*} value
-     * @param {number} index
      */
-    _constructor: function(objectPath, value, index) {
+    _constructor: function(objectPath, value) {
 
-        this._super(objectPath, value);
+        this._super(PrependChange.CHANGE_TYPE, objectPath);
 
 
         //-------------------------------------------------------------------------------
@@ -55,23 +53,21 @@ var AddAtChange = Class.extend(AddChange, /** @lends {AddAtChange.prototype} */ 
 
         /**
          * @private
-         * @type {number}
+         * @type {*}
          */
-        this.index  = index;
+        this.value  = value;
     },
-
 
     //-------------------------------------------------------------------------------
     // Getters and Setters
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {number}
+     * @return {*}
      */
-    getIndex: function() {
-        return this.index;
+    getValue: function() {
+        return this.value;
     },
-
 
     //-------------------------------------------------------------------------------
     // Obj Methods
@@ -79,16 +75,16 @@ var AddAtChange = Class.extend(AddChange, /** @lends {AddAtChange.prototype} */ 
 
     /**
      * @param {boolean=} deep
-     * @return {AddAtChange}
+     * @return {PrependChange}
      */
     clone: function(deep) {
 
         //TODO BRN: Implement deep cloning
 
-        var cloneAddAtChange = new AddAtChange(this.getObjectPath(), this.getValue(), this.getIndex());
-        cloneAddAtChange.setChangingObservable(this.getChangingObservable());
-        cloneAddAtChange.setReportingObservable(this.getReportingObservable());
-        return cloneAddAtChange;
+        var clonePrependChange = new PrependChange(this.getObjectPath(), this.getValue(), this.getIndex());
+        clonePrependChange.setChangingObservable(this.getChangingObservable());
+        clonePrependChange.setReportingObservable(this.getReportingObservable());
+        return clonePrependChange;
     }
 });
 
@@ -100,10 +96,10 @@ var AddAtChange = Class.extend(AddChange, /** @lends {AddAtChange.prototype} */ 
  * @static
  * @const {string}
  */
-AddAtChange.CHANGE_TYPE = "AddAt";
+PrependChange.CHANGE_TYPE = "Prepend";
 
 //-------------------------------------------------------------------------------
 // Exports
 //-------------------------------------------------------------------------------
 
-bugpack.export('AddAtChange', AddAtChange);
+bugpack.export('PrependChange', PrependChange);

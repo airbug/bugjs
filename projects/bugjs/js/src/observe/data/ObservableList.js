@@ -11,6 +11,7 @@
 //@Require('List')
 //@Require('Obj')
 //@Require('ObservableCollection')
+//@Require('PrependChange')
 //@Require('RemoveAtChange')
 //@Require('TypeUtil')
 
@@ -33,6 +34,7 @@ var IList                           = bugpack.require('IList');
 var List                            = bugpack.require('List');
 var Obj                             = bugpack.require('Obj');
 var ObservableCollection            = bugpack.require('ObservableCollection');
+var PrependChange                   = bugpack.require('PrependChange');
 var RemoveAtChange                  = bugpack.require('RemoveAtChange');
 var TypeUtil                        = bugpack.require('TypeUtil');
 
@@ -153,6 +155,26 @@ var ObservableList = Class.extend(ObservableCollection, /** @lends {ObservableLi
     },
 
     /**
+     * @return {C} The removed value
+     */
+    pop: function() {
+        var lastIndex = this.valueArray.length - 1;
+        return this.removeAt(lastIndex);
+    },
+
+    prepend: function(value) {
+        this.getObserved().addAt(0, value);
+        this.notifyObservers(new PrependChange("", value))
+    },
+
+    /**
+     * @param {C} value
+     */
+    push: function(value) {
+        this.add(value);
+    },
+
+    /**
      * @param {number} index
      * @return {C} The removed value
      */
@@ -175,12 +197,26 @@ var ObservableList = Class.extend(ObservableCollection, /** @lends {ObservableLi
     },
 
     /**
+     * @return {C} The removed value
+     */
+    shift: function() {
+        return this.removeAt(0);
+    },
+
+    /**
      * @param {number} fromIndex
      * @param {number} toIndex
      * @return {IList.<C>}
      */
     subList: function(fromIndex, toIndex) {
         return this.getObserved().subList(fromIndex, toIndex);
+    },
+
+    /**
+     * @param {C} value
+     */
+    unshift: function(value){
+        this.prepend(value);
     },
 
     //-------------------------------------------------------------------------------

@@ -158,7 +158,7 @@ var List = Class.extend(Collection, {
 
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Instance Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -237,6 +237,45 @@ var List = Class.extend(Collection, {
     },
 
     /**
+     * @param {function()} function
+     * @param {{*}} context
+     * @return {List}
+     * destructive
+     */
+    map: function(fn, context) {
+        var _this       = this;
+        var newArray    = this.valueArray.map(fn, context);
+        this.clear();
+        this.valueArray = newArray;
+        this.valueArray.forEach(function(value){
+            _this.hashStore.addValue(value);
+        });
+        return this;
+    },
+
+    /**
+     * @return {C} The removed value
+     */
+    pop: function() {
+        var lastIndex = this.valueArray.length - 1;
+        return this.removeAt(lastIndex);
+    },
+
+    /**
+     * @param {C} value
+     */
+    prepend: function(value) {
+        this.addAt(0, value);
+    },
+
+    /**
+     * @param {C} value
+     */
+    push: function(value) {
+        this.add(value);
+    },
+
+    /**
      * @param {number} index
      * @return {C} The removed value
      */
@@ -260,6 +299,13 @@ var List = Class.extend(Collection, {
     },
 
     /**
+     * @return {C} The removed value
+     */
+    shift: function() {
+        return this.removeAt(0);
+    },
+
+    /**
      * @param {number} fromIndex
      * @param {number} toIndex
      * @return {List.<C>}
@@ -276,6 +322,13 @@ var List = Class.extend(Collection, {
             subList.add(this.getAt(i));
         }
         return subList;
+    },
+
+    /**
+     * @param {C} value
+     */
+    unshift: function(value){
+        this.addAt(0, value);
     }
 });
 
