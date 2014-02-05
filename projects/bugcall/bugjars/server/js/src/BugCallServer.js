@@ -246,7 +246,7 @@ var BugCallServer = Class.extend(EventDispatcher, {
      * @return {Call}
      */
     createCall: function(callUuid, reconnect) {
-        return new Call(callUuid, reconnect);
+        return new Call(this.logger, callUuid, reconnect);
     },
 
     /**

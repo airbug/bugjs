@@ -15,6 +15,7 @@
 //@Require('bugdouble.BugDouble')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
+//@Require('loggerbug.Logger')
 
 
 //-------------------------------------------------------------------------------
@@ -39,6 +40,7 @@ var RequestFailedException  = bugpack.require('bugcall.RequestFailedException');
 var BugDouble               = bugpack.require('bugdouble.BugDouble');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
+var Logger                  = bugpack.require('loggerbug.Logger')
 
 
 //-------------------------------------------------------------------------------
@@ -89,7 +91,8 @@ var callInstantiationNoArgumentsTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        this.testCall   = new Call();
+        this.logger         = new Logger();
+        this.testCall       = new Call(this.logger);
     },
 
     //-------------------------------------------------------------------------------
@@ -121,9 +124,10 @@ var callInstantiationWithArgumentsTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
+        this.logger             = new Logger();
         this.testCallUuid       = "testCallUuid";
         this.testReconnect      = true;
-        this.testCall    = new Call(this.testCallUuid, this.testReconnect);
+        this.testCall           = new Call(this.logger, this.testCallUuid, this.testReconnect);
     },
 
     //-------------------------------------------------------------------------------
@@ -158,6 +162,7 @@ var callSendRequestQueuesWhenNotOpenTest = {
 
     setup: function(test) {
         var _this                       = this;
+        this.logger                     = new Logger();
         this.testCallUuid               = "testCallUuid";
         this.testReconnect              = false;
         this.testRequestType            = "testRequestType";
@@ -166,7 +171,7 @@ var callSendRequestQueuesWhenNotOpenTest = {
 
         };
         this.testCallResponseHandler    = new CallResponseHandler(this.testCallback);
-        this.testCall                   = new Call(this.testCallUuid, this.testReconnect);
+        this.testCall                   = new Call(this.logger, this.testCallUuid, this.testReconnect);
         this.testSendCallback           = function(throwable, outgoingRequest) {
             if (!throwable) {
                 test.assertTrue(Class.doesExtend(outgoingRequest, OutgoingRequest),
@@ -231,7 +236,8 @@ var callCloseCallTest = {
         this.dummySocketConnection      = generateDummySocket();
         this.testCallConnection         = new CallConnection(this.dummySocketConnection, this.dummyMarshaller);
         this.testCallResponseHandler    = new CallResponseHandler(this.testCallbackSpy);
-        this.testCall                   = new Call(this.testCallUuid, this.testReconnect);
+        this.logger                     = new Logger();
+        this.testCall                   = new Call(this.logger, this.testCallUuid, this.testReconnect);
         this.testRequest                = new CallRequest(this.testRequestType, this.testRequestData);
         this.testSendCallback           = function(throwable, outgoingRequest) {
             _this.testCall.openCall(_this.testCallConnection);

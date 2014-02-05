@@ -9,6 +9,7 @@
 //@Require('Bug')
 //@Require('Class')
 //@Require('EventDispatcher')
+//@Require('Exception')
 //@Require('Map')
 //@Require('Queue')
 //@Require('Set')
@@ -38,6 +39,7 @@ var bugpack                 = require('bugpack').context();
 var Bug                     = bugpack.require('Bug');
 var Class                   = bugpack.require('Class');
 var EventDispatcher         = bugpack.require('EventDispatcher');
+var Exception               = bugpack.require('Exception');
 var Map                     = bugpack.require('Map');
 var Queue                   = bugpack.require('Queue');
 var Set                     = bugpack.require('Set');
@@ -72,10 +74,11 @@ var Call = Class.extend(EventDispatcher, {
 
     /**
      * @constructs
+     * @param {Logger} logger
      * @param {string} callUuid
      * @param {boolean} reconnect
      */
-    _constructor: function(callUuid, reconnect) {
+    _constructor: function(logger, callUuid, reconnect) {
 
         this._super();
 
@@ -118,6 +121,12 @@ var Call = Class.extend(EventDispatcher, {
          * @type {Queue.<OutgoingResponse>}
          */
         this.incomingResponseQueue              = new Queue();
+
+        /**
+         * @private
+         * @type {Logger}
+         */
+        this.logger                             = logger;
 
         /**
          * @private
@@ -621,8 +630,8 @@ var Call = Class.extend(EventDispatcher, {
             this.routeResponse(requestUuid, null, incomingResponse);
             this.checkForStopped();
         } else {
-            //NOTE BRN: This should never happen.
-            throw new Error("Could not find outgoingRequest for this incomingResponse. IncomingResponse:" + incomingResponse.toObject());
+            //NOTE BRN: This could happen if a call closes shortly after it sends a response
+            throw new Exception("Could not find outgoingRequest for this incomingResponse. IncomingResponse:" + incomingResponse.toObject());
         }
     },
 
@@ -759,6 +768,7 @@ var Call = Class.extend(EventDispatcher, {
      * @private
      */
     processOutgoingRequestQueue: function() {
+        var _this = this;
         while (!this.outgoingRequestQueue.isEmpty()) {
             var outgoingRequest = this.outgoingRequestQueue.dequeue();
             this.doSendOutgoingRequest(outgoingRequest, function(throwable) {
@@ -766,7 +776,7 @@ var Call = Class.extend(EventDispatcher, {
                 //TODO BRN: Might want to requeue this request if something goes wrong
 
                 if (throwable) {
-                    console.error(throwable);
+                    _this.logger.error(throwable);
                 }
             });
         }
@@ -776,6 +786,7 @@ var Call = Class.extend(EventDispatcher, {
      * @private
      */
     processOutgoingResponseQueue: function() {
+        var _this = this;
         while (!this.outgoingResponseQueue.isEmpty()) {
             var outgoingResponse = this.outgoingResponseQueue.dequeue();
             this.doSendOutgoingResponse(outgoingResponse, function(throwable) {
@@ -783,7 +794,7 @@ var Call = Class.extend(EventDispatcher, {
                 //TODO BRN: Might want to requeue this response if something goes wrong
 
                 if (throwable) {
-                    console.error(throwable);
+                    _this.logger.error(throwable);
                 }
             });
         }
@@ -802,9 +813,17 @@ var Call = Class.extend(EventDispatcher, {
         var callRequest = event.getData().callRequest;
         if (callRequest) {
             var incomingRequest = new IncomingRequest(callRequest, this);
-            this.processIncomingRequest(incomingRequest);
+            try {
+                this.processIncomingRequest(incomingRequest);
+            } catch(throwable) {
+                if (Class.doesExtend(throwable, Exception)) {
+                    this.logger.warn(throwable);
+                } else {
+                    throw throwable;
+                }
+            }
         } else {
-            throw new Error("Incompatible request");
+            throw new Bug("IllegalState", {}, "Incompatible request");
         }
 
     },
@@ -817,9 +836,17 @@ var Call = Class.extend(EventDispatcher, {
         var callResponse = event.getData().callResponse;
         if (callResponse) {
             var incomingResponse = new IncomingResponse(callResponse, this);
-            this.processIncomingResponse(incomingResponse);
+            try {
+                this.processIncomingResponse(incomingResponse);
+            } catch(throwable) {
+                if (Class.doesExtend(throwable, Exception)) {
+                    this.logger.warn(throwable);
+                } else {
+                    throw throwable;
+                }
+            }
         } else {
-            throw new Error("Incompatible response");
+            throw new Bug("IllegalState", {}, "Incompatible response");
         }
     }
 });
