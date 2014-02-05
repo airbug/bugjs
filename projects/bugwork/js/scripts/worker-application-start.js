@@ -18,6 +18,7 @@ var domain                      = require('domain');
 //-------------------------------------------------------------------------------
 
 var WorkerApplication           = bugpack.require('bugwork.WorkerApplication');
+var WorkerDefines               = bugpack.require('bugwork.WorkerDefines');
 
 
 //-------------------------------------------------------------------------------
@@ -26,13 +27,15 @@ var WorkerApplication           = bugpack.require('bugwork.WorkerApplication');
 
 var applicationDomain = domain.create();
 applicationDomain.on('error', function(error) {
-    process.send({
-        type: "workerError",
-        data: {
-            message: error.message,
-            stack: error.stack
-        }
-    });
+    if (process.connected) {
+        process.send({
+            messageType: WorkerDefines.MessageTypes.WORKER_ERROR,
+            error: {
+                message: error.message,
+                stack: error.stack
+            }
+        });
+    }
 
     // Note: we're in dangerous territory!
     // By definition, something unexpected occurred,
@@ -52,20 +55,22 @@ applicationDomain.run(function() {
     application.addEventListener(WorkerApplication.EventTypes.STARTED, function(event) {
         console.log("Worker application created!");
         process.send({
-            type: "workerReady"
+            messageType: WorkerDefines.MessageTypes.WORKER_READY
         })
     });
     application.addEventListener(WorkerApplication.EventTypes.STOPPED, function(event) {
         process.exit();
     });
     application.addEventListener(WorkerApplication.EventTypes.ERROR, function(event) {
-        process.send({
-            type: "workerError",
-            data: {
-                message: event.getData().error.message,
-                stack: event.getData().error.stack
-            }
-        });
+        if (process.connected) {
+            process.send({
+                messageType: WorkerDefines.MessageTypes.WORKER_ERROR,
+                error: {
+                    message: event.getData().error.message,
+                    stack: event.getData().error.stack
+                }
+            });
+        }
         if (application.isStarting()) {
             process.exit(1);
         } else if (application.isStarted()) {
@@ -89,13 +94,15 @@ var gracefulShutdown = function() {
     try {
         application.stop();
     } catch(error) {
-        process.send({
-            type: "workerError",
-            data: {
-                message: error.message,
-                stack: error.stack
-            }
-        });
+        if (process.connected) {
+            process.send({
+                type: WorkerDefines.MessageTypes.WORKER_ERROR,
+                data: {
+                    message: error.message,
+                    stack: error.stack
+                }
+            });
+        }
         process.exit(1);
     }
 };

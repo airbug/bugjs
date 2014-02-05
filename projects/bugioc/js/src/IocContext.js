@@ -133,7 +133,7 @@ var IocContext = Class.extend(Obj, {
     /**
      * @param {function(Throwable=)} callback
      */
-    deinitialze: function(callback) {
+    deinitialize: function(callback) {
         var _this = this;
         $series([
             $task(function(flow) {
@@ -277,7 +277,7 @@ var IocContext = Class.extend(Obj, {
 
     /**
      * @private
-     * @param {function(Throwable)} callback
+     * @param {function(Throwable=)} callback
      */
     deinitializeModules: function(callback) {
         var _this = this;

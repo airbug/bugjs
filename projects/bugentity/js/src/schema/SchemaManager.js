@@ -95,7 +95,7 @@ var SchemaManager = Class.extend(EventDispatcher, {
     },
 
     /**
-     * @param {function(Throwable)} callback
+     * @param {function(Throwable=)} callback
      */
     initializeModule: function(callback) {
         var entityScan = new EntityScan(new EntityProcessor(this));

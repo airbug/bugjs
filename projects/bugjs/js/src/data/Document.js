@@ -48,7 +48,7 @@ var TypeUtil            = bugpack.require('TypeUtil');
 /**
  * @class
  * @extends {Obj}
- * @implement {IDocument}
+ * @implements {IDocument}
  */
 var Document = Class.extend(Obj, {
 

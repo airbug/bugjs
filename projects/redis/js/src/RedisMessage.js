@@ -35,7 +35,7 @@ var RedisMessage = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(channel, message) {
+    _constructor: function(message) {
 
         this._super();
 
@@ -43,13 +43,6 @@ var RedisMessage = Class.extend(Obj, {
         //-------------------------------------------------------------------------------
         // Private Properties
         //-------------------------------------------------------------------------------
-
-
-        /**
-         * @private
-         * @type {string}
-         */
-        this.channel        = channel;
 
         /**
          * @private
@@ -62,13 +55,6 @@ var RedisMessage = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
     // Getters and Setters
     //-------------------------------------------------------------------------------
-
-    /**
-     * @return {string}
-     */
-    getChannel: function() {
-        return this.channel;
-    },
 
     /**
      * @return {string}

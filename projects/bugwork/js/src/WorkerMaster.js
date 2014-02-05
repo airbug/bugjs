@@ -11,8 +11,6 @@
 //@Require('Obj')
 //@Require('Set')
 //@Require('bugflow.BugFlow')
-//@Require('bugwork.WorkerProcessCreator')
-//@Require('bugwork.WorkerProcessStarter')
 
 
 //-------------------------------------------------------------------------------
@@ -31,17 +29,16 @@ var Class                       = bugpack.require('Class');
 var Obj                         = bugpack.require('Obj');
 var Set                         = bugpack.require('Set');
 var BugFlow                     = bugpack.require('bugflow.BugFlow');
-var WorkerProcessCreator        = bugpack.require('bugwork.WorkerProcessCreator');
-var WorkerProcessStarter        = bugpack.require('bugwork.WorkerProcessStarter');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var $whileParallel              = BugFlow.$whileParallel;
 var $iterableParallel           = BugFlow.$iterableParallel;
+var $series                     = BugFlow.$series;
 var $task                       = BugFlow.$task;
+var $whileParallel              = BugFlow.$whileParallel;
 
 
 //-------------------------------------------------------------------------------
@@ -54,7 +51,7 @@ var WorkerMaster = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(workerName, maxConcurrency, debug) {
+    _constructor: function(workerName, maxConcurrency, debug, workerContextFactory) {
 
         this._super();
 
@@ -67,43 +64,31 @@ var WorkerMaster = Class.extend(Obj, {
          * @private
          * @type {boolean}
          */
-        this.debug              = debug;
+        this.debug                      = debug;
 
         /**
          * @private
          * @type {number}
          */
-        this.maxConcurrency     = maxConcurrency;
+        this.maxConcurrency             = maxConcurrency;
 
         /**
          * @private
-         * @type {boolean}
+         * @type {WorkerContextFactory}
          */
-        this.started            = false;
-
-        /**
-         * @private
-         * @type {boolean}
-         */
-        this.starting           = false;
-
-        /**
-         * @private
-         * @type {boolean}
-         */
-        this.stopping           = false;
+        this.workerContextFactory       = workerContextFactory;
 
         /**
          * @private
          * @type {string}
          */
-        this.workerName         = workerName;
+        this.workerName                 = workerName;
 
         /**
          * @private
-         * @type {Set.<WorkerProcess>}
+         * @type {Set.<WorkerContext>}
          */
-        this.workerProcessSet   = new Set();
+        this.workerContextSet           = new Set();
     },
 
 
@@ -112,31 +97,17 @@ var WorkerMaster = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @return {Set.<WorkerContext>}
+     */
+    getWorkerContextSet: function() {
+        return this.workerContextSet;
+    },
+
+    /**
      * @return {boolean}
      */
     isDebug: function() {
         return this.debug;
-    },
-
-    /**
-     * @return {boolean}
-     */
-    isStarted: function() {
-        return this.started;
-    },
-
-    /**
-     * @return {boolean}
-     */
-    isStarting: function() {
-        return this.starting;
-    },
-
-    /**
-     * @return {boolean}
-     */
-    isStopping: function() {
-        return this.stopping;
     },
 
 
@@ -147,7 +118,7 @@ var WorkerMaster = Class.extend(Obj, {
     /**
      * @param {function(Throwable=)} callback
      */
-    createWorkers: function(callback) {
+    createAndStartWorkers: function(callback) {
         var _this   = this;
         var i       = 0;
         $whileParallel(function(flow) {
@@ -155,21 +126,7 @@ var WorkerMaster = Class.extend(Obj, {
             },
             $task(function(flow) {
                 i++;
-                WorkerMaster.lastDebugPort++;
-                var workerProcessCreator = _this.factoryWorkerProcessCreator(_this.isDebug(), WorkerMaster.lastDebugPort);
-                workerProcessCreator.createWorkerProcess(function(throwable, workerProcess) {
-
-                    if (throwable) {
-                        //TEST
-                        console.log("createWorkerProcess callback throwable:", throwable)
-                    }
-
-                   console.log("WorkerProcess created");
-
-                    //TODO BRN: What do we do if we received a throwable?
-                    if (!throwable) {
-                        _this.addWorkerProcess(workerProcess);
-                    }
+                _this.createAndStartWorker(function(throwable) {
                     flow.complete(throwable);
                 });
             })
@@ -179,23 +136,22 @@ var WorkerMaster = Class.extend(Obj, {
     /**
      * @param {function(Throwable=)} callback
      */
-    destroyWorkers: function(callback) {
-        $iterableParallel(this.workerProcessSet, function(flow, workerProcess) {
-            //TODO BRN: Destroy the workers
-            flow.complete();
+    startWorkers: function(callback) {
+        var _this = this;
+        $iterableParallel(this.workerContextSet, function(flow, workerContext) {
+            _this.startWorker(workerContext, function(throwable) {
+                flow.complete(throwable);
+            });
         }).execute(callback);
     },
 
     /**
      * @param {function(Throwable=)} callback
      */
-    startWorkers: function(callback) {
-        //TEST
-        console.log("WorkerMaster#startWorkers");
+    stopAndDestroyWorkers: function(callback) {
         var _this = this;
-        $iterableParallel(this.workerProcessSet, function(flow, workerProcess) {
-            var workerProcessStarter = new WorkerProcessStarter(workerProcess);
-            workerProcessStarter.startWorkerProcess(_this.workerName, function(throwable) {
+        $iterableParallel(this.workerContextSet, function(flow, workerContext) {
+            _this.stopAndDestroyWorker(workerContext, function(throwable) {
                 flow.complete(throwable);
             });
         }).execute(callback);
@@ -205,7 +161,12 @@ var WorkerMaster = Class.extend(Obj, {
      * @param {function(Throwable=)} callback
      */
     stopWorkers: function(callback) {
-
+        var _this = this;
+        $iterableParallel(this.workerContextSet, function(flow, workerContext) {
+            _this.stopWorker(workerContext, function(throwable) {
+                flow.complete(throwable);
+            });
+        }).execute(callback);
     },
 
 
@@ -215,20 +176,79 @@ var WorkerMaster = Class.extend(Obj, {
 
     /**
      * @private
-     * @param {WorkerProcess} workerProcess
+     * @param {WorkerContext} workerContext
      */
-    addWorkerProcess: function(workerProcess) {
-        this.workerProcessSet.add(workerProcess);
+    addWorkerContext: function(workerContext) {
+        this.workerContextSet.add(workerContext);
     },
 
     /**
      * @private
-     * @param {boolean} debug
-     * @param {number} debugPort
-     * @return {WorkerProcessCreator}
+     * @param {function(Throwable=)} callback
      */
-    factoryWorkerProcessCreator: function(debug, debugPort) {
-        return new WorkerProcessCreator(debug, debugPort);
+    createAndStartWorker: function(callback) {
+        var _this = this;
+        $task(function(flow) {
+            WorkerMaster.lastDebugPort++;
+            var workerContext = _this.workerContextFactory.factoryWorkerContext(_this.workerName, _this.isDebug(), WorkerMaster.lastDebugPort);
+            workerContext.createAndStartWorker(function(throwable) {
+                if (!throwable) {
+                    _this.addWorkerContext(workerContext);
+                }
+                flow.complete(throwable);
+            });
+        }).execute(callback);
+    },
+
+    /**
+     * @private
+     * @param {WorkerContext} workerContext
+     */
+    removeWorkerContext: function(workerContext) {
+        this.workerContextSet.remove(workerContext);
+    },
+
+    /**
+     * @private
+     * @param {WorkerContext} workerContext
+     * @param {function(Throwable=)} callback
+     */
+    startWorker: function(workerContext, callback) {
+        $task(function(flow) {
+            workerContext.startWorker(function(throwable) {
+                flow.complete(throwable);
+            });
+        }).execute(callback);
+    },
+
+    /**
+     * @private
+     * @param {WorkerContext} workerContext
+     * @param {function(Throwable=)} callback
+     */
+    stopAndDestroyWorker: function(workerContext, callback) {
+        var _this = this;
+        $task(function(flow) {
+            workerContext.stopAndDestroyWorker(function(throwable) {
+                if (!throwable) {
+                    _this.removeWorkerContext(workerContext);
+                }
+                flow.complete(throwable);
+            });
+        }).execute(callback);
+    },
+
+    /**
+     * @private
+     * @param {WorkerContext} workerContext
+     * @param {function(Throwable=)} callback
+     */
+    stopWorker: function(workerContext, callback) {
+        $task(function(flow) {
+            workerContext.stopWorker(function(throwable) {
+                flow.complete(throwable);
+            });
+        }).execute(callback);
     }
 });
 

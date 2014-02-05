@@ -29,6 +29,10 @@ var StackTraceUtil  = bugpack.require('StackTraceUtil');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Bug}
+ */
 var ArgumentBug = Class.extend(Bug, {
 
     //-------------------------------------------------------------------------------

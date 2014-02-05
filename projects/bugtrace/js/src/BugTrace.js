@@ -64,12 +64,6 @@ var BugTrace = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {string}
-         */
-        this.header = "Bug stack trace:";
-
-        /**
-         * @private
          * @type {TreeNode}
          */
         this.rootNode = new TreeNode("ROOT_NODE");
@@ -117,14 +111,12 @@ var BugTrace = Class.extend(Obj, {
             }
     
             var currentStack = error.stack.split("\n");
-            var totalStack = [];
-            totalStack.push(this.header);
-            totalStack = totalStack.concat(currentStack.slice(1));
+            var totalStack = ([]).concat(currentStack);
     
             var currentNode = this.currentNode;
             while (!Obj.equals(currentNode, this.rootNode)) {
                 var trace = currentNode.getValue();
-                var stackParts = trace.split("\n").slice(2);
+                var stackParts = trace.split("\n");
                 totalStack.push("-------- Async Break ---------");
                 totalStack = totalStack.concat(stackParts);
                 currentNode = currentNode.getParentNode();
@@ -232,18 +224,6 @@ var BugTrace = Class.extend(Obj, {
             node.removed = true;
 
             this.checkTraceNodeForRemoval(parentNode);
-        }
-    },
-
-    /**
-     * @private
-     * @return {*}
-     */
-    createException: function() {
-        try {
-            this.undef();
-        } catch (e) {
-            return e;
         }
     }
 });

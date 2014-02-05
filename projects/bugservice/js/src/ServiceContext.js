@@ -35,7 +35,7 @@ var ServiceContext = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(callManager) {
+    _constructor: function(call) {
 
         this._super();
 
@@ -46,9 +46,9 @@ var ServiceContext = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {CallManager}
+         * @type {Call}
          */
-        this.callManager = callManager;
+        this.call = call;
     },
 
 
@@ -57,10 +57,10 @@ var ServiceContext = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {CallManager}
+     * @return {Call}
      */
-    getCallManager: function() {
-        return this.callManager;
+    getCall: function() {
+        return this.call;
     }
 });
 

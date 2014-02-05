@@ -146,12 +146,11 @@ var RedisPubSub = Class.extend(EventDispatcher, {
 
     /**
      * @private
-     * @param {string} channel
      * @param {string} message
      * @return {RedisMessage}
      */
-    factoryRedisMessage: function(channel, message) {
-        return new RedisMessage(channel, message);
+    factoryRedisMessage: function(message) {
+        return new RedisMessage(message);
     },
 
     /**
@@ -175,10 +174,12 @@ var RedisPubSub = Class.extend(EventDispatcher, {
     /**
      * @private
      * @param {RedisMessage} redisMessage
+     * @param {string} redisChannel
      */
-    processMessage: function(redisMessage) {
+    processMessage: function(redisMessage, redisChannel) {
         this.dispatchEvent(new Event(RedisPubSub.EventTypes.MESSAGE, {
-            redisMessage: redisMessage
+            redisMessage: redisMessage,
+            redisChannel: redisChannel
         }));
     },
 
@@ -194,8 +195,8 @@ var RedisPubSub = Class.extend(EventDispatcher, {
     hearRedisMessageEvent: function(event) {
         var channel     = event.getData().channel;
         var message     = event.getData().message;
-        var redisMessage = this.factoryRedisMessage(channel, message);
-        this.processMessage(redisMessage);
+        var redisMessage = this.factoryRedisMessage(message);
+        this.processMessage(redisMessage, channel);
     }
 });
 

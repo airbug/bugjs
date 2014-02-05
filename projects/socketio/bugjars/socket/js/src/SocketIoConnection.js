@@ -142,17 +142,16 @@ var SocketIoConnection = Class.extend(EventReceiver, {
      *
      */
     connect: function() {
-        if(!this.isConnected()){
+        if (!this.isConnected()) {
             this.socket.connect();
         }
     },
 
-    //TODO
     /**
      *
      */
     disconnect: function() {
-        if(this.isConnected()){
+        if (this.isConnected()) {
             this.socket.disconnect();
         }
     },
@@ -181,6 +180,13 @@ var SocketIoConnection = Class.extend(EventReceiver, {
      */
     send: function(messageData, callback) {
         this.emit("message", messageData, callback);
+    },
+
+    /**
+     *
+     */
+    terminate: function() {
+        this.emit("terminate", {}, function(data) {});
     },
 
 
@@ -303,7 +309,7 @@ var SocketIoConnection = Class.extend(EventReceiver, {
      * @param {NodeJsEvent} event
      */
     hearTerminate: function(event) {
-        this.disconnect(); //TODO
+        this.disconnect();
     }
 });
 

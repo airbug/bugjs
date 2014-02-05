@@ -153,6 +153,8 @@ var RedisClient = Class.extend(EventDispatcher, {
                 _this.dispatchEvent(new RedisEvent(RedisEvent.EventTypes.END));
             });
             this.client.on("error", function(error) {
+                console.error(error.message);
+                console.error(error.stack);
                 if (!cbFired) {
                     cbFired = true;
                     callback(error);
@@ -225,6 +227,30 @@ var RedisClient = Class.extend(EventDispatcher, {
         return this.client.getrange.apply(this.client, arguments);
     },
 
+    hDel: function() {
+        return this.client.hdel.apply(this.client, arguments);
+    },
+
+    hExists: function() {
+        return this.client.hexists.apply(this.client, arguments);
+    },
+
+    hGet: function() {
+        return this.client.hget.apply(this.client, arguments);
+    },
+
+    hLen: function() {
+        return this.client.hlen.apply(this.client, arguments);
+    },
+
+    hSet: function() {
+        return this.client.hset.apply(this.client, arguments);
+    },
+
+    hVals: function() {
+        return this.client.hvals.apply(this.client, arguments);
+    },
+
     lPush: function() {
         return this.client.lpush.apply(this.client, arguments);
     },
@@ -247,6 +273,10 @@ var RedisClient = Class.extend(EventDispatcher, {
 
     sAdd: function() {
         return this.client.sadd.apply(this.client, arguments);
+    },
+
+    sCard: function() {
+        return this.client.scard.apply(this.client, arguments);
     },
 
     set: function() {

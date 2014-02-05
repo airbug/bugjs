@@ -79,7 +79,7 @@ var ServiceController = Class.extend(Obj, {
                 var data        = request.getData();
                 var lockType    = data.type;
                 var key         = data.key;
-                var consumer    = _this.consumerManager.getConsumerForCallManager(request.getCallManager());
+                var consumer    = _this.consumerManager.getConsumerForCall(request.getCall());
                 _this.serverCacheService.acquireLock(consumer, key, lockType, function(error) {
                     var data        = null;
                     var response    = null;
@@ -111,7 +111,7 @@ var ServiceController = Class.extend(Obj, {
                 var options = data.options;
                 var key     = data.key;
                 var value   = data.value;
-                var consumer    = _this.consumerManager.getConsumerForCallManager(request.getCallManager());
+                var consumer    = _this.consumerManager.getConsumerForCall(request.getCall());
                 _this.serverCacheService.add(consumer, key, value, options, function(error) {
                     var data        = null;
                     var response    = null;
@@ -172,7 +172,7 @@ var ServiceController = Class.extend(Obj, {
                 var data    = request.getData();
                 var options = data.options;
                 var key     = data.key;
-                var consumer    = _this.consumerManager.getConsumerForCallManager(request.getCallManager());
+                var consumer    = _this.consumerManager.getConsumerForCall(request.getCall());
                 _this.serverCacheService.get(consumer, key, options, function(error, value) {
                     var data        = null;
                     var response    = null;
@@ -239,7 +239,7 @@ var ServiceController = Class.extend(Obj, {
                 var options = data.options;
                 var key     = data.key;
                 var value   = data.value;
-                var consumer    = _this.consumerManager.getConsumerForCallManager(request.getCallManager());
+                var consumer    = _this.consumerManager.getConsumerForCall(request.getCall());
                 _this.serverCacheService.set(consumer, key, value, options, function(error) {
                     var data        = null;
                     var response    = null;
@@ -272,7 +272,7 @@ var ServiceController = Class.extend(Obj, {
                 var data    = request.getData();
                 var options = data.options;
                 var key     = data.key;
-                var consumer    = _this.consumerManager.getConsumerForCallManager(request.getCallManager());
+                var consumer    = _this.consumerManager.getConsumerForCall(request.getCall());
                 _this.serverCacheService.sync(consumer, key, options, function(error){
                     var data        = null;
                     var response    = null;
@@ -303,7 +303,7 @@ var ServiceController = Class.extend(Obj, {
                 var data    = request.getData();
                 var options = data.options;
                 var keys    = data.keys;
-                var consumer    = _this.consumerManager.getConsumerForCallManager(request.getCallManager());
+                var consumer    = _this.consumerManager.getConsumerForCall(request.getCall());
                 _this.serverCacheService.syncAll(consumer, keys, options, function(error){
                     var data        = null;
                     var response    = null;
@@ -334,7 +334,7 @@ var ServiceController = Class.extend(Obj, {
                 var data    = request.getData();
                 var options = data.options;
                 var key     = data.key;
-                var consumer    = _this.consumerManager.getConsumerForCallManager(request.getCallManager());
+                var consumer    = _this.consumerManager.getConsumerForCall(request.getCall());
                 _this.serverCacheService.unsync(consumer, key, options, function(error){
                     var data        = null;
                     var response    = null;

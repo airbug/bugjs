@@ -39,29 +39,3 @@ var test            = TestAnnotation.test;
 // Declare Tests
 //-------------------------------------------------------------------------------
 
-/**
- *
- */
-var createExceptionTest = {
-
-    // Setup Test
-    //-------------------------------------------------------------------------------
-
-    setup: function() {
-        this.bugTrace = new BugTrace();
-    },
-
-
-    // Run Test
-    //-------------------------------------------------------------------------------
-
-    test: function(test) {
-
-        var error = this.bugTrace.createException();
-        var isError = error instanceof Error;
-        test.assertTrue(isError, "Assert createException returns an error");
-    }
-};
-bugmeta.annotate(createExceptionTest).with(
-    test().name("BugTrace: createException test")
-);

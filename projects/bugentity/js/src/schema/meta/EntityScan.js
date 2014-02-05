@@ -7,16 +7,15 @@
 //@Export('EntityScan')
 
 //@Require('Class')
-//@Require('Obj')
 //@Require('bugentity.EntityAnnotation')
-//@Require('bugmeta.BugMeta')
+//@Require('bugmeta.AnnotationScan')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -24,74 +23,30 @@ var bugpack = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
-var Obj                 = bugpack.require('Obj');
 var EntityAnnotation    = bugpack.require('bugentity.EntityAnnotation');
-var BugMeta             = bugpack.require('bugmeta.BugMeta');
+var AnnotationScan      = bugpack.require('bugmeta.AnnotationScan');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var EntityScan = Class.extend(Obj, {
-
+/**
+ * @class
+ * @extends {AnnotationScan}
+ */
+var EntityScan = Class.extend(AnnotationScan, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
     /**
+     * @constructs
      * @param {EntityProcessor} processor
      */
     _constructor: function(processor) {
-
-        this._super();
-
-
-        //-------------------------------------------------------------------------------
-        // Private Properties
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {EntityProcessor}
-         */
-        this.processor = processor;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     *
-     */
-    scanAll: function() {
-        var _this       = this;
-        var bugmeta     = BugMeta.context();
-        var entityAnnotations = bugmeta.getAnnotationsByType("Entity");
-        if (entityAnnotations) {
-            entityAnnotations.forEach(function(annotation) {
-                _this.processor.process(annotation);
-            });
-        }
-    },
-
-    /**
-     * @param {Class} _class
-     */
-    scanClass: function(_class) {
-        var _this       = this;
-        var bugmeta     = BugMeta.context();
-        var annotations = bugmeta.getAnnotationsByReference(_class);
-        if (annotations) {
-            annotations.forEach(function(annotation) {
-                if (Class.doesExtend(annotation, EntityAnnotation)) {
-                    _this.processor.process(annotation);
-                }
-            });
-        }
+        this._super(processor, EntityAnnotation.TYPE);
     }
 });
 

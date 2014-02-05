@@ -71,8 +71,9 @@ var WorkerManager = Class.extend(Obj, {
     /**
      * @constructs
      * @param {WorkerRegistry} workerRegistry
+     * @param {WorkerContextFactory} workerContextFactory
      */
-    _constructor: function(workerRegistry) {
+    _constructor: function(workerRegistry, workerContextFactory) {
 
         this._super();
 
@@ -85,19 +86,52 @@ var WorkerManager = Class.extend(Obj, {
          * @private
          * @type {Set.<WorkerMaster>}
          */
-        this.workerMasterSet       = new Set();
+        this.workerMasterSet                = new Set();
+
+        /**
+         * @private
+         * @type {WorkerContextFactory}
+         */
+        this.workerContextFactory           = workerContextFactory;
 
         /**
          * @private
          * @type {WorkerRegistry}
          */
-        this.workerRegistry         = workerRegistry;
+        this.workerRegistry                 = workerRegistry;
     },
 
 
     //-------------------------------------------------------------------------------
     // Getters and Setters
     //-------------------------------------------------------------------------------
+
+    /**
+     * @return {WorkerContextFactory}
+     */
+    getWorkerContextFactory: function() {
+        return this.workerContextFactory;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // IInitializeModule Implementation
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @param {function(Throwable=)} callback
+     */
+    deinitializeModule: function(callback) {
+        this.destroyAllWorkers(callback);
+    },
+
+    /**
+     * @param {function(Throwable=)} callback
+     */
+    initializeModule: function(callback) {
+        callback();
+    },
+
 
 
     //-------------------------------------------------------------------------------
@@ -120,19 +154,11 @@ var WorkerManager = Class.extend(Obj, {
         //TEST
         console.log("WorkerManager#createWorker - workerName:", workerName, " maxConcurrency:", options.maxConcurrency, " debug:", debug);
 
-        //TODO BRN: For now we simply auto start. If needed we can split this out and delay the start process.
-        $series([
-            $task(function(flow) {
-                workerMaster.createWorkers(function(throwable) {
-                    flow.complete(throwable);
-                });
-            }),
-            $task(function(flow) {
-                workerMaster.startWorkers(function(throwable) {
-                    flow.complete(throwable)
-                });
-            })
-        ]).execute(callback);
+        $task(function(flow) {
+            workerMaster.createAndStartWorkers(function(throwable) {
+                flow.complete(throwable);
+            });
+        }).execute(callback);
     },
 
     /**
@@ -142,18 +168,11 @@ var WorkerManager = Class.extend(Obj, {
     destroyWorker: function(workerMaster, callback) {
         if (this.workerMasterSet.contains(workerMaster)) {
             this.workerMasterSet.remove(workerMaster);
-            $series([
-                $task(function(flow) {
-                    workerMaster.stopWorkers(function(throwable) {
-                        flow.complete(throwable);
-                    });
-                }),
-                $task(function(flow) {
-                    workerMaster.destroyWorkers(function(throwable) {
-                        flow.complete(throwable)
-                    });
-                })
-            ]).execute(callback);
+            $task(function(flow) {
+                workerMaster.stopAndDestroyWorkers(function(throwable) {
+                    flow.complete(throwable);
+                });
+            }).execute(callback);
         } else {
             callback();
         }
@@ -184,9 +203,16 @@ var WorkerManager = Class.extend(Obj, {
      * @returns {WorkerMaster}
      */
     factoryWorkerMaster: function(workerName, maxConcurrency, debug) {
-        return new WorkerMaster(workerName, maxConcurrency, debug);
+        return new WorkerMaster(workerName, maxConcurrency, debug, this.workerContextFactory);
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Implement Interfaces
+//-------------------------------------------------------------------------------
+
+Class.implement(WorkerManager, IInitializeModule);
 
 
 //-------------------------------------------------------------------------------
@@ -196,7 +222,8 @@ var WorkerManager = Class.extend(Obj, {
 bugmeta.annotate(WorkerManager).with(
     module("workerManager")
         .args([
-            arg().ref("workerRegistry")
+            arg().ref("workerRegistry"),
+            arg().ref("workerContextFactory")
         ])
 );
 

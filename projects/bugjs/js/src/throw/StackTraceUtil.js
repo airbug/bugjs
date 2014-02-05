@@ -40,6 +40,10 @@ var StackTraceUtil = {};
 StackTraceUtil.generateStackTrace = function() {
     var callstack = [];
     var isCallstackPopulated = false;
+
+    //NOTE BRN: See more info about this line https://code.google.com/p/v8/wiki/JavaScriptStackTraceApi
+    Error.stackTraceLimit = Infinity;
+
     var error = new Error();
     if (error.stack) { //Firefox & nodejs
         callstack = error.stack.split('\n');
@@ -62,7 +66,7 @@ StackTraceUtil.generateStackTrace = function() {
         callstack.shift();
         isCallstackPopulated = true;
     } else {
-        var exception = this.createException();
+        var exception = StackTraceUtil.createException();
         if (exception.stack) {
             callstack = exception.stack.split('\n');
             callstack.shift();
@@ -71,7 +75,7 @@ StackTraceUtil.generateStackTrace = function() {
         }
     }
     if (!isCallstackPopulated) { //IE
-        callstack = this.generateStackFromCaller();
+        callstack = StackTraceUtil.generateStackFromCaller();
     }
     return callstack.join("\n");
 };
@@ -93,9 +97,21 @@ StackTraceUtil.generateStackFromCaller = function() {
         }
     } catch(error) {
         //TODO BRN: Verify this error is from strict mode
-        console.log("Cannot create strack trace in strict mode");
+        console.log("Cannot create stack trace in strict mode");
     }
     return callstack;
+};
+
+/**
+ * @private
+ * @return {*}
+ */
+StackTraceUtil.createException = function() {
+    try {
+        this.undef();
+    } catch (e) {
+        return e;
+    }
 };
 
 

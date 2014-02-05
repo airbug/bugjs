@@ -37,7 +37,7 @@ var EntityAnnotation = Class.extend(Annotation, {
 
     _constructor: function(entityName) {
 
-        this._super("Entity");
+        this._super(EntityAnnotation.TYPE);
 
 
         //-------------------------------------------------------------------------------
@@ -92,10 +92,22 @@ var EntityAnnotation = Class.extend(Annotation, {
 
 
 //-------------------------------------------------------------------------------
+// Static Properties
+//-------------------------------------------------------------------------------
+
+/**
+ * @static
+ * @const {string}
+ */
+EntityAnnotation.TYPE   = "Entity";
+
+
+//-------------------------------------------------------------------------------
 // Static Methods
 //-------------------------------------------------------------------------------
 
 /**
+ * @static
  * @param {string} entityName
  * @return {EntityAnnotation}
  */

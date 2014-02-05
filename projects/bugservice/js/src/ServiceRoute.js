@@ -109,7 +109,7 @@ var ServiceRoute = Class.extend(Obj, {
     route: function(request, responder) {
         var _this = this;
         var data            = request.getData();
-        var serviceContext  = this.factoryServiceContext(request.getCallManager());
+        var serviceContext  = this.factoryServiceContext(request.getCall());
         var args = [serviceContext];
         this.paramList.forEach(function(param) {
             args.push(data[param]);
@@ -165,7 +165,7 @@ var ServiceRoute = Class.extend(Obj, {
      * @return {ServiceContext}
      */
     factoryServiceContext: function(request) {
-        return new ServiceContext(request.getCallManager());
+        return new ServiceContext(request.getCall());
     }
 });
 

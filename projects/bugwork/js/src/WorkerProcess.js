@@ -14,6 +14,7 @@
 //@Require('TypeUtil')
 //@Require('bugflow.BugFlow')
 //@Require('bugfs.BugFs')
+//@Require('bugwork.WorkerDefines')
 
 
 //-------------------------------------------------------------------------------
@@ -36,6 +37,7 @@ var Exception                       = bugpack.require('Exception');
 var TypeUtil                        = bugpack.require('TypeUtil');
 var BugFlow                         = bugpack.require('bugflow.BugFlow');
 var BugFs                           = bugpack.require('bugfs.BugFs');
+var WorkerDefines                   = bugpack.require('bugwork.WorkerDefines');
 
 
 //-------------------------------------------------------------------------------
@@ -60,8 +62,9 @@ var WorkerProcess = Class.extend(EventDispatcher, {
      * @constructs
      * @param {boolean=} debug
      * @param {number=} debugPort
+     * @param {Marshaller} marshaller
      */
-    _constructor: function(debug, debugPort) {
+    _constructor: function(debug, debugPort, marshaller) {
 
         this._super();
 
@@ -93,6 +96,12 @@ var WorkerProcess = Class.extend(EventDispatcher, {
          * @type {number}
          */
         this.debugPort          = debugPort;
+
+        /**
+         * @private
+         * @type {Marshaller}
+         */
+        this.marshaller         = marshaller;
 
         /**
          * @private
@@ -187,13 +196,20 @@ var WorkerProcess = Class.extend(EventDispatcher, {
      *
      */
     destroyProcess: function() {
-        //TODO
+        if (this.isCreated()) {
+            this.childProcess.kill();
+        }
     },
 
     /**
-     * @param {*} message
+     * @param {string} messageType
+     * @param {*} messageData
      */
-    sendMessage: function(message) {
+    sendMessage: function(messageType, messageData) {
+        var message = {
+            messageType: messageType,
+            messageData: this.marshaller.marshalData(messageData)
+        };
         this.childProcess.send(message)
     },
 
@@ -222,16 +238,6 @@ var WorkerProcess = Class.extend(EventDispatcher, {
 
     /**
      * @private
-     * @param {Bug} error
-     */
-    dispatchError: function(error) {
-        this.dispatchEvent(new Event(WorkerProcess.EventTypes.ERROR, {
-            error: error
-        }));
-    },
-
-    /**
-     * @private
      * @param {*} message
      */
     dispatchMessage: function(message) {
@@ -249,11 +255,21 @@ var WorkerProcess = Class.extend(EventDispatcher, {
 
     /**
      * @private
+     * @param {Throwable} throwable
+     */
+    dispatchThrowable: function(throwable) {
+        this.dispatchEvent(new Event(WorkerProcess.EventTypes.THROWABLE, {
+            throwable: throwable
+        }));
+    },
+
+    /**
+     * @private
      * @param {number} code
      */
     handleChildProcessClose: function(code) {
         this.resetProcessState();
-
+        this.dispatchClosed();
     },
 
     /**
@@ -262,11 +278,17 @@ var WorkerProcess = Class.extend(EventDispatcher, {
      */
     handleChildProcessMessage: function(message) {
         if (TypeUtil.isObject(message)) {
-            switch (message.type) {
-                case "workerError":
-                    this.handleErrorMessage(message);
+            if (message.messageData) {
+                message.messageData = this.marshaller.unmarshalData(message.messageData);
+            }
+            switch (message.messageType) {
+                case WorkerDefines.MessageTypes.WORKER_ERROR:
+                    this.handleWorkerErrorMessage(message);
                     break;
-                case "workerReady":
+                case WorkerDefines.MessageTypes.WORKER_THROWABLE:
+                    this.handleWorkerThrowableMessage(message);
+                    break;
+                case WorkerDefines.MessageTypes.WORKER_READY:
                     this.handleWorkerReadyMessage(message);
                     break;
                 default:
@@ -281,10 +303,10 @@ var WorkerProcess = Class.extend(EventDispatcher, {
      * @private
      * @param {*} message
      */
-    handleErrorMessage: function(message) {
-        var error = new Bug("ChildProcessError", {}, message.data.message);
-        error.stack = message.data.stack;
-        this.dispatchError(error);
+    handleWorkerErrorMessage: function(message) {
+        var error = new Bug("ChildProcessError", {}, message.error.message);
+        error.stack = message.error.stack;
+        this.dispatchThrowable(error);
     },
 
     /**
@@ -296,8 +318,16 @@ var WorkerProcess = Class.extend(EventDispatcher, {
             this.ready = true;
             this.dispatchReady();
         } else {
-            this.dispatchError(new Bug("IllegalState", {}, "Process is already ready. Received a worker ready message after already ready"));
+            this.dispatchThrowable(new Bug("IllegalState", {}, "Process is already ready. Received a worker ready message after already ready"));
         }
+    },
+
+    /**
+     * @private
+     * @param {*} message
+     */
+    handleWorkerThrowableMessage: function(message) {
+        this.dispatchThrowable(message.messageData.throwable);
     },
 
     /**
@@ -321,9 +351,9 @@ var WorkerProcess = Class.extend(EventDispatcher, {
  */
 WorkerProcess.EventTypes = {
     CLOSED: "WorkerProcess:Closed",
-    ERROR: "WorkerProcess:Error",
     MESSAGE: "WorkerProcess:Message",
-    READY: "WorkerProcess:Ready"
+    READY: "WorkerProcess:Ready",
+    THROWABLE: "WorkerProcess:Throwable"
 };
 
 

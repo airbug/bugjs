@@ -132,11 +132,14 @@ var SocketIoClient = Class.extend(EventDispatcher, {
         return this.socketConnection;
     },
 
-    //TODO SUNG
+    /**
+     *
+     */
     disconnect: function() {
-        this.socketConnection.disconnect();
+        if (this.isConnected()) {
+            this.socketConnection.terminate();
+        }
     },
-
 
     /**
      * @param {string} querystring

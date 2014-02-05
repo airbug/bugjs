@@ -168,8 +168,10 @@ var WorkerApplication = Class.extend(EventDispatcher, {
         var _this   = this;
         this.state  = WorkerApplication.States.STARTING;
         this.moduleScan.scanBugpacks([
-            'bugwork.WorkerRegistry',
-            'bugwork.WorkerRunner'
+            "bugmarsh.MarshRegistry",
+            "bugmarsh.Marshaller",
+            "bugwork.WorkerRegistry",
+            "bugwork.WorkerRunner"
         ]);
         this.iocContext.process();
         this.iocContext.initialize(function(throwable) {
@@ -188,7 +190,7 @@ var WorkerApplication = Class.extend(EventDispatcher, {
     stopApplication: function() {
         var _this   = this;
         this.state  = WorkerApplication.States.STOPPING;
-        this.iocContext.deinitialze(function(throwable) {
+        this.iocContext.deinitialize(function(throwable) {
             if (!throwable) {
                 _this.state = WorkerApplication.States.STOPPED;
                 _this.dispatchStopped();

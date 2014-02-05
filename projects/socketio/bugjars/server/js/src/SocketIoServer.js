@@ -92,7 +92,16 @@ var SocketIoServer = Class.extend(EventDispatcher, {
                 //TEST
                 console.log("authorization - made it here");
 
-                _this.handshaker.shake(handshakeData, callback);
+                _this.handshaker.shake(handshakeData, function(throwable, result) {
+                    if (!throwable) {
+
+                        //NOTE BRN: This MUST be undefined in order to work.
+
+                        callback(undefined, result);
+                    } else {
+                        callback(throwable, false);
+                    }
+                });
             });
         });
         this.ioServer.set('match origin protocol', this.config.getMatchOriginProtocol()); //NOTE: Only necessary for use with wss, WebSocket Secure protocol

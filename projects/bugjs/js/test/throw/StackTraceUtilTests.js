@@ -76,3 +76,31 @@ var generateStackFromCallerTest = {
 bugmeta.annotate(generateStackFromCallerTest).with(
     test().name("Generate stack trace from caller test")
 );
+
+
+/**
+ *
+ */
+var stackTraceUtilCreateExceptionTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+
+        var error = StackTraceUtil.createException();
+        var isError = error instanceof Error;
+        test.assertTrue(isError, "Assert createException returns an error");
+    }
+};
+bugmeta.annotate(stackTraceUtilCreateExceptionTest).with(
+    test().name("StackTraceUtil - #createException test")
+);

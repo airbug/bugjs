@@ -5,28 +5,43 @@
 //@Package('loggerbug')
 
 //@Export('Logger')
+//@Autoload
 
 //@Require('ArgUtil')
 //@Require('Class')
 //@Require('Map')
 //@Require('Obj')
+//@Require('Throwable')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
+var bugpack                         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var ArgUtil             = bugpack.require('ArgUtil');
-var Class               = bugpack.require('Class');
-var Map                 = bugpack.require('Map');
-var Obj                 = bugpack.require('Obj');
+var ArgUtil                         = bugpack.require('ArgUtil');
+var Class                           = bugpack.require('Class');
+var Map                             = bugpack.require('Map');
+var Obj                             = bugpack.require('Obj');
+var Throwable                       = bugpack.require('Throwable');
+var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
+var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+
+
+//-------------------------------------------------------------------------------
+// Simplify References
+//-------------------------------------------------------------------------------
+
+var bugmeta                         = BugMeta.context();
+var module                          = ModuleAnnotation.module;
 
 
 //-------------------------------------------------------------------------------
@@ -60,7 +75,7 @@ var Logger = Class.extend(Obj, {
          * @private
          * @type {number}
          */
-        this.consoleLogPriority     = consoleLogPriority || Logger.Priority.WARN;
+        this.consoleLogPriority     = consoleLogPriority || Logger.Priority.INFO;
     },
 
 
@@ -145,7 +160,31 @@ var Logger = Class.extend(Obj, {
      */
     processLog: function(type, priority, messages) {
         if (priority >= this.consoleLogPriority) {
-            console.log.apply(console, messages);
+            if (type === Logger.Type.ERROR) {
+                messages.forEach(function(message) {
+                    if (Class.doesExtend(message, Throwable) || Class.doesExtend(message, Error)) {
+                        console.error(message.message + "\n" + message.stack);
+                    } else {
+                        console.error(message);
+                    }
+                });
+            } else if (type === Logger.Type.WARN) {
+                messages.forEach(function(message) {
+                    if (Class.doesExtend(message, Throwable) || Class.doesExtend(message, Error)) {
+                        console.warn(message.message + "\n" + message.stack);
+                    } else {
+                        console.warn(message);
+                    }
+                });
+            } else {
+                messages.forEach(function(message) {
+                    if (Class.doesExtend(message, Throwable) || Class.doesExtend(message, Error)) {
+                        console.log(message.message + "\n" + message.stack);
+                    } else {
+                        console.log(message);
+                    }
+                });
+            }
         }
     }
 });
@@ -178,6 +217,15 @@ Logger.Priority = {
     TRACE: 100,
     WARN: 400
 };
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(Logger).with(
+    module("logger")
+);
 
 
 //-------------------------------------------------------------------------------

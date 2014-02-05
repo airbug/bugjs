@@ -16,6 +16,7 @@
 //@Require('bugioc.IInitializeModule')
 //@Require('bugioc.ModuleAnnotation')
 //@Require('bugmeta.BugMeta')
+//@Require('bugwork.WorkerDefines')
 
 
 //-------------------------------------------------------------------------------
@@ -39,6 +40,7 @@ var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
 var IInitializeModule               = bugpack.require('bugioc.IInitializeModule');
 var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
 var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+var WorkerDefines                   = bugpack.require('bugwork.WorkerDefines');
 
 
 //-------------------------------------------------------------------------------
@@ -65,8 +67,9 @@ var WorkerRunner = Class.extend(Obj, {
     /**
      * @constructs
      * @param {WorkerRegistry} workerRegistry
+     * @param {Marshaller} marshaller
      */
-    _constructor: function(workerRegistry) {
+    _constructor: function(workerRegistry, marshaller) {
 
         this._super();
 
@@ -74,6 +77,12 @@ var WorkerRunner = Class.extend(Obj, {
         //-------------------------------------------------------------------------------
         // Private Properties
         //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {Marshaller}
+         */
+        this.marshaller         = marshaller;
 
         /**
          * @private
@@ -125,7 +134,6 @@ var WorkerRunner = Class.extend(Obj, {
         return this.state === WorkerRunner.States.STARTING;
     },
 
-
     /**
      * @return {boolean}
      */
@@ -149,8 +157,7 @@ var WorkerRunner = Class.extend(Obj, {
      * @param {function(Throwable=)} callback
      */
     deinitializeModule: function(callback) {
-        var _this = this;
-        process.off('message', _this.hearProcessMessage);
+        process.removeListener('message', this.hearProcessMessage);
         this.stopWorker(function(throwable) {
             callback(throwable);
         });
@@ -195,51 +202,83 @@ var WorkerRunner = Class.extend(Obj, {
 
         //TEST
         console.log("WorkerRunner#handleProcessMessage - message:", message);
-
         console.log("TypeUtil.isObject(message):", TypeUtil.isObject(message));
-        console.log("message.type:", message.type);
+        console.log("message.messageType:", message.messageType);
 
         if (TypeUtil.isObject(message)) {
-            if (message.type === "startWorker") {
-                this.processStartWorkerMessage(message, function(throwable) {
-                    if (!throwable) {
-                        process.send({
-                            type: "workerStarted"
-                        });
-                    } else {
-                        process.send({
-                            type: "exception",
-                            data: {
-                                message: throwable.message,
-                                stack: throwable.stack
-                            }
-                        });
-                    }
-                });
+            if (message.messageData) {
+                message.messageData = this.marshaller.unmarshalData(message.messageData);
+            }
+            if (message.messageType === WorkerDefines.MessageTypes.START_WORKER) {
+                this.processStartWorkerMessage(message);
+            } else if (message.messageType === WorkerDefines.MessageTypes.STOP_WORKER) {
+                this.processStopWorkerMessage(message);
             }
         }
     },
 
     /**
      * @private
-     * @param {Object }message
-     * @param {function(Throwable=)} callback
+     * @param {Object} message
      */
-    processStartWorkerMessage: function(message, callback) {
+    processStartWorkerMessage: function(message) {
         var _this = this;
-        $series([
-            $task(function(flow) {
-                if (!_this.isStarted()) {
-                    var data = message.data;
-                    _this.generateWorker(data.workerName);
-                    _this.startWorker(function(throwable) {
-                        flow.complete(throwable);
-                    });
-                } else {
-                    flow.error(new Exception("IllegalState", {}, "Worker already started"));
-                }
-            })
-        ]).execute(callback);
+        $task(function(flow) {
+            if (!_this.isStarted()) {
+                var data = message.messageData;
+                _this.generateWorker(data.workerName);
+                _this.startWorker(function(throwable) {
+                    flow.complete(throwable);
+                });
+            } else {
+                flow.error(new Exception("IllegalState", {}, "Worker already started"));
+            }
+        }).execute(function(throwable) {
+            if (throwable) {
+                //TEST
+                console.log("Throwable on processStartWorkerMessage - throwable:", throwable);
+
+                _this.sendProcessMessage(WorkerDefines.MessageTypes.WORKER_THROWABLE, {
+                    throwable: throwable
+                });
+            }
+        });
+    },
+
+    /**
+     * @private
+     * @param {Object} message
+     */
+    processStopWorkerMessage: function(message) {
+        var _this = this;
+        $task(function(flow) {
+            if (_this.isStarted()) {
+                _this.stopWorker(function(throwable) {
+                    flow.complete(throwable);
+                });
+            } else {
+                flow.error(new Exception("IllegalState", {}, "Worker already stopped"));
+            }
+        }).execute(function(throwable) {
+            if (throwable) {
+                _this.sendProcessMessage(WorkerDefines.MessageTypes.WORKER_THROWABLE, {
+                    throwable: throwable
+                });
+            }
+        });
+    },
+
+    /**
+     * @private
+     * @param {string} messageType
+     * @param {*=} messageData
+     */
+    sendProcessMessage: function(messageType, messageData) {
+        var message = {
+            messageType: messageType,
+            messageData: this.marshaller.marshalData(messageData)
+        };
+        process.send(message);
     },
 
     /**
@@ -257,6 +296,7 @@ var WorkerRunner = Class.extend(Obj, {
             this.worker.start(function(throwable) {
                 if (!throwable) {
                     _this.state = WorkerRunner.States.STARTED;
+                    _this.sendProcessMessage(WorkerDefines.MessageTypes.WORKER_STARTED);
                 }
                 callback(throwable);
             });
@@ -274,7 +314,10 @@ var WorkerRunner = Class.extend(Obj, {
         if (this.isStarted()) {
             this.state = WorkerRunner.States.STOPPING;
             this.worker.stop(function(throwable) {
-                _this.state = WorkerRunner.States.STOPPED;
+                if (!throwable) {
+                    _this.state = WorkerRunner.States.STOPPED;
+                    _this.sendProcessMessage(WorkerDefines.MessageTypes.WORKER_STOPPED);
+                }
                 callback(throwable);
             });
         } else {
@@ -314,7 +357,8 @@ Class.implement(WorkerRunner, IInitializeModule);
 bugmeta.annotate(WorkerRunner).with(
     module("workerRunner")
         .args([
-            arg().ref("workerRegistry")
+            arg().ref("workerRegistry"),
+            arg().ref("marshaller")
         ])
 );
 
