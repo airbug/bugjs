@@ -229,7 +229,7 @@ var CallService = Class.extend(Obj, {
                         if (retrievedPersistedCall) {
                             persistedCall = retrievedPersistedCall;
                         } else {
-                            throwable = new Exception("NotFound", {}, "Could not find PersistedCall with the callUuid:", call.getCallUuid());
+                            throwable = new Exception("NotFound", {}, "Could not find PersistedCall with the callUuid:" + call.getCallUuid());
                         }
                     }
                     flow.complete(throwable);

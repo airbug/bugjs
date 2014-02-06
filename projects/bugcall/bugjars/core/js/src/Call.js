@@ -112,6 +112,12 @@ var Call = Class.extend(EventDispatcher, {
 
         /**
          * @private
+         * @type {Object}
+         */
+        this.handshake                          = null;
+
+        /**
+         * @private
          * @type {Queue.<OutgoingRequest>}
          */
         this.incomingRequestQueue               = new Queue();
@@ -203,6 +209,13 @@ var Call = Class.extend(EventDispatcher, {
      */
     getConnectionState: function() {
         return this.connectionState;
+    },
+
+    /**
+     * @return {Object}
+     */
+    getHandshake: function() {
+        return this.handshake;
     },
 
     /**
@@ -359,7 +372,8 @@ var Call = Class.extend(EventDispatcher, {
         if (this.hasConnection()) {
             this.clearConnection();
         }
-        this.callConnection = callConnection;
+        this.callConnection     = callConnection;
+        this.handshake          = callConnection.getHandshake();
         this.initializeConnection();
     },
 
