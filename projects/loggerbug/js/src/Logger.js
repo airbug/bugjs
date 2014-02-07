@@ -171,9 +171,9 @@ var Logger = Class.extend(Obj, {
             } else if (type === Logger.Type.WARN) {
                 messages.forEach(function(message) {
                     if (Class.doesExtend(message, Throwable) || Class.doesExtend(message, Error)) {
-                        console.warn(message.message + "\n" + message.stack);
+                        console.error(message.message + "\n" + message.stack);
                     } else {
-                        console.warn(message);
+                        console.error(message);
                     }
                 });
             } else {

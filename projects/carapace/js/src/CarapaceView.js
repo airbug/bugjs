@@ -211,6 +211,13 @@ var CarapaceView = Class.adapt(Backbone.View, {
         return this.viewChildList;
     },
 
+    /**
+     * @return {CarapaceView}
+     */
+    getViewParent: function() {
+        return this.viewParent;
+    },
+
 
     //-------------------------------------------------------------------------------
     // Convenience Methods
@@ -299,7 +306,7 @@ var CarapaceView = Class.adapt(Backbone.View, {
         this.viewChildList.add(viewChild);
         var targetEl = domQuery ? this.findElement(domQuery) : this.$el;
         if (targetEl.length == 0) {
-            throw new Error("No DOM element found for domQuery (" + domQuery + " )");
+            throw new Error("No DOM element found for domQuery (" + domQuery + ")");
         }
         targetEl.append(viewChild.el);
     },
@@ -515,6 +522,7 @@ var CarapaceView = Class.adapt(Backbone.View, {
      * @return {$}
      */
     findElement: function(domQuery) {
+        domQuery = domQuery.replace("{{cid}}", this.getCid());
         return this.$el.find('*').andSelf().filter(domQuery);
     },
 
