@@ -15,16 +15,16 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class   = bugpack.require('Class');
-var List    = bugpack.require('List');
-var Obj     = bugpack.require('Obj');
+var Class               = bugpack.require('Class');
+var List                = bugpack.require('List');
+var Obj                 = bugpack.require('Obj');
 
 
 //-------------------------------------------------------------------------------
@@ -50,43 +50,49 @@ var ViewBuilder = Class.extend(Obj, {
          * @private
          * @type {string}
          */
-        this.viewAppendTo = null;
+        this.viewAppendTo           = null;
 
         /**
          * @private
          * @type {Object}
          */
-        this.viewAttributes = {};
+        this.viewAttributes         = {};
 
         /**
          * @private
          * @type {List.<ViewBuilder>}
          */
-        this.viewChildren = new List();
+        this.viewChildren           = new List();
 
         /**
          * @private
-         * @type {new:CarapaceView}
+         * @type (new:CarapaceView}
          */
-        this.viewClass = viewClass;
+        this.viewClass              = viewClass;
 
         /**
          * @private
-         * @type {CarapaceCollection}
+         * @type {CarapaceList}
          */
-        this.viewCollection = null;
+        this.viewCollection         = null;
 
         /**
          * @private
          * @type {string}
          */
-        this.viewId = null;
+        this.viewId                 = null;
 
         /**
          * @private
          * @type {CarapaceModel}
          */
-        this.viewModel = null;
+        this.viewModel              = null;
+
+        /**
+         * @private
+         * @type {string}
+         */
+        this.viewName               = null;
     },
 
 
@@ -113,13 +119,17 @@ var ViewBuilder = Class.extend(Obj, {
     },
 
     /**
+     * @param {CarapaceContainer=} container
      * @return {CarapaceView}
      */
-    build: function() {
-        var viewOptions = this.generateViewOptions();
-        var view = new this.viewClass(viewOptions);
+    build: function(container) {
+        var viewOptions     = this.generateViewOptions();
+        var view            = new this.viewClass(viewOptions);
+        if (view.hasName() && !!container) {
+            container[view.getName()] = view;
+        }
         this.viewChildren.forEach(function(viewChildBuilder) {
-            var viewChild = viewChildBuilder.build();
+            var viewChild = viewChildBuilder.build(container);
             view.addViewChild(viewChild, viewChildBuilder.viewAppendTo);
         });
         return view;
@@ -161,6 +171,14 @@ var ViewBuilder = Class.extend(Obj, {
         return this;
     },
 
+    /**
+     * @param {string} viewName
+     */
+    name: function(viewName) {
+        this.viewName = viewName;
+        return this;
+    },
+
 
     //-------------------------------------------------------------------------------
     // Private Class Methods
@@ -183,6 +201,9 @@ var ViewBuilder = Class.extend(Obj, {
         }
         if (this.viewModel) {
             viewOptions.model = this.viewModel;
+        }
+        if (this.viewName) {
+            viewOptions.name = this.viewName;
         }
         return viewOptions;
     }

@@ -7,33 +7,33 @@
 //@Export('CarapaceContainer')
 
 //@Require('Class')
+//@Require('EventDispatcher')
 //@Require('List')
 //@Require('Map')
-//@Require('Obj')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class   = bugpack.require('Class');
-var List    = bugpack.require('List');
-var Map     = bugpack.require('Map');
-var Obj     = bugpack.require('Obj');
+var Class               = bugpack.require('Class');
+var EventDispatcher     = bugpack.require('EventDispatcher');
+var List                = bugpack.require('List');
+var Map                 = bugpack.require('Map');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var CarapaceContainer = Class.extend(Obj, {
+var CarapaceContainer = Class.extend(EventDispatcher, {
 
     //-------------------------------------------------------------------------------
     // Constructor

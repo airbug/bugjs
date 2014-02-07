@@ -106,15 +106,21 @@ var CarapaceView = Class.adapt(Backbone.View, {
 
         /**
          * @private
-         * @type {$}
-         */
-        this.previousElParent = null;
-
-        /**
-         * @private
          * @type {EventDispatcher}
          */
         this.eventDispatcher = new EventDispatcher(this);
+
+        /**
+         * @private
+         * @type {string}
+         */
+        this.name               = null;
+
+        /**
+         * @private
+         * @type {$}
+         */
+        this.previousElParent = null;
 
         /**
          * @private
@@ -192,10 +198,29 @@ var CarapaceView = Class.adapt(Backbone.View, {
     },
 
     /**
+     * @return {string}
+     */
+    getName: function() {
+        return this.name;
+    },
+
+    /**
      * @return {List.<CarapaceView>}
      */
     getViewChildList: function() {
         return this.viewChildList;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Convenience Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {boolean}
+     */
+    hasName: function() {
+        return !!this.name;
     },
 
     /**
@@ -396,6 +421,7 @@ var CarapaceView = Class.adapt(Backbone.View, {
             Obj.merge(options.attributes, this.attributes);
             delete options.attributes;
         }
+        this.name   = options.name;
         this._configure(options);
     },
 
@@ -486,7 +512,7 @@ var CarapaceView = Class.adapt(Backbone.View, {
 
     /**
      * @param {string} domQuery
-     * @return {Element}
+     * @return {$}
      */
     findElement: function(domQuery) {
         return this.$el.find('*').andSelf().filter(domQuery);

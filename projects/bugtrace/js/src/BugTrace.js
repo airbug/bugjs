@@ -60,19 +60,25 @@ var BugTrace = Class.extend(Obj, {
          * @private
          * @type {TreeNode}
          */
-        this.currentNode = BugTrace.rootNode;
+        this.currentNode    = BugTrace.rootNode;
+
+        /**
+         * @private
+         * @type {boolean}
+         */
+        this.enabled        = false;
 
         /**
          * @private
          * @type {TreeNode}
          */
-        this.rootNode = new TreeNode("ROOT_NODE");
+        this.rootNode       = new TreeNode("ROOT_NODE");
 
         /**
          * @private
          * @type {Stack}
          */
-        this.traceTree = new Tree();
+        this.traceTree      = new Tree();
     },
 
 
@@ -104,25 +110,27 @@ var BugTrace = Class.extend(Obj, {
      * @return {Throwable}
      */
     $error: function(error) {
-        if (!error.bugTraced) {
-            error.bugTraced = true;
-            if (!error.stack) {
-                error.stack = StackTraceUtil.generateStackTrace();
+        if (this.enabled) {
+            if (!error.bugTraced) {
+                error.bugTraced = true;
+                if (!error.stack) {
+                    error.stack = StackTraceUtil.generateStackTrace();
+                }
+
+                var currentStack = error.stack.split("\n");
+                var totalStack = ([]).concat(currentStack);
+
+                var currentNode = this.currentNode;
+                while (!Obj.equals(currentNode, this.rootNode)) {
+                    var trace = currentNode.getValue();
+                    var stackParts = trace.split("\n");
+                    totalStack.push("-------- Async Break ---------");
+                    totalStack = totalStack.concat(stackParts);
+                    currentNode = currentNode.getParentNode();
+                }
+
+                error.stack = totalStack.join("\n");
             }
-    
-            var currentStack = error.stack.split("\n");
-            var totalStack = ([]).concat(currentStack);
-    
-            var currentNode = this.currentNode;
-            while (!Obj.equals(currentNode, this.rootNode)) {
-                var trace = currentNode.getValue();
-                var stackParts = trace.split("\n");
-                totalStack.push("-------- Async Break ---------");
-                totalStack = totalStack.concat(stackParts);
-                currentNode = currentNode.getParentNode();
-            }
-    
-            error.stack = totalStack.join("\n");
         }
         return error;
     },
@@ -132,27 +140,31 @@ var BugTrace = Class.extend(Obj, {
      * @return {function}
      */
     $trace: function(callback) {
-        var _this = this;
-        var stack = StackTraceUtil.generateStackTrace();
-        var newNode = this.addTraceNode(stack);
+        if (this.enabled) {
+            var _this = this;
+            var stack = StackTraceUtil.generateStackTrace();
+            var newNode = this.addTraceNode(stack);
 
-        if (callback.aCallback) {
-            throw new Error("This callback has already been wrapped in a trace");
+            if (callback.aCallback) {
+                throw new Error("This callback has already been wrapped in a trace");
+            }
+            var newCallback = function() {
+                newCallback.aCallback = true;
+                var args = ArgUtil.toArray(arguments);
+                _this.currentNode = newNode;
+                callback.apply(null, args);
+
+                //NOTE BRN: If one async thread ends and a new one starts that we have not wrapped in our own trace callback
+                //we do not want any new nodes that the thread creates to attach to the previous current node (since they
+                //are unrelated). So, we reset the current node to the root node after the completion of every callback.
+
+                _this.currentNode = _this.rootNode;
+                _this.checkTraceNodeForRemoval(newNode);
+            };
+            return newCallback;
+        } else {
+            return callback;
         }
-        var newCallback = function() {
-            newCallback.aCallback = true;
-            var args = ArgUtil.toArray(arguments);
-            _this.currentNode = newNode;
-            callback.apply(null, args);
-
-            //NOTE BRN: If one async thread ends and a new one starts that we have not wrapped in our own trace callback
-            //we do not want any new nodes that the thread creates to attach to the previous current node (since they
-            //are unrelated). So, we reset the current node to the root node after the completion of every callback.
-
-            _this.currentNode = _this.rootNode;
-            _this.checkTraceNodeForRemoval(newNode);
-        };
-        return newCallback;
     },
 
     /**
@@ -160,29 +172,32 @@ var BugTrace = Class.extend(Obj, {
      * @return {function}
      */
     $traceWithError: function(callback) {
-    
-        var _this = this;
-        var stack = StackTraceUtil.generateStackTrace();
-        var newNode = this.addTraceNode(stack);
+        if (this.enabled) {
+            var _this = this;
+            var stack = StackTraceUtil.generateStackTrace();
+            var newNode = this.addTraceNode(stack);
 
-        if (callback.aCallback) {
-            throw new Error("This callback has already been wrapped in a trace");
-        }
-
-        var newCallback = function() {
-            newCallback.aCallback = true;
-            var args = ArgUtil.toArray(arguments);
-            var error = args[0];
-    
-            if (error) {
-                args[0] = _this.$error(error);
+            if (callback.aCallback) {
+                throw new Error("This callback has already been wrapped in a trace");
             }
-            _this.currentNode = newNode;
-            callback.apply(null, args);
-            _this.currentNode = _this.rootNode;
-            _this.checkTraceNodeForRemoval(newNode);
-        };
-        return newCallback;
+
+            var newCallback = function() {
+                newCallback.aCallback = true;
+                var args = ArgUtil.toArray(arguments);
+                var error = args[0];
+
+                if (error) {
+                    args[0] = _this.$error(error);
+                }
+                _this.currentNode = newNode;
+                callback.apply(null, args);
+                _this.currentNode = _this.rootNode;
+                _this.checkTraceNodeForRemoval(newNode);
+            };
+            return newCallback;
+        } else {
+            return callback;
+        }
     },
     
     //-------------------------------------------------------------------------------
