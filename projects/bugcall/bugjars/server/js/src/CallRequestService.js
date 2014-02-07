@@ -282,6 +282,26 @@ var CallRequestService = Class.extend(Obj, {
                 }
             });
         }
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Event Listeners
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {CallEvent} event
+     */
+    hearBugCallServerCallClosed: function(event) {
+        var _this       = this;
+        var data        = event.getData();
+        var call        = data.call;
+        this.callRequestPublisher.unsubscribeFromCallRequestsForCall(call.getCallUuid(), this.receiveCallRequestMessage, this, function(throwable) {
+            if (throwable) {
+                _this.logger.error(throwable);
+            }
+        });
     }
 });
 

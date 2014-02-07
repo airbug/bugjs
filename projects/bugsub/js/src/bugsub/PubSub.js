@@ -71,10 +71,11 @@ var PubSub = Class.extend(Obj, {
 
     /**
      * @constructs
+     * @param {Logger} logger
      * @param {Marshaller} marshaller
      * @param {RedisPubSub} redisPubSub
      */
-    _constructor: function(marshaller, redisPubSub) {
+    _constructor: function(logger, marshaller, redisPubSub) {
 
         this._super();
 
@@ -88,6 +89,12 @@ var PubSub = Class.extend(Obj, {
          * @type {Map.<string, List.<Subscriber>>}
          */
         this.channelToSubscriberListMap             = new Map();
+
+        /**
+         * @private
+         * @type {Logger}
+         */
+        this.logger                                 = logger;
 
         /**
          * @private
@@ -282,10 +289,18 @@ var PubSub = Class.extend(Obj, {
      * @param {string} channel
      */
     deliverMessage: function(message, channel) {
+        var _this = this;
         var subscriberList  = this.channelToSubscriberListMap.get(channel);
         if (subscriberList) {
             subscriberList.forEach(function(subscriber) {
                 subscriber.receiveMessage(message);
+                if (subscriber.getOnce()) {
+                    _this.removeSubscriber(channel, subscriber, function(throwable) {
+                        if (throwable) {
+                            _this.logger.error(throwable);
+                        }
+                    });
+                }
             });
         } else {
             //TODO BRN: If there are no subscribers for this message, what do we do?
@@ -419,6 +434,7 @@ Class.implement(PubSub, IInitializeModule);
 bugmeta.annotate(PubSub).with(
     module("pubSub")
         .args([
+            arg().ref("logger"),
             arg().ref("marshaller"),
             arg().ref("redisPubSub")
         ])
