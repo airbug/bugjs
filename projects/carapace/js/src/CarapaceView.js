@@ -523,6 +523,7 @@ var CarapaceView = Class.adapt(Backbone.View, {
      */
     findElement: function(domQuery) {
         domQuery = domQuery.replace("{{cid}}", this.getCid());
+        domQuery = domQuery.replace("{{id}}", this.getId());
         return this.$el.find('*').andSelf().filter(domQuery);
     },
 
