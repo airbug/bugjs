@@ -70,9 +70,15 @@ var RoutingRequest = Class.extend(EventDispatcher, {
 
         /**
          * @private
-         * @type {RoutingRequest.RejectedReason}
+         * @type {*}
          */
-        this.rejectedReason     = null;
+        this.rejectData         = null;
+
+        /**
+         * @private
+         * @type {RoutingRequest.RejectReason}
+         */
+        this.rejectReason     = null;
 
         /**
          * @private
@@ -114,10 +120,17 @@ var RoutingRequest = Class.extend(EventDispatcher, {
     },
 
     /**
-     * @return {RoutingRequest.RejectedReason}
+     * @return {*}
      */
-    getRejectedReason: function() {
-        return this.rejectedReason;
+    getRejectData: function() {
+        return this.rejectData;
+    },
+
+    /**
+     * @return {RoutingRequest.RejectReason}
+     */
+    getRejectReason: function() {
+        return this.rejectReason;
     },
 
     /**
@@ -160,11 +173,13 @@ var RoutingRequest = Class.extend(EventDispatcher, {
 
     /**
      * @param {RoutingRequest.RejectReason} rejectReason
+     * @param {*=} rejectData
      */
-    reject: function(rejectReason) {
+    reject: function(rejectReason, rejectData) {
         var _this = this;
         this.processRequest(RoutingRequest.Result.REJECTED, function() {
-            _this.rejectReason = rejectReason;
+            _this.rejectData    = rejectData;
+            _this.rejectReason  = rejectReason;
         });
     },
 
@@ -195,10 +210,11 @@ var RoutingRequest = Class.extend(EventDispatcher, {
 
 
 //-------------------------------------------------------------------------------
-// Static Variables
+// Static Properties
 //-------------------------------------------------------------------------------
 
 /**
+ * @static
  * @enum {string}
  */
 RoutingRequest.EventType = {
@@ -206,6 +222,7 @@ RoutingRequest.EventType = {
 };
 
 /**
+ * @static
  * @enum {string}
  */
 RoutingRequest.Result = {
@@ -215,11 +232,14 @@ RoutingRequest.Result = {
 };
 
 /**
+ * @static
  * @enum {string}
  */
-RoutingRequest.RejectedReason = {
-    UNKNOWN_ROUTE: "RoutingRequest:UnknownRoute",
-    UNAUTHORIZED_ROUTE: "RoutingRequest:UnauthorizedRoute"
+RoutingRequest.RejectReason = {
+    ERROR: "RoutingRequest:Error",
+    NOT_FOUND: "RoutingRequest:NotFound",
+    UNAUTHORIZED: "RoutingRequest:Unauthorized",
+    UNKNOWN: "RoutingRequest:Unknown"
 };
 
 

@@ -71,6 +71,37 @@ bugmeta.annotate(pairInstantiationTest).with(
     test().name("Pair - instantiation test")
 );
 
+/**
+ * This tests
+ * 1) Instantiate a Pair using another Pair
+ */
+var pairInstantiationWithPairTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.testA          = "testA";
+        this.testB          = "testB";
+        this.testPair       = new Pair(this.testA, this.testB);
+        this.testNewPair    = new Pair(this.testPair);
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        test.assertEqual(this.testNewPair.getA(), this.testPair.getA(),
+            "Assert that testPair.a and testNewPair.a are equal");
+        test.assertEqual(this.testNewPair.getB(), this.testPair.getB(),
+            "Assert that testPair.b and testNewPair.b are equal");
+    }
+};
+bugmeta.annotate(pairInstantiationWithPairTest).with(
+    test().name("Pair - instantiation with Pair test")
+);
+
 
 /**
  * This tests
@@ -135,4 +166,41 @@ var pairContainsTest = {
 };
 bugmeta.annotate(pairContainsTest).with(
     test().name("Pair - #contains test")
+);
+
+/**
+ * This tests
+ * 1) Check if #getOther function works
+ */
+var pairGetOtherTest = {
+
+    // Setup Test
+    //-------------------------------------------------------------------------------
+
+    setup: function() {
+        this.testA      = "testA";
+        this.testB      = "testB";
+        this.testC      = "testC";
+        this.testPair = new Pair(this.testA, this.testB);
+    },
+
+
+    // Run Test
+    //-------------------------------------------------------------------------------
+
+    test: function(test) {
+        var _this   = this;
+        var otherA  = this.testPair.getOther(this.testA);
+        test.assertEqual(otherA, this.testB,
+            "Assert that #getOther returns testB when called with testA");
+        var otherB  = this.testPair.getOther(this.testB);
+        test.assertEqual(otherB, this.testA,
+            "Assert that #getOther returns testA when called with testB");
+        test.assertThrows(function() {
+            _this.testPair.getOther(_this.testC);
+        }, "Assert calling getOther with a value that does not exist in the pair throws an Exception");
+    }
+};
+bugmeta.annotate(pairGetOtherTest).with(
+    test().name("Pair - #getOther test")
 );

@@ -46,7 +46,7 @@ var CarapaceApplication = Class.extend(EventDispatcher, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(router) {
+    _constructor: function(logger, router) {
 
         this._super();
 
@@ -59,30 +59,36 @@ var CarapaceApplication = Class.extend(EventDispatcher, {
          * @private
          * @type {CarapaceController}
          */
-        this.currentController = null;
+        this.currentController              = null;
+
+        /**
+         * @private
+         * @type {Logger}
+         */
+        this.logger                         = logger;
 
         /**
          * @private
          * @type {CarapaceRouter}
          */
-        this.router = router;
+        this.router                         = router;
 
         /**
          * @private
          * @type {Set<CarapaceController>}
          */
-        this.registeredControllerSet = new Set();
+        this.registeredControllerSet        = new Set();
 
         /**
          * @private
          * @type {Set<ControllerRoute>}
          */
-        this.registeredControllerRouteSet = new Set();
+        this.registeredControllerRouteSet   = new Set();
     },
 
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Private Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -114,7 +120,7 @@ var CarapaceApplication = Class.extend(EventDispatcher, {
         var result = Backbone.history.start();
 
         //TEST
-        console.log("Result:", result);
+        this.logger.info("Result:", result);
 
         callback();
     },
@@ -142,9 +148,7 @@ var CarapaceApplication = Class.extend(EventDispatcher, {
      * @param {RoutingRequest} routingRequest
      */
     acceptRoutingRequest: function(routingRequest) {
-        //TEST
-        console.log("Routing request accepted!");
-
+        this.logger.info("Routing request accepted!");
         var routingArgs = routingRequest.getArgs();
         var route       = routingRequest.getRoute();
         var controller  = route.getController();
@@ -156,9 +160,7 @@ var CarapaceApplication = Class.extend(EventDispatcher, {
      * @param {RoutingRequest} routingRequest
      */
     forwardRoutingRequest: function(routingRequest) {
-        //TEST
-        console.log("Routing request forwarded!");
-
+        this.logger.info("Routing request forwarded!");
         var forwardFragment = routingRequest.getForwardFragment();
         var forwardOptions  = routingRequest.getForwardOptions();
         this.router.navigate(forwardFragment, forwardOptions);
@@ -169,11 +171,15 @@ var CarapaceApplication = Class.extend(EventDispatcher, {
      * @param {RoutingRequest} routingRequest
      */
     rejectRoutingRequest: function(routingRequest) {
-        var rejectedReason = routingRequest.getRejectedReason();
+        var rejectReason    = routingRequest.getRejectReason();
+        var rejectData      = routingRequest.getRejectData();
 
         //TODO BRN: Build an annotation for adding rejection handlers to controllers
 
-        console.error("Routing request was rejected!");
+        this.logger.info("Routing request was rejected!");
+        if (rejectReason === RoutingRequest.RejectReason.ERROR) {
+            this.logger.error(rejectData.throwable);
+        }
     },
 
 
@@ -187,7 +193,6 @@ var CarapaceApplication = Class.extend(EventDispatcher, {
      */
     processRoutingRequestResults: function(routingRequest) {
         var result  = routingRequest.getResult();
-
         switch (result) {
             case RoutingRequest.Result.ACCEPTED:
                 this.acceptRoutingRequest(routingRequest);

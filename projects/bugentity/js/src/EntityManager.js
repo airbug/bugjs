@@ -10,6 +10,7 @@
 //@Require('Class')
 //@Require('Map')
 //@Require('Obj')
+//@Require('Pair')
 //@Require('Set')
 //@Require('StringUtil')
 //@Require('TypeUtil')
@@ -37,6 +38,7 @@ var Bug                     = bugpack.require('Bug');
 var Class                   = bugpack.require('Class');
 var Map                     = bugpack.require('Map');
 var Obj                     = bugpack.require('Obj');
+var Pair                    = bugpack.require('Pair');
 var Set                     = bugpack.require('Set');
 var StringUtil              = bugpack.require('StringUtil');
 var TypeUtil                = bugpack.require('TypeUtil');
@@ -148,30 +150,26 @@ var EntityManager = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Entity | {*}} entity
+     * @param {(Entity | *)} entity
      * @param {*} options
      * @param {Array.<string>} dependencies
      * @param {function(Throwable, Entity=)} callback
      */
     create: function(entity, options, dependencies, callback) {
-        var _this = this;
-
-        if(Class.doesExtend(entity, Entity)) {
+        var _this       = this;
+        var dbObject    = null;
+        if (Class.doesExtend(entity, Entity)) {
             if (!entity.getCreatedAt()) {
                 entity.setCreatedAt(new Date());
                 entity.setUpdatedAt(new Date());
             }
-
-            var dbObject = this.convertEntityToDbObject(entity);
-
+            dbObject = this.convertEntityToDbObject(entity);
         } else {
-            if(!entity.createdAt) {
+            if (!entity.createdAt) {
                 entity.createdAt = new Date();
                 entity.updatedAt = new Date();
             }
-
-            var dbObject = entity;
-
+            dbObject = entity;
         }
 
         $series([
@@ -262,91 +260,18 @@ var EntityManager = Class.extend(Obj, {
             if (schema.hasProperty(property)) {
                 /** @type {SchemaProperty} */
                 var schemaProperty      = schema.getPropertyByName(property);
-                var schemaPropertyType  = schemaProperty.getType();
                 var propertyOptions     = options[property];
                 if (propertyOptions) {
-                    if (schemaProperty.isPopulates()) {
-                        var manager             = undefined;
-                        var retriever           = undefined;
-                        switch (schemaPropertyType) {
-                            case "Set":
-                                var idData              = propertyOptions.idGetter.call(entity);
-                                manager                 = _this.entityManagerStore.getEntityManagerByEntityType(schemaProperty.getCollectionOf());
-                                if (propertyOptions.retriever) {
-                                    retriever = manager[propertyOptions.retriever];
-                                } else {
-                                    retriever = manager["retrieve" + schemaProperty.getCollectionOf()];
-                                }
-                                if (Class.doesExtend(idData, Set)) {
-                                    var getterEntitySet     = propertyOptions.getter.call(entity);
-                                    var lookupIdSet         = Obj.clone(idData);
-                                    var getterEntitySetClone = getterEntitySet.clone();
-
-                                    getterEntitySetClone.forEach(function(getterEntity) {
-                                        if (idData.contains(getterEntity.getId())) {
-                                            lookupIdSet.remove(getterEntity.getId());
-                                        } else {
-                                            getterEntitySet.remove(getterEntity);
-                                        }
-                                    });
-
-                                    $iterableParallel(lookupIdSet, function(flow, entityId) {
-                                        retriever.call(manager, entityId, function(throwable, retrievedEntity) {
-                                            if (!throwable) {
-                                                getterEntitySet.add(retrievedEntity);
-                                            }
-                                            flow.complete(throwable);
-                                        });
-                                    }).execute(function(throwable) {
-                                        flow.complete(throwable);
-                                    });
-                                } else {
-                                    var setter = propertyOptions.setter;
-                                    retriever.call(manager, idData, function(throwable, retrievedData) {
-                                        if (!throwable) {
-                                            setter.call(entity, retrievedData);
-                                        }
-                                        flow.complete(throwable)
-                                    });
-                                }
-                                break;
-                            default:
-                                var getterProperty  = propertyOptions.getter.call(entity);
-                                var getterId        = propertyOptions.idGetter.call(entity);
-                                manager             = _this.entityManagerStore.getEntityManagerByEntityType(schemaPropertyType);
-                                if (propertyOptions.retriever) {
-                                    retriever = manager[propertyOptions.retriever];
-                                } else {
-                                    retriever = manager["retrieve" + schemaPropertyType];
-                                }
-                                if (getterId) {
-                                    if (!getterProperty || getterProperty.getId() !== getterId) {
-                                        retriever.call(manager, getterId, function(throwable, retrievedEntity) {
-                                            if (!throwable) {
-                                                propertyOptions.setter.call(entity, retrievedEntity);
-                                            }
-                                            flow.complete(throwable);
-                                        })
-                                    } else {
-                                        flow.complete();
-                                    }
-                                } else {
-                                    flow.complete();
-                                }
-                                break;
-                        }
-                    } else {
-                        flow.error(new Error("Property '" + property + "' is not marked with 'populates'"));
-                    }
+                    _this.populateProperty(entity, schemaProperty, propertyOptions, function(throwable) {
+                        flow.complete(throwable);
+                    });
                 } else {
                     flow.error(new Error("Cannot find options for property '" + property + "'"));
                 }
             } else {
                 flow.error(new Error("Unknown property '" + property + "'"));
             }
-        }).execute(function(throwable){
-            callback(throwable);
-        });
+        }).execute(callback);
     },
 
     /**
@@ -506,7 +431,7 @@ var EntityManager = Class.extend(Obj, {
     convertDbObjectToEntity: function(dbObject) {
         var entityType      = this.entityType;
         var entitySchema    = this.schemaManager.getSchemaByName(entityType);
-        var dataObject = this.convertDbObjectToDataObject(dbObject, entitySchema);
+        var dataObject      = this.convertDbObjectToDataObject(dbObject, entitySchema);
         return this["generate" + this.entityType](dataObject);
     },
 
@@ -545,7 +470,35 @@ var EntityManager = Class.extend(Obj, {
         if (schemaProperty.isPrimaryId()) {
             return propertyValue.toString();
         } else {
+
+            //TODO BRN: Switch this up to use the core of bugmarsh's data conversion
+
             switch (propertyType) {
+                case "Pair":
+                    var valuesPair = null;
+                    if (propertyValue) {
+                        if (schemaProperty.isId()) {
+                            var a   = null;
+                            var b   = null;
+                            if (propertyValue.a) {
+                                a = propertyValue.a.toString();
+                            } else {
+                                a = propertyValue.a;
+                            }
+                            if (propertyValue.b) {
+                                b = propertyValue.b.toString();
+                            } else {
+                                b = propertyValue.b;
+                            }
+                            valuesPair = new Pair(a, b);
+                        } else {
+                            valuesPair = new Pair(propertyValue.a, propertyValue.b);
+                        }
+                    } else {
+                        valuesPair = new Pair();
+                    }
+                    return valuesPair;
+                    break;
                 case "Set":
                     var valuesSet = new Set();
                     if (propertyValue) {
@@ -625,6 +578,19 @@ var EntityManager = Class.extend(Obj, {
                     return [];
                 }
                 break;
+            case "Pair":
+                if (propertyValue) {
+                    return {
+                        a: propertyValue.getA(),
+                        b: propertyValue.getB()
+                    };
+                } else {
+                    return {
+                        a: null,
+                        b: null
+                    };
+                }
+                break;
             default:
                 if (this.schemaManager.hasSchemaForName(propertyType)) {
                     var entitySchema = this.schemaManager.getSchemaByName(propertyType);
@@ -637,10 +603,10 @@ var EntityManager = Class.extend(Obj, {
 
     /**
      * @private
-     * @param entity
+     * @param {Entity} entity
      * @param options
      * @param dependencies
-     * @param callback
+     * @param {function(Throwable=)} callback
      */
     createDependencies: function(entity, options, dependencies, callback) {
         var _this = this;
@@ -649,32 +615,9 @@ var EntityManager = Class.extend(Obj, {
                 $forEachParallel(dependencies, function(flow, dependency) {
                     var dependencyOptions = options[dependency];
                     if (dependencyOptions) {
-                        var schema              = _this.schemaManager.getSchemaByClass(entity.getClass());
-                        var schemaProperty      = schema.getPropertyByName(dependency);
-                        if (schemaProperty) {
-                            var schemaPropertyType  = schemaProperty.getType();
-                            var manager             = _this.entityManagerStore.getEntityManagerByEntityType(schemaPropertyType);
-                            var data                = {};
-                            data[dependencyOptions.ownerIdProperty] = entity.getId();
-                            var generatedDependency = manager["generate" + schemaPropertyType](data);
-                            manager["create" + schemaPropertyType](generatedDependency, function(throwable, returnedDependency){
-                                var idSetter    = dependencyOptions.idSetter;
-                                var setter      = dependencyOptions.setter;
-                                var ownerProperty = dependencyOptions.ownerProperty;
-                                if (idSetter) {
-                                    idSetter.call(entity, generatedDependency.getId());
-                                }
-                                if (setter) {
-                                    setter.call(entity, generatedDependency);
-                                }
-                                if (ownerProperty) {
-                                    generatedDependency["set" + StringUtil.capitalize(ownerProperty)](entity);
-                                }
-                                flow.complete(throwable);
-                            });
-                        } else {
-                            flow.error(new Bug("EntityManager", {}, "Unknown dependency '" + dependency + "'"));
-                        }
+                        _this.createDependency(entity, dependencyOptions, dependency, function(throwable) {
+                            flow.complete(throwable);
+                        });
                     } else {
                         flow.error(new Bug("EntityManager", {}, "Cannot find options for dependency '" + dependency + "'"));
                     }
@@ -692,10 +635,160 @@ var EntityManager = Class.extend(Obj, {
 
     /**
      * @private
+     * @param {Entity} entity
+     * @param dependencyOptions
+     * @param dependency
+     * @param {function(Throwable=)} callback
+     */
+    createDependency: function(entity, dependencyOptions, dependency, callback) {
+        var _this = this;
+        $task(function(flow) {
+            var schema              = _this.schemaManager.getSchemaByClass(entity.getClass());
+            var schemaProperty      = schema.getPropertyByName(dependency);
+            if (schemaProperty) {
+                var schemaPropertyType  = schemaProperty.getType();
+                var manager             = _this.entityManagerStore.getEntityManagerByEntityType(schemaPropertyType);
+                var data                = {};
+
+                if (dependencyOptions.referenceIdProperty) {
+                    data[dependencyOptions.referenceIdProperty] = entity.getId();
+                }
+                if (dependencyOptions.referenceTypeProperty) {
+                    data[dependencyOptions.referenceTypeProperty] = entity.getEntityType();
+                }
+                var generatedDependency = manager["generate" + schemaPropertyType](data);
+                manager["create" + schemaPropertyType](generatedDependency, function(throwable, returnedDependency) {
+                    var idSetter    = dependencyOptions.idSetter;
+                    var setter      = dependencyOptions.setter;
+                    var referenceProperty = dependencyOptions.referenceProperty;
+                    if (idSetter) {
+                        idSetter.call(entity, generatedDependency.getId());
+                    }
+                    if (setter) {
+                        setter.call(entity, generatedDependency);
+                    }
+                    if (referenceProperty) {
+                        generatedDependency["set" + StringUtil.capitalize(referenceProperty)](entity);
+                    }
+                    flow.complete(throwable);
+                });
+            } else {
+                flow.error(new Bug("EntityManager", {}, "Unknown dependency '" + dependency + "'"));
+            }
+        }).execute(callback);
+    },
+
+    /**
+     * @private
+     * @param {Entity} entity
+     * @param {{
+     *      idGetter: function():string,
+     *      typeGetter: function():string
+     * }} propertyOptions
+     * @param {SchemaProperty} schemaProperty
+     * @returns {string|*}
+     */
+    determineSchemaPropertyType: function(entity, propertyOptions, schemaProperty) {
+        var propertyType = schemaProperty.getType();
+        if (propertyOptions.typeGetter) {
+            propertyType = propertyOptions.typeGetter.call(entity);
+        }
+        return propertyType;
+    },
+
+    /**
+     * @private
      * @param {Error} dbError
      */
     factoryBugFromDbError: function(dbError) {
         return new Bug("DbError", {error: dbError}, "An error occurred in the DB", [dbError]);
+    },
+
+    /**
+     * @private
+     * @param {Entity} entity
+     * @param {SchemaProperty} schemaProperty
+     * @param {*} propertyOptions
+     * @param {function(Throwable=)} callback
+     */
+    populateProperty: function(entity, schemaProperty, propertyOptions, callback) {
+        var _this = this;
+        $task(function(flow) {
+            if (schemaProperty.isPopulates()) {
+                var schemaPropertyType  = _this.determineSchemaPropertyType(entity, propertyOptions, schemaProperty);
+                var manager             = undefined;
+                var retriever           = undefined;
+                switch (schemaPropertyType) {
+                    case "Set":
+                        var idData              = propertyOptions.idGetter.call(entity);
+                        manager                 = _this.entityManagerStore.getEntityManagerByEntityType(schemaProperty.getCollectionOf());
+                        if (propertyOptions.retriever) {
+                            retriever = manager[propertyOptions.retriever];
+                        } else {
+                            retriever = manager["retrieve" + schemaProperty.getCollectionOf()];
+                        }
+                        if (Class.doesExtend(idData, Set)) {
+                            var getterEntitySet     = propertyOptions.getter.call(entity);
+                            var lookupIdSet         = Obj.clone(idData);
+                            var getterEntitySetClone = getterEntitySet.clone();
+
+                            getterEntitySetClone.forEach(function(getterEntity) {
+                                if (idData.contains(getterEntity.getId())) {
+                                    lookupIdSet.remove(getterEntity.getId());
+                                } else {
+                                    getterEntitySet.remove(getterEntity);
+                                }
+                            });
+
+                            $iterableParallel(lookupIdSet, function(flow, entityId) {
+                                retriever.call(manager, entityId, function(throwable, retrievedEntity) {
+                                    if (!throwable) {
+                                        getterEntitySet.add(retrievedEntity);
+                                    }
+                                    flow.complete(throwable);
+                                });
+                            }).execute(function(throwable) {
+                                    flow.complete(throwable);
+                                });
+                        } else {
+                            var setter = propertyOptions.setter;
+                            retriever.call(manager, idData, function(throwable, retrievedData) {
+                                if (!throwable) {
+                                    setter.call(entity, retrievedData);
+                                }
+                                flow.complete(throwable)
+                            });
+                        }
+                        break;
+                    default:
+                        var getterProperty  = propertyOptions.getter.call(entity);
+                        var getterId        = propertyOptions.idGetter.call(entity);
+                        manager             = _this.entityManagerStore.getEntityManagerByEntityType(schemaPropertyType);
+                        if (propertyOptions.retriever) {
+                            retriever = manager[propertyOptions.retriever];
+                        } else {
+                            retriever = manager["retrieve" + schemaPropertyType];
+                        }
+                        if (getterId) {
+                            if (!getterProperty || getterProperty.getId() !== getterId) {
+                                retriever.call(manager, getterId, function(throwable, retrievedEntity) {
+                                    if (!throwable) {
+                                        propertyOptions.setter.call(entity, retrievedEntity);
+                                    }
+                                    flow.complete(throwable);
+                                })
+                            } else {
+                                flow.complete();
+                            }
+                        } else {
+                            flow.complete();
+                        }
+                        break;
+                }
+            } else {
+                flow.error(new Error("Property '" + schemaProperty.getName() + "' is not marked with 'populates'"));
+            }
+        }).execute(callback);
     }
 });
 

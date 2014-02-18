@@ -41,6 +41,10 @@ var IDelta          = bugpack.require('bugdelta.IDelta');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Obj}
+ */
 var Entity = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
@@ -99,6 +103,13 @@ var Entity = Class.extend(Obj, {
      */
     getDeltaDocument: function() {
         return this.deltaDocument;
+    },
+
+    /**
+     * @return {*}
+     */
+    getEntityData: function() {
+        return this.deltaDocument.getData();
     },
 
     /**

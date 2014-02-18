@@ -5,9 +5,11 @@
 //@Export('Pair')
 
 //@Require('Class')
+//@Require('Exception')
 //@Require('IArrayable')
 //@Require('IObjectable')
 //@Require('Obj')
+//@Require('TypeUtil')
 
 
 //-------------------------------------------------------------------------------
@@ -22,9 +24,11 @@ var bugpack             = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var Class               = bugpack.require('Class');
+var Exception           = bugpack.require('Exception');
 var IArrayable          = bugpack.require('IArrayable');
 var IObjectable         = bugpack.require('IObjectable');
 var Obj                 = bugpack.require('Obj');
+var TypeUtil            = bugpack.require('TypeUtil');
 
 
 //-------------------------------------------------------------------------------
@@ -45,8 +49,8 @@ var Pair = Class.extend(Obj, {
 
     /**
      * @constructs
-     * @param {*} a
-     * @param {*} b
+     * @param {(* | Pair | {a: *, b: *})} a
+     * @param {*=} b
      */
     _constructor: function(a ,b) {
 
@@ -61,13 +65,24 @@ var Pair = Class.extend(Obj, {
          * @private
          * @type {*}
          */
-        this.a  = a;
+        this.a  = null;
 
         /**
          * @private
          * @type {*}
          */
-        this.b  = b;
+        this.b  = null;
+
+        if (Class.doesExtend(a, Pair)) {
+            this.a = a.getA();
+            this.b = a.getB();
+        } else if (TypeUtil.isObject(a)) {
+            this.a = a.a;
+            this.b = a.b;
+        } else {
+            this.a = a;
+            this.b = b;
+        }
     },
 
 
@@ -180,6 +195,22 @@ var Pair = Class.extend(Obj, {
      */
     contains: function(value) {
         return Obj.equals(value, this.a) || Obj.equals(value, this.b);
+    },
+
+    /**
+     * @param {*} value
+     * @return {*}
+     */
+    getOther: function(value) {
+        if (this.contains(value)) {
+            if (Obj.equals(value, this.a)) {
+                return this.b;
+            } else {
+                return this.a;
+            }
+        } else {
+            throw new Exception("value is not in Pair - '" + value + "'");
+        }
     }
 });
 

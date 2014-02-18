@@ -98,6 +98,18 @@ var htmlUtilReplaceUrlsTest = {
                 value: "www.airbug.com"
             },
             {
+                expected: "test <b>www.airbug.com</b> test",
+                value: "test www.airbug.com test"
+            },
+            {
+                expected: "<b>subsub.sub.airbug.com</b>",
+                value: "subsub.sub.airbug.com"
+            },
+            {
+                expected: "<b>open.spotify.com</b>",
+                value: "open.spotify.com"
+            },
+            {
                 expected: "<b>www.airbug.com:80</b>",
                 value: "www.airbug.com:80"
             },
@@ -108,6 +120,14 @@ var htmlUtilReplaceUrlsTest = {
             {
                 expected: "<b>http://localhost</b>:/app#room/52d997cf05830c97a6a5da50",
                 value: "http://localhost:/app#room/52d997cf05830c97a6a5da50"
+            },
+            {
+                expected: "<b>https://maps.google.com/maps?q=arlington,+va+to+airbug+inc,+san+francisco,+ca&saddr=arlington,+va&daddr=airbug+inc,+san+francisco,+ca&hl=en&ll=39.774769,-99.755859&spn=48.496045,88.242187&sll=37.0625,-95.677068&sspn=50.111473,88.242187&geocode=FVVJUQIdW69n-ykPp6d7nba3iTE0voUzYAOG4A%3BFdX-PwIdewGz-CGgBC0rVL4deCk7B7kygX2PgDGgBC0rVL4deA&t=m&z=4</b>",
+                value: "https://maps.google.com/maps?q=arlington,+va+to+airbug+inc,+san+francisco,+ca&saddr=arlington,+va&daddr=airbug+inc,+san+francisco,+ca&hl=en&ll=39.774769,-99.755859&spn=48.496045,88.242187&sll=37.0625,-95.677068&sspn=50.111473,88.242187&geocode=FVVJUQIdW69n-ykPp6d7nba3iTE0voUzYAOG4A%3BFdX-PwIdewGz-CGgBC0rVL4deCk7B7kygX2PgDGgBC0rVL4deA&t=m&z=4"
+            },
+            {
+                expected: "<b>https://embed.spotify.com/?uri=spotify:user:matthewvroom:playlist:1wZihJ4AKuJoo98bdXr9me</b>",
+                value: "https://embed.spotify.com/?uri=spotify:user:matthewvroom:playlist:1wZihJ4AKuJoo98bdXr9me"
             }
         ];
     },

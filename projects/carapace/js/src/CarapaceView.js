@@ -487,9 +487,31 @@ var CarapaceView = Class.adapt(Backbone.View, {
     /**
      * @protected
      */
+    renderAttributes: function() {
+        var _this = this;
+        Obj.forIn(this.attributes, function(attributeName, attributeValue) {
+            _this.renderAttribute(attributeName, attributeValue);
+        });
+    },
+
+    /**
+     * @protected
+     * @param {string} attributeName
+     * @param {*} attributeValue
+     */
+    renderAttribute: function(attributeName, attributeValue) {
+
+    },
+
+    /**
+     * @protected
+     */
     renderView: function() {
         if (this.model) {
             this.renderModel();
+        }
+        if (this.attributes) {
+            this.renderAttributes();
         }
     },
 
@@ -511,6 +533,7 @@ var CarapaceView = Class.adapt(Backbone.View, {
     renderModelProperty: function(propertyName, propertyValue) {
 
     },
+
 
     //TODO BRN: We should improve the Proxy util to handle these cases.
     //-------------------------------------------------------------------------------
