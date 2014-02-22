@@ -142,8 +142,8 @@ var DummyMongoManager = Class.extend(Obj, {
     distinct: function() {
 
     },
-    ensureIndexes: function() {
-
+    ensureIndexes: function(callback) {
+        callback();
     },
 
     /**
