@@ -77,7 +77,10 @@ var ForEachSeries = Class.extend(IteratorFlow, {
      */
     executeFlow: function(args) {
         if (!this.data) {
-            this.error("data value must be iterable");
+            this.error("There is not data. Data value must be iterable");
+            //NOTE SUNG
+            // You may need to wrap your forEachSeries in another task
+            // because the data is defined before the forEachSeries is run
         }
         if (this.data.length > 0) {
             this.next();
