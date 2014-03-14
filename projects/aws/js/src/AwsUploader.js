@@ -91,8 +91,15 @@ var AwsUploader = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // Public Methods
+    // Getters and Setters
     //-------------------------------------------------------------------------------
+
+    /**
+     * @return {string}
+     */
+    getPropertiesFilePath: function() {
+        return this.propertiesFilePath;
+    },
 
     /**
      * @returns {{
@@ -110,6 +117,11 @@ var AwsUploader = Class.extend(Obj, {
     getProps: function() {
         return this.props;
     },
+
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
+    //-------------------------------------------------------------------------------
 
     /**
      * @param {function(error)=} callback

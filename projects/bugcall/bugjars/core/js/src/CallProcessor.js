@@ -92,6 +92,25 @@ var CallProcessor = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {Set.<IPreProcessCall>}
+     */
+    getCallPreProcessorSet: function() {
+        return this.callPreProcessorSet;
+    },
+
+    /**
+     * @return {Set.<IProcessCall>}
+     */
+    getCallProcessorSet: function() {
+        return this.callProcessorSet;
+    },
+
+
+    //-------------------------------------------------------------------------------
     // Public Methods
     //-------------------------------------------------------------------------------
 

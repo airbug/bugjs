@@ -54,6 +54,12 @@ var SchemaProperty = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {*}
+         */
+        this.default        = null;
+
+        /**
+         * @private
          * @type {boolean}
          */
         this.id             = false;
@@ -63,6 +69,12 @@ var SchemaProperty = Class.extend(Obj, {
          * @type {boolean}
          */
         this.indexed        = false;
+
+        /**
+         * @private
+         * @type {string}
+         */
+        this.name           = name;
 
         /**
          * @private
@@ -78,9 +90,9 @@ var SchemaProperty = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {string}
+         * @type {boolean}
          */
-        this.name           = name;
+        this.required       = false;
 
         /**
          * @private
@@ -104,6 +116,9 @@ var SchemaProperty = Class.extend(Obj, {
             if (TypeUtil.isString(options.collectionOf)) {
                 this.collectionOf = options.collectionOf;
             }
+            if (!TypeUtil.isUndefined(options.default) && !TypeUtil.isNull(options.default)) {
+                this.default = options.default;
+            }
             if (TypeUtil.isBoolean(options.id)) {
                 this.id = options.id;
             }
@@ -115,6 +130,9 @@ var SchemaProperty = Class.extend(Obj, {
             }
             if (TypeUtil.isBoolean(options.primaryId)) {
                 this.primaryId = options.primaryId;
+            }
+            if (TypeUtil.isBoolean(options.required)) {
+                this.required = options.required;
             }
             if (TypeUtil.isBoolean(options.stored)) {
                 this.stored = options.stored;
@@ -138,6 +156,13 @@ var SchemaProperty = Class.extend(Obj, {
     },
 
     /**
+     * @return {*}
+     */
+    getDefault: function() {
+        return this.default;
+    },
+
+    /**
      * @return {string}
      */
     getName: function() {
@@ -149,6 +174,18 @@ var SchemaProperty = Class.extend(Obj, {
      */
     getType: function() {
         return this.type;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Convenience Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {boolean}
+     */
+    hasDefault: function() {
+        return !TypeUtil.isNull(this.default);
     },
 
     /**
@@ -182,6 +219,13 @@ var SchemaProperty = Class.extend(Obj, {
     /**
      * @return {boolean}
      */
+    isRequired: function() {
+        return this.required;
+    },
+
+    /**
+     * @return {boolean}
+     */
     isStored: function() {
         return this.stored;
     },
@@ -191,6 +235,27 @@ var SchemaProperty = Class.extend(Obj, {
      */
     isUnique: function() {
         return this.unique;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {*}
+     */
+    generateDefault: function() {
+        var value = this.default;
+        if (TypeUtil.isFunction(value)) {
+            value = value();
+        }
+        switch(this.type) {
+            case "date":
+                return new Date(value);
+            default:
+                return value;
+        }
     }
 });
 

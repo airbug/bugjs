@@ -14,21 +14,25 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var Annotation  = bugpack.require('bugmeta.Annotation');
+var Class           = bugpack.require('Class');
+var Annotation      = bugpack.require('bugmeta.Annotation');
 
 
 //-------------------------------------------------------------------------------
 // Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Annotation}
+ */
 var PropertyAnnotation = Class.extend(Annotation, {
 
     //-------------------------------------------------------------------------------
@@ -41,7 +45,7 @@ var PropertyAnnotation = Class.extend(Annotation, {
 
 
         //-------------------------------------------------------------------------------
-        // Instance Properties
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**
@@ -49,6 +53,12 @@ var PropertyAnnotation = Class.extend(Annotation, {
          * @type {string}
          */
         this.propertyCollectionOf       = null;
+
+        /**
+         * @private
+         * @type {*}
+         */
+        this.propertyDefault            = null;
 
         /**
          * @private
@@ -84,6 +94,12 @@ var PropertyAnnotation = Class.extend(Annotation, {
          * @private
          * @type {boolean}
          */
+        this.propertyRequired           = false;
+
+        /**
+         * @private
+         * @type {boolean}
+         */
         this.propertyStored             = true;
 
         /**
@@ -112,6 +128,13 @@ var PropertyAnnotation = Class.extend(Annotation, {
     },
 
     /**
+     * @return {*}
+     */
+    getPropertyDefault: function() {
+        return this.propertyDefault;
+    },
+
+    /**
      * @return {string}
      */
     getPropertyName: function() {
@@ -126,11 +149,23 @@ var PropertyAnnotation = Class.extend(Annotation, {
     },
 
     /**
+     * @return {boolean}
+     */
+    getPropertyRequired: function() {
+        return this.propertyRequired;
+    },
+
+    /**
      * @return {string}
      */
     getPropertyType: function() {
         return this.propertyType;
     },
+
+
+    //-------------------------------------------------------------------------------
+    // Convenience Methods
+    //-------------------------------------------------------------------------------
 
     /**
      * @return {boolean}
@@ -151,6 +186,13 @@ var PropertyAnnotation = Class.extend(Annotation, {
      */
     isPropertyPrimaryId: function() {
         return this.propertyPrimaryId;
+    },
+
+    /**
+     * @return {boolean}
+     */
+    isPropertyRequired: function() {
+        return this.propertyRequired;
     },
 
     /**
@@ -182,6 +224,15 @@ var PropertyAnnotation = Class.extend(Annotation, {
     },
 
     /**
+     * @param {*} propertyDefault
+     * @returns {PropertyAnnotation}
+     */
+    'default': function(propertyDefault) {
+        this.propertyDefault = propertyDefault;
+        return this;
+    },
+
+    /**
      * @return {PropertyAnnotation}
      */
     id: function() {
@@ -190,10 +241,11 @@ var PropertyAnnotation = Class.extend(Annotation, {
     },
 
     /**
+     * @param {boolean} index
      * @return {PropertyAnnotation}
      */
-    index: function() {
-        this.propertyIndexed = true;
+    index: function(index) {
+        this.propertyIndexed = index;
         return this;
     },
 
@@ -215,10 +267,19 @@ var PropertyAnnotation = Class.extend(Annotation, {
     },
 
     /**
+     * @param {boolean} required
+     * @return {PropertyAnnotation}
+     */
+    require: function(required) {
+        this.propertyRequired = required;
+        return this;
+    },
+
+    /**
      * @param {boolean} stored
      * @return {PropertyAnnotation}
      */
-    stored: function(stored) {
+    store: function(stored) {
         this.propertyStored = stored;
         return this;
     },
@@ -233,10 +294,11 @@ var PropertyAnnotation = Class.extend(Annotation, {
     },
 
     /**
+     * @param {boolean} unique
      * @return {PropertyAnnotation}
      */
-    unique: function() {
-        this.propertyUnique = true;
+    unique: function(unique) {
+        this.propertyUnique = unique;
         return this;
     }
 });

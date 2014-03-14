@@ -79,7 +79,33 @@ var SocketIoServer = Class.extend(EventDispatcher, {
 
 
     //-------------------------------------------------------------------------------
-    // Public Class Methods
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {SocketIoServerConfig}
+     */
+    getConfig: function() {
+        return this.config;
+    },
+
+    /**
+     * @return {ExpressServer}
+     */
+    getExpressServer: function() {
+        return this.expressServer;
+    },
+
+    /**
+     * @return {Handshaker}
+     */
+    getHandshaker: function() {
+        return this.handshaker;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -99,6 +125,10 @@ var SocketIoServer = Class.extend(EventDispatcher, {
 
                         callback(undefined, result);
                     } else {
+                        if (throwable) {
+                            console.log(throwable.message);
+                            console.log(throwable.stack);
+                        }
                         callback(throwable, false);
                     }
                 });

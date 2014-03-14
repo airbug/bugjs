@@ -15,6 +15,7 @@
 //@Require('bugdouble.BugDouble')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
+//@Require('bugyarn.BugYarn')
 //@Require('loggerbug.Logger')
 
 
@@ -40,6 +41,7 @@ var RequestFailedException  = bugpack.require('bugcall.RequestFailedException');
 var BugDouble               = bugpack.require('bugdouble.BugDouble');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
+var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 var Logger                  = bugpack.require('loggerbug.Logger')
 
 
@@ -48,8 +50,30 @@ var Logger                  = bugpack.require('loggerbug.Logger')
 //-------------------------------------------------------------------------------
 
 var bugmeta                 = BugMeta.context();
+var bugyarn                 = BugYarn.context();
 var spyOnFunction           = BugDouble.spyOnFunction;
 var test                    = TestAnnotation.test;
+
+
+//-------------------------------------------------------------------------------
+// BugYarn
+//-------------------------------------------------------------------------------
+
+bugyarn.registerWeaver("testCall", function(yarn, args) {
+    yarn.spin([
+        "setupTestLogger"
+    ]);
+    return new Call(this.logger, args[0], args[1]);
+});
+
+bugyarn.registerWinder("setupTestCall", function(yarn) {
+    yarn.spin([
+        "setupTestLogger"
+    ]);
+    yarn.wind({
+        call: new Call(this.logger)
+    });
+});
 
 
 //-------------------------------------------------------------------------------
@@ -80,6 +104,7 @@ var generateDummySocket     = function() {
     };
 };
 
+
 //-------------------------------------------------------------------------------
 // Declare Tests
 //-------------------------------------------------------------------------------
@@ -91,7 +116,10 @@ var callInstantiationNoArgumentsTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        this.logger         = new Logger();
+        var yarn = bugyarn.yarn(this);
+        yarn.spin([
+            "setupTestLogger"
+        ]);
         this.testCall       = new Call(this.logger);
     },
 
@@ -124,7 +152,10 @@ var callInstantiationWithArgumentsTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        this.logger             = new Logger();
+        var yarn = bugyarn.yarn(this);
+        yarn.spin([
+            "setupTestLogger"
+        ]);
         this.testCallUuid       = "testCallUuid";
         this.testReconnect      = true;
         this.testCall           = new Call(this.logger, this.testCallUuid, this.testReconnect);
@@ -162,7 +193,10 @@ var callSendRequestQueuesWhenNotOpenTest = {
 
     setup: function(test) {
         var _this                       = this;
-        this.logger                     = new Logger();
+        var yarn = bugyarn.yarn(this);
+        yarn.spin([
+            "setupTestLogger"
+        ]);
         this.testCallUuid               = "testCallUuid";
         this.testReconnect              = false;
         this.testRequestType            = "testRequestType";
@@ -178,12 +212,13 @@ var callSendRequestQueuesWhenNotOpenTest = {
                     "Assert that outgoingRequest was an instance of OutgoingRequest");
                 test.assertTrue(_this.testCall.getOutgoingRequestQueue().contains(outgoingRequest),
                     "Assert outgoingRequest was queued");
-                test.complete();
+                test.completeTest();
             } else {
                 test.error(throwable);
             }
         };
         this.testSendCallbackSpy        = spyOnFunction(this.testSendCallback);
+        test.completeSetup();
     },
 
     //-------------------------------------------------------------------------------
@@ -212,6 +247,10 @@ var callCloseCallTest = {
 
     setup: function(test) {
         var _this                       = this;
+        var yarn = bugyarn.yarn(this);
+        yarn.spin([
+            "setupTestLogger"
+        ]);
         this.testCallUuid               = "testCallUuid";
         this.testReconnect              = false;
         this.testRequestType            = "testRequestType";
@@ -236,7 +275,6 @@ var callCloseCallTest = {
         this.dummySocketConnection      = generateDummySocket();
         this.testCallConnection         = new CallConnection(this.dummySocketConnection, this.dummyMarshaller);
         this.testCallResponseHandler    = new CallResponseHandler(this.testCallbackSpy);
-        this.logger                     = new Logger();
         this.testCall                   = new Call(this.logger, this.testCallUuid, this.testReconnect);
         this.testRequest                = new CallRequest(this.testRequestType, this.testRequestData);
         this.testSendCallback           = function(throwable, outgoingRequest) {

@@ -101,6 +101,13 @@ var RedisClient = Class.extend(EventDispatcher, {
     },
 
     /**
+     * @return {RedisConfig}
+     */
+    getConfig: function() {
+        return this.config;
+    },
+
+    /**
      * @return {boolean}
      */
     getConnected: function() {
@@ -295,6 +302,11 @@ var RedisClient = Class.extend(EventDispatcher, {
         return this.client.srem.apply(this.client, arguments);
     },
 
+    /**
+     * @param {string} channel
+     * @param {function(Error, string)} callback
+     * @return {*}
+     */
     subscribe: function(channel, callback) {
         return this.client.subscribe.apply(this.client, arguments);
     },

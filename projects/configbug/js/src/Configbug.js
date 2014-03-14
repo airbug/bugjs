@@ -13,35 +13,41 @@
 //@Require('TypeUtil')
 //@Require('bugflow.BugFlow')
 //@Require('bugfs.BugFs')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var Config      = bugpack.require('Config');
-var Map         = bugpack.require('Map');
-var Obj         = bugpack.require('Obj');
-var TypeUtil    = bugpack.require('TypeUtil');
-var BugFlow     = bugpack.require('bugflow.BugFlow');
-var BugFs       = bugpack.require('bugfs.BugFs');
+var Class                   = bugpack.require('Class');
+var Config                  = bugpack.require('Config');
+var Map                     = bugpack.require('Map');
+var Obj                     = bugpack.require('Obj');
+var TypeUtil                = bugpack.require('TypeUtil');
+var BugFlow                 = bugpack.require('bugflow.BugFlow');
+var BugFs                   = bugpack.require('bugfs.BugFs');
+var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
+var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var $if         = BugFlow.$if;
-var $series     = BugFlow.$series;
-var $task       = BugFlow.$task;
+var bugmeta                 = BugMeta.context();
+var module                  = ModuleAnnotation.module;
+var $if                     = BugFlow.$if;
+var $series                 = BugFlow.$series;
+var $task                   = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
@@ -107,6 +113,13 @@ var Configbug = Class.extend(Obj, {
      */
     getConfigPath: function() {
         return this.configPath;
+    },
+
+    /**
+     * @param {Path} configPath
+     */
+    setConfigPath: function(configPath) {
+        this.configPath = configPath;
     },
 
     /**
@@ -260,6 +273,15 @@ var Configbug = Class.extend(Obj, {
         });
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(Configbug).with(
+    module("configbug")
+);
 
 
 //-------------------------------------------------------------------------------

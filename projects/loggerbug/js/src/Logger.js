@@ -12,6 +12,7 @@
 //@Require('Map')
 //@Require('Obj')
 //@Require('Throwable')
+//@Require('bugioc.ArgAnnotation')
 //@Require('bugioc.ModuleAnnotation')
 //@Require('bugmeta.BugMeta')
 
@@ -32,6 +33,7 @@ var Class                           = bugpack.require('Class');
 var Map                             = bugpack.require('Map');
 var Obj                             = bugpack.require('Obj');
 var Throwable                       = bugpack.require('Throwable');
+var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
 var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
 var BugMeta                         = bugpack.require('bugmeta.BugMeta');
 
@@ -40,6 +42,7 @@ var BugMeta                         = bugpack.require('bugmeta.BugMeta');
 // Simplify References
 //-------------------------------------------------------------------------------
 
+var arg                             = ArgAnnotation.arg;
 var bugmeta                         = BugMeta.context();
 var module                          = ModuleAnnotation.module;
 
@@ -60,9 +63,10 @@ var Logger = Class.extend(Obj, {
 
     /**
      * @constructs
+     * @param {console|Console} console
      * @param {number} consoleLogPriority
      */
-    _constructor: function(consoleLogPriority) {
+    _constructor: function(console, consoleLogPriority) {
 
         this._super();
 
@@ -70,6 +74,12 @@ var Logger = Class.extend(Obj, {
         //-------------------------------------------------------------------------------
         // Private Properties
         //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @type {console|Console}
+         */
+        this.console                = console;
 
         /**
          * @private
@@ -82,6 +92,13 @@ var Logger = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
     // Getters and Setters
     //-------------------------------------------------------------------------------
+
+    /**
+     * @return {console|Console}
+     */
+    getConsole: function() {
+        return this.console;
+    },
 
     /**
      * @returns {number}
@@ -159,29 +176,30 @@ var Logger = Class.extend(Obj, {
      * @param {Array.<string>} messages
      */
     processLog: function(type, priority, messages) {
+        var _this = this;
         if (priority >= this.consoleLogPriority) {
             if (type === Logger.Type.ERROR) {
                 messages.forEach(function(message) {
                     if (Class.doesExtend(message, Throwable) || Class.doesExtend(message, Error)) {
-                        console.error(message.message + "\n" + message.stack);
+                        _this.console.error(message.message + "\n" + message.stack);
                     } else {
-                        console.error(message);
+                        _this.console.error(message);
                     }
                 });
             } else if (type === Logger.Type.WARN) {
                 messages.forEach(function(message) {
                     if (Class.doesExtend(message, Throwable) || Class.doesExtend(message, Error)) {
-                        console.error(message.message + "\n" + message.stack);
+                        _this.console.error(message.message + "\n" + message.stack);
                     } else {
-                        console.error(message);
+                        _this.console.error(message);
                     }
                 });
             } else {
                 messages.forEach(function(message) {
                     if (Class.doesExtend(message, Throwable) || Class.doesExtend(message, Error)) {
-                        console.log(message.message + "\n" + message.stack);
+                        _this.console.log(message.message + "\n" + message.stack);
                     } else {
-                        console.log(message);
+                        _this.console.log(message);
                     }
                 });
             }
@@ -225,6 +243,9 @@ Logger.Priority = {
 
 bugmeta.annotate(Logger).with(
     module("logger")
+        .args([
+            arg().ref("console")
+        ])
 );
 
 

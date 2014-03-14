@@ -115,6 +115,13 @@ var PubSub = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @return {Logger}
+     */
+    getLogger: function() {
+        return this.logger;
+    },
+
+    /**
      * @return {Marshaller}
      */
     getMarshaller: function() {
@@ -165,6 +172,14 @@ var PubSub = Class.extend(Obj, {
             message.setMessageUuid(messageObject.messageUuid);
         }
         return message;
+    },
+
+    /**
+     * @param {string} channel
+     * @return {boolean}
+     */
+    hasSubscriber: function(channel) {
+        return this.channelToSubscriberListMap.containsKey(channel);
     },
 
     /**
@@ -293,7 +308,7 @@ var PubSub = Class.extend(Obj, {
         var subscriberList  = this.channelToSubscriberListMap.get(channel);
         if (subscriberList) {
             subscriberList.forEach(function(subscriber) {
-                subscriber.receiveMessage(message);
+                subscriber.receiveMessage(message, channel);
                 if (subscriber.getOnce()) {
                     _this.removeSubscriber(channel, subscriber, function(throwable) {
                         if (throwable) {

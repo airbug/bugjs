@@ -176,6 +176,13 @@ var BugCallServer = Class.extend(EventDispatcher, {
     },
 
     /**
+     * @return {Logger}
+     */
+    getLogger: function() {
+        return this.logger;
+    },
+
+    /**
      * @return {RequestProcessor}
      */
     getRequestProcessor: function() {

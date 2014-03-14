@@ -60,10 +60,10 @@ var ArrayCalculator = Class.extend(Obj, {
     /**
      * @param {Delta} delta
      * @param {string} path
-     * @param {DeltaDocument} currentDocument
-     * @param {DeltaDocument} previousDocument
+     * @param {*} currentValue
+     * @param {*} previousValue
      */
-    calculateDelta: function(delta, path, currentDocument, previousDocument) {
+    calculateDelta: function(delta, path, currentValue, previousValue) {
 
     }
 });

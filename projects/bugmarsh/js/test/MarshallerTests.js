@@ -6,11 +6,11 @@
 
 //@Require('Class')
 //@Require('bugmarsh.Marshaller')
-//@Require('bugmarsh.MarshRegistry')
 //@Require('bugmeta.Annotation')
 //@Require('bugmeta.BugMeta')
 //@Require('bugmeta.MetaContext')
 //@Require('bugunit-annotate.TestAnnotation')
+//@Require('bugyarn.BugYarn')
 
 
 //-------------------------------------------------------------------------------
@@ -26,11 +26,11 @@ var bugpack                 = require('bugpack').context();
 
 var Class                   = bugpack.require('Class');
 var Marshaller              = bugpack.require('bugmarsh.Marshaller');
-var MarshRegistry           = bugpack.require('bugmarsh.MarshRegistry');
 var Annotation              = bugpack.require('bugmeta.Annotation');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var MetaContext             = bugpack.require('bugmeta.MetaContext');
 var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
+var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 
 //-------------------------------------------------------------------------------
@@ -38,7 +38,22 @@ var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation')
 //-------------------------------------------------------------------------------
 
 var bugmeta                 = BugMeta.context();
+var bugyarn                 = BugYarn.context();
 var test                    = TestAnnotation.test;
+
+
+//-------------------------------------------------------------------------------
+// BugYarn
+//-------------------------------------------------------------------------------
+
+bugyarn.registerWinder("setupTestMarshaller", function(yarn) {
+    yarn.spin([
+        "setupTestMarshRegistry"
+    ]);
+    yarn.wind({
+        marshaller: new Marshaller(this.marshRegistry)
+    });
+});
 
 
 //-------------------------------------------------------------------------------
@@ -52,8 +67,9 @@ var marshallerInstantiationTest = {
     //-------------------------------------------------------------------------------
 
     setup: function(test) {
-        this.testMarshRegistry  = new MarshRegistry();
-        this.testMarshaller     = new Marshaller(this.testMarshRegistry);
+        var yarn = bugyarn.yarn(this);
+        yarn.spin(["setupTestMarshRegistry"]);
+        this.testMarshaller     = new Marshaller(this.marshRegistry);
     },
 
 
@@ -64,7 +80,7 @@ var marshallerInstantiationTest = {
     test: function(test) {
         test.assertTrue(Class.doesExtend(this.testMarshaller, Marshaller),
             "Assert testMarshaller is an instance of Marshaller");
-        test.assertEqual(this.testMarshaller.getMarshRegistry(), this.testMarshRegistry,
+        test.assertEqual(this.testMarshaller.getMarshRegistry(), this.marshRegistry,
             "Assert marshRegistry was set correctly");
     }
 };

@@ -14,7 +14,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -31,8 +31,8 @@ var TestAnnotation      = bugpack.require('bugunit-annotate.TestAnnotation');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var bugmeta = BugMeta.context();
-var test = TestAnnotation.test;
+var bugmeta             = BugMeta.context();
+var test                = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
@@ -66,6 +66,7 @@ var bugflowExecuteWhileParallelTest = {
             }, 0);
         });
         this.whileParallel = BugFlow.$whileParallel(this.testWhileMethod, this.testTask);
+        test.completeSetup();
     },
 
 
@@ -87,7 +88,7 @@ var bugflowExecuteWhileParallelTest = {
             } else {
                 test.error(throwable);
             }
-            test.complete();
+            test.completeTest();
         });
     }
 };

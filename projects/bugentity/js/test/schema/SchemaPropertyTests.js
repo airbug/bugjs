@@ -7,7 +7,7 @@
 //@Require('bugentity.SchemaProperty')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
-//@Require('mongo.MongoDataStore')
+//@Require('bugyarn.BugYarn')
 
 
 //-------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ var bugpack                 = require('bugpack').context();
 var SchemaProperty          = bugpack.require('bugentity.SchemaProperty');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
-var MongoDataStore          = bugpack.require('mongo.MongoDataStore');
+var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 
 //-------------------------------------------------------------------------------
@@ -32,7 +32,17 @@ var MongoDataStore          = bugpack.require('mongo.MongoDataStore');
 //-------------------------------------------------------------------------------
 
 var bugmeta                 = BugMeta.context();
+var bugyarn                 = BugYarn.context();
 var test                    = TestAnnotation.test;
+
+
+//-------------------------------------------------------------------------------
+// BugYarn
+//-------------------------------------------------------------------------------
+
+bugyarn.registerWeaver("testSchemaProperty", function(yarn, args) {
+    return new SchemaProperty(args[0], args[1], args[2]);
+});
 
 
 //-------------------------------------------------------------------------------

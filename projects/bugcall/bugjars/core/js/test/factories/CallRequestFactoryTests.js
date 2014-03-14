@@ -10,6 +10,7 @@
 //@Require('bugcall.CallRequestFactory')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
+//@Require('bugyarn.BugYarn')
 
 
 //-------------------------------------------------------------------------------
@@ -29,6 +30,7 @@ var CallRequest             = bugpack.require('bugcall.CallRequest');
 var CallRequestFactory      = bugpack.require('bugcall.CallRequestFactory');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
+var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 
 //-------------------------------------------------------------------------------
@@ -36,7 +38,19 @@ var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation')
 //-------------------------------------------------------------------------------
 
 var bugmeta                 = BugMeta.context();
+var bugyarn                 = BugYarn.context();
 var test                    = TestAnnotation.test;
+
+
+//-------------------------------------------------------------------------------
+// BugYarn
+//-------------------------------------------------------------------------------
+
+bugyarn.registerWinder("setupTestCallRequestFactory", function(yarn) {
+    yarn.wind({
+        callRequestFactory: new CallRequestFactory()
+    });
+});
 
 
 //-------------------------------------------------------------------------------

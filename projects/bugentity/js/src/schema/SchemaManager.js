@@ -7,13 +7,13 @@
 //@Export('SchemaManager')
 //@Autoload
 
+//@Require('Bug')
 //@Require('Class')
-//@Require('Event')
-//@Require('EventDispatcher')
 //@Require('Map')
+//@Require('Obj')
 //@Require('bugentity.EntityProcessor')
 //@Require('bugentity.EntityScan')
-//@Require('bugioc.IInitializeModule')
+//@Require('bugioc.IProcessModule')
 //@Require('bugioc.ModuleAnnotation')
 //@Require('bugmeta.BugMeta')
 
@@ -22,20 +22,20 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // Bugpack Modules
 //-------------------------------------------------------------------------------
 
+var Bug                 = bugpack.require('Bug');
 var Class               = bugpack.require('Class');
-var Event               = bugpack.require('Event');
-var EventDispatcher     = bugpack.require('EventDispatcher');
 var Map                 = bugpack.require('Map');
+var Obj                 = bugpack.require('Obj');
 var EntityProcessor     = bugpack.require('bugentity.EntityProcessor');
 var EntityScan          = bugpack.require('bugentity.EntityScan');
-var IInitializeModule   = bugpack.require('bugioc.IInitializeModule');
+var IProcessModule      = bugpack.require('bugioc.IProcessModule');
 var ModuleAnnotation    = bugpack.require('bugioc.ModuleAnnotation');
 var BugMeta             = bugpack.require('bugmeta.BugMeta');
 
@@ -52,7 +52,7 @@ var module               = ModuleAnnotation.module;
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var SchemaManager = Class.extend(EventDispatcher, {
+var SchemaManager = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
@@ -78,29 +78,30 @@ var SchemaManager = Class.extend(EventDispatcher, {
          * @type {Map.<string, Schema>}
          */
         this.nameToSchemaMap    = new Map();
+
+        /**
+         * @private
+         * @type {boolean}
+         */
+        this.processed          = false;
     },
 
 
     //-------------------------------------------------------------------------------
-    // IInitializeModule Implementation
+    // IProcessModule Implementation
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {function(Throwable=)} callback
+     *
      */
-    deinitializeModule: function(callback) {
-        this.classToSchemaMap.clear();
-        this.nameToSchemaMap.clear();
-        callback();
-    },
-
-    /**
-     * @param {function(Throwable=)} callback
-     */
-    initializeModule: function(callback) {
-        var entityScan = new EntityScan(new EntityProcessor(this));
-        entityScan.scanAll();
-        callback();
+    processModule: function() {
+        if (!this.processed) {
+            this.processed = true;
+            var entityScan = new EntityScan(new EntityProcessor(this));
+            entityScan.scanAll();
+        } else {
+            throw new Bug("IllegalState", {}, "Already processed module SchemaManager");
+        }
     },
 
 
@@ -109,18 +110,28 @@ var SchemaManager = Class.extend(EventDispatcher, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @return {ICollection.<EntitySchema>}
+     */
+    getSchemaCollection: function() {
+        this.assertProcessed();
+        return this.nameToSchemaMap.getValueCollection();
+    },
+
+    /**
      * @param {Class} _class
-     * @return {Schema}
+     * @return {EntitySchema}
      */
     getSchemaByClass: function(_class) {
+        this.assertProcessed();
         return this.classToSchemaMap.get(_class);
     },
 
     /**
      * @param {string} name
-     * @return {Schema}
+     * @return {EntitySchema}
      */
     getSchemaByName: function(name) {
+        this.assertProcessed();
         return this.nameToSchemaMap.get(name);
     },
 
@@ -129,6 +140,7 @@ var SchemaManager = Class.extend(EventDispatcher, {
      * @return {boolean}
      */
     hasSchemaForClass: function(_class) {
+        this.assertProcessed();
         return this.classToSchemaMap.containsKey(_class);
     },
 
@@ -137,11 +149,12 @@ var SchemaManager = Class.extend(EventDispatcher, {
      * @return {boolean}
      */
     hasSchemaForName: function(name) {
+        this.assertProcessed();
         return this.nameToSchemaMap.containsKey(name);
     },
 
     /**
-     * @param {Schema} schema
+     * @param {EntitySchema} schema
      */
     registerSchema: function(schema) {
         if (this.hasSchemaForClass(schema.getEntityClass())) {
@@ -152,7 +165,20 @@ var SchemaManager = Class.extend(EventDispatcher, {
         }
         this.classToSchemaMap.put(schema.getEntityClass(), schema);
         this.nameToSchemaMap.put(schema.getEntityName(), schema);
-        this.dispatchEvent(new Event(SchemaManager.EventTypes.SCHEMA_REGISTERED, {schema: schema}));
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Private Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     */
+    assertProcessed: function() {
+        if (!this.processed) {
+            throw new Bug("AssertFailed", {}, "Module 'SchemaManager' has not been processed");
+        }
     }
 });
 
@@ -161,7 +187,7 @@ var SchemaManager = Class.extend(EventDispatcher, {
 // Interfaces
 //-------------------------------------------------------------------------------
 
-Class.implement(SchemaManager, IInitializeModule);
+Class.implement(SchemaManager, IProcessModule);
 
 
 //-------------------------------------------------------------------------------
@@ -171,18 +197,6 @@ Class.implement(SchemaManager, IInitializeModule);
 bugmeta.annotate(SchemaManager).with(
     module("schemaManager")
 );
-
-
-//-------------------------------------------------------------------------------
-// Static Properties
-//-------------------------------------------------------------------------------
-
-/**
- * @enum {string}
- */
-SchemaManager.EventTypes = {
-    SCHEMA_REGISTERED: "SchemaManager:SchemaRegistered"
-};
 
 
 //-------------------------------------------------------------------------------

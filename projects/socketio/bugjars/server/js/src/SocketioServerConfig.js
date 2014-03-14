@@ -45,7 +45,11 @@ var SocketIoServerConfig = Class.extend(Config, {
      * @return {boolean}
      */
     getMatchOriginProtocol: function() {
-        return this.getProperties().getProperty("matchOriginProtocol");
+        var matchOriginProtocol = this.getProperties().getProperty("matchOriginProtocol");
+        if (!TypeUtil.isBoolean(matchOriginProtocol)) {
+            matchOriginProtocol = false;
+        }
+        return matchOriginProtocol;
     },
 
     /**
@@ -81,9 +85,6 @@ var SocketIoServerConfig = Class.extend(Config, {
         if (!TypeUtil.isArray(transports)) {
             transports = [
                 'websocket',
-                'flashsocket',
-                'htmlfile',
-                'xhr-polling',
                 'jsonp-polling'
             ];
         }

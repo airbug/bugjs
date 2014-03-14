@@ -8,6 +8,8 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('Set')
+//@Require('TypeUtil')
 //@Require('bugmeta.BugMeta')
 
 
@@ -24,6 +26,8 @@ var bugpack                     = require('bugpack').context();
 
 var Class                       = bugpack.require('Class');
 var Obj                         = bugpack.require('Obj');
+var Set                         = bugpack.require('Set');
+var TypeUtil                    = bugpack.require('TypeUtil');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
 
@@ -82,15 +86,29 @@ var AnnotationScan = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @param {{
+     *      excludes: Array.<string>
+     * }=} scanOptions
      */
-    scanAll: function() {
-        var _this       = this;
-        var bugmeta     = BugMeta.context();
-        var annotations = bugmeta.getAnnotationsByType(this.forType);
+    scanAll: function(scanOptions) {
+        var _this           = this;
+        var bugmeta         = BugMeta.context();
+        var excludeSet      = new Set();
+        var annotations     = bugmeta.getAnnotationsByType(this.forType);
+        if (scanOptions && scanOptions.excludes) {
+            scanOptions.excludes.forEach(function(exclude) {
+                if (TypeUtil.isString(exclude)) {
+                    excludeSet.add(bugpack.require(exclude));
+                } else {
+                    excludeSet.add(exclude);
+                }
+            });
+        }
         if (annotations) {
             annotations.forEach(function(annotation) {
-                _this.processor.process(annotation);
+                if (!excludeSet.contains(annotation.getAnnotationReference())) {
+                    _this.processor.process(annotation);
+                }
             });
         }
     },

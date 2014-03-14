@@ -40,7 +40,7 @@ var Set                     = bugpack.require('Set');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
 var IConfiguration          = bugpack.require('bugioc.IConfiguration');
 var IInitializeModule       = bugpack.require('bugioc.IInitializeModule');
-var IProcessModule      = bugpack.require('bugioc.IProcessModule');
+var IProcessModule          = bugpack.require('bugioc.IProcessModule');
 var IPreProcessModule       = bugpack.require('bugioc.IPreProcessModule');
 var IocModule               = bugpack.require('bugioc.IocModule');
 var PrototypeScope          = bugpack.require('bugioc.PrototypeScope');
@@ -124,6 +124,11 @@ var IocContext = Class.extend(Obj, {
          */
         this.registeredIocModuleSet                 = new Set();
     },
+
+
+    //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
 
 
     //-------------------------------------------------------------------------------
@@ -410,6 +415,8 @@ var IocContext = Class.extend(Obj, {
      * @param {IocModule} iocModule
      */
     processIocModule: function(iocModule) {
+        //TEST
+        console.log("IocContext processIocModule - ", iocModule.getName());
         this.generateModule(iocModule);
     },
 
@@ -422,15 +429,21 @@ var IocContext = Class.extend(Obj, {
 
         //TODO BRN: Make this code async
 
-        if (Class.doesImplement(module, IPreProcessModule)) {
-            module.preProcessModule();
-        }
-        this.wireModuleProperties(iocModule, module);
-        if (Class.doesImplement(module, IProcessModule)) {
-            module.processModule();
-        }
-        if (Class.doesImplement(module, IInitializeModule)) {
-            this.initializingModuleSet.add(module);
+        if (!this.hasProcessedModule(module)) {
+            this.processedModuleSet.add(module);
+            //TEST
+            console.log("Processing module " + iocModule.getName());
+
+            if (Class.doesImplement(module, IPreProcessModule)) {
+                module.preProcessModule();
+            }
+            this.wireModuleProperties(iocModule, module);
+            if (Class.doesImplement(module, IProcessModule)) {
+                module.processModule();
+            }
+            if (Class.doesImplement(module, IInitializeModule)) {
+                this.initializingModuleSet.add(module);
+            }
         }
     },
 

@@ -138,7 +138,7 @@ var MetaContext = Class.extend(Obj, {
 
     /**
      * @param {string} annotationType
-     * @return {List<Annotation>}
+     * @return {List.<Annotation>}
      */
     getAnnotationsByType: function(annotationType) {
         //TODO BRN (QUESTION): Should we clone this list to prevent breakage?

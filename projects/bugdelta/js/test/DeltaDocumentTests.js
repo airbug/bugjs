@@ -17,7 +17,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
@@ -37,8 +37,8 @@ var TestAnnotation      = bugpack.require('bugunit-annotate.TestAnnotation');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var bugmeta = BugMeta.context();
-var test = TestAnnotation.test;
+var bugmeta             = BugMeta.context();
+var test                = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------

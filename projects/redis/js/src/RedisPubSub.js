@@ -78,8 +78,18 @@ var RedisPubSub = Class.extend(EventDispatcher, {
     // Getters and Setters
     //-------------------------------------------------------------------------------
 
+    /**
+     * @return {RedisClient}
+     */
     getRedisClient: function() {
         return this.redisClient;
+    },
+
+    /**
+     * @return {RedisClient}
+     */
+    getSubscriberRedisClient: function() {
+        return this.subscriberRedisClient;
     },
 
 

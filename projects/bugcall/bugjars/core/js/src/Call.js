@@ -645,7 +645,7 @@ var Call = Class.extend(EventDispatcher, {
             this.checkForStopped();
         } else {
             //NOTE BRN: This could happen if a call closes shortly after it sends a response
-            throw new Exception("Could not find outgoingRequest for this incomingResponse. IncomingResponse:" + incomingResponse.toObject());
+            throw new Exception("IllegalState", {}, "Could not find outgoingRequest for this incomingResponse. IncomingResponse:" + incomingResponse.toObject());
         }
     },
 

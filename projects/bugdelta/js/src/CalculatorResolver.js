@@ -108,12 +108,18 @@ var CalculatorResolver = Class.extend(Obj, {
             var _class = value.getClass();
             if (this.classCalculatorMap.containsKey(_class)) {
                 return this.classCalculatorMap.get(_class);
-            } else {
-                for (var i = 0, size = value.getClass().getInterfaces().length; i < size; i++) {
-                    var _interface = value.getClass().getInterfaces()[i];
-                    if (this.interfaceCalculatorMap.containsKey(_interface)) {
-                        return this.interfaceCalculatorMap.get(_interface);
-                    }
+            }
+            var _superclass = _class.getSuperClass();
+            while (_superclass) {
+                if (this.classCalculatorMap.containsKey(_superclass)) {
+                    return this.classCalculatorMap.get(_superclass);
+                }
+                _superclass = _superclass.getSuperClass();
+            }
+            for (var i = 0, size = value.getClass().getInterfaces().length; i < size; i++) {
+                var _interface = value.getClass().getInterfaces()[i];
+                if (this.interfaceCalculatorMap.containsKey(_interface)) {
+                    return this.interfaceCalculatorMap.get(_interface);
                 }
             }
         } else {

@@ -106,6 +106,25 @@ var CallServer = Class.extend(EventDispatcher, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @return {Marshaller}
+     */
+    getMarshaller: function() {
+        return this.marshaller;
+    },
+
+    /**
+     * @return {SocketIoManager}
+     */
+    getSocketIoManager: function() {
+        return this.socketIoManager;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Convenience Methods
+    //-------------------------------------------------------------------------------
+
+    /**
      * @return {boolean}
      */
     isInitialized: function() {

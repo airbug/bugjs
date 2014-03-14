@@ -96,9 +96,10 @@ var Subscriber = Class.extend(Obj, {
 
     /**
      * @param {Message} message
+     * @param {string} channel
      */
-    receiveMessage: function(message) {
-        this.subscriberFunction.call(this.subscriberContext, message);
+    receiveMessage: function(message, channel) {
+        this.subscriberFunction.call(this.subscriberContext, message, channel);
     }
 });
 

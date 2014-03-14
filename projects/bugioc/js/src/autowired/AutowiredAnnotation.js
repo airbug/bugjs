@@ -84,7 +84,7 @@ var AutowiredAnnotation = Class.extend(Annotation, {
 
 /**
  * @static
- * @return {ConfigurationAnnotation}
+ * @return {AutowiredAnnotation}
  */
 AutowiredAnnotation.autowired = function() {
     return new AutowiredAnnotation();

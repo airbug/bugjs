@@ -66,6 +66,10 @@ var $task                   = BugFlow.$task;
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Obj}
+ */
 var EntityManager = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
@@ -76,9 +80,10 @@ var EntityManager = Class.extend(Obj, {
      * @constructs
      * @param {EntityManagerStore} entityManagerStore
      * @param {SchemaManager} schemaManager
-     * @param {MongoDataStore} mongoDataStore
+     * @param {EntityDataStore} entityDataStore
+     * @param {EntityDeltaBuilder} entityDeltaBuilder
      */
-    _constructor: function(entityManagerStore, schemaManager, mongoDataStore) {
+    _constructor: function(entityManagerStore, schemaManager, entityDataStore, entityDeltaBuilder) {
 
         this._super();
 
@@ -95,6 +100,18 @@ var EntityManager = Class.extend(Obj, {
 
         /**
          * @private
+         * @type {EntityDataStore}
+         */
+        this.entityDataStore        = entityDataStore;
+
+        /**
+         * @private
+         * @type {EntityDeltaBuilder}
+         */
+        this.entityDeltaBuilder     = entityDeltaBuilder;
+
+        /**
+         * @private
          * @type {EntityManagerStore}
          */
         this.entityManagerStore     = entityManagerStore;
@@ -104,12 +121,6 @@ var EntityManager = Class.extend(Obj, {
          * @type {string}
          */
         this.entityType             = null;
-
-        /**
-         * @private
-         * @type {MongoDataStore}
-         */
-        this.mongoDataStore         = mongoDataStore;
 
         /**
          * @private
@@ -131,6 +142,27 @@ var EntityManager = Class.extend(Obj, {
     },
 
     /**
+     * @return {EntityDataStore}
+     */
+    getEntityDataStore: function() {
+        return this.entityDataStore;
+    },
+
+    /**
+     * @return {EntityDeltaBuilder}
+     */
+    getEntityDeltaBuilder: function() {
+        return this.entityDeltaBuilder;
+    },
+
+    /**
+     * @return {EntityManagerStore}
+     */
+    getEntityManagerStore: function() {
+        return this.entityManagerStore;
+    },
+
+    /**
      * @return {string}
      */
     getEntityType: function() {
@@ -142,6 +174,13 @@ var EntityManager = Class.extend(Obj, {
      */
     setEntityType: function(entityType) {
         this.entityType = entityType;
+    },
+
+    /**
+     * @return {SchemaManager}
+     */
+    getSchemaManager: function() {
+        return this.schemaManager;
     },
 
 
@@ -236,7 +275,9 @@ var EntityManager = Class.extend(Obj, {
      * @param {Entity} entity
      */
     generate: function(entity) {
+        var _this = this;
         entity.setEntityType(this.entityType);
+        this.validate(entity);
     },
 
     /**
@@ -341,6 +382,41 @@ var EntityManager = Class.extend(Obj, {
         });
     },
 
+    /**
+     * @param {Entity} entity
+     */
+    validate: function(entity) {
+        var _this           = this;
+        var entitySchema    = this.schemaManager.getSchemaByName(entity.getEntityType());
+        if (entitySchema) {
+            entitySchema.getPropertyList().forEach(function(schemaProperty) {
+                if (schemaProperty.isStored() && !schemaProperty.isPrimaryId()) {
+                    var entityData          = entity.getEntityData();
+                    var propertyName        = schemaProperty.getName();
+                    var propertyType        = schemaProperty.getType();
+                    var propertyValue       = entityData[propertyName];
+                    if (schemaProperty.isRequired()) {
+                        if (TypeUtil.isUndefined(propertyValue)) {
+
+                            //TODO BRN: This doesn't quite fit here. Think we should set the defaults ahead of time before the validation.
+
+                            if (schemaProperty.hasDefault()) {
+                                entityData[propertyName] = propertyValue = schemaProperty.generateDefault();
+                            } else {
+                                throw new Bug("MissingRequiredProperty", {}, "Property '" + propertyName + "' in entity type '" + _this.entityType + "' is required. Property was undefined")
+                            }
+                        } else {
+                            if (_this.schemaManager.hasSchemaForName(propertyType)) {
+                                _this.validate(propertyValue);
+                            }
+                        }
+                    }
+                }
+            });
+        } else {
+            throw new Bug("IllegalState", {}, "Cannot find EntitySchema for Entity of type '" + entity.getEntityType() +"'");
+        }
+    },
 
     //-------------------------------------------------------------------------------
     // IInitializeModule Implementation
@@ -359,7 +435,7 @@ var EntityManager = Class.extend(Obj, {
      * @param {function(Throwable=)} callback
      */
     initializeModule: function(callback) {
-        this.dataStore = this.mongoDataStore.generateManager(this.entityType);
+        this.dataStore = this.entityDataStore.generateManager(this.entityType);
         this.entityManagerStore.registerEntityManager(this);
         callback();
     },
@@ -372,10 +448,11 @@ var EntityManager = Class.extend(Obj, {
     /**
      * @private
      * @param {Entity} entity
+     * @return {Object}
      */
     buildUpdateObject: function(entity) {
         var _this           = this;
-        var delta           = entity.generateDelta();
+        var delta           = this.entityDeltaBuilder.buildDelta(entity.getDeltaDocument(), entity.getDeltaDocument().getPreviousDocument());
         var updateChanges   = new MongoUpdateChanges();
         var entitySchema    = this.schemaManager.getSchemaByClass(entity.getClass());
         delta.getDeltaChangeList().forEach(function(deltaChange) {
@@ -536,7 +613,7 @@ var EntityManager = Class.extend(Obj, {
      * @return {Object}
      */
     convertEntityToDbObject: function(entity) {
-        var data        = entity.getDeltaDocument().getData();
+        var data        = entity.getEntityData();
         var schema      = this.schemaManager.getSchemaByClass(entity.getClass());
         return this.convertDataObjectToDbObject(data, schema);
     },
@@ -544,7 +621,7 @@ var EntityManager = Class.extend(Obj, {
     /**
      * @private
      * @param {Object} dataObject
-     * @param {Schema} schema
+     * @param {EntitySchema} schema
      * @return {Object}
      */
     convertDataObjectToDbObject: function(dataObject, schema) {
@@ -593,8 +670,13 @@ var EntityManager = Class.extend(Obj, {
                 break;
             default:
                 if (this.schemaManager.hasSchemaForName(propertyType)) {
-                    var entitySchema = this.schemaManager.getSchemaByName(propertyType);
-                    return this.convertDataObjectToDbObject(propertyValue, entitySchema);
+                    var entitySchema    = this.schemaManager.getSchemaByName(propertyType);
+                    var entityClass     = entitySchema.getEntityClass();
+                    if (Class.doesExtend(propertyValue, entityClass)) {
+                        return this.convertEntityToDbObject(propertyValue);
+                    } else {
+                        return this.convertDataObjectToDbObject(propertyValue, entitySchema);
+                    }
                 } else {
                     return propertyValue;
                 }

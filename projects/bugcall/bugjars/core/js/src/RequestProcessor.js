@@ -87,6 +87,25 @@ var RequestProcessor = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {Set.<IPreProcessRequest>}
+     */
+    getRequestPreProcessorSet: function() {
+        return this.requestPreProcessorSet;
+    },
+
+    /**
+     * @return {Set.<IProcessRequest>}
+     */
+    getRequestProcessorSet: function() {
+        return this.requestProcessorSet;
+    },
+
+
+    //-------------------------------------------------------------------------------
     // Public Methods
     //-------------------------------------------------------------------------------
 

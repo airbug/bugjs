@@ -281,6 +281,25 @@ var Collection = Class.extend(Obj, /** @lends {Collection.prototype} */{
         }
     },
 
+    /**
+     * @param {(ICollection.<*> | Array.<*>)} items
+     */
+    retainAll: function(items) {
+        if (TypeUtil.isArray(items)) {
+            items = new Collection(items);
+        }
+        if (Class.doesImplement(items, ICollection)) {
+            var _this = this;
+            _this.forEach(function(value) {
+                if (!items.contains(value)) {
+                    _this.remove(value);
+                }
+            });
+        } else {
+            throw new ArgumentBug(ArgumentBug.ILLEGAL, "items", items, "parameter must implement ICollection or be an Array");
+        }
+    },
+
 
     //-------------------------------------------------------------------------------
     // IIterable Implementation

@@ -85,10 +85,11 @@ var lockWaitLockTest = {
                 test.assertTrue(_this.testMethod2Spy.wasCalled(),
                     "Assert method 2 has not been called");
                 _this.testLock.unlock();
-                test.complete();
+                test.completeTest();
             }, 0);
         };
         this.testMethod3Spy = spyOnFunction(this.testMethod3);
+        test.completeSetup();
     },
 
 

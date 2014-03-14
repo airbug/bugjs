@@ -11,7 +11,7 @@
 //@Require('Class')
 //@Require('Map')
 //@Require('Obj')
-//@Require('bugioc.IInitializeModule')
+//@Require('bugioc.IProcessModule')
 //@Require('bugioc.ModuleAnnotation')
 //@Require('bugmarsh.MarshAnnotationProcessor')
 //@Require('bugmarsh.MarshAnnotationScan')
@@ -34,7 +34,7 @@ var Bug                             = bugpack.require('Bug');
 var Class                           = bugpack.require('Class');
 var Map                             = bugpack.require('Map');
 var Obj                             = bugpack.require('Obj');
-var IInitializeModule               = bugpack.require('bugioc.IInitializeModule');
+var IProcessModule                  = bugpack.require('bugioc.IProcessModule');
 var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
 var MarshAnnotationProcessor        = bugpack.require('bugmarsh.MarshAnnotationProcessor');
 var MarshAnnotationScan             = bugpack.require('bugmarsh.MarshAnnotationScan');
@@ -79,29 +79,30 @@ var MarshRegistry = Class.extend(Obj, {
          * @type {Map.<string, Marsh>}
          */
         this.nameToMarshMap     = new Map();
+
+        /**
+         * @private
+         * @type {boolean}
+         */
+        this.processed          = false;
     },
 
 
     //-------------------------------------------------------------------------------
-    // IInitializeModule Implementation
+    // IProcessModule Implementation
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {function(Throwable=)} callback
+     *
      */
-    deinitializeModule: function(callback) {
-        this.classToMarshMap.clear();
-        this.nameToMarshMap.clear();
-        callback();
-    },
-
-    /**
-     * @param {function(Throwable=)} callback
-     */
-    initializeModule: function(callback) {
-        var scan = new MarshAnnotationScan(new MarshAnnotationProcessor(this));
-        scan.scanAll();
-        callback();
+    processModule: function() {
+        if (!this.processed) {
+            this.processed = true;
+            var scan = new MarshAnnotationScan(new MarshAnnotationProcessor(this));
+            scan.scanAll();
+        } else {
+            throw new Bug("IllegalState", {}, "Already processed module MarshRegistry");
+        }
     },
 
 
@@ -114,6 +115,7 @@ var MarshRegistry = Class.extend(Obj, {
      * @return {Marsh}
      */
     getMarshByClass: function(_class) {
+        this.assertProcessed();
         return this.classToMarshMap.get(_class);
     },
 
@@ -122,6 +124,7 @@ var MarshRegistry = Class.extend(Obj, {
      * @return {Marsh}
      */
     getMarshByName: function(name) {
+        this.assertProcessed();
         return this.nameToMarshMap.get(name);
     },
 
@@ -130,6 +133,7 @@ var MarshRegistry = Class.extend(Obj, {
      * @return {boolean}
      */
     hasMarshForClass: function(_class) {
+        this.assertProcessed();
         return this.classToMarshMap.containsKey(_class);
     },
 
@@ -138,6 +142,7 @@ var MarshRegistry = Class.extend(Obj, {
      * @return {boolean}
      */
     hasMarshForName: function(name) {
+        this.assertProcessed();
         return this.nameToMarshMap.containsKey(name);
     },
 
@@ -145,6 +150,7 @@ var MarshRegistry = Class.extend(Obj, {
      * @param {Marsh} marsh
      */
     registerMarsh: function(marsh) {
+        this.assertProcessed();
         if (this.hasMarshForClass(marsh.getMarshClass())) {
             throw new Error("Marsh already registered for class - class:", marsh.getMarshClass());
         }
@@ -153,6 +159,20 @@ var MarshRegistry = Class.extend(Obj, {
         }
         this.classToMarshMap.put(marsh.getMarshClass(), marsh);
         this.nameToMarshMap.put(marsh.getMarshName(), marsh);
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Private Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     */
+    assertProcessed: function() {
+        if (!this.processed) {
+            throw new Bug("AssertFailed", {}, "Module 'MarshRegistry' has not been processed");
+        }
     }
 });
 
@@ -161,7 +181,7 @@ var MarshRegistry = Class.extend(Obj, {
 // Interfaces
 //-------------------------------------------------------------------------------
 
-Class.implement(MarshRegistry, IInitializeModule);
+Class.implement(MarshRegistry, IProcessModule);
 
 
 //-------------------------------------------------------------------------------

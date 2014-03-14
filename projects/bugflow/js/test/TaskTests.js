@@ -69,6 +69,7 @@ var bugflowTaskExecuteTaskTest = {
             }
         };
         this.task = new Task(this.taskContext.taskMethod, this.taskContext);
+        test.completeSetup();
     },
 
 
@@ -78,7 +79,7 @@ var bugflowTaskExecuteTaskTest = {
     test: function(test) {
         this.task.execute([this.arg1, this.arg2], function() {
             test.assertTrue(true, "Task execute callback was executed");
-            test.complete();
+            test.completeTest();
         });
     }
 };

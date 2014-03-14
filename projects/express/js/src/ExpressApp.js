@@ -38,7 +38,7 @@ var ExpressApp = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    _constructor: function(express) {
 
         this._super();
 
@@ -47,7 +47,17 @@ var ExpressApp = Class.extend(Obj, {
         // Private Properties
         //-------------------------------------------------------------------------------
 
-        this.app = express();
+        /**
+         * @private
+         * @type {*}
+         */
+        this.app        = express();
+
+        /**
+         * @private
+         * @type {Express}
+         */
+        this.express    = express;
 
         Proxy.proxy(this, this.app, [
             "configure",

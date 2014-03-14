@@ -81,11 +81,23 @@ var SocketIoConnection = Class.extend(EventReceiver, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @return {boolean}
+     */
+    getConnected: function() {
+        return this.connected;
+    },
+
+    /**
      * @return {*}
      */
     getSocket: function() {
         return this.socket;
     },
+
+
+    //-------------------------------------------------------------------------------
+    // Convenience Methods
+    //-------------------------------------------------------------------------------
 
     /**
      * @return {boolean}

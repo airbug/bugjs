@@ -15,17 +15,17 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-var http    = require('http');
+var bugpack         = require('bugpack').context();
+var http            = require('http');
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class   = bugpack.require('Class');
-var Obj     = bugpack.require('Obj');
-var Proxy   = bugpack.require('Proxy');
+var Class           = bugpack.require('Class');
+var Obj             = bugpack.require('Obj');
+var Proxy           = bugpack.require('Proxy');
 
 
 //-------------------------------------------------------------------------------
@@ -38,7 +38,7 @@ var ExpressServer = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(expressApp) {
+    _constructor: function(http, expressApp) {
 
         this._super();
 
@@ -51,19 +51,32 @@ var ExpressServer = Class.extend(Obj, {
          * @private
          * @type {ExpressApp}
          */
-        this.expressApp = expressApp;
+        this.expressApp     = expressApp;
+
+        /**
+         * @private
+         * @type {http}
+         */
+        this.http           = http;
 
         /**
          * @private
          * @type {http.Server}
          */
-        this.httpServer = http.createServer(this.expressApp.getApp());
+        this.httpServer     = http.createServer(this.expressApp.getApp());
     },
 
 
     //-------------------------------------------------------------------------------
     // Getters and Setters
     //-------------------------------------------------------------------------------
+
+    /**
+     * @return {http}
+     */
+    getHttp: function() {
+        return this.http;
+    },
 
     /**
      * @return {http.Server}

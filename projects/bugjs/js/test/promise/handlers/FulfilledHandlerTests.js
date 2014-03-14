@@ -85,11 +85,12 @@ var fulfilledHandlerHandleNoMethodTest = {
     // Setup Test
     //-------------------------------------------------------------------------------
 
-    setup: function() {
+    setup: function(test) {
         this.testMethod             = null;
         this.testArgs               = ["testValue1", "testValue2"];
         this.testForwardPromise     = new Promise();
         this.testFulfilledHandler   = new FulfilledHandler(this.testMethod, this.testForwardPromise);
+        test.completeSetup();
     },
 
 
@@ -109,7 +110,7 @@ var fulfilledHandlerHandleNoMethodTest = {
                         "Assert that the value from testArgs matches the value in valueList at the same index"); 
                 });
             }
-            test.complete();
+            test.completeTest();
         }, 0);
     }
 };

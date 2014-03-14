@@ -14,6 +14,7 @@
 //@Require('StringUtil')
 //@Require('Tree')
 //@Require('TreeNode')
+//@Require('bugtrace.Trace')
 
 
 //-------------------------------------------------------------------------------
@@ -35,6 +36,7 @@ var StackTraceUtil      = bugpack.require('StackTraceUtil');
 var StringUtil          = bugpack.require('StringUtil');
 var Tree                = bugpack.require('Tree');
 var TreeNode            = bugpack.require('TreeNode');
+var Trace               = bugpack.require('bugtrace.Trace');
 
 
 //-------------------------------------------------------------------------------
@@ -58,12 +60,6 @@ var BugTrace = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {TreeNode}
-         */
-        this.currentNode    = BugTrace.rootNode;
-
-        /**
-         * @private
          * @type {boolean}
          */
         this.enabled        = false;
@@ -72,13 +68,19 @@ var BugTrace = Class.extend(Obj, {
          * @private
          * @type {TreeNode}
          */
-        this.rootNode       = new TreeNode("ROOT_NODE");
+        this.rootNode       = new TreeNode(new Trace("", "ROOT_NODE"));
 
         /**
          * @private
-         * @type {Stack}
+         * @type {Tree}
          */
         this.traceTree      = new Tree();
+
+        /**
+         * @private
+         * @type {TreeNode}
+         */
+        this.currentNode    = this.rootNode;
     },
 
 
@@ -102,7 +104,7 @@ var BugTrace = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // Public Class Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -117,22 +119,23 @@ var BugTrace = Class.extend(Obj, {
                     error.stack = StackTraceUtil.generateStackTrace();
                 }
 
-                var currentStack = error.stack.split("\n");
-                var totalStack = ([]).concat(currentStack);
-
-                var currentNode = this.currentNode;
-                while (!Obj.equals(currentNode, this.rootNode)) {
-                    var trace = currentNode.getValue();
-                    var stackParts = trace.split("\n");
-                    totalStack.push("-------- Async Break ---------");
-                    totalStack = totalStack.concat(stackParts);
-                    currentNode = currentNode.getParentNode();
-                }
-
-                error.stack = totalStack.join("\n");
+                var nodeStack       = this.generateNodeStack(this.currentNode);
+                var currentStack    = error.stack + nodeStack;
+                error.stack = currentStack;
             }
         }
         return error;
+    },
+
+    /**
+     * @param {string} name
+     */
+    $name: function(name) {
+        var currentNode = this.currentNode;
+        if (currentNode) {
+            var trace   = currentNode.getValue();
+            trace.setName(name);
+        }
     },
 
     /**
@@ -199,9 +202,65 @@ var BugTrace = Class.extend(Obj, {
             return callback;
         }
     },
+
+    /**
+     * @param {TreeNode} traceNode
+     * @return {string}
+     */
+    generateNodeStack: function(traceNode) {
+        var nodeStack   = [];
+        var currentNode = traceNode;
+        while (!Obj.equals(currentNode, this.rootNode)) {
+            var trace   = currentNode.getValue();
+            var stack   = trace.getStack();
+            var stackParts = stack.split("\n");
+            nodeStack.push("-------- Async Break ---------");
+            nodeStack = nodeStack.concat(stackParts);
+            currentNode = currentNode.getParentNode();
+        }
+        return nodeStack.join("\n");
+    },
+
+    /**
+     * @param {string} name
+     * @return {string}
+     */
+    getNamedStack: function(name) {
+        //TEST
+        console.log("getNamedStack: name:", name);
+
+        var firstNamedNode = this.traceTree.findFirst(function(trace) {
+            //TEST
+            console.log("trace.getName():", trace.getName(), " name:", name);
+            return (trace.getName() === name);
+        });
+
+        if (firstNamedNode) {
+            var currentNode = null;
+            var nextNode    = firstNamedNode;
+            while (nextNode) {
+                currentNode = nextNode;
+                nextNode    = null;
+                if (currentNode.getChildNodes().getCount() > 0) {
+                    var childNodes = currentNode.getChildNodes();
+                    for (var i = childNodes.getCount() - 1; i >= 0; i--) {
+                        var childNode = childNodes.getAt(i);
+                        if (childNode.getValue().getName() === name) {
+                            nextNode = childNode;
+                            break;
+                        }
+                    }
+                }
+            }
+            return this.generateNodeStack(currentNode);
+        } else {
+            return "";
+        }
+    },
+
     
     //-------------------------------------------------------------------------------
-    // Private Class Methods
+    // Private Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -218,7 +277,9 @@ var BugTrace = Class.extend(Obj, {
      * @return {*}
      */
     addTraceNode: function(stack) {
-        var newNode = new TreeNode(stack);
+        var trace   = new Trace(stack);
+        var newNode = new TreeNode(trace);
+        trace.setName(this.currentNode.getValue().getName());
         this.currentNode.addChildNode(newNode);
         return newNode;
     },
@@ -273,8 +334,10 @@ BugTrace.getInstance = function() {
 
 Proxy.proxy(BugTrace, Proxy.method(BugTrace.getInstance), [
     "$error",
+    "$name",
     "$trace",
-    "$traceWithError"
+    "$traceWithError",
+    "getNamedStack"
 ]);
 
 

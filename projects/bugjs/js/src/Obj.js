@@ -285,6 +285,7 @@ Obj.equals = function(value1, value2) {
  * @static
  * @param {Object} object
  * @param {string} propertyQuery
+ * @return {*}
  */
 Obj.findProperty = function(object, propertyQuery) {
 
@@ -444,6 +445,34 @@ Obj.pick = function(object, properties) {
     });
     return picked;
 };
+
+/**
+ * @static
+ * @param {Object} object
+ * @param {string} propertyQuery
+ * @param {*} value
+ */
+Obj.setProperty = function(object, propertyQuery, value) {
+    if (!TypeUtil.isObject(object)) {
+        throw new Error("parameter 'object' must be an object");
+    }
+    if (!TypeUtil.isString(propertyQuery)) {
+        throw new Error("parameter 'propertyQuery' must be an string");
+    }
+    var parts           = propertyQuery.split(".");
+    var propertyValue   = object;
+    for (var i = 0, size = parts.length; i < size; i++) {
+        var part = parts[i];
+        if (i === size - 1) {
+            propertyValue[part] = value;
+        } else {
+            if (!TypeUtil.isObject(propertyValue)) {
+                propertyValue[part] = {};
+            }
+            propertyValue = propertyValue[part];
+        }
+    }
+}
 
 
 //-------------------------------------------------------------------------------

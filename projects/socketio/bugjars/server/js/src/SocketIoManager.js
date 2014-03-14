@@ -67,7 +67,13 @@ var SocketIoManager = Class.extend(EventDispatcher, {
          * @private
          * @type {*}
          */
-        this.ioManager          = socketIoServer.of(namespace);
+        this.ioManager          = null;
+
+        /**
+         * @private
+         * @type {string}
+         */
+        this.namespace          = namespace;
 
         /**
          * @private
@@ -80,13 +86,33 @@ var SocketIoManager = Class.extend(EventDispatcher, {
 
 
     //-------------------------------------------------------------------------------
-    // Private Class Methods
+    // Getters and Setters
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {string}
+     */
+    getNamespace: function() {
+        return this.namespace;
+    },
+
+    /**
+     * @return {SocketIoServer}
+     */
+    getSocketIoServer: function() {
+        return this.socketIoServer;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Private Methods
     //-------------------------------------------------------------------------------
 
     /**
      * @private
      */
     initialize: function() {
+        this.ioManager = this.socketIoServer.of(this.namespace);
         console.log("Inside SocketIoManager#initialize");
         var _this = this;
         this.ioManager.on("connection", function(socket) {

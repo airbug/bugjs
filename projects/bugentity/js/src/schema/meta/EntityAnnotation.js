@@ -46,21 +46,53 @@ var EntityAnnotation = Class.extend(Annotation, {
 
         /**
          * @private
+         * @type {boolean}
+         */
+        this.entityEmbedded         = false;
+
+        /**
+         * @private
+         * @type {Array.<IndexAnnotation>}
+         */
+        this.entityIndexArray       = [];
+
+        /**
+         * @private
          * @type {string}
          */
-        this.entityName     = entityName;
+        this.entityName             = entityName;
 
         /**
          * @private
          * @type {Array.<PropertyAnnotation>}
          */
-        this.entityPropertyArray  = [];
+        this.entityPropertyArray    = [];
+
+        /**
+         * @private
+         * @type {boolean}
+         */
+        this.entityStored           = true;
     },
 
 
     //-------------------------------------------------------------------------------
     // Getters and Setters
     //-------------------------------------------------------------------------------
+
+    /**
+     * @return {boolean}
+     */
+    getEntityEmbedded: function() {
+        return this.entityEmbedded;
+    },
+
+    /**
+     * @return {Array.<IndexAnnotation>}
+     */
+    getEntityIndexes: function() {
+        return this.entityIndexArray;
+    },
 
     /**
      * @return {string}
@@ -76,16 +108,51 @@ var EntityAnnotation = Class.extend(Annotation, {
         return this.entityPropertyArray;
     },
 
+    /**
+     * @return {boolean}
+     */
+    getEntityStored: function() {
+        return this.entityStored;
+    },
+
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
+     * @param {boolean} embedded
+     * @return {EntityAnnotation}
+     */
+    embed: function(embedded) {
+        this.entityEmbedded = embedded;
+        return this;
+    },
+
+    /**
+     * @param {Array.<IndexAnnotation>} indexArray
+     * @return {EntityAnnotation}
+     */
+    indexes: function(indexArray) {
+        this.entityIndexArray = indexArray;
+        return this;
+    },
+
+    /**
      * @param {Array.<PropertyAnnotation>} propertyArray
+     * @return {EntityAnnotation}
      */
     properties: function(propertyArray) {
         this.entityPropertyArray = propertyArray;
+        return this;
+    },
+
+    /**
+     * @param {boolean} stored
+     * @return {EntityAnnotation}
+     */
+    store: function(stored) {
+        this.entityStored = stored;
         return this;
     }
 });

@@ -11,6 +11,7 @@
 //@Require('bugdouble.BugDouble')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit-annotate.TestAnnotation')
+//@Require('bugyarn.BugYarn')
 //@Require('loggerbug.Logger')
 
 
@@ -32,6 +33,7 @@ var Call                    = bugpack.require('bugcall.Call');
 var BugDouble               = bugpack.require('bugdouble.BugDouble');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
+var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 var Logger                  = bugpack.require('loggerbug.Logger');
 
 
@@ -40,46 +42,27 @@ var Logger                  = bugpack.require('loggerbug.Logger');
 //-------------------------------------------------------------------------------
 
 var bugmeta                 = BugMeta.context();
+var bugyarn                 = BugYarn.context();
 var spyOnObject             = BugDouble.spyOnObject;
 var stubObject              = BugDouble.stubObject;
 var test                    = TestAnnotation.test;
 
 
 //-------------------------------------------------------------------------------
-// Helper Methods
+// BugYarn
 //-------------------------------------------------------------------------------
 
-var setupTestServer  = function(testObject) {
-    testObject.dummyCallServer        = {
-        addEventListener: function() {
-
-        }
-    };
-    testObject.dummyRequestProcessor  = {};
-    testObject.dummySocketConnection  = {
-        addEventListener: function() {
-
-        }
-    };
-    testObject.dummyCallProcessor = {
-        processCall: function(call, callback) {
-            callback();
-        }
-    };
-    testObject.testCallUuid           = "testCallUuid";
-    testObject.testCallConnection     = new CallConnection(testObject.dummySocketConnection);
-    testObject.logger                 = new Logger();
-    testObject.testBugCallServer      = new BugCallServer(testObject.logger, testObject.dummyCallServer, testObject.dummyRequestProcessor, testObject.dummyCallProcessor);
-    testObject.testHandshake          = {
-        query: {
-            reconnect: "false",
-            callUuid: testObject.testCallUuid
-        }
-    };
-    stubObject(testObject.testCallConnection, {getHandshake: function() {
-        return testObject.testHandshake;
-    }});
-};
+bugyarn.registerWinder("setupTestBugCallServer", function(yarn) {
+    yarn.spin([
+        "setupTestLogger",
+        "setupTestCallServer",
+        "setupTestRequestProcessor",
+        "setupTestCallProcessor"
+    ]);
+    yarn.wind({
+        bugCallServer: new BugCallServer(this.logger, this.callServer, this.requestProcessor, this.callProcessor)
+    });
+});
 
 
 //-------------------------------------------------------------------------------
@@ -94,12 +77,29 @@ var bugCallServerHandleConnectionFailedTest = {
 
     setup: function(test) {
         var _this = this;
-        setupTestServer(this);
-        this.testListener = {
+        var yarn = bugyarn.yarn(this);
+        yarn.spin([
+            "setupTestBugCallServer"
+        ]);
+        this.testCallConnection = yarn.weave("testCallConnection");
+        this.testCallUuid       = "testCallUuid";
+        this.testHandshake          = {
+            query: {
+                reconnect: "false",
+                callUuid: this.testCallUuid
+            }
+        };
+        stubObject(this.testCallConnection, {
+            getHandshake: function() {
+                return _this.testHandshake;
+            }
+        });
+
+        this.testListener       = {
             handleConnectionClosed: function(event) {}
         };
-        this.testListenerSpy = spyOnObject(this.testListener);
-        this.testBugCallServer.addEventListener(CallEvent.CLOSED, this.testListener.handleConnectionClosed, this.testListener);
+        this.testListenerSpy    = spyOnObject(this.testListener);
+        this.bugCallServer.addEventListener(CallEvent.CLOSED, this.testListener.handleConnectionClosed, this.testListener);
     },
 
     //-------------------------------------------------------------------------------
@@ -107,13 +107,13 @@ var bugCallServerHandleConnectionFailedTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
-        this.testBugCallServer.handleConnectionEstablished(this.testCallConnection);
-        var call = this.testBugCallServer.getCallForCallUuid(this.testCallUuid);
+        this.bugCallServer.handleConnectionEstablished(this.testCallConnection);
+        var call = this.bugCallServer.getCallForCallUuid(this.testCallUuid);
         test.assertEqual(call.getCallUuid(), this.testCallUuid,
             "Assert callUuid of call matches the testCallUuid");
         test.assertEqual(call.isOpen(), true,
             "Assert call is open");
-        this.testBugCallServer.handleConnectionFailed(this.testCallConnection);
+        this.bugCallServer.handleConnectionFailed(this.testCallConnection);
         test.assertTrue(this.testListenerSpy.getSpy("handleConnectionClosed").wasCalled(),
             "Assert that the CallEvent.CLOSED event was heard by the testListener");
         test.assertEqual(call.isOpen(), false,
@@ -132,12 +132,28 @@ var bugCallServerHandleConnectionClosedTest = {
 
     setup: function(test) {
         var _this = this;
-        setupTestServer(this);
+        var yarn = bugyarn.yarn(this);
+        yarn.spin([
+            "setupTestBugCallServer"
+        ]);
+        this.testCallConnection = yarn.weave("testCallConnection");
+        this.testCallUuid       = "testCallUuid";
+        this.testHandshake          = {
+            query: {
+                reconnect: "false",
+                callUuid: this.testCallUuid
+            }
+        };
+        stubObject(this.testCallConnection, {
+            getHandshake: function() {
+                return _this.testHandshake;
+            }
+        });
         this.testListener = {
             handleConnectionClosed: function(event) {}
         };
         this.testListenerSpy = spyOnObject(this.testListener);
-        this.testBugCallServer.addEventListener(CallEvent.CLOSED, this.testListener.handleConnectionClosed, this.testListener);
+        this.bugCallServer.addEventListener(CallEvent.CLOSED, this.testListener.handleConnectionClosed, this.testListener);
     },
 
     //-------------------------------------------------------------------------------
@@ -145,13 +161,13 @@ var bugCallServerHandleConnectionClosedTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
-        this.testBugCallServer.handleConnectionEstablished(this.testCallConnection);
-        var call = this.testBugCallServer.getCallForCallUuid(this.testCallUuid);
+        this.bugCallServer.handleConnectionEstablished(this.testCallConnection);
+        var call = this.bugCallServer.getCallForCallUuid(this.testCallUuid);
         test.assertEqual(call.getCallUuid(), this.testCallUuid,
             "Assert callUuid of call matches the testCallUuid");
         test.assertEqual(call.isOpen(), true,
             "Assert call is open");
-        this.testBugCallServer.handleConnectionClosed(this.testCallConnection);
+        this.bugCallServer.handleConnectionClosed(this.testCallConnection);
         test.assertTrue(this.testListenerSpy.getSpy("handleConnectionClosed").wasCalled(),
             "Assert that the CallEvent.CLOSED event was heard by the testListener");
         test.assertEqual(call.isOpen(), false,
@@ -170,7 +186,23 @@ var bugCallServerHandleConnectionEstablishedTest = {
 
     setup: function(test) {
         var _this = this;
-        setupTestServer(this);
+        var yarn = bugyarn.yarn(this);
+        yarn.spin([
+            "setupTestBugCallServer"
+        ]);
+        this.testCallConnection = yarn.weave("testCallConnection");
+        this.testCallUuid       = "testCallUuid";
+        this.testHandshake          = {
+            query: {
+                reconnect: "false",
+                callUuid: this.testCallUuid
+            }
+        };
+        stubObject(this.testCallConnection, {
+            getHandshake: function() {
+                return _this.testHandshake;
+            }
+        });
         this.testListener = {
             handleConnectionEstablished: function(event) {
                 var call = event.getData().call;
@@ -181,7 +213,7 @@ var bugCallServerHandleConnectionEstablishedTest = {
             }
         };
         this.testListenerSpy = spyOnObject(this.testListener);
-        this.testBugCallServer.addEventListener(CallEvent.OPENED, this.testListener.handleConnectionEstablished, this.testListener);
+        this.bugCallServer.addEventListener(CallEvent.OPENED, this.testListener.handleConnectionEstablished, this.testListener);
     },
 
     //-------------------------------------------------------------------------------
@@ -189,8 +221,8 @@ var bugCallServerHandleConnectionEstablishedTest = {
     //-------------------------------------------------------------------------------
 
     test: function(test) {
-        this.testBugCallServer.handleConnectionEstablished(this.testCallConnection);
-        var call = this.testBugCallServer.getCallForCallUuid(this.testCallUuid);
+        this.bugCallServer.handleConnectionEstablished(this.testCallConnection);
+        var call = this.bugCallServer.getCallForCallUuid(this.testCallUuid);
         test.assertEqual(call.getCallUuid(), this.testCallUuid,
             "Assert callUuid of call matches the testCallUuid");
         test.assertEqual(call.isOpen(), true,

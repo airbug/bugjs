@@ -85,11 +85,12 @@ var rejectedHandlerHandleNoMethodTest = {
     // Setup Test
     //-------------------------------------------------------------------------------
 
-    setup: function() {
+    setup: function(test) {
         this.testMethod             = null;
         this.testArgs               = ["reason1", "reason2"];
         this.testForwardPromise     = new Promise();
         this.testRejectedHandler    = new RejectedHandler(this.testMethod, this.testForwardPromise);
+        test.completeSetup();
     },
 
 
@@ -109,7 +110,7 @@ var rejectedHandlerHandleNoMethodTest = {
                         "Assert that the reason from testArgs matches the reason in reasonList at the same index");
                 });
             }
-            test.complete();
+            test.completeTest();
         }, 0);
     }
 };

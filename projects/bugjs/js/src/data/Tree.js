@@ -27,6 +27,10 @@ var Obj =   bugpack.require('Obj');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Obj}
+ */
 var Tree = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
@@ -72,8 +76,21 @@ var Tree = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // Class methods
+    // Public Methods
     //-------------------------------------------------------------------------------
+
+    /**
+     * @param {function()} func
+     * @return {TreeNode}
+     */
+    findFirst: function(func) {
+        var rootNode = this.getRootNode();
+        if (rootNode) {
+            return this.findRecursive(rootNode, func);
+        } else {
+            return null;
+        }
+    },
 
     /**
      * Performs a top down depth walk of the tree.
@@ -88,8 +105,31 @@ var Tree = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // Private Class methods
+    // Private Methods
     //-------------------------------------------------------------------------------
+
+    /**
+     * @private
+     * @param {TreeNode} node
+     * @param {function(*)} func
+     * @return {TreeNode}
+     */
+    findRecursive: function(node, func) {
+        var result = func(node.getValue());
+        if (result) {
+            return node;
+        } else {
+            var childNodes = node.getChildNodes();
+            for (var i = 0, size = childNodes.getCount(); i < size; i++) {
+                var childNode = childNodes.getAt(i);
+                var result = this.findRecursive(childNode, func);
+                if (result) {
+                    return result;
+                }
+            }
+            return null;
+        }
+    },
 
     /**
      * @private

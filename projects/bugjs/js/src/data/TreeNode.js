@@ -46,7 +46,7 @@ var TreeNode = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {List<TreeNode>}
+         * @type {List.<TreeNode>}
          */
         this.childNodes = null;
 
@@ -69,7 +69,7 @@ var TreeNode = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {List<TreeNode>}
+     * @return {List.<TreeNode>}
      */
     getChildNodes: function() {
         if (!this.childNodes) {

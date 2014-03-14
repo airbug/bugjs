@@ -46,14 +46,6 @@ var generateStackFromCallerTest = {
 
     async: true,
 
-    // Setup Test
-    //-------------------------------------------------------------------------------
-
-    setup: function() {
-
-    },
-
-
     // Run Test
     //-------------------------------------------------------------------------------
 
@@ -69,7 +61,7 @@ var generateStackFromCallerTest = {
         }
         setTimeout(function() {
             testFunction();
-            test.complete();
+            test.completeTest();
         }, 0);
     }
 };

@@ -90,6 +90,24 @@ var ObjectChange = Class.extend(DeltaChange, {
      */
     getPropertyValue: function() {
         return this.propertyValue;
+    },
+
+
+    //-------------------------------------------------------------------------------
+    // Convenience Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @return {string}
+     */
+    getPropertyPath: function() {
+        var path = this.getPath() || "";
+        if (path) {
+            path += "." + this.getPropertyName();
+        } else {
+            path = this.getPropertyName();
+        }
+        return path;
     }
 });
 

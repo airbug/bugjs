@@ -98,7 +98,7 @@ var MapCalculator = Class.extend(DeltaCalculator, {
                 } else {
                     var deltaCalculator = _this.getDeltaBuilder().getCalculatorResolver().resolveCalculator(currentMapValue);
                     if (deltaCalculator) {
-                        var propertyPath = (currentPath ? currentPath + ".": "") + key;
+                        var propertyPath = (currentPath ? currentPath + "." : "") + key;
                         deltaCalculator.calculateDelta(delta, propertyPath, currentMapValue, previousMapValue);
                     } else {
                         if (!Obj.equals(currentMapValue, previousMapValue)) {

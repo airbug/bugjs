@@ -185,7 +185,7 @@ var Marshaller = Class.extend(Obj, {
         } else if (TypeUtil.isNumber(data) || TypeUtil.isBoolean(data) || TypeUtil.isString(data)) {
             return data;
         } else {
-            throw new Bug("Unsupported", {}, "Unsupported data type cannot be marshalled. data:", data);
+            throw new Bug("Unsupported", {}, "Unsupported data type cannot be marshalled. data:" + data);
         }
     },
 
@@ -398,17 +398,22 @@ var Marshaller = Class.extend(Obj, {
             default:
                 var _this           = this;
                 var marsh           = this.marshRegistry.getMarshByName(unbuiltData.type);
-                var marshClass      = marsh.getMarshClass();
-                var builtMarsh      = new marshClass();
-                marsh.getMarshPropertyList().forEach(function(marshProperty) {
-                    var value = _this.buildData(unbuiltData.value[marshProperty.getPropertyName()]);
-                    if (marshProperty.hasSetter()) {
-                        builtMarsh[marshProperty.getSetterName()](value);
-                    } else {
-                        builtMarsh[marshProperty.getPropertyName()] = value;
-                    }
-                });
-                return builtMarsh;
+                if (marsh) {
+                    var marshClass      = marsh.getMarshClass();
+                    var builtMarsh      = new marshClass();
+                    marsh.getMarshPropertyList().forEach(function(marshProperty) {
+                        var value = _this.buildData(unbuiltData.value[marshProperty.getPropertyName()]);
+                        if (marshProperty.hasSetter()) {
+                            builtMarsh[marshProperty.getSetterName()](value);
+                        } else {
+                            builtMarsh[marshProperty.getPropertyName()] = value;
+                        }
+                    });
+                    return builtMarsh;
+                } else {
+                    throw new Bug("UnregisteredMarshType", {}, "Cannot find marsh by the type '" + unbuiltData.type + "'");
+                }
+
         }
     },
 

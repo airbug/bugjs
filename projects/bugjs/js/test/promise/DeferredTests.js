@@ -96,6 +96,7 @@ var deferredThenAndResolveTest = {
                 "Assert that the value received in the #then method is testValue");
         };
         this.testFunctionSpy    = spyOnFunction(this.testFunction);
+        test.completeSetup();
     },
 
 
@@ -115,7 +116,7 @@ var deferredThenAndResolveTest = {
             setTimeout(function() {
                 test.assertTrue(_this.testFunctionSpy.wasCalled(),
                     "Assert that the testFunction was called after setTimeout expires");
-                test.complete();
+                test.completeTest();
             }, 0);
         }, 0);
     }
@@ -146,6 +147,7 @@ var deferredResolveAndThenTest = {
                 "Assert that the value received in the #then method is testValue");
         };
         this.testFunctionSpy    = spyOnFunction(this.testFunction);
+        test.completeSetup();
     },
 
 
@@ -162,7 +164,7 @@ var deferredResolveAndThenTest = {
         setTimeout(function() {
             test.assertTrue(_this.testFunctionSpy.wasCalled(),
                 "Assert that the testFunction was called after setTimeout expires");
-            test.complete();
+            test.completeTest();
         }, 0);
     }
 };
@@ -192,6 +194,7 @@ var deferredResolveWithAPromiseTest = {
                 "Assert that the value received in the #then method is testValue");
         };
         this.testFunctionSpy    = spyOnFunction(this.testFunction);
+        test.completeSetup();
     },
 
 
@@ -213,7 +216,7 @@ var deferredResolveWithAPromiseTest = {
             promise.then(function() {
                 test.assertTrue(_this.testFunctionSpy.wasCalled(),
                     "Assert that the testFunction was called");
-                test.complete();
+                test.completeTest();
             });
         }, 0);
     }
