@@ -114,12 +114,12 @@ var htmlUtilReplaceUrlsTest = {
                 value: "www.airbug.com:80"
             },
             {
-                expected: "<b>http://localhost:8000/app#room/52d997cf05830c97a6a5da50</b>",
-                value: "http://localhost:8000/app#room/52d997cf05830c97a6a5da50"
+                expected: "<b>http://localhost:8000/app#conversation/52d997cf05830c97a6a5da50</b>",
+                value: "http://localhost:8000/app#conversation/52d997cf05830c97a6a5da50"
             },
             {
-                expected: "<b>http://localhost</b>:/app#room/52d997cf05830c97a6a5da50",
-                value: "http://localhost:/app#room/52d997cf05830c97a6a5da50"
+                expected: "<b>http://localhost</b>:/app#conversation/52d997cf05830c97a6a5da50",
+                value: "http://localhost:/app#conversation/52d997cf05830c97a6a5da50"
             },
             {
                 expected: "<b>https://maps.google.com/maps?q=arlington,+va+to+airbug+inc,+san+francisco,+ca&saddr=arlington,+va&daddr=airbug+inc,+san+francisco,+ca&hl=en&ll=39.774769,-99.755859&spn=48.496045,88.242187&sll=37.0625,-95.677068&sspn=50.111473,88.242187&geocode=FVVJUQIdW69n-ykPp6d7nba3iTE0voUzYAOG4A%3BFdX-PwIdewGz-CGgBC0rVL4deCk7B7kygX2PgDGgBC0rVL4deA&t=m&z=4</b>",

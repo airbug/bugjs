@@ -74,10 +74,6 @@ var handshakerInstantiationTest = {
             "Assert no hands have been registered for testHandshaker");
     }
 };
-bugmeta.annotate(handshakerInstantiationTest).with(
-    test().name("Handshaker - instantiation Test")
-);
-
 
 var handshakerInstantiationWithHandsTest = {
 
@@ -101,9 +97,6 @@ var handshakerInstantiationWithHandsTest = {
             "Assert the Handshaker has the testDummyHand");
     }
 };
-bugmeta.annotate(handshakerInstantiationWithHandsTest).with(
-    test().name("Handshaker - instantiation with hands Test")
-);
 
 var handshakerInstantiationWithNonHandsTest = {
 
@@ -126,9 +119,6 @@ var handshakerInstantiationWithNonHandsTest = {
         });
     }
 };
-bugmeta.annotate(handshakerInstantiationWithNonHandsTest).with(
-    test().name("Handshaker - instantiation with non hands Test")
-);
 
 var handshakerShakeAuthorizedTrueWithThrowableShouldFailAuthorization = {
 
@@ -157,6 +147,21 @@ var handshakerShakeAuthorizedTrueWithThrowableShouldFailAuthorization = {
         });
     }
 };
+
+
+//-------------------------------------------------------------------------------
+// BugMeta
+//-------------------------------------------------------------------------------
+
+bugmeta.annotate(handshakerInstantiationTest).with(
+    test().name("Handshaker - instantiation Test")
+);
+bugmeta.annotate(handshakerInstantiationWithHandsTest).with(
+    test().name("Handshaker - instantiation with hands Test")
+);
+bugmeta.annotate(handshakerInstantiationWithNonHandsTest).with(
+    test().name("Handshaker - instantiation with non hands Test")
+);
 bugmeta.annotate(handshakerShakeAuthorizedTrueWithThrowableShouldFailAuthorization).with(
     test().name("Handshaker - shake that returns true authorization but contains a throwable should fail authorization")
 );

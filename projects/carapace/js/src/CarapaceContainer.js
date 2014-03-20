@@ -33,6 +33,10 @@ var Map                 = bugpack.require('Map');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {EventDispatcher}
+ */
 var CarapaceContainer = Class.extend(EventDispatcher, {
 
     //-------------------------------------------------------------------------------
