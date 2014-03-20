@@ -124,6 +124,7 @@ var ViewBuilder = Class.extend(Obj, {
      */
     build: function(container) {
         var viewOptions     = this.generateViewOptions();
+        /** @type {CarapaceView} */
         var view            = new this.viewClass(viewOptions);
         if (view.hasName() && !!container) {
             container[view.getName()] = view;
