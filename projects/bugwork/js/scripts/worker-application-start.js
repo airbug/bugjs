@@ -2,7 +2,9 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
+//@Require('bugapp.Application')
 //@Require('bugwork.WorkerApplication')
+//@Require('bugwork.WorkerDefines')
 
 
 //-------------------------------------------------------------------------------
@@ -17,6 +19,7 @@ var domain                      = require('domain');
 // BugPack
 //-------------------------------------------------------------------------------
 
+var Application                 = bugpack.require('bugapp.Application');
 var WorkerApplication           = bugpack.require('bugwork.WorkerApplication');
 var WorkerDefines               = bugpack.require('bugwork.WorkerDefines');
 
@@ -52,16 +55,16 @@ applicationDomain.add(WorkerApplication);
 applicationDomain.run(function() {
 
     console.log("Creating worker application...");
-    application.addEventListener(WorkerApplication.EventTypes.STARTED, function(event) {
+    application.addEventListener(Application.EventTypes.STARTED, function(event) {
         console.log("Worker application created!");
         process.send({
             messageType: WorkerDefines.MessageTypes.WORKER_READY
         })
     });
-    application.addEventListener(WorkerApplication.EventTypes.STOPPED, function(event) {
+    application.addEventListener(Application.EventTypes.STOPPED, function(event) {
         process.exit();
     });
-    application.addEventListener(WorkerApplication.EventTypes.ERROR, function(event) {
+    application.addEventListener(Application.EventTypes.ERROR, function(event) {
         if (process.connected) {
             process.send({
                 messageType: WorkerDefines.MessageTypes.WORKER_ERROR,
