@@ -167,7 +167,7 @@ var TaskProcessor = Class.extend(EventDispatcher, {
      * @param {function(Throwable=)} callback
      */
     doTask: function(task, callback) {
-        throw new Bug("AbstractMethodNotImplemented")
+        throw new Bug("AbstractMethodNotImplemented", {}, "Must implement the doTask method");
     },
 
 

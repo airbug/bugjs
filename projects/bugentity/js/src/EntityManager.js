@@ -442,6 +442,23 @@ var EntityManager = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
+    // Protected Methods
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @protected
+     * @param {Object} dbObject
+     * @return {Entity}
+     */
+    convertDbObjectToEntity: function(dbObject) {
+        var entityType      = this.entityType;
+        var entitySchema    = this.schemaManager.getSchemaByName(entityType);
+        var dataObject      = this.convertDbObjectToDataObject(dbObject, entitySchema);
+        return this["generate" + this.entityType](dataObject);
+    },
+
+
+    //-------------------------------------------------------------------------------
     // Private Methods
     //-------------------------------------------------------------------------------
 
@@ -498,18 +515,6 @@ var EntityManager = Class.extend(Obj, {
         });
 
         return updateChanges.buildUpdateObject();
-    },
-
-    /**
-     * @private
-     * @param {Object} dbObject
-     * @return {Entity}
-     */
-    convertDbObjectToEntity: function(dbObject) {
-        var entityType      = this.entityType;
-        var entitySchema    = this.schemaManager.getSchemaByName(entityType);
-        var dataObject      = this.convertDbObjectToDataObject(dbObject, entitySchema);
-        return this["generate" + this.entityType](dataObject);
     },
 
     /**
