@@ -1952,9 +1952,9 @@ var Path = Class.extend(Obj, {
     },
 
     /**
-     * @param {?(string|function(Error, *))=} encoding
-     * @param {?(boolean|function(Error, *))=} resolveSymlink (defaults to true)
-     * @param {function(Error, *)} callback
+     * @param {(string|function(Error, *=))} encoding
+     * @param {(boolean|function(Error, *=))=} resolveSymlink (defaults to true)
+     * @param {function(Error, *=)=} callback
      */
     readFile: function(encoding, resolveSymlink, callback) {
         if (TypeUtil.isFunction(resolveSymlink)) {

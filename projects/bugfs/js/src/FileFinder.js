@@ -6,6 +6,7 @@
 
 //@Export('FileFinder')
 
+//@Require('Bug')
 //@Require('Class')
 //@Require('List')
 //@Require('Obj')
@@ -26,6 +27,7 @@ var bugpack             = require('bugpack').context();
 // BugPack
 //-------------------------------------------------------------------------------
 
+var Bug                 = bugpack.require('Bug');
 var Class               = bugpack.require('Class');
 var List                = bugpack.require('List');
 var Obj                 = bugpack.require('Obj');
@@ -49,6 +51,10 @@ var $task               = BugFlow.$task;
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Obj}
+ */
 var FileFinder = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
@@ -61,7 +67,7 @@ var FileFinder = Class.extend(Obj, {
 
 
         //-------------------------------------------------------------------------------
-        // Properties
+        // Private Properties
         //-------------------------------------------------------------------------------
 
         /**
@@ -79,12 +85,12 @@ var FileFinder = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // Public Class Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
      * @param {Array.<(string | Path)> | Collection.<(string | Path)>} scanPaths
-     * @param {function(Error, Set.<Path>)} callback
+     * @param {function(Throwable, Set.<Path>=)} callback
      */
     scan: function(scanPaths, callback) {
         var _this = this;
@@ -92,6 +98,7 @@ var FileFinder = Class.extend(Obj, {
         var matchingPaths = new Set();
         if (TypeUtil.isArray(scanPaths)) {
             $forEachParallel(scanPaths, function(flow, scanPath) {
+                scanPath = BugFs.path(scanPath);
                 _this.scanPathForMatchingFiles(scanPath, function(error, matchedPaths) {
                     if (!error) {
                         matchingPaths.addAll(matchedPaths);
@@ -100,13 +107,13 @@ var FileFinder = Class.extend(Obj, {
                 });
             }).execute(function(error) {
                 if (!error) {
-                    callback(undefined, matchingPaths);
+                    callback(null, matchingPaths);
                 } else {
                     callback(error);
                 }
             });
         } else {
-            callback(new Error("scanPaths must be an Array and must not be empty"));
+            callback(new Bug("IllegalArgument", {}, "scanPaths must be an Array and must not be empty"));
         }
     },
 
@@ -154,7 +161,7 @@ var FileFinder = Class.extend(Obj, {
     /**
      * @private
      * @param {Path} path
-     * @param {function(Error, Set.<Path>)}
+     * @param {function(Throwable, Set.<Path>=)}
      */
     scanDirectoryForMatchingFiles: function(path, callback) {
         var _this = this;
@@ -199,7 +206,7 @@ var FileFinder = Class.extend(Obj, {
     /**
      * @private
      * @param {Path} scanPath
-     * @param {function(Error, Set.<Path>)} callback
+     * @param {function(Throwable, Set.<Path>=)} callback
      */
     scanPathForMatchingFiles: function(scanPath, callback) {
         var _this = this;
