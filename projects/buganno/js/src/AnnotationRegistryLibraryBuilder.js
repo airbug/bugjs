@@ -77,8 +77,8 @@ var AnnotationRegistryLibraryBuilder = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {(Array.<(string | Path)> | List.<(string | Path)>} filePaths
-     * @param {function(Error, AnnotationRegistryLibrary)} callback
+     * @param {Array.<(string | Path)> | List.<(string | Path)>} filePaths
+     * @param {function(Error, AnnotationRegistryLibrary=)} callback
      */
     build: function(filePaths, callback) {
         var _this                       = this;
@@ -93,7 +93,7 @@ var AnnotationRegistryLibraryBuilder = Class.extend(Obj, {
             });
         }).execute(function(error) {
             if (!error) {
-                callback(undefined, annotationRegistryLibrary);
+                callback(null, annotationRegistryLibrary);
             } else {
                 callback(error);
             }

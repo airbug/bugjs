@@ -39,7 +39,12 @@ var BugAnnotation = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
-    _constructor: function(type, arguments) {
+    /**
+     * @constructs
+     * @param {string} annotationType
+     * @param {Array.<(string | number)>} arguments
+     */
+    _constructor: function(annotationType, arguments) {
 
         this._super();
 
@@ -52,13 +57,13 @@ var BugAnnotation = Class.extend(Obj, {
          * @private
          * @type {List.<(string | number)>}
          */
-        this.argumentList = new List(arguments);
+        this.argumentList       = new List(arguments);
 
         /**
          * @private
          * @type {string}
          */
-        this.type = type;
+        this.annotationType     = annotationType;
     },
 
 
@@ -67,8 +72,7 @@ var BugAnnotation = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @private
-     * @return {List.<(string | number)}
+     * @return {List.<(string | number)>}
      */
     getArgumentList: function() {
         return this.argumentList;
@@ -77,8 +81,8 @@ var BugAnnotation = Class.extend(Obj, {
     /**
      * @return {string}
      */
-    getType: function() {
-        return this.type;
+    getAnnotationType: function() {
+        return this.annotationType;
     },
 
 
@@ -92,7 +96,7 @@ var BugAnnotation = Class.extend(Obj, {
     toObject: function() {
         return {
             arguments: this.argumentList.toArray(),
-            type: this.type
+            type: this.annotationType
         };
     }
 });

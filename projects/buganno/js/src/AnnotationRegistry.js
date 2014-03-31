@@ -6,35 +6,43 @@
 
 //@Export('AnnotationRegistry')
 
+//@Require('Bug')
 //@Require('Class')
 //@Require('IObjectable')
 //@Require('List')
 //@Require('Map')
 //@Require('Obj')
+//@Require('buganno.BugAnnotation')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var IObjectable = bugpack.require('IObjectable');
-var List        = bugpack.require('List');
-var Map         = bugpack.require('Map');
-var Obj         = bugpack.require('Obj');
+var Bug             = bugpack.require('Bug');
+var Class           = bugpack.require('Class');
+var IObjectable     = bugpack.require('IObjectable');
+var List            = bugpack.require('List');
+var Map             = bugpack.require('Map');
+var Obj             = bugpack.require('Obj');
+var BugAnnotation   = bugpack.require('buganno.BugAnnotation');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Obj}
+ */
 var AnnotationRegistry = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
@@ -42,6 +50,7 @@ var AnnotationRegistry = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
+     * @constructs
      * @param {Path} filePath
      */
     _constructor: function(filePath) {
@@ -78,7 +87,6 @@ var AnnotationRegistry = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @private
      * @return {List.<Annotation>}
      */
     getAnnotationList: function() {
@@ -117,21 +125,25 @@ var AnnotationRegistry = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Annotation} annotation
+     * @param {BugAnnotation} annotation
      */
     addAnnotation: function(annotation) {
-        this.annotationList.add(annotation);
-        var annotationTypeList = this.annotationTypeMap.get(annotation.getAnnotationType());
-        if (!annotationTypeList) {
-            annotationTypeList = new List();
-            this.annotationTypeMap.put(annotation.getAnnotationType(), annotationTypeList);
+        if (Class.doesExtend(annotation, BugAnnotation)) {
+            this.annotationList.add(annotation);
+            var annotationTypeList = this.annotationTypeMap.get(annotation.getAnnotationType());
+            if (!annotationTypeList) {
+                annotationTypeList = new List();
+                this.annotationTypeMap.put(annotation.getAnnotationType(), annotationTypeList);
+            }
+            annotationTypeList.add(annotation);
+        } else {
+            throw new Bug("IllegalArgument", {}, "parameter 'annotation' must be an instance of BugAnnotation");
         }
-        annotationTypeList.add(annotation);
     },
 
     /**
      * @param {string} type
-     * @return {List.<Annotation>)
+     * @return {List.<BugAnnotation>}
      */
     getAnnotationListByType: function(type) {
         return this.annotationTypeMap.get(type);

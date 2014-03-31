@@ -73,7 +73,7 @@ var AnnotationParserProcessor = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {Map.<string, function(Error, AnnotationRegistry)}}
+         * @type {Map.<string, function(Error, AnnotationRegistry=)>}
          */
         this.sourceFileToCallbackMap    = new Map();
     },
@@ -84,8 +84,8 @@ var AnnotationParserProcessor = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {(string | Path)}
-     * @param {function(Error, AnnotationRegistry)} callback
+     * @param {(string | Path)} sourceFile
+     * @param {function(Error, AnnotationRegistry=)} callback
      */
     parse: function(sourceFile, callback) {
         sourceFile = BugFs.path(sourceFile);

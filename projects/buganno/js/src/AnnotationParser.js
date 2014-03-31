@@ -78,7 +78,7 @@ var AnnotationParser = Class.extend(Obj, {
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {function(Error, AnnotationRegistry)} callback
+     * @param {function(Error, AnnotationRegistry=)} callback
      */
     parse: function(callback) {
         var _this = this;
