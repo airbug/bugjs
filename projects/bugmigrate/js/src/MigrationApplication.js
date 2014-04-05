@@ -18,6 +18,7 @@
 //@Require('bugioc.IocContext')
 //@Require('bugioc.ModuleAnnotationProcessor')
 //@Require('bugioc.ModuleScan')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
@@ -42,6 +43,7 @@ var ConfigurationScan                   = bugpack.require('bugioc.ConfigurationS
 var IocContext                          = bugpack.require('bugioc.IocContext');
 var ModuleAnnotationProcessor           = bugpack.require('bugioc.ModuleAnnotationProcessor');
 var ModuleScan                          = bugpack.require('bugioc.ModuleScan');
+var BugMeta                             = bugpack.require('bugmeta.BugMeta');
 
 
 //-------------------------------------------------------------------------------
@@ -73,25 +75,25 @@ var MigrationApplication = Class.extend(Obj, {
          * @private
          * @type {AutowiredScan}
          */
-        this.autowiredScan      = new AutowiredScan(new AutowiredAnnotationProcessor(this.iocContext));
+        this.autowiredScan      = new AutowiredScan(BugMeta.context(), new AutowiredAnnotationProcessor(this.iocContext));
 
         /**
          * @private
          * @type {ConfigurationScan}
          */
-        this.configurationScan  = new ConfigurationScan(new ConfigurationAnnotationProcessor(this.iocContext));
+        this.configurationScan  = new ConfigurationScan(BugMeta.context(), new ConfigurationAnnotationProcessor(this.iocContext));
 
         /**
          * @private
          * @type {EntityManagerScan}
          */
-        this.entityManagerScan  = new EntityManagerScan(new EntityManagerAnnotationProcessor(this.iocContext));
+        this.entityManagerScan  = new EntityManagerScan(BugMeta.context(), new EntityManagerAnnotationProcessor(this.iocContext));
 
         /**
          * @private
          * @type {ModuleScan}
          */
-        this.moduleScan         = new ModuleScan(new ModuleAnnotationProcessor(this.iocContext));
+        this.moduleScan         = new ModuleScan(BugMeta.context(), new ModuleAnnotationProcessor(this.iocContext));
     },
 
 

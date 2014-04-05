@@ -43,10 +43,11 @@ var MarshAnnotationScan = Class.extend(AnnotationScan, {
 
     /**
      * @constructs
+     * @param {MetaContext} metaContext
      * @param {MarshAnnotationProcessor} processor
      */
-    _constructor: function(processor) {
-        this._super(processor, MarshAnnotation.TYPE);
+    _constructor: function(metaContext, processor) {
+        this._super(metaContext, processor, MarshAnnotation.TYPE);
     }
 });
 

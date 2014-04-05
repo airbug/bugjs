@@ -66,7 +66,7 @@ var AnnotationModuleFactory = Class.extend(ModuleFactory, {
      */
     factoryModule: function() {
         var moduleArgs      = this.buildModuleArgs();
-        return this.moduleClass.create(moduleArgs);
+        return this.moduleClass.newInstance(moduleArgs);
     }
 });
 

@@ -73,7 +73,7 @@ var EntityManagerModuleFactory = Class.extend(ModuleFactory, {
      */
     factoryModule: function() {
         var moduleArgs      = this.buildModuleArgs();
-        var entityManager   = this.entityManagerClass.create(moduleArgs);
+        var entityManager   = this.entityManagerClass.newInstance(moduleArgs);
         entityManager.setEntityType(this.entityType);
         return entityManager;
     }

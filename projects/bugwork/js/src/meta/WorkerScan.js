@@ -33,6 +33,10 @@ var WorkerAnnotation            = bugpack.require('bugwork.WorkerAnnotation');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {AnnotationScan}
+ */
 var WorkerScan = Class.extend(AnnotationScan, {
 
     //-------------------------------------------------------------------------------
@@ -41,10 +45,11 @@ var WorkerScan = Class.extend(AnnotationScan, {
 
     /**
      * @constructs
+     * @param {MetaContext} metaContext
      * @param {AnnotationProcessor} processor
      */
-    _constructor: function(processor) {
-        this._super(processor, WorkerAnnotation.TYPE);
+    _constructor: function(metaContext, processor) {
+        this._super(metaContext, processor, WorkerAnnotation.TYPE);
     }
 });
 

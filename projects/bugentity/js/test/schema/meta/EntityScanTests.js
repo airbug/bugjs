@@ -47,7 +47,7 @@ bugyarn.registerWinder("setupTestEntityScan", function(yarn) {
         "setupTestEntityProcessor"
     ]);
     yarn.wind({
-        entityScan: new EntityScan(this.entityProcessor)
+        entityScan: new EntityScan(bugmeta, this.entityProcessor)
     });
 });
 
@@ -67,7 +67,7 @@ var entityScanInstantiationTest = {
         yarn.spin([
             "setupTestEntityProcessor"
         ]);
-        this.testEntityScan     = new EntityScan(this.entityProcessor);
+        this.testEntityScan     = new EntityScan(bugmeta, this.entityProcessor);
     },
 
     //-------------------------------------------------------------------------------
@@ -79,6 +79,8 @@ var entityScanInstantiationTest = {
             "Assert instance of EntityScan");
         test.assertEqual(this.testEntityScan.getProcessor(), this.entityProcessor,
             "Assert .processor was set correctly");
+        test.assertEqual(this.testEntityScan.getMetaContext, bugmeta,
+            "Assert .metaContext was set correctly");
     }
 };
 bugmeta.annotate(entityScanInstantiationTest).with(

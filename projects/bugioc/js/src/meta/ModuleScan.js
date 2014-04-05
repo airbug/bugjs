@@ -43,11 +43,12 @@ var ModuleScan = Class.extend(AnnotationScan, {
 
     /**
      * @constructs
+     * @param {MetaContext} metaContext
      * @param {ModuleAnnotationProcessor} processor
      */
-    _constructor: function(processor) {
+    _constructor: function(metaContext, processor) {
 
-        this._super(processor, ModuleAnnotation.TYPE);
+        this._super(metaContext, processor, ModuleAnnotation.TYPE);
 
     }
 });

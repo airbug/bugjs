@@ -52,6 +52,10 @@ var module               = ModuleAnnotation.module;
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Obj}
+ */
 var SchemaManager = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
@@ -97,7 +101,7 @@ var SchemaManager = Class.extend(Obj, {
     processModule: function() {
         if (!this.processed) {
             this.processed = true;
-            var entityScan = new EntityScan(new EntityProcessor(this));
+            var entityScan = new EntityScan(bugmeta, new EntityProcessor(this));
             entityScan.scanAll();
         } else {
             throw new Bug("IllegalState", {}, "Already processed module SchemaManager");

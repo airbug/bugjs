@@ -43,10 +43,11 @@ var EntityManagerScan = Class.extend(AnnotationScan, {
 
     /**
      * @constructs
+     * @param {MetaContext} metaContext
      * @param {EntityManagerAnnotationProcessor} processor
      */
-    _constructor: function(processor) {
-        this._super(processor, EntityManagerAnnotation.TYPE);
+    _constructor: function(metaContext, processor) {
+        this._super(metaContext, processor, EntityManagerAnnotation.TYPE);
     }
 });
 

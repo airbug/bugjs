@@ -43,10 +43,11 @@ var MigrationAnnotationScan = Class.extend(AnnotationScan, {
 
     /**
      * @constructs
+     * @param {MetaContext} metaContext
      * @param {MigrationAnnotationProcessor} processor
      */
-    _constructor: function(processor) {
-        this._super(processor, MigrationAnnotation.TYPE);
+    _constructor: function(metaContext, processor) {
+        this._super(metaContext, processor, MigrationAnnotation.TYPE);
     }
 });
 

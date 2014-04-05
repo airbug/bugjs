@@ -43,10 +43,11 @@ var ConfigurationScan = Class.extend(AnnotationScan, {
 
     /**
      * @constructs
+     * @param {MetaContext} metaContext
      * @param {ConfigurationAnnotationProcessor} processor
      */
-    _constructor: function(processor) {
-        this._super(processor, ConfigurationAnnotation.TYPE);
+    _constructor: function(metaContext, processor) {
+        this._super(metaContext, processor, ConfigurationAnnotation.TYPE);
     }
 });
 

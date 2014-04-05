@@ -98,7 +98,7 @@ var MarshRegistry = Class.extend(Obj, {
     processModule: function() {
         if (!this.processed) {
             this.processed = true;
-            var scan = new MarshAnnotationScan(new MarshAnnotationProcessor(this));
+            var scan = new MarshAnnotationScan(bugmeta, new MarshAnnotationProcessor(this));
             scan.scanAll();
         } else {
             throw new Bug("IllegalState", {}, "Already processed module MarshRegistry");

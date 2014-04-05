@@ -96,7 +96,7 @@ var MigrationManager = Class.extend(Obj, {
      *
      */
     processModule: function() {
-        var scan = new MigrationAnnotationScan(new MigrationAnnotationProcessor(this));
+        var scan = new MigrationAnnotationScan(bugmeta, new MigrationAnnotationProcessor(this));
         scan.scanAll();
     },
 
