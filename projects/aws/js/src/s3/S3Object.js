@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aws')
-
-//@Export('S3Object')
+//@Export('aws.S3Object')
 
 //@Require('Class')
 //@Require('aws.AwsObject')

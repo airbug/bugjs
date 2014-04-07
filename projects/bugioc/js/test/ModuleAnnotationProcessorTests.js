@@ -10,7 +10,7 @@
 //@Require('bugioc.ModuleAnnotationProcessor')
 //@Require('bugioc.PropertyAnnotation')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit-annotate.TestAnnotation')
+//@Require('bugunit.TestAnnotation')
 
 
 //-------------------------------------------------------------------------------
@@ -30,7 +30,7 @@ var ModuleAnnotation            = bugpack.require('bugioc.ModuleAnnotation');
 var ModuleAnnotationProcessor   = bugpack.require('bugioc.ModuleAnnotationProcessor');
 var PropertyAnnotation          = bugpack.require('bugioc.PropertyAnnotation');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation              = bugpack.require('bugunit-annotate.TestAnnotation');
+var TestAnnotation              = bugpack.require('bugunit.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------

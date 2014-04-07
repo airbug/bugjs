@@ -9,7 +9,7 @@
 //@Require('bugmeta.Annotation')
 //@Require('bugmeta.BugMeta')
 //@Require('bugmeta.MetaContext')
-//@Require('bugunit-annotate.TestAnnotation')
+//@Require('bugunit.TestAnnotation')
 //@Require('bugyarn.BugYarn')
 
 
@@ -29,7 +29,7 @@ var Marshaller              = bugpack.require('bugmarsh.Marshaller');
 var Annotation              = bugpack.require('bugmeta.Annotation');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var MetaContext             = bugpack.require('bugmeta.MetaContext');
-var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
+var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 

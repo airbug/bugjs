@@ -6,7 +6,7 @@
 
 //@Require('Class')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit-annotate.TestAnnotation')
+//@Require('bugunit.TestAnnotation')
 //@Require('bugyarn.BugYarn')
 //@Require('redis.RedisConfig')
 
@@ -24,7 +24,7 @@ var bugpack                 = require('bugpack').context();
 
 var Class                   = bugpack.require('Class');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
+var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 var RedisConfig             = bugpack.require('redis.RedisConfig');
 

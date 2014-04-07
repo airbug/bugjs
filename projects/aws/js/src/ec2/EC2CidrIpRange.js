@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aws')
-
-//@Export('EC2CidrIpRange')
+//@Export('aws.EC2CidrIpRange')
 
 //@Require('Class')
 //@Require('Obj')

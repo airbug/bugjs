@@ -9,7 +9,7 @@
 //@Require('bugcall.CallResponseHandler')
 //@Require('bugcall.CallResponseHandlerFactory')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit-annotate.TestAnnotation')
+//@Require('bugunit.TestAnnotation')
 //@Require('bugyarn.BugYarn')
 
 
@@ -29,7 +29,7 @@ var TypeUtil                        = bugpack.require('TypeUtil');
 var CallResponseHandler             = bugpack.require('bugcall.CallResponseHandler');
 var CallResponseHandlerFactory      = bugpack.require('bugcall.CallResponseHandlerFactory');
 var BugMeta                         = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation                  = bugpack.require('bugunit-annotate.TestAnnotation');
+var TestAnnotation                  = bugpack.require('bugunit.TestAnnotation');
 var BugYarn                         = bugpack.require('bugyarn.BugYarn');
 
 

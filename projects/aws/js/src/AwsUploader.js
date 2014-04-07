@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aws')
-
-//@Export('AwsUploader')
+//@Export('aws.AwsUploader')
 
 //@Require('Class')
 //@Require('Obj')
@@ -83,7 +81,7 @@ var AwsUploader = Class.extend(Obj, {
          *      sourcePaths: Array.<string>,
          *      local-bucket: string,
          *      bucket: string,
-         *      options: {*}
+         *      options: *
          *  }}
          */
         this.props                  = null;
@@ -102,7 +100,7 @@ var AwsUploader = Class.extend(Obj, {
     },
 
     /**
-     * @returns {{
+     * @return {{
      *      awsConfig: {
      *          accessKeyId: string,
      *          region: string,
@@ -111,8 +109,8 @@ var AwsUploader = Class.extend(Obj, {
      *      sourcePaths: Array.<string>,
      *      local-bucket: string,
      *      bucket: string,
-     *      options: {*}
-     *  }}
+     *      options: *
+     * }}
      */
     getProps: function() {
         return this.props;

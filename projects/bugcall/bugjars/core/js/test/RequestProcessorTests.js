@@ -7,7 +7,7 @@
 //@Require('Class')
 //@Require('bugcall.RequestProcessor')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit-annotate.TestAnnotation')
+//@Require('bugunit.TestAnnotation')
 //@Require('bugyarn.BugYarn')
 
 
@@ -25,7 +25,7 @@ var bugpack                 = require('bugpack').context();
 var Class                   = bugpack.require('Class');
 var RequestProcessor        = bugpack.require('bugcall.RequestProcessor');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
+var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 

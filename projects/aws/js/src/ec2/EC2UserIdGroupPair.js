@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aws')
-
-//@Export('EC2UserIdGroupPair')
+//@Export('aws.EC2UserIdGroupPair')
 
 //@Require('Class')
 //@Require('Obj')

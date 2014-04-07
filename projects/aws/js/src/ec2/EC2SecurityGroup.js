@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aws')
-
-//@Export('EC2SecurityGroup')
+//@Export('aws.EC2SecurityGroup')
 
 //@Require('Class')
 //@Require('Set')

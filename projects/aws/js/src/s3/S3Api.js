@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aws')
-
-//@Export('S3Api')
+//@Export('aws.S3Api')
 
 //@Require('Bug')
 //@Require('Class')

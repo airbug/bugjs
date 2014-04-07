@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aws')
-
-//@Export('EC2Api')
+//@Export('aws.EC2Api')
 
 //@Require('Class')
 //@Require('Obj')

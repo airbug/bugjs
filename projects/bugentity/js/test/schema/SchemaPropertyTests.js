@@ -6,7 +6,7 @@
 
 //@Require('bugentity.SchemaProperty')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit-annotate.TestAnnotation')
+//@Require('bugunit.TestAnnotation')
 //@Require('bugyarn.BugYarn')
 
 
@@ -23,7 +23,7 @@ var bugpack                 = require('bugpack').context();
 
 var SchemaProperty          = bugpack.require('bugentity.SchemaProperty');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
+var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 

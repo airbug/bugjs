@@ -7,7 +7,7 @@
 //@Require('bugdouble.BugDouble')
 //@Require('bugmeta.BugMeta')
 //@Require('bugroute:bugcall.BugCallRoute')
-//@Require('bugunit-annotate.TestAnnotation')
+//@Require('bugunit.TestAnnotation')
 
 
 //-------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ var bugpack             = require('bugpack').context();
 var BugDouble           = bugpack.require('bugdouble.BugDouble');
 var BugMeta             = bugpack.require('bugmeta.BugMeta');
 var BugCallRoute        = bugpack.require('bugroute:bugcall.BugCallRoute');
-var TestAnnotation      = bugpack.require('bugunit-annotate.TestAnnotation');
+var TestAnnotation      = bugpack.require('bugunit.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------

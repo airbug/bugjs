@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aws')
-
-//@Export('IAMApi')
+//@Export('aws.IAMApi')
 
 //@Require('Class')
 //@Require('Obj')

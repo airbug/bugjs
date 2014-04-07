@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aws')
-
-//@Export('EC2IpPermission')
+//@Export('aws.EC2IpPermission')
 
 //@Require('Class')
 //@Require('Obj')
@@ -18,19 +16,19 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =                 bugpack.require('Class');
-var Obj =                   bugpack.require('Obj');
-var Set =                   bugpack.require('Set');
-var AwsObject =             bugpack.require('aws.AwsObject');
-var EC2CidrIpRange =        bugpack.require('aws.EC2CidrIpRange');
-var EC2UserIdGroupPair =    bugpack.require('aws.EC2UserIdGroupPair');
+var Class                   = bugpack.require('Class');
+var Obj                     = bugpack.require('Obj');
+var Set                     = bugpack.require('Set');
+var AwsObject               = bugpack.require('aws.AwsObject');
+var EC2CidrIpRange          = bugpack.require('aws.EC2CidrIpRange');
+var EC2UserIdGroupPair      = bugpack.require('aws.EC2UserIdGroupPair');
 
 
 //-------------------------------------------------------------------------------

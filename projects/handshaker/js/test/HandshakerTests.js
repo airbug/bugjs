@@ -6,7 +6,7 @@
 
 //@Require('TypeUtil')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit-annotate.TestAnnotation')
+//@Require('bugunit.TestAnnotation')
 //@Require('bugyarn.BugYarn')
 //@Require('handshaker.DummyHand');
 //@Require('handshaker.Handshaker')
@@ -25,7 +25,7 @@ var bugpack                 = require('bugpack').context();
 
 var TypeUtil                = bugpack.require('TypeUtil');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit-annotate.TestAnnotation');
+var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 var DummyHand               = bugpack.require('handshaker.DummyHand');
 var Handshaker              = bugpack.require('handshaker.Handshaker');

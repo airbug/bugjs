@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugcli')
-
-//@Export('BugCli')
+//@Export('bugcli.BugCli')
 
 //@Require('Class')
 //@Require('Map')
@@ -21,43 +19,50 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-var path = require('path');
+var bugpack             = require('bugpack').context();
+var path                = require('path');
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class =     bugpack.require('Class');
-var Map =       bugpack.require('Map');
-var Obj =       bugpack.require('Obj');
-var CliAction = bugpack.require('bugcli.CliAction');
-var CliBuild =  bugpack.require('bugcli.CliBuild');
-var CliOption = bugpack.require('bugcli.CliOption');
-var CliParser = bugpack.require('bugcli.CliParser');
-var CliRunner = bugpack.require('bugcli.CliRunner');
-var BugFlow =   bugpack.require('bugflow.BugFlow');
+var Class               = bugpack.require('Class');
+var Map                 = bugpack.require('Map');
+var Obj                 = bugpack.require('Obj');
+var CliAction           = bugpack.require('bugcli.CliAction');
+var CliBuild            = bugpack.require('bugcli.CliBuild');
+var CliOption           = bugpack.require('bugcli.CliOption');
+var CliParser           = bugpack.require('bugcli.CliParser');
+var CliRunner           = bugpack.require('bugcli.CliRunner');
+var BugFlow             = bugpack.require('bugflow.BugFlow');
 
 
 //-------------------------------------------------------------------------------
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var $series =   BugFlow.$series;
-var $task =     BugFlow.$task;
+var $series             = BugFlow.$series;
+var $task               = BugFlow.$task;
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Obj}
+ */
 var BugCli = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
+    /**
+     * @constructs
+     */
     _constructor: function() {
 
         this._super();

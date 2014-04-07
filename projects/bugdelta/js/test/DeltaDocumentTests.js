@@ -10,7 +10,7 @@
 //@Require('bugdelta.DeltaDocument')
 //@Require('bugdelta.SetChange')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit-annotate.TestAnnotation')
+//@Require('bugunit.TestAnnotation')
 
 
 //-------------------------------------------------------------------------------
@@ -30,7 +30,7 @@ var DeltaBuilder        = bugpack.require('bugdelta.DeltaBuilder');
 var DeltaDocument       = bugpack.require('bugdelta.DeltaDocument');
 var SetChange           = bugpack.require('bugdelta.SetChange');
 var BugMeta             = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation      = bugpack.require('bugunit-annotate.TestAnnotation');
+var TestAnnotation      = bugpack.require('bugunit.TestAnnotation');
 
 
 //-------------------------------------------------------------------------------

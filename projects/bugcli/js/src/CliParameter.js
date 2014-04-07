@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugcli')
-
-//@Export('CliParameter')
+//@Export('bugcli.CliParameter')
 
 //@Require('Class')
 //@Require('Obj')
