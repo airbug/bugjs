@@ -74,7 +74,8 @@ buildTarget('local').buildFlow(
 
 buildScript({
     dependencies: [
-        "https://s3.amazonaws.com/deploy-airbug/bugpack-0.0.5.tgz"
+        "bugcore",
+        "bugflow"
     ],
     script: function() {
 
@@ -82,25 +83,17 @@ buildScript({
         // Common Modules
         //-------------------------------------------------------------------------------
 
-        //TEST
-        console.log("require.resolve('buildbug'):", require.resolve('buildbug'));
-        var bugpack         = require('bugpack').context(require.resolve('buildbug'));
-
-
-        //-------------------------------------------------------------------------------
-        // BugPack
-        //-------------------------------------------------------------------------------
-
-        var TypeUtil        = bugpack.require('TypeUtil');
-        var BugFlow         = bugpack.require('bugflow.BugFlow');
+        var bugcore         = require('bugcore');
+        var bugflow         = require('bugflow');
 
 
         //-------------------------------------------------------------------------------
         // Simplify References
         //-------------------------------------------------------------------------------
 
-        var $series         = BugFlow.$series;
-        var $task           = BugFlow.$task;
+        var TypeUtil        = bugcore.TypeUtil;
+        var $series         = bugflow.$series;
+        var $task           = bugflow.$task;
 
 
         //-------------------------------------------------------------------------------
