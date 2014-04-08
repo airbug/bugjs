@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugyarn')
-
-//@Export('Winder')
+//@Export('bugyarn.Winder')
 
 //@Require('Class')
 //@Require('Obj')
@@ -29,6 +27,10 @@ var Obj                     = bugpack.require('Obj');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Obj}
+ */
 var Winder = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------

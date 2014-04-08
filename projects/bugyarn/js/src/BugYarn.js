@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugyarn')
-
-//@Export('BugYarn')
+//@Export('bugyarn.BugYarn')
 
 //@Require('Class')
 //@Require('Obj')
@@ -24,13 +22,17 @@ var bugpack                 = require('bugpack').context();
 
 var Class                   = bugpack.require('Class');
 var Obj                     = bugpack.require('Obj');
-var LoomContext            = bugpack.require('bugyarn.LoomContext');
+var LoomContext             = bugpack.require('bugyarn.LoomContext');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Obj}
+ */
 var BugYarn = Class.extend(Obj, {});
 
 

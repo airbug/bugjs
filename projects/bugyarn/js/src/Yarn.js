@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugyarn')
-
-//@Export('Yarn')
+//@Export('bugyarn.Yarn')
 
 //@Require('ArgumentBug')
 //@Require('Bug')
@@ -37,6 +35,10 @@ var TypeUtil                = bugpack.require('TypeUtil');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Obj}
+ */
 var Yarn = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugyarn')
-
-//@Export('LoomContext')
+//@Export('bugyarn.LoomContext')
 
 //@Require('Bug')
 //@Require('Class')
@@ -39,12 +37,19 @@ var Yarn                    = bugpack.require('bugyarn.Yarn');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Obj}
+ */
 var LoomContext = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
+    /**
+     * @constructs
+     */
     _constructor: function() {
 
         this._super();

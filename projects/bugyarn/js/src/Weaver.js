@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugyarn')
-
-//@Export('Weaver')
+//@Export('bugyarn.Weaver')
 
 //@Require('Class')
 //@Require('Obj')
@@ -29,6 +27,10 @@ var Obj                     = bugpack.require('Obj');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Obj}
+ */
 var Weaver = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
