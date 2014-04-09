@@ -60,7 +60,7 @@ buildTarget('local').buildFlow(
                 targetPaths: buildProject.getProperty("bugjs.targetPaths"),
                 ignores: buildProject.getProperty("bugjs.ignorePatterns"),
                 lintTasks: [
-                    "fixExportAndRemovePackageAnnotations"
+
                 ]
             }
         })
