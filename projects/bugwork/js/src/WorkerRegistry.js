@@ -89,7 +89,7 @@ var WorkerRegistry = Class.extend(Obj, {
      * @param {function(Throwable=)} callback
      */
     initializeModule: function(callback) {
-        var scan = new WorkerScan(new WorkerAnnotationProcessor(this));
+        var scan = new WorkerScan(bugmeta, new WorkerAnnotationProcessor(this));
         scan.scanAll();
         callback();
     },

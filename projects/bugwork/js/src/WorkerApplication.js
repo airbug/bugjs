@@ -13,15 +13,15 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack                             = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class                               = bugpack.require('Class');
-var Application                         = bugpack.require('bugapp.Application');
+var Class               = bugpack.require('Class');
+var Application         = bugpack.require('bugapp.Application');
 
 
 //-------------------------------------------------------------------------------

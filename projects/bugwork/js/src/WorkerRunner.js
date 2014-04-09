@@ -3,6 +3,7 @@
 //-------------------------------------------------------------------------------
 
 //@Export('bugwork.WorkerRunner')
+//@Autoload
 
 //@Require('Bug')
 //@Require('Class')
