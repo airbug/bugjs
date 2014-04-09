@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('Yaml')
+//@Export('acesnippets.Yaml')
 
 //@Require('ace.Ace')
 

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('AssemblyX86')
+//@Export('acesnippets.AssemblyX86')
 
 //@Require('ace.Ace')
 

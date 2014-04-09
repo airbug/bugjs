@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('Coldfusion')
+//@Export('acesnippets.Coldfusion')
 
 //@Require('ace.Ace')
 

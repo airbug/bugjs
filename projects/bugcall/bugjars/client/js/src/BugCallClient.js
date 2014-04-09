@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugcall')
-
-//@Export('BugCallClient')
+//@Export('bugcall.BugCallClient')
 //@Autoload
 
 //@Require('Class')

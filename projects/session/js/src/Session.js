@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('session')
-
-//@Export('Session')
+//@Export('session.Session')
 
 //@Require('Class')
 //@Require('IObjectable')

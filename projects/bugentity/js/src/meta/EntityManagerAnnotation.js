@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugentity')
-
-//@Export('EntityManagerAnnotation')
+//@Export('bugentity.EntityManagerAnnotation')
 
 //@Require('Class')
 //@Require('bugioc.ModuleAnnotation')

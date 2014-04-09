@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('R')
+//@Export('acesnippets.R')
 
 //@Require('ace.Ace')
 

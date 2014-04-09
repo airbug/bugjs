@@ -32,9 +32,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
-
-//@Export('CrimsonEditor')
+//@Export('acethemes.CrimsonEditor')
 
 //@Require('ace.Ace')
 

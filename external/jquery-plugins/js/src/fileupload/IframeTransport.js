@@ -2,8 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('fileupload')
-//@Export('IframeTransport')
+//@Export('fileupload.IframeTransport')
 
 //@Require('jquery.JQuery')
 

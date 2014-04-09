@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugmessage')
-
-//@Export('Message')
+//@Export('bugmessage.Message')
 
 //@Require('Class')
 //@Require('IObjectable')

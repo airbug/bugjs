@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aceexts')
-
-//@Export('StaticHighlight')
+//@Export('aceexts.StaticHighlight')
 
 //@Require('ace.Ace')
 

@@ -2,8 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('jqueryplugin')
-//@Export('Widget')
+//@Export('jqueryplugin.Widget')
 
 //@Require('jquery.JQuery')
 

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('Stylus')
+//@Export('acesnippets.Stylus')
 
 //@Require('ace.Ace')
 

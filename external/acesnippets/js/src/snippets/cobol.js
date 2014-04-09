@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('Cobol')
+//@Export('acesnippets.Cobol')
 
 //@Require('ace.Ace')
 

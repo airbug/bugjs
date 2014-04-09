@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('Golang')
+//@Export('acesnippets.Golang')
 
 //@Require('ace.Ace')
 

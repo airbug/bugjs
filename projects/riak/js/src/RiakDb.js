@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('riak')
-
-//@Export('RiakDb')
+//@Export('riak.RiakDb')
 
 //@Require('Map')
 //@Require('TypeUtil');

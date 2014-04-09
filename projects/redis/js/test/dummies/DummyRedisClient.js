@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('redis')
-
-//@Export('DummyRedisClient')
+//@Export('redis.DummyRedisClient')
 
 //@Require('Class')
 //@Require('Event')

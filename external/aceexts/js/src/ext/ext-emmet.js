@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aceexts')
-
-//@Export('Emmet')
+//@Export('aceexts.Emmet')
 
 //@Require('ace.Ace')
 

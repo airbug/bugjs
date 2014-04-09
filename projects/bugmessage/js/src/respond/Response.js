@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugmessage')
-
-//@Export('Response')
+//@Export('bugmessage.Response')
 
 //@Require('Class')
 //@Require('Map')

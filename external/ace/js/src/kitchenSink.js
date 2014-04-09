@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('ace')
-
-//@Export('KitchenSink')
+//@Export('ace.KitchenSink')
 
 //@Require('ace.Ace')
 

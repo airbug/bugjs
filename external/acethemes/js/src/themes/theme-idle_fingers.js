@@ -32,9 +32,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
-
-//@Export('IdleFingers')
+//@Export('acethemes.IdleFingers')
 
 //@Require('ace.Ace')
 

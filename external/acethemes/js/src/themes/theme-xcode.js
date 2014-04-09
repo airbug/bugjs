@@ -32,9 +32,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
-
-//@Export('Xcode')
+//@Export('acethemes.Xcode')
 
 //@Require('ace.Ace')
 

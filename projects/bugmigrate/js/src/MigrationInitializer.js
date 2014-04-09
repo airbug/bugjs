@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugmigrate')
-
-//@Export('MigrationInitializer')
+//@Export('bugmigrate.MigrationInitializer')
 
 //@Require('Class')
 //@Require('Obj')

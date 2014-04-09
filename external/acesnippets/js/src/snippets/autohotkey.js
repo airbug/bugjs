@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('Autohotkey')
+//@Export('acesnippets.Autohotkey')
 
 //@Require('ace.Ace')
 

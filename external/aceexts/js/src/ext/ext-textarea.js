@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aceexts')
-
-//@Export('Textarea')
+//@Export('aceexts.Textarea')
 
 //@Require('ace.Ace')
 

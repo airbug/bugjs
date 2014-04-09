@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aceexts')
-
-//@Export('ElasticTabstopsLite')
+//@Export('aceexts.ElasticTabstopsLite')
 
 //@Require('ace.Ace')
 

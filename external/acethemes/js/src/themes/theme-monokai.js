@@ -32,9 +32,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
-
-//@Export('Monokai')
+//@Export('acethemes.Monokai')
 
 //@Require('ace.Ace')
 

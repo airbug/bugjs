@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('redis')
-
-//@Export('DummyRedisHDelQuery')
+//@Export('redis.DummyRedisHDelQuery')
 
 //@Require('Class')
 //@Require('Map')

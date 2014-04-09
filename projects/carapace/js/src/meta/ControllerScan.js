@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('carapace')
-
-//@Export('ControllerScan')
+//@Export('carapace.ControllerScan')
 
 //@Require('Class')
 //@Require('Obj')

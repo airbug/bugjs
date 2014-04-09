@@ -32,9 +32,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
-
-//@Export('Kr')
+//@Export('acethemes.Kr')
 
 //@Require('ace.Ace')
 

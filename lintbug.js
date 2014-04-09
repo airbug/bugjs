@@ -52,9 +52,6 @@ lintbug.lintTask("fixExportAndRemovePackageAnnotations", function(lintFile, call
         fileContents = fileContents.replace(exportAnnotationRegex, function(match, p1, p2, p3, p4, p5, p6, offset, string) {
             return p1 + "//" + p2 + "@Export(" + p3 + packageName + "." + p4 + p5 + ")" + p6 + "\n";
         });
-
-        console.log("Lint complete - " + lintFile.getFilePath().getAbsolutePath() + "\n");
-        console.log(fileContents);
     }
 
     lintFile.setFileContents(fileContents);

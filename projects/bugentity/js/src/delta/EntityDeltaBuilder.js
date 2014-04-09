@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugentity')
-
-//@Export('EntityDeltaBuilder')
+//@Export('bugentity.EntityDeltaBuilder')
 //@Autoload
 
 //@Require('Class')

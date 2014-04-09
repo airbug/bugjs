@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugcontrol')
-
-//@Export('BugControl')
+//@Export('bugcontrol.BugControl')
 
 //@Require('Class')
 //@Require('Obj')

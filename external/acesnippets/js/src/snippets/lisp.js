@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('Lisp')
+//@Export('acesnippets.Lisp')
 
 //@Require('ace.Ace')
 

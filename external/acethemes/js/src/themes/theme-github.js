@@ -32,9 +32,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
-
-//@Export('Github')
+//@Export('acethemes.Github')
 
 //@Require('ace.Ace')
 

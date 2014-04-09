@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugcall')
-
-//@Export('CallRequestManager')
+//@Export('bugcall.CallRequestManager')
 //@Autoload
 
 //@Require('Class')

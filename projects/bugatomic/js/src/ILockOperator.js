@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugatomic')
-
-//@Export('ILockOperator')
+//@Export('bugatomic.ILockOperator')
 
 //@Require('Interface')
 

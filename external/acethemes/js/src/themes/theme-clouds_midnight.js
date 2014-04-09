@@ -32,9 +32,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
-
-//@Export('CloudsMidnight')
+//@Export('acethemes.CloudsMidnight')
 
 //@Require('ace.Ace')
 

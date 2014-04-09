@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('Csharp')
+//@Export('acesnippets.Csharp')
 
 //@Require('ace.Ace')
 

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('Django')
+//@Export('acesnippets.Django')
 
 //@Require('ace.Ace')
 

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugioc')
-
-//@Export('ModuleFactory')
+//@Export('bugioc.ModuleFactory')
 
 //@Require('Class')
 //@Require('Obj')

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aceexts')
-
-//@Export('SettingsMenu')
+//@Export('aceexts.SettingsMenu')
 
 //@Require('ace.Ace')
 

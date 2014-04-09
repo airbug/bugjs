@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aceexts')
-
-//@Export('Modelist')
+//@Export('aceexts.Modelist')
 
 //@Require('ace.Ace')
 

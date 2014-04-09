@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugcall')
-
-//@Export('CallServerConnection')
+//@Export('bugcall.CallServerConnection')
 
 //@Require('Class')
 //@Require('bugcall.CallConnection')

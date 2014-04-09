@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('mongo')
-
-//@Export('MongoDataStore')
+//@Export('mongo.MongoDataStore')
 //@Autoload
 
 //@Require('Bug')

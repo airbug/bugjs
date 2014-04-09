@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugentity')
-
-//@Export('EntityScan')
+//@Export('bugentity.EntityScan')
 
 //@Require('Class')
 //@Require('bugentity.EntityAnnotation')

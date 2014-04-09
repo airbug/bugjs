@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('HtmlRuby')
+//@Export('acesnippets.HtmlRuby')
 
 //@Require('ace.Ace')
 

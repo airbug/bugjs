@@ -32,9 +32,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
-
-//@Export('Eclipse')
+//@Export('acethemes.Eclipse')
 
 //@Require('ace.Ace')
 

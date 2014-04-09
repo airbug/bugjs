@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugioc')
-
-//@Export('SingletonScope')
+//@Export('bugioc.SingletonScope')
 
 //@Require('Class')
 //@Require('bugioc.Scope')

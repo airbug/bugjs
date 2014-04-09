@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('carapace')
-
-//@Export('RoutingRequest')
+//@Export('carapace.RoutingRequest')
 
 //@Require('Class')
 //@Require('EventDispatcher')

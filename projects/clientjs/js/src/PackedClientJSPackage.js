@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('clientjs')
-
-//@Export('PackedClientJSPackage')
+//@Export('clientjs.PackedClientJSPackage')
 
 //@Require('Class')
 //@Require('Obj')

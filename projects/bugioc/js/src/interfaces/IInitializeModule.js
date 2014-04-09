@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugioc')
-
-//@Export('IInitializeModule')
+//@Export('bugioc.IInitializeModule')
 
 //@Require('Interface')
 

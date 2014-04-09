@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugioc')
-
-//@Export('Scope')
+//@Export('bugioc.Scope')
 
 //@Require('Class')
 //@Require('Obj')

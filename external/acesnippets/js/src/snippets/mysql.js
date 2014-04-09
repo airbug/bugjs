@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('Mysql')
+//@Export('acesnippets.Mysql')
 
 //@Require('ace.Ace')
 

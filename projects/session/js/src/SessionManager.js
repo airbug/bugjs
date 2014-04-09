@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('session')
-
-//@Export('SessionManager')
+//@Export('session.SessionManager')
 
 //@Require('Class')
 //@Require('Obj')

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('splash')
-
-//@Export('ImageMarkupEditor')
+//@Export('splash.ImageMarkupEditor')
 
 //@Require('Class')
 //@Require('Obj')

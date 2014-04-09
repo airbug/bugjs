@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('Groovy')
+//@Export('acesnippets.Groovy')
 
 //@Require('ace.Ace')
 

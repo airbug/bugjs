@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugmigrate')
-
-//@Export('MigrationModel')
+//@Export('bugmigrate.MigrationModel')
 //@Autoload
 
 //@Require('airbugserver.MigrationSchema')

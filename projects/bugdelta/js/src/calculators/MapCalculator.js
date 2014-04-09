@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugdelta')
-
-//@Export('MapCalculator')
+//@Export('bugdelta.MapCalculator')
 
 //@Require('Class')
 //@Require('Map')

@@ -32,9 +32,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
-
-//@Export('Chrome')
+//@Export('acethemes.Chrome')
 
 //@Require('ace.Ace')
 

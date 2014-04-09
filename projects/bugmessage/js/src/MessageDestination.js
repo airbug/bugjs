@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugmessage')
-
-//@Export('MessageDestination')
+//@Export('bugmessage.MessageDestination')
 
 //@Require('Class')
 //@Require('Event')

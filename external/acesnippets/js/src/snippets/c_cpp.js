@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('CCpp')
+//@Export('acesnippets.CCpp')
 
 //@Require('ace.Ace')
 

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugioc')
-
-//@Export('IocModule')
+//@Export('bugioc.IocModule')
 
 //@Require('Class')
 //@Require('List')

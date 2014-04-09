@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('Livescript')
+//@Export('acesnippets.Livescript')
 
 //@Require('ace.Ace')
 

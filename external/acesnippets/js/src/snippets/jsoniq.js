@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('Jsoniq')
+//@Export('acesnippets.Jsoniq')
 
 //@Require('ace.Ace')
 

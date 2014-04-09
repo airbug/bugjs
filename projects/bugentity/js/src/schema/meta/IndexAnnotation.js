@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugentity')
-
-//@Export('IndexAnnotation')
+//@Export('bugentity.IndexAnnotation')
 
 //@Require('Class')
 //@Require('bugmeta.Annotation')

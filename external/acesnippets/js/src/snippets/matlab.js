@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('Matlab')
+//@Export('acesnippets.Matlab')
 
 //@Require('ace.Ace')
 

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugmarsh')
-
-//@Export('MarshAnnotation')
+//@Export('bugmarsh.MarshAnnotation')
 
 //@Require('Class')
 //@Require('bugmeta.Annotation')

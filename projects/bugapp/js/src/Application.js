@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugapp')
-
-//@Export('Application')
+//@Export('bugapp.Application')
 
 //@Require('Class')
 //@Require('Event')

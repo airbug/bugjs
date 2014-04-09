@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('redis')
-
-//@Export('DummyRedisUnsubscribeQuery')
+//@Export('redis.DummyRedisUnsubscribeQuery')
 
 //@Require('Class')
 //@Require('Set')

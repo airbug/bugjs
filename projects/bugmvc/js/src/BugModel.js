@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugmvc')
-
-//@Export('BugModel')
+//@Export('bugmvc.BugModel')
 
 //@Require('Class')
 //@Require('ISet')

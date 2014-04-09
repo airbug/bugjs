@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('mongo')
-
-//@Export('DummyWhereQuery')
+//@Export('mongo.DummyWhereQuery')
 
 //@Require('Class')
 //@Require('mongo.DummyMongoQuery')

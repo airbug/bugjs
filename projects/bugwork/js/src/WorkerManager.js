@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugwork')
-
-//@Export('WorkerManager')
+//@Export('bugwork.WorkerManager')
 //@Autoload
 
 //@Require('Bug')

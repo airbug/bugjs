@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugcall')
-
-//@Export('IPreProcessCall')
+//@Export('bugcall.IPreProcessCall')
 
 //@Require('Interface')
 

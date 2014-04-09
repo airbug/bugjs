@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugmessage')
-
-//@Export('IResponseSender')
+//@Export('bugmessage.IResponseSender')
 
 //@Require('Interface')
 

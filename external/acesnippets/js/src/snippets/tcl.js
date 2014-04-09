@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('Tcl')
+//@Export('acesnippets.Tcl')
 
 //@Require('ace.Ace')
 

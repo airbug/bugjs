@@ -4,9 +4,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('clientjs')
-
-//@Export('ClientJSServer')
+//@Export('clientjs.ClientJSServer')
 
 //@Require('Class')
 //@Require('Obj')

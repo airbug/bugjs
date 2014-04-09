@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aceexts')
-
-//@Export('Statusbar')
+//@Export('aceexts.Statusbar')
 
 //@Require('ace.Ace')
 

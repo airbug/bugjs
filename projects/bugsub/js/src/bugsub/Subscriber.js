@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugsub')
-
-//@Export('Subscriber')
+//@Export('bugsub.Subscriber')
 
 //@Require('Class')
 //@Require('Obj')

@@ -32,9 +32,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
-
-//@Export('Terminal')
+//@Export('acethemes.Terminal')
 
 //@Require('ace.Ace')
 

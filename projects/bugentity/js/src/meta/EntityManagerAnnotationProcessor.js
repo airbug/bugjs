@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugentity')
-
-//@Export('EntityManagerAnnotationProcessor')
+//@Export('bugentity.EntityManagerAnnotationProcessor')
 
 //@Require('Class')
 //@Require('Set')

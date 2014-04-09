@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugentity')
-
-//@Export('SchemaManager')
+//@Export('bugentity.SchemaManager')
 //@Autoload
 
 //@Require('Bug')

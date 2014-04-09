@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugentity')
-
-//@Export('SchemaProperty')
+//@Export('bugentity.SchemaProperty')
 
 //@Require('Class')
 //@Require('Obj')

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugatomic')
-
-//@Export('OperationBatchRunner')
+//@Export('bugatomic.OperationBatchRunner')
 
 //@Require('Class')
 //@Require('EventDispatcher')

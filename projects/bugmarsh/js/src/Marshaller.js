@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugmarsh')
-
-//@Export('Marshaller')
+//@Export('bugmarsh.Marshaller')
 //@Autoload
 
 //@Require('Bug')

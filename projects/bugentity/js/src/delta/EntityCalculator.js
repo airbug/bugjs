@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugentity')
-
-//@Export('EntityCalculator')
+//@Export('bugentity.EntityCalculator')
 
 //@Require('Class')
 //@Require('Obj')

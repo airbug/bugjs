@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugmigrate')
-
-//@Export('MigrationSchema')
+//@Export('bugmigrate.MigrationSchema')
 //@Autoload
 
 

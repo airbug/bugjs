@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('mongo')
-
-//@Export('MongoUpdateChanges')
+//@Export('mongo.MongoUpdateChanges')
 
 //@Require('Class')
 //@Require('Map')

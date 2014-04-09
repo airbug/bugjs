@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('mongo')
-
-//@Export('DummyFindByIdAndUpdateQuery')
+//@Export('mongo.DummyFindByIdAndUpdateQuery')
 
 //@Require('Class')
 //@Require('Obj')

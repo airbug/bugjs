@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aceexts')
-
-//@Export('Split')
+//@Export('aceexts.Split')
 
 //@Require('ace.Ace')
 

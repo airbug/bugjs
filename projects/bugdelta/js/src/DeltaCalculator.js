@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugdelta')
-
-//@Export('DeltaCalculator')
+//@Export('bugdelta.DeltaCalculator')
 
 //@Require('Class')
 //@Require('Obj')

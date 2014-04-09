@@ -32,9 +32,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
-
-//@Export('Textmate')
+//@Export('acethemes.Textmate')
 
 //@Require('ace.Ace')
 

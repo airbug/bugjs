@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('HtmlCompletions')
+//@Export('acesnippets.HtmlCompletions')
 
 //@Require('ace.Ace')
 

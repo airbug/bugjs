@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('configbug')
-
-//@Export('Configbug')
+//@Export('configbug.Configbug')
 
 //@Require('Class')
 //@Require('Config')

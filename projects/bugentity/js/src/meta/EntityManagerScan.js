@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugentity')
-
-//@Export('EntityManagerScan')
+//@Export('bugentity.EntityManagerScan')
 
 //@Require('Class')
 //@Require('bugentity.EntityManagerAnnotation')

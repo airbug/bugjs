@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugioc')
-
-//@Export('AutowiredScan')
+//@Export('bugioc.AutowiredScan')
 
 //@Require('Class')
 //@Require('Obj')

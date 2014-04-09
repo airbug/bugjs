@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugioc')
-
-//@Export('ConfigurationAnnotationProcessor')
+//@Export('bugioc.ConfigurationAnnotationProcessor')
 
 //@Require('Class')
 //@Require('Set')

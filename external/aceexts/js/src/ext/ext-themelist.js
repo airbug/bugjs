@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aceexts')
-
-//@Export('Themelist')
+//@Export('aceexts.Themelist')
 
 //@Require('ace.Ace')
 

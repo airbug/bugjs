@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('carapace')
-
-//@Export('CarapaceList')
+//@Export('carapace.CarapaceList')
 
 //@Require('Class')
 //@Require('bugmvc.BugList')

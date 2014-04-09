@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('Prolog')
+//@Export('acesnippets.Prolog')
 
 //@Require('ace.Ace')
 

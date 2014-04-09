@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('redis')
-
-//@Export('RedisPubSub')
+//@Export('redis.RedisPubSub')
 
 //@Require('Class')
 //@Require('Event')

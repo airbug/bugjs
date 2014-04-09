@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugservice')
-
-//@Export('ServiceRoute')
+//@Export('bugservice.ServiceRoute')
 
 //@Require('ArgUtil')
 //@Require('Class')

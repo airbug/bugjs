@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('Typescript')
+//@Export('acesnippets.Typescript')
 
 //@Require('ace.Ace')
 

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugmessage')
-
-//@Export('AbstractResponseChannel')
+//@Export('bugmessage.AbstractResponseChannel')
 
 //@Require('Class')
 //@Require('EventPropagator')

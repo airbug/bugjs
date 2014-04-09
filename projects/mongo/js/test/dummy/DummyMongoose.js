@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('mongo')
-
-//@Export('DummyMongoose')
+//@Export('mongo.DummyMongoose')
 
 //@Require('Class')
 //@Require('Map')

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aceexts')
-
-//@Export('Spellcheck')
+//@Export('aceexts.Spellcheck')
 
 //@Require('ace.Ace')
 

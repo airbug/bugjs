@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('carapace')
-
-//@Export('ControllerAnnotation')
+//@Export('carapace.ControllerAnnotation')
 
 //@Require('Class')
 //@Require('bugmeta.Annotation')

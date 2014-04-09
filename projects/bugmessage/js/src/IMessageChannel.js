@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugmessage')
-
-//@Export('IMessageChannel')
+//@Export('bugmessage.IMessageChannel')
 
 //@Require('IEventPropagator')
 //@Require('Interface')

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('Twig')
+//@Export('acesnippets.Twig')
 
 //@Require('ace.Ace')
 

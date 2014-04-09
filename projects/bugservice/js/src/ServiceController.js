@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugservice')
-
-//@Export('ServiceController')
+//@Export('bugservice.ServiceController')
 
 //@Require('Class')
 //@Require('Exception')

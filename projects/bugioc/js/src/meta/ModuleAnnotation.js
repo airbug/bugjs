@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugioc')
-
-//@Export('ModuleAnnotation')
+//@Export('bugioc.ModuleAnnotation')
 
 //@Require('Class')
 //@Require('bugmeta.Annotation')

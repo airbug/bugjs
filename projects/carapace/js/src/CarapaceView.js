@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('carapace')
-
-//@Export('CarapaceView')
+//@Export('carapace.CarapaceView')
 
 //@Require('Class')
 //@Require('Event')

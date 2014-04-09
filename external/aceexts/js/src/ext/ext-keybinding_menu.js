@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aceexts')
-
-//@Export('KeybindingMenu')
+//@Export('aceexts.KeybindingMenu')
 
 //@Require('ace.Ace')
 

@@ -32,9 +32,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
-
-//@Export('MonoIndustrial')
+//@Export('acethemes.MonoIndustrial')
 
 //@Require('ace.Ace')
 

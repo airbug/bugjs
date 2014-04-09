@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugmessage')
-
-//@Export('CallbackResponseChannel')
+//@Export('bugmessage.CallbackResponseChannel')
 
 //@Require('Class')
 //@Require('bugmessage.AbstractResponseChannel')

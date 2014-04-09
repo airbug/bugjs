@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugsub')
-
-//@Export('PubSub')
+//@Export('bugsub.PubSub')
 //@Autoload
 
 //@Require('Class')

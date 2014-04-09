@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugwork')
-
-//@Export('WorkerCommand')
+//@Export('bugwork.WorkerCommand')
 
 //@Require('Class')
 //@Require('Command')

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('Ruby')
+//@Export('acesnippets.Ruby')
 
 //@Require('ace.Ace')
 

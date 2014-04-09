@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugwork')
-
-//@Export('DestroyWorkerProcessCommand')
+//@Export('bugwork.DestroyWorkerProcessCommand')
 
 //@Require('Bug')
 //@Require('Class')

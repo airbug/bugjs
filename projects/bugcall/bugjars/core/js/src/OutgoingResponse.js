@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugcall')
-
-//@Export('OutgoingResponse')
+//@Export('bugcall.OutgoingResponse')
 
 //@Require('Class')
 //@Require('EventDispatcher')

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aceexts')
-
-//@Export('Searchbox')
+//@Export('aceexts.Searchbox')
 
 //@Require('ace.Ace')
 

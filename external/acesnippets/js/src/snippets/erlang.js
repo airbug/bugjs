@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('Erlang')
+//@Export('acesnippets.Erlang')
 
 //@Require('ace.Ace')
 

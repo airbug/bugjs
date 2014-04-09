@@ -32,9 +32,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
-
-//@Export('VibrantInk')
+//@Export('acethemes.VibrantInk')
 
 //@Require('ace.Ace')
 

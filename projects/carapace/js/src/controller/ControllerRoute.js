@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('carapace')
-
-//@Export('ControllerRoute')
+//@Export('carapace.ControllerRoute')
 
 //@Require('ArgUtil')
 //@Require('Class')

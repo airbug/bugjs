@@ -10,9 +10,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('backbone')
-
-//@Export('Backbone')
+//@Export('backbone.Backbone')
 
 //@Require('underscore.Underscore')
 //@Require('jquery.JQuery')

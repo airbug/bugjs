@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugcall')
-
-//@Export('DummyBugCallServer')
+//@Export('bugcall.DummyBugCallServer')
 
 //@Require('Class')
 //@Require('EventDispatcher')

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aceexts')
-
-//@Export('OldIe')
+//@Export('aceexts.OldIe')
 
 //@Require('ace.Ace')
 

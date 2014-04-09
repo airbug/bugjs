@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('Diff')
+//@Export('acesnippets.Diff')
 
 //@Require('ace.Ace')
 

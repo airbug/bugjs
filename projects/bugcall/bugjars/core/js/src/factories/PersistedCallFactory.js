@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugcall')
-
-//@Export('PersistedCallFactory')
+//@Export('bugcall.PersistedCallFactory')
 //@Autoload
 
 //@Require('Class')

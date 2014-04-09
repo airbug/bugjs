@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugmarkup')
-
-//@Export('PropertyChange')
+//@Export('bugmarkup.PropertyChange')
 
 //@Require('Class')
 //@Require('Obj')

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('Rust')
+//@Export('acesnippets.Rust')
 
 //@Require('ace.Ace')
 

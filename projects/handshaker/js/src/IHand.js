@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('handshaker')
-
-//@Export('IHand')
+//@Export('handshaker.IHand')
 
 //@Require('Interface')
 

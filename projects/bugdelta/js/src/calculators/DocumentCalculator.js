@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugdelta')
-
-//@Export('DocumentCalculator')
+//@Export('bugdelta.DocumentCalculator')
 
 //@Require('Class')
 //@Require('IDocument')

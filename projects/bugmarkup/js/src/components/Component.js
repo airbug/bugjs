@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugmarkup')
-
-//@Export('Component')
+//@Export('bugmarkup.Component')
 
 //@Require('Class')
 //@Require('EventDispatcher')

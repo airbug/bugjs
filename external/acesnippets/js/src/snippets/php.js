@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('Php')
+//@Export('acesnippets.Php')
 
 //@Require('ace.Ace')
 

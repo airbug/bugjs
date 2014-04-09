@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugservice')
-
-//@Export('MethodAnnotation')
+//@Export('bugservice.MethodAnnotation')
 
 //@Require('Class')
 //@Require('List')

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('cookies')
-
-//@Export('Cookies')
+//@Export('cookies.Cookies')
 
 //@Require('Class')
 //@Require('Obj')

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aceexts')
-
-//@Export('LanguageTools')
+//@Export('aceexts.LanguageTools')
 
 //@Require('ace.Ace')
 

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('Logiql')
+//@Export('acesnippets.Logiql')
 
 //@Require('ace.Ace')
 

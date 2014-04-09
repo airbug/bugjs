@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugmessage')
-
-//@Export('AbstractMessageRouter')
+//@Export('bugmessage.AbstractMessageRouter')
 
 //@Require('Class')
 //@Require('List')

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aceexts')
-
-//@Export('Whitespace')
+//@Export('aceexts.Whitespace')
 
 //@Require('ace.Ace')
 

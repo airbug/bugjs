@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('mongo')
-
-//@Export('MongoManager')
+//@Export('mongo.MongoManager')
 
 //@Require('Class')
 //@Require('Exception')

@@ -32,9 +32,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
-
-//@Export('MerbivoreSoft')
+//@Export('acethemes.MerbivoreSoft')
 
 //@Require('ace.Ace')
 

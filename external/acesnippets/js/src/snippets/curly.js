@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('Curly')
+//@Export('acesnippets.Curly')
 
 //@Require('ace.Ace')
 

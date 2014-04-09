@@ -32,9 +32,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
-
-//@Export('Dreamweaver')
+//@Export('acethemes.Dreamweaver')
 
 //@Require('ace.Ace')
 

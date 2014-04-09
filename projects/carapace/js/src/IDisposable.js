@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('carapace')
-
-//@Export('IDisposable')
+//@Export('carapace.IDisposable')
 
 //@Require('Interface')
 

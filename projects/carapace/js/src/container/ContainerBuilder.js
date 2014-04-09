@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('carapace')
-
-//@Export('ContainerBuilder')
+//@Export('carapace.ContainerBuilder')
 
 //@Require('Class')
 //@Require('List')

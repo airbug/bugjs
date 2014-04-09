@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugtask')
-
-//@Export('TaskProcessor')
+//@Export('bugtask.TaskProcessor')
 
 //@Require('Bug')
 //@Require('Class')

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugatomic')
-
-//@Export('LockOperator')
+//@Export('bugatomic.LockOperator')
 
 //@Require('Class')
 //@Require('Lock')

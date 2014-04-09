@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugdelta')
-
-//@Export('IDelta')
+//@Export('bugdelta.IDelta')
 
 //@Require('Interface')
 

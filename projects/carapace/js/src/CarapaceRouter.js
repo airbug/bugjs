@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('carapace')
-
-//@Export('CarapaceRouter')
+//@Export('carapace.CarapaceRouter')
 
 //@Require('Class')
 //@Require('List')

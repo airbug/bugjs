@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugatomic')
-
-//@Export('BugAtomic')
+//@Export('bugatomic.BugAtomic')
 
 //@Require('Class')
 //@Require('Map')

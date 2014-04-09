@@ -32,9 +32,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
-
-//@Export('SolarizedLight')
+//@Export('acethemes.SolarizedLight')
 
 //@Require('ace.Ace')
 

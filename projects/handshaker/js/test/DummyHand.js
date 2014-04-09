@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('handshaker')
-
-//@Export('DummyHand')
+//@Export('handshaker.DummyHand')
 
 //@Require('Class')
 //@Require('Obj')

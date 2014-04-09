@@ -32,9 +32,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
-
-//@Export('PastelOnDark')
+//@Export('acethemes.PastelOnDark')
 
 //@Require('ace.Ace')
 

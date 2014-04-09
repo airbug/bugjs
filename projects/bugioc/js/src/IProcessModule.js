@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugioc')
-
-//@Export('IProcessModule')
+//@Export('bugioc.IProcessModule')
 
 //@Require('Interface')
 

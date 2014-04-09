@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('Objectivec')
+//@Export('acesnippets.Objectivec')
 
 //@Require('ace.Ace')
 

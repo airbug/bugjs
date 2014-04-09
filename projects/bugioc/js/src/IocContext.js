@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugioc')
-
-//@Export('IocContext')
+//@Export('bugioc.IocContext')
 
 //@Require('Class')
 //@Require('DependencyGraph')

@@ -25,9 +25,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
-
-//@Export('Chaos')
+//@Export('acethemes.Chaos')
 
 //@Require('ace.Ace')
 

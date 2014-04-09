@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('loggerbug')
-
-//@Export('Logger')
+//@Export('loggerbug.Logger')
 //@Autoload
 
 //@Require('ArgUtil')

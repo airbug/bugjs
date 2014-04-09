@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('handshaker')
-
-//@Export('Handshaker')
+//@Export('handshaker.Handshaker')
 
 //@Require('ArgUtil')
 //@Require('Class')

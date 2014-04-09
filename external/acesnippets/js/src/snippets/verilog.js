@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('Verilog')
+//@Export('acesnippets.Verilog')
 
 //@Require('ace.Ace')
 

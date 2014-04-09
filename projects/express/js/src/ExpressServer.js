@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('express')
-
-//@Export('ExpressServer')
+//@Export('express.ExpressServer')
 
 //@Require('Class')
 //@Require('Obj')

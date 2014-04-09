@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('Vbscript')
+//@Export('acesnippets.Vbscript')
 
 //@Require('ace.Ace')
 

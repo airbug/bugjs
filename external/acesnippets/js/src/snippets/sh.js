@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('Sh')
+//@Export('acesnippets.Sh')
 
 //@Require('ace.Ace')
 

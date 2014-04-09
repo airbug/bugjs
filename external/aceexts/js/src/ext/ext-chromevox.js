@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('aceexts')
-
-//@Export('Chromevox')
+//@Export('aceexts.Chromevox')
 
 //@Require('ace.Ace')
 

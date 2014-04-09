@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('redis')
-
-//@Export('RedisConfig')
+//@Export('redis.RedisConfig')
 
 //@Require('Class')
 //@Require('Config')

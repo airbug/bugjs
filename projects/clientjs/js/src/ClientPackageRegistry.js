@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('clientjs')
-
-//@Export('ClientPackageRegistry')
+//@Export('clientjs.ClientPackageRegistry')
 
 //@Require('Class')
 //@Require('Map')

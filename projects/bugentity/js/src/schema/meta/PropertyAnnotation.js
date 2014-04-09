@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugentity')
-
-//@Export('PropertyAnnotation')
+//@Export('bugentity.PropertyAnnotation')
 
 //@Require('Class')
 //@Require('bugmeta.Annotation')

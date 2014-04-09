@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('redis')
-
-//@Export('DummyRedisLPushQuery')
+//@Export('redis.DummyRedisLPushQuery')
 
 //@Require('Class')
 //@Require('List')

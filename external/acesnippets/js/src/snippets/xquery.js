@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('Xquery')
+//@Export('acesnippets.Xquery')
 
 //@Require('ace.Ace')
 

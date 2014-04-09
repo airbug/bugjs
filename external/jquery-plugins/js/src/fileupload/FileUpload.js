@@ -2,8 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('fileupload')
-//@Export('FileUpload')
+//@Export('fileupload.FileUpload')
 
 //@Require('jquery.JQuery')
 //@Require('jqueryplugin.Widget')

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugdelta')
-
-//@Export('SetChange')
+//@Export('bugdelta.SetChange')
 
 //@Require('Class')
 //@Require('bugdelta.DeltaChange')

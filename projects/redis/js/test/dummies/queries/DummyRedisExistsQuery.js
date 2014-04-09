@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('redis')
-
-//@Export('DummyRedisExistsQuery')
+//@Export('redis.DummyRedisExistsQuery')
 
 //@Require('Class')
 //@Require('Set')

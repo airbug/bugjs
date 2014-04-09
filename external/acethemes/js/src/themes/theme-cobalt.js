@@ -32,9 +32,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acethemes')
-
-//@Export('Cobalt')
+//@Export('acethemes.Cobalt')
 
 //@Require('ace.Ace')
 

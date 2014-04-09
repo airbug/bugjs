@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('MushcodeHighRules')
+//@Export('acesnippets.MushcodeHighRules')
 
 //@Require('ace.Ace')
 

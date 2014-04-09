@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('acesnippets')
-
-//@Export('Ocaml')
+//@Export('acesnippets.Ocaml')
 
 //@Require('ace.Ace')
 
