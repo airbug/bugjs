@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('socketio:client')
-
-//@Export('ISocketFactory')
+//@Export('socketio:client.ISocketFactory')
 
 //@Require('Interface')
 
@@ -13,14 +11,14 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack         = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Interface = bugpack.require('Interface');
+var Interface       = bugpack.require('Interface');
 
 
 //-------------------------------------------------------------------------------

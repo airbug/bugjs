@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugroute:bugcall')
-
-//@Export('BugCallRouter')
+//@Export('bugroute:bugcall.BugCallRouter')
 
 //@Require('ArgUtil')
 //@Require('Class')

@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('socketio:client')
-
-//@Export('DummySocketFactory')
+//@Export('socketio:client.DummySocketFactory')
 
 //@Require('Class')
 //@Require('Obj')
@@ -16,7 +14,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------

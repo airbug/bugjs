@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('sharejs:client')
-
-//@Export('IClientFactory')
+//@Export('sharejs:client.IClientFactory')
 
 //@Require('Interface')
 

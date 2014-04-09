@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugroute:bugcall')
-
-//@Export('ICallRoute')
+//@Export('bugroute:bugcall.ICallRoute')
 
 //@Require('Interface')
 

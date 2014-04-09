@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('socketio:factorybrowser')
-
-//@Export('BrowserSocketIoFactory')
+//@Export('socketio:factorybrowser.BrowserSocketIoFactory')
 
 //@Require('Class')
 //@Require('Obj')
@@ -17,7 +15,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack             = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------

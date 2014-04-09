@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('bugroute:socketio')
-
-//@Export('SocketRoute')
+//@Export('bugroute:socketio.SocketRoute')
 
 //@Require('Class')
 //@Require('Obj')

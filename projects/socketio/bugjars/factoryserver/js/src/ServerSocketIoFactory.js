@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('socketio:factoryserver')
-
-//@Export('ServerSocketIoFactory')
+//@Export('socketio:factoryserver.ServerSocketIoFactory')
 
 //@Require('Class')
 //@Require('Obj')
@@ -16,8 +14,8 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-var io      = require('socket.io-client');
+var bugpack             = require('bugpack').context();
+var io                  = require('socket.io-client');
 
 
 //-------------------------------------------------------------------------------

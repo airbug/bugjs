@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('socketio:socket')
-
-//@Export('SocketIoConnection')
+//@Export('socketio:socket.SocketIoConnection')
 
 //@Require('ArgUtil')
 //@Require('Class')

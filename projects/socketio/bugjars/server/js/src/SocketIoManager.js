@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('socketio:server')
-
-//@Export('SocketIoManager')
+//@Export('socketio:server.SocketIoManager')
 
 //@Require('Class')
 //@Require('Event')
@@ -17,8 +15,8 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
-var io              = require('socket.io');
+var bugpack             = require('bugpack').context();
+var io                  = require('socket.io');
 
 
 //-------------------------------------------------------------------------------

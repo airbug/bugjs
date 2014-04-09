@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('socketio:socket')
-
-//@Export('SocketIoEmit')
+//@Export('socketio:socket.SocketIoEmit')
 
 //@Require('Class')
 //@Require('Obj')

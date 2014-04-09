@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('socketio:client')
-
-//@Export('SocketIoClientChannel')
+//@Export('socketio:client.SocketIoClientChannel')
 
 //@Require('Class')
 //@Require('IEventPropagator')
@@ -19,7 +17,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------

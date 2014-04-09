@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('socketio:server')
-
-//@Export('SocketIoServerConfig')
+//@Export('socketio:server.SocketIoServerConfig')
 
 //@Require('Class')
 //@Require('Config')

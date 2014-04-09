@@ -2,9 +2,7 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Package('sharejs:server')
-
-//@Export('ShareJsServerConfig')
+//@Export('sharejs:server.ShareJsServerConfig')
 
 //@Require('Class')
 //@Require('Config')
