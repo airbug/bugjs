@@ -5,7 +5,8 @@
 //@Export('bugioc.AutowiredScan')
 
 //@Require('Class')
-//@Require('Obj')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugmeta.AnnotationScan')
 //@Require('bugmeta.BugMeta')
 
 
@@ -13,34 +14,41 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class       = bugpack.require('Class');
-var Obj         = bugpack.require('Obj');
-var BugMeta     = bugpack.require('bugmeta.BugMeta');
+var Class                   = bugpack.require('Class');
+var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
+var AnnotationScan          = bugpack.require('bugmeta.AnnotationScan');
+var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
-var AutowiredScan = Class.extend(Obj, {
+/**
+ * @class
+ * @extends {AnnotationScan}
+ */
+var AutowiredScan = Class.extend(AnnotationScan, /** @lends {AutowiredScan.prototype} */{
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
     /**
+     * @constructs
+     * @param {MetaContext} metaContext
      * @param {AutowiredAnnotationProcessor} processor
      */
-    _constructor: function(processor) {
+    _constructor: function(metaContext, processor) {
 
-        this._super();
+        this._super(metaContext, processor, AutowiredAnnotation.TYPE);
 
 
         //-------------------------------------------------------------------------------
@@ -49,35 +57,15 @@ var AutowiredScan = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {AutowiredAnnotationProcessor}
-         */
-        this.processor = processor;
-
-        /**
-         * @priavate
          * @type {boolean}
          */
-        this.scanning   = false;
+        this.scanning       = false;
     },
 
 
     //-------------------------------------------------------------------------------
-    // Public Class Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
-
-    /**
-     *
-     */
-    scanAll: function() {
-        var _this = this;
-        var bugmeta = BugMeta.context();
-        var autowiredAnnotations = bugmeta.getAnnotationsByType("Autowired");
-        if (autowiredAnnotations) {
-            autowiredAnnotations.forEach(function(annotation) {
-                _this.processor.process(annotation);
-            });
-        }
-    },
 
     /**
      *
@@ -88,7 +76,7 @@ var AutowiredScan = Class.extend(Obj, {
             this.scanning = true;
             var bugmeta                 = BugMeta.context();
             bugmeta.registerAnnotationProcessor("Autowired", function(annotation) {
-                _this.processor.process(annotation);
+                _this.getProcessor().process(annotation);
             });
         }
     }

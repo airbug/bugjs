@@ -3,6 +3,7 @@
 //-------------------------------------------------------------------------------
 
 //@Export('bugmigrate.MigrationManager')
+//@Autoload
 
 //@Require('Class')
 //@Require('Obj')
@@ -19,7 +20,7 @@
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack                                     = require('bugpack').context(module);
+var bugpack                                     = require('bugpack').context();
 var mongoose                                    = require('mongoose');
 
 

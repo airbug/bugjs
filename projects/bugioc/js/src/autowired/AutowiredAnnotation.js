@@ -27,15 +27,22 @@ var Annotation      = bugpack.require('bugmeta.Annotation');
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Annotation}
+ */
 var AutowiredAnnotation = Class.extend(Annotation, {
 
     //-------------------------------------------------------------------------------
     // Constructor
     //-------------------------------------------------------------------------------
 
+    /**
+     * @constructs
+     */
     _constructor: function() {
 
-        this._super("Autowired");
+        this._super(AutowiredAnnotation.TYPE);
 
 
         //-------------------------------------------------------------------------------
@@ -63,17 +70,29 @@ var AutowiredAnnotation = Class.extend(Annotation, {
 
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
      * @param {Array.<PropertyAnnotation>} autowiredPropertyArray
+     * @return {AutowiredAnnotation}
      */
     properties: function(autowiredPropertyArray) {
         this.autowiredPropertyArray = autowiredPropertyArray;
         return this;
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Static Properties
+//-------------------------------------------------------------------------------
+
+/**
+ * @static
+ * @const {string}
+ */
+AutowiredAnnotation.TYPE = "Autowired";
 
 
 //-------------------------------------------------------------------------------

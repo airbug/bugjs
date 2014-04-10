@@ -79,7 +79,7 @@ var entityScanInstantiationTest = {
             "Assert instance of EntityScan");
         test.assertEqual(this.testEntityScan.getProcessor(), this.entityProcessor,
             "Assert .processor was set correctly");
-        test.assertEqual(this.testEntityScan.getMetaContext, bugmeta,
+        test.assertEqual(this.testEntityScan.getMetaContext(), bugmeta,
             "Assert .metaContext was set correctly");
     }
 };

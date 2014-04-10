@@ -5,7 +5,7 @@
 //@Export('bugmigrate.MigrationModel')
 //@Autoload
 
-//@Require('airbugserver.MigrationSchema')
+//@Require('bugmigrate.MigrationSchema')
 
 
 //-------------------------------------------------------------------------------

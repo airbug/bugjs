@@ -7,28 +7,35 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('Set')
+//@Require('bugmeta.IAnnotationProcessor')
 
 
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
+var bugpack                 = require('bugpack').context();
 
 
 //-------------------------------------------------------------------------------
 // BugPack
 //-------------------------------------------------------------------------------
 
-var Class               = bugpack.require('Class');
-var Obj                 = bugpack.require('Obj');
-var Set                 = bugpack.require('Set');
+var Class                   = bugpack.require('Class');
+var Obj                     = bugpack.require('Obj');
+var Set                     = bugpack.require('Set');
+var IAnnotationProcessor    = bugpack.require('bugmeta.IAnnotationProcessor');
 
 
 //-------------------------------------------------------------------------------
 // Declare Class
 //-------------------------------------------------------------------------------
 
+/**
+ * @class
+ * @extends {Obj}
+ * @implements {IAnnotationProcessor}
+ */
 var AutowiredAnnotationProcessor = Class.extend(Obj, {
 
     //-------------------------------------------------------------------------------
@@ -55,7 +62,7 @@ var AutowiredAnnotationProcessor = Class.extend(Obj, {
 
         /**
          * @private
-         * @type {}
+         * @type {Set.<AutowiredAnnotation>}
          */
         this.processedAutowiredAnnotationSet    = new Set();
     },
@@ -101,6 +108,13 @@ var AutowiredAnnotationProcessor = Class.extend(Obj, {
         }
     }
 });
+
+
+//-------------------------------------------------------------------------------
+// Implement Interfaces
+//-------------------------------------------------------------------------------
+
+Class.implement(AutowiredAnnotationProcessor, IAnnotationProcessor);
 
 
 //-------------------------------------------------------------------------------
