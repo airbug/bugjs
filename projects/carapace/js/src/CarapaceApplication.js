@@ -15,246 +15,255 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                 = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                   = bugpack.require('Class');
-var Event                   = bugpack.require('Event');
-var EventDispatcher         = bugpack.require('EventDispatcher');
-var Set                     = bugpack.require('Set');
-var Backbone                = bugpack.require('backbone.Backbone');
-var ControllerRoute         = bugpack.require('carapace.ControllerRoute');
-var RoutingRequest          = bugpack.require('carapace.RoutingRequest');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var CarapaceApplication = Class.extend(EventDispatcher, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function(logger, router) {
+    var Class                   = bugpack.require('Class');
+    var Event                   = bugpack.require('Event');
+    var EventDispatcher         = bugpack.require('EventDispatcher');
+    var Set                     = bugpack.require('Set');
+    var Backbone                = bugpack.require('backbone.Backbone');
+    var ControllerRoute         = bugpack.require('carapace.ControllerRoute');
+    var RoutingRequest          = bugpack.require('carapace.RoutingRequest');
 
-        this._super();
 
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {EventDispatcher}
+     */
+    var CarapaceApplication = Class.extend(EventDispatcher, {
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {CarapaceController}
+         * @constructs
+         * @param {Logger} logger
+         * @param {CarapaceRouter} router
          */
-        this.currentController              = null;
+        _constructor: function(logger, router) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {CarapaceController}
+             */
+            this.currentController              = null;
+
+            /**
+             * @private
+             * @type {Logger}
+             */
+            this.logger                         = logger;
+
+            /**
+             * @private
+             * @type {CarapaceRouter}
+             */
+            this.router                         = router;
+
+            /**
+             * @private
+             * @type {Set<CarapaceController>}
+             */
+            this.registeredControllerSet        = new Set();
+
+            /**
+             * @private
+             * @type {Set<ControllerRoute>}
+             */
+            this.registeredControllerRouteSet   = new Set();
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Private Methods
+        //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {Logger}
+         * @param {CarapaceController} controller
          */
-        this.logger                         = logger;
+        registerController: function(controller) {
+            if (!this.registeredControllerSet.contains(controller)) {
+                this.registeredControllerSet.add(controller);
+            }
+        },
+
+        /**
+         * @param {ControllerRoute} controllerRoute
+         */
+        registerControllerRoute: function(controllerRoute) {
+            if (!this.registeredControllerRouteSet.contains(controllerRoute)) {
+                this.registeredControllerRouteSet.add(controllerRoute);
+                controllerRoute.setupRoute(this.router);
+                controllerRoute.addEventListener(ControllerRoute.EventType.ROUTING_REQUESTED,
+                    this.hearControllerRouteRoutingRequestedEvent, this);
+            }
+        },
+
+        /**
+         *
+         */
+        start: function(callback) {
+            var result = Backbone.history.start();
+
+            //TEST
+            this.logger.info("Result:", result);
+
+            callback();
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Protected Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @protected
+         * @param {CarapaceController} controller
+         * @param {Array<*>} routingArgs
+         */
+        startController: function(controller, routingArgs) {
+            if (this.currentController) {
+                this.currentController.stop();
+            }
+            this.currentController = controller;
+            controller.start(routingArgs);
+        },
+
+        /**
+         * @protected
+         * @param {RoutingRequest} routingRequest
+         */
+        acceptRoutingRequest: function(routingRequest) {
+            this.logger.info("Routing request accepted!");
+            var routingArgs = routingRequest.getArgs();
+            var route       = routingRequest.getRoute();
+            var controller  = route.getController();
+            this.startController(controller, routingArgs);
+        },
+
+        /**
+         * @protected
+         * @param {RoutingRequest} routingRequest
+         */
+        forwardRoutingRequest: function(routingRequest) {
+            this.logger.info("Routing request forwarded!");
+            var forwardFragment = routingRequest.getForwardFragment();
+            var forwardOptions  = routingRequest.getForwardOptions();
+            this.router.navigate(forwardFragment, forwardOptions);
+        },
+
+        /**
+         * @protected
+         * @param {RoutingRequest} routingRequest
+         */
+        rejectRoutingRequest: function(routingRequest) {
+            var rejectReason    = routingRequest.getRejectReason();
+            var rejectData      = routingRequest.getRejectData();
+
+            //TODO BRN: Build an annotation for adding rejection handlers to controllers
+
+            this.logger.info("Routing request was rejected!");
+            if (rejectReason === RoutingRequest.RejectReason.ERROR) {
+                this.logger.error(rejectData.throwable);
+            }
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Private Methods
+        //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {CarapaceRouter}
+         * @param {RoutingRequest} routingRequest
          */
-        this.router                         = router;
+        processRoutingRequestResults: function(routingRequest) {
+            var result  = routingRequest.getResult();
+            switch (result) {
+                case RoutingRequest.Result.ACCEPTED:
+                    this.acceptRoutingRequest(routingRequest);
+                    break;
+                case RoutingRequest.Result.FORWARDED:
+                    this.forwardRoutingRequest(routingRequest);
+                    break;
+                case RoutingRequest.Result.REJECTED:
+                    this.rejectRoutingRequest(routingRequest);
+                    break;
+            }
+        },
 
         /**
          * @private
-         * @type {Set<CarapaceController>}
+         * @param {RoutingRequest} routingRequest
          */
-        this.registeredControllerSet        = new Set();
+        listenToRoutingRequest: function(routingRequest) {
+            routingRequest.addEventListener(RoutingRequest.EventType.PROCESSED,
+                this.hearRoutingRequestProcessedEvent, this);
+            routingRequest.addEventPropagator(this);
+        },
 
         /**
          * @private
-         * @type {Set<ControllerRoute>}
+         * @param {RoutingRequest} routingRequest
          */
-        this.registeredControllerRouteSet   = new Set();
-    },
+        stopListeningToRoutingRequest: function(routingRequest) {
+            routingRequest.removeEventListener(RoutingRequest.EventType.PROCESSED,
+                this.hearRoutingRequestProcessedEvent, this);
+            routingRequest.removeEventPropagator(this);
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // Private Methods
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // Event Listeners
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @private
-     * @param {CarapaceController} controller
-     */
-    registerController: function(controller) {
-        if (!this.registeredControllerSet.contains(controller)) {
-            this.registeredControllerSet.add(controller);
+        /**
+         * @private
+         * @param {Event} event
+         */
+        hearControllerRouteRoutingRequestedEvent: function(event) {
+            var controllerRoute = event.getTarget();
+            var routingRequest  = event.getData().routingRequest;
+            var controller      = controllerRoute.getController();
+            this.listenToRoutingRequest(routingRequest);
+            controller.route(routingRequest);
+        },
+
+        /**
+         * @private
+         * @param {Event} event
+         */
+        hearRoutingRequestProcessedEvent: function(event) {
+            var routingRequest = event.getTarget();
+            this.stopListeningToRoutingRequest(routingRequest);
+            this.processRoutingRequestResults(routingRequest);
         }
-    },
-
-    /**
-     * @param {ControllerRoute} controllerRoute
-     */
-    registerControllerRoute: function(controllerRoute) {
-        if (!this.registeredControllerRouteSet.contains(controllerRoute)) {
-            this.registeredControllerRouteSet.add(controllerRoute);
-            controllerRoute.setupRoute(this.router);
-            controllerRoute.addEventListener(ControllerRoute.EventType.ROUTING_REQUESTED,
-                this.hearControllerRouteRoutingRequestedEvent, this);
-        }
-    },
-
-    /**
-     *
-     */
-    start: function(callback) {
-        var result = Backbone.history.start();
-
-        //TEST
-        this.logger.info("Result:", result);
-
-        callback();
-    },
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Protected Class Methods
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @protected
-     * @param {CarapaceController} controller
-     * @param {Array<*>} routingArgs
-     */
-    startController: function(controller, routingArgs) {
-        if (this.currentController) {
-            this.currentController.stop();
-        }
-        this.currentController = controller;
-        controller.start(routingArgs);
-    },
-
-    /**
-     * @protected
-     * @param {RoutingRequest} routingRequest
-     */
-    acceptRoutingRequest: function(routingRequest) {
-        this.logger.info("Routing request accepted!");
-        var routingArgs = routingRequest.getArgs();
-        var route       = routingRequest.getRoute();
-        var controller  = route.getController();
-        this.startController(controller, routingArgs);
-    },
-
-    /**
-     * @protected
-     * @param {RoutingRequest} routingRequest
-     */
-    forwardRoutingRequest: function(routingRequest) {
-        this.logger.info("Routing request forwarded!");
-        var forwardFragment = routingRequest.getForwardFragment();
-        var forwardOptions  = routingRequest.getForwardOptions();
-        this.router.navigate(forwardFragment, forwardOptions);
-    },
-
-    /**
-     * @protected
-     * @param {RoutingRequest} routingRequest
-     */
-    rejectRoutingRequest: function(routingRequest) {
-        var rejectReason    = routingRequest.getRejectReason();
-        var rejectData      = routingRequest.getRejectData();
-
-        //TODO BRN: Build an annotation for adding rejection handlers to controllers
-
-        this.logger.info("Routing request was rejected!");
-        if (rejectReason === RoutingRequest.RejectReason.ERROR) {
-            this.logger.error(rejectData.throwable);
-        }
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Private Class Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     * @param {RoutingRequest} routingRequest
-     */
-    processRoutingRequestResults: function(routingRequest) {
-        var result  = routingRequest.getResult();
-        switch (result) {
-            case RoutingRequest.Result.ACCEPTED:
-                this.acceptRoutingRequest(routingRequest);
-                break;
-            case RoutingRequest.Result.FORWARDED:
-                this.forwardRoutingRequest(routingRequest);
-                break;
-            case RoutingRequest.Result.REJECTED:
-                this.rejectRoutingRequest(routingRequest);
-                break;
-        }
-    },
-
-    /**
-     * @private
-     * @param {RoutingRequest} routingRequest
-     */
-    listenToRoutingRequest: function(routingRequest) {
-        routingRequest.addEventListener(RoutingRequest.EventType.PROCESSED,
-            this.hearRoutingRequestProcessedEvent, this);
-        routingRequest.addEventPropagator(this);
-    },
-
-    /**
-     * @private
-     * @param {RoutingRequest} routingRequest
-     */
-    stopListeningToRoutingRequest: function(routingRequest) {
-        routingRequest.removeEventListener(RoutingRequest.EventType.PROCESSED,
-            this.hearRoutingRequestProcessedEvent, this);
-        routingRequest.removeEventPropagator(this);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Event Listeners
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     * @param {Event} event
-     */
-    hearControllerRouteRoutingRequestedEvent: function(event) {
-        var controllerRoute = event.getTarget();
-        var routingRequest  = event.getData().routingRequest;
-        var controller      = controllerRoute.getController();
-        this.listenToRoutingRequest(routingRequest);
-        controller.route(routingRequest);
-    },
-
-    /**
-     * @private
-     * @param {Event} event
-     */
-    hearRoutingRequestProcessedEvent: function(event) {
-        var routingRequest = event.getTarget();
-        this.stopListeningToRoutingRequest(routingRequest);
-        this.processRoutingRequestResults(routingRequest);
-    }
+    bugpack.export('carapace.CarapaceApplication', CarapaceApplication);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('carapace.CarapaceApplication', CarapaceApplication);
