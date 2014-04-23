@@ -90,7 +90,7 @@ var MapCalculator = Class.extend(DeltaCalculator, {
                 if (TypeUtil.toType(previousMapValue) !== TypeUtil.toType(currentMapValue)) {
                     delta.addDeltaChange(new MapChange(MapChange.ChangeTypes.PUT_TO_MAP, currentPath,
                         key, currentMapValue));
-                } else if (TypeUtil.isObject(currentMapValue) && TypeUtil.isFunction(currentMapValue.getClass) && !Class.doesExtend(previousMapValue, currentMapValue.getClass())) {
+                } else if (TypeUtil.isObject(currentMapValue) && TypeUtil.isFunction(currentMapValue.getClass) && !Class.doesExtend(previousMapValue, currentMapValue.getClass().getConstructor())) {
                     delta.addDeltaChange(new MapChange(MapChange.ChangeTypes.PUT_TO_MAP, currentPath,
                         key, currentMapValue));
                 } else {

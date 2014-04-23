@@ -3,12 +3,16 @@
 //-------------------------------------------------------------------------------
 
 //@Export('carapace.CarapaceApplication')
+//@Autoload
 
 //@Require('Class')
 //@Require('Event')
 //@Require('EventDispatcher')
 //@Require('Set')
 //@Require('backbone.Backbone')
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceController')
 //@Require('carapace.ControllerRoute')
 //@Require('carapace.RoutingRequest')
@@ -29,8 +33,20 @@ require('bugpack').context("*", function(bugpack) {
     var EventDispatcher         = bugpack.require('EventDispatcher');
     var Set                     = bugpack.require('Set');
     var Backbone                = bugpack.require('backbone.Backbone');
+    var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');
+    var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
     var ControllerRoute         = bugpack.require('carapace.ControllerRoute');
     var RoutingRequest          = bugpack.require('carapace.RoutingRequest');
+
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var arg                     = ArgAnnotation.arg;
+    var bugmeta                 = BugMeta.context();
+    var module                  = ModuleAnnotation.module;
 
 
     //-------------------------------------------------------------------------------
@@ -42,6 +58,9 @@ require('bugpack').context("*", function(bugpack) {
      * @extends {EventDispatcher}
      */
     var CarapaceApplication = Class.extend(EventDispatcher, {
+
+        _name: "carapace.CarapaceApplication",
+
 
         //-------------------------------------------------------------------------------
         // Constructor
@@ -81,24 +100,23 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
-             * @type {Set<CarapaceController>}
+             * @type {Set.<CarapaceController>}
              */
             this.registeredControllerSet        = new Set();
 
             /**
              * @private
-             * @type {Set<ControllerRoute>}
+             * @type {Set.<ControllerRoute>}
              */
             this.registeredControllerRouteSet   = new Set();
         },
 
 
         //-------------------------------------------------------------------------------
-        // Private Methods
+        // Public Methods
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
          * @param {CarapaceController} controller
          */
         registerController: function(controller) {
@@ -124,10 +142,6 @@ require('bugpack').context("*", function(bugpack) {
          */
         start: function(callback) {
             var result = Backbone.history.start();
-
-            //TEST
-            this.logger.info("Result:", result);
-
             callback();
         },
 
@@ -259,6 +273,19 @@ require('bugpack').context("*", function(bugpack) {
             this.processRoutingRequestResults(routingRequest);
         }
     });
+
+
+    //-------------------------------------------------------------------------------
+    // BugMeta
+    //-------------------------------------------------------------------------------
+
+    bugmeta.annotate(CarapaceApplication).with(
+        module("carapaceApplication")
+            .args([
+                arg().ref("logger"),
+                arg().ref("carapaceRouter")
+            ])
+    );
 
 
     //-------------------------------------------------------------------------------

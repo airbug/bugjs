@@ -17,600 +17,617 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var AWS                     = require('aws-sdk');
-var bugpack                 = require('bugpack').context();
-var zlib                    = require('zlib');
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Bug                     = bugpack.require('Bug');
-var Class                   = bugpack.require('Class');
-var Map                     = bugpack.require('Map');
-var Obj                     = bugpack.require('Obj');
-var Set                     = bugpack.require('Set');
-var TypeUtil                = bugpack.require('TypeUtil');
-var AwsConfig               = bugpack.require('aws.AwsConfig');
-var S3Object                = bugpack.require('aws.S3Object');
-var BugFlow                 = bugpack.require('bugflow.BugFlow');
-var BugFs                   = bugpack.require('bugfs.BugFs');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var $forEachParallel        = BugFlow.$forEachParallel;
-var $if                     = BugFlow.$if;
-var $iterableParallel       = BugFlow.$iterableParallel;
-var $series                 = BugFlow.$series;
-var $task                   = BugFlow.$task;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var S3Api = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Common Modules
     //-------------------------------------------------------------------------------
 
-    _constructor: function(awsConfig) {
+    var AWS                     = require('aws-sdk');
+    var zlib                    = require('zlib');
 
-        this._super();
+
+    //-------------------------------------------------------------------------------
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Bug                     = bugpack.require('Bug');
+    var Class                   = bugpack.require('Class');
+    var Map                     = bugpack.require('Map');
+    var Obj                     = bugpack.require('Obj');
+    var Set                     = bugpack.require('Set');
+    var TypeUtil                = bugpack.require('TypeUtil');
+    var AwsConfig               = bugpack.require('aws.AwsConfig');
+    var S3Object                = bugpack.require('aws.S3Object');
+    var BugFlow                 = bugpack.require('bugflow.BugFlow');
+    var BugFs                   = bugpack.require('bugfs.BugFs');
+
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var $forEachParallel        = BugFlow.$forEachParallel;
+    var $if                     = BugFlow.$if;
+    var $iterableParallel       = BugFlow.$iterableParallel;
+    var $series                 = BugFlow.$series;
+    var $task                   = BugFlow.$task;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {Obj}
+     */
+    var S3Api = Class.extend(Obj, {
+
+        //-------------------------------------------------------------------------------
+        // Constructor
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @constructs
+         * @param {AwsConfig} awsConfig
+         */
+        _constructor: function(awsConfig) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {AwsConfig}
+             */
+            this.awsConfig = awsConfig;
+
+            /**
+             * @private
+             * @type {boolean}
+             */
+            this.initialized = false;
+
+            /**
+             * @private
+             * @type {AWS.S3}
+             */
+            this.s3 = null;
+        },
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Public Methods
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {AwsConfig}
+         * @param {S3Bucket} s3Bucket
+         * @param {function(Error, boolean)} callback
          */
-        this.awsConfig = awsConfig;
-
-        /**
-         * @private
-         * @type {boolean}
-         */
-        this.initialized = false;
-
-        /**
-         * @private
-         * @type {AWS.S3}
-         */
-        this.s3 = null;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Public Class Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {S3Bucket} s3Bucket
-     * @param {function(Error, boolean)} callback
-     */
-    canAccessBucket: function(s3Bucket, callback) {
-        this.initialize();
-        this.headBucket(s3Bucket, function(error, data) {
-            if (error) {
-                //TODO BRN: What other codes?
-                callback(null, false);
-            } else {
-                callback(null, true);
-            }
-        });
-    },
-
-    /**
-     * @param {S3Bucket} s3Bucket
-     * @param {{
-     *   acl: string,
-     *   createBucketConfiguration: Object,
-     *   locationConstraint: string,
-     *   grantFullControl: string,
-     *   grantRead: string,
-     *   grantReadACP: string,
-     *   grantWrite: string,
-     *   grantWriteACP: string
-     * }} options
-     * @param {function(Error, data} callback
-     */
-    createBucket: function(s3Bucket, options, callback) {
-        var params = {
-            Bucket: s3Bucket.getName(),
-            ACL: options.acl,
-            CreateBucketConfiguration: options.createBucketConfiguration,
-            LocationConstraint: options.locationConstraint,
-            GrantRead: options.grantRead,
-            GrantReadACP: options.grantReadACP,
-            GrantWrite: options.grantWrite,
-            GrantWriteACP: options.grantWriteACP
-        };
-        this.s3.client.createBucket(params, callback)
-    },
-
-    /**
-     * @param {S3Bucket} s3Bucket
-     * @param {function(Error, boolean)} callback
-     */
-    doesBucketExist: function(s3Bucket, callback) {
-        this.initialize();
-        this.headBucket(s3Bucket, function(error, data) {
-            if (error) {
-                if (error.code === 'NotFound') {
+        canAccessBucket: function(s3Bucket, callback) {
+            this.initialize();
+            this.headBucket(s3Bucket, function(error, data) {
+                if (error) {
+                    //TODO BRN: What other codes?
                     callback(null, false);
                 } else {
-                    //TODO BRN: What other codes?
-                    console.log(error);
-                    throw new Error("Something else happened.");
+                    callback(null, true);
                 }
-            } else {
-                callback(null, true);
-            }
-        });
-    },
+            });
+        },
 
-    /**
-     * @param {S3Bucket} s3Bucket
-     * @param {function(Error)} callback
-     */
-    ensureBucket: function(s3Bucket, callback) {
-        var _this = this;
-        this.initialize();
-        $if (function(flow) {
-                _this.doesBucketExist(s3Bucket, function(error, exists) {
-                    if (!error) {
-                        flow.assert(!exists);
+        /**
+         * @param {S3Bucket} s3Bucket
+         * @param {{
+         *   acl: string,
+         *   createBucketConfiguration: Object,
+         *   locationConstraint: string,
+         *   grantFullControl: string,
+         *   grantRead: string,
+         *   grantReadACP: string,
+         *   grantWrite: string,
+         *   grantWriteACP: string
+         * }} options
+         * @param {function(Error, data} callback
+         */
+        createBucket: function(s3Bucket, options, callback) {
+            var params = {
+                Bucket: s3Bucket.getName(),
+                ACL: options.acl,
+                CreateBucketConfiguration: options.createBucketConfiguration,
+                LocationConstraint: options.locationConstraint,
+                GrantRead: options.grantRead,
+                GrantReadACP: options.grantReadACP,
+                GrantWrite: options.grantWrite,
+                GrantWriteACP: options.grantWriteACP
+            };
+            this.s3.client.createBucket(params, callback)
+        },
+
+        /**
+         * @param {S3Bucket} s3Bucket
+         * @param {function(Error, boolean)} callback
+         */
+        doesBucketExist: function(s3Bucket, callback) {
+            this.initialize();
+            this.headBucket(s3Bucket, function(error, data) {
+                if (error) {
+                    if (error.code === 'NotFound') {
+                        callback(null, false);
                     } else {
-                        flow.error(error);
+                        //TODO BRN: What other codes?
+                        console.log(error);
+                        throw new Error("Something else happened.");
                     }
-                });
-            },
-            $task(function(flow) {
-                _this.createBucket(s3Bucket, function(error, data) {
-                    flow.complete(error, data);
-                });
-            })
-        ).execute(callback);
-    },
+                } else {
+                    callback(null, true);
+                }
+            });
+        },
 
-    /**
-     * @param {S3Object} s3Object
-     * @param {S3Bucket} s3Bucket
-     * @return {string}
-     */
-    getObjectURL: function(s3Object, s3Bucket) {
-        return "https://s3.amazonaws.com/" + s3Bucket.getName() + "/" + s3Object.getKey();
-    },
-
-    /**
-     * @param {S3Bucket} s3Bucket
-     * @param {function(Object, Object)} callback
-     */
-    headBucket: function(s3Bucket, callback) {
-        this.initialize();
-        var params = {
-            Bucket: s3Bucket.getName()
-        };
-        this.s3.client.headBucket(params, callback);
-    },
-
-    /**
-     *
-     * @param directoryPath
-     * @param s3Bucket
-     * @param options
-     * @param callback
-     */
-    putDirectory: function(directoryPath, s3Bucket, options, callback) {
-        var _this           = this;
-        var fileData        = null;
-        var s3Object        = null;
-        var filePathSet     = null;
-        if (TypeUtil.isFunction(options)) {
-            callback    = options;
-            options     = null;
-        }
-        if (!TypeUtil.isObject(options)) {
-            options     = {};
-        }
-
-        this.initialize();
-        $if (function(flow) {
-                _this.canAccessBucket(s3Bucket, function(error, canAccess) {
-                    if (!error) {
-                        flow.assert(canAccess);
-                    } else {
-                        flow.error(error);
-                    }
-                });
-            },
-            $series([
-                $task(function(flow) {
-                    _this.buildFilePathSet(directoryPath, function(throwable, returnedFilePathSet) {
-                        if (!throwable) {
-                            filePathSet = returnedFilePathSet;
-                        }
-                        flow.complete(throwable);
-                    });
-                }),
-                $task(function(flow) {
-                    $iterableParallel(filePathSet, function(flow, filePath) {
-                        var contentType = _this.autoDiscoverContentType(filePath);
-                        var gzipped = false;
-                        $series([
-                            $task(function(flow) {
-                                filePath.readFile(function(error, data) {
-                                    if (!error) {
-                                        fileData = data;
-                                        flow.complete();
-                                    } else {
-                                        flow.error(error);
-                                    }
-                                });
-                            }),
-                            $task(function(flow) {
-                                if (options.gzip) {
-                                    if (contentType === "text/css" || contentType === "application/x-javascript" || contentType === "application/json") {
-                                        zlib.gzip(fileData, function(error, gzipData) {
-                                            if (!error) {
-                                                gzipped = true;
-                                                fileData = gzipData;
-                                            }
-                                            flow.complete(error);
-                                        });
-                                    } else {
-                                        flow.complete();
-                                    }
-                                } else {
-                                    flow.complete();
-                                }
-                            }),
-                            $task(function(flow) {
-                                var s3Key = "";
-                                if (options.base) {
-                                    s3Key += options.base + "/";
-                                }
-                                s3Key += directoryPath.getRelativePath(filePath);
-
-                                s3Object = new S3Object({
-                                    body: fileData,
-                                    key: s3Key,
-                                    contentType: contentType,
-                                    cacheControl: options.cacheControl
-                                });
-                                if (gzipped) {
-                                    s3Object.setContentEncoding(S3Api.ContentEncoding.GZIP);
-                                }
-                                if (options.encrypt) {
-                                    s3Object.setServerSideEncryption("AES256");
-                                }
-                                _this.putObject(s3Object, s3Bucket, options, function(error) {
-                                    flow.complete(error);
-                                });
-                            })
-                        ]).execute(function(throwable) {
-                            flow.complete(throwable);
-                        });
-                    }).execute(function(throwable) {
-                        flow.complete(throwable);
-                    });
-                })
-            ])
-        ).$else(
-            $task(function(flow) {
-                flow.error(new Error("Cannot access bucket '" + s3Bucket.getName() + "'"));
-            })
-        ).execute(function(error) {
-            if (!error) {
-                callback(null, s3Object);
-            } else {
-                callback(error);
-            }
-        });
-    },
-
-    /**
-     * @param {Path} filePath
-     * @param {string} s3Key
-     * @param {string} contentType
-     * @param {S3Bucket} s3Bucket
-     * @param {{
-     *     acl: ?string,
-     *     encrypt: ?boolean,
-     *     grantFullControl: ?string,
-     *     grantRead: ?string,
-     *     grantReadACP: ?string,
-     *     grantWriteACP: ?string,
-     *     gzip: ?boolean,
-     *     storageClass: ?string
-     * }} options
-     * @param {function(Throwable, S3Object=)} callback
-     */
-    putFile: function(filePath, s3Key, contentType, s3Bucket, options, callback) {
-        var _this = this;
-        var fileData = null;
-        var s3Object = null;
-        if (TypeUtil.isFunction(options)) {
-            callback = options;
-            options = null;
-        }
-        if (!TypeUtil.isObject(options)) {
-            options = {};
-        }
-        this.initialize();
-        $if (function(flow) {
-                _this.canAccessBucket(s3Bucket, function(error, canAccess) {
-                    if (!error) {
-                        flow.assert(canAccess);
-                    } else {
-                        flow.error(error);
-                    }
-                });
-            },
-            $series([
-                $task(function(flow) {
-                    filePath.readFile(function(error, data) {
+        /**
+         * @param {S3Bucket} s3Bucket
+         * @param {function(Error)} callback
+         */
+        ensureBucket: function(s3Bucket, callback) {
+            var _this = this;
+            this.initialize();
+            $if (function(flow) {
+                    _this.doesBucketExist(s3Bucket, function(error, exists) {
                         if (!error) {
-                            fileData = data;
-                            flow.complete();
+                            flow.assert(!exists);
                         } else {
                             flow.error(error);
                         }
                     });
-                }),
+                },
                 $task(function(flow) {
-                    if (options.gzip) {
-                        zlib.gzip(fileData, function(error, gzipData) {
-                            if (!error) {
-                                fileData = gzipData;
-                            }
-                            flow.complete(error);
-                        });
-                    } else {
-                        flow.complete();
-                    }
-                }),
-                $task(function(flow) {
-                    if (!contentType) {
-                        contentType = _this.autoDiscoverContentType(filePath);
-                    }
-                    s3Object = new S3Object({
-                        body: fileData,
-                        key: s3Key,
-                        contentType: contentType
-                    });
-                    if (options.gzip) {
-                        s3Object.setContentEncoding(S3Api.ContentEncoding.GZIP);
-                    }
-                    if (options.encrypt) {
-                        s3Object.setServerSideEncryption("AES256");
-                    }
-                    _this.putObject(s3Object, s3Bucket, options, function(error) {
-                        flow.complete(error);
+                    _this.createBucket(s3Bucket, function(error, data) {
+                        flow.complete(error, data);
                     });
                 })
-            ])
-        ).$else(
-            $task(function(flow) {
-                flow.error(new Error("Cannot access bucket '" + s3Bucket.getName() + "'"));
-            })
-        ).execute(function(error) {
-            if (!error) {
-                callback(null, s3Object);
-            } else {
-                callback(error);
+            ).execute(callback);
+        },
+
+        /**
+         * @param {S3Object} s3Object
+         * @param {S3Bucket} s3Bucket
+         * @return {string}
+         */
+        getObjectURL: function(s3Object, s3Bucket) {
+            return "https://s3.amazonaws.com/" + s3Bucket.getName() + "/" + s3Object.getKey();
+        },
+
+        /**
+         * @param {S3Bucket} s3Bucket
+         * @param {function(Object, Object)} callback
+         */
+        headBucket: function(s3Bucket, callback) {
+            this.initialize();
+            var params = {
+                Bucket: s3Bucket.getName()
+            };
+            this.s3.client.headBucket(params, callback);
+        },
+
+        /**
+         *
+         * @param directoryPath
+         * @param s3Bucket
+         * @param options
+         * @param callback
+         */
+        putDirectory: function(directoryPath, s3Bucket, options, callback) {
+            var _this           = this;
+            var fileData        = null;
+            var s3Object        = null;
+            var filePathSet     = null;
+            if (TypeUtil.isFunction(options)) {
+                callback    = options;
+                options     = null;
             }
-        });
-    },
+            if (!TypeUtil.isObject(options)) {
+                options     = {};
+            }
 
-    /**
-     * @private
-     * @param {S3Object} s3Object
-     * @param {S3Bucket} s3Bucket
-     * @param {{
-     *     acl: ?string
-     *     grantFullControl: ?string,
-     *     grantRead: ?string,
-     *     grantReadACP: ?string,
-     *     grantWriteACP: ?string,
-     *     storageClass: ?string
-     * }} options
-     * @param {function(Object, Object)} callback
-     */
-    putObject: function(s3Object, s3Bucket, options, callback) {
-        var params = {
-            Body: s3Object.getBody(),
-            Bucket: s3Bucket.getName(),
-            Key: s3Object.getKey()
-        };
-        if (TypeUtil.isFunction(options)) {
-            callback = options;
-            options = null;
-        }
-        if (!TypeUtil.isObject(options)) {
-            options = {};
-        }
-        if (options.acl) {
-            params.ACL = options.acl;
-        }
-        if (s3Object.getCacheControl()) {
-            params.CacheControl = s3Object.getCacheControl();
-        }
-        if (s3Object.getContentDisposition()) {
-            params.ContentDisposition = s3Object.getCacheControl();
-        }
-        if (s3Object.getContentEncoding()) {
-            params.ContentEncoding = s3Object.getContentEncoding();
-        }
-        if (s3Object.getContentLanguage()) {
-            params.ContentLanguage = s3Object.getContentLanguage();
-        }
-        if (s3Object.getContentType()) {
-            params.ContentType = s3Object.getContentType();
-        }
-        if (s3Object.getExpires()) {
-            params.Expires = s3Object.getExpires();
-        }
-        if (options.grantFullControl) {
-            params.GrantFullControl = options.grantFullControl;
-        }
-        if (options.grantRead) {
-            params.GrantRead = options.grantRead;
-        }
-        if (options.grantReadACP) {
-            params.GrantReadACP = options.grantReadACP;
-        }
-        if (options.grantWriteACP) {
-            params.GrantWriteACP = options.grantWriteACP;
-        }
-        if (s3Object.getMetaData()) {
-            params.MetaData = s3Object.getMetaData();
-        }
-        if (s3Object.getServerSideEncryption()) {
-            params.ServerSideEncryption = s3Object.getServerSideEncryption();
-        }
-        if (options.storageClass) {
-            params.StorageClass = options.storageClass;
-        }
-        if (s3Object.getWebsiteRedirectLocation()) {
-            params.WebsiteRedirectLocation = s3Object.getWebsiteRedirectLocation();
-        }
-        this.s3.client.putObject(params, callback);
-    },
+            this.initialize();
+            $if (function(flow) {
+                    _this.canAccessBucket(s3Bucket, function(error, canAccess) {
+                        if (!error) {
+                            flow.assert(canAccess);
+                        } else {
+                            flow.error(error);
+                        }
+                    });
+                },
+                $series([
+                    $task(function(flow) {
+                        _this.buildFilePathSet(directoryPath, function(throwable, returnedFilePathSet) {
+                            if (!throwable) {
+                                filePathSet = returnedFilePathSet;
+                            }
+                            flow.complete(throwable);
+                        });
+                    }),
+                    $task(function(flow) {
+                        $iterableParallel(filePathSet, function(flow, filePath) {
+                            var contentType = _this.autoDiscoverContentType(filePath);
+                            var gzipped = false;
+                            $series([
+                                $task(function(flow) {
+                                    filePath.readFile(function(error, data) {
+                                        if (!error) {
+                                            fileData = data;
+                                            flow.complete();
+                                        } else {
+                                            flow.error(error);
+                                        }
+                                    });
+                                }),
+                                $task(function(flow) {
+                                    if (options.gzip) {
+                                        if (contentType === "text/css" || contentType === "application/x-javascript" || contentType === "application/json") {
+                                            zlib.gzip(fileData, function(error, gzipData) {
+                                                if (!error) {
+                                                    gzipped = true;
+                                                    fileData = gzipData;
+                                                }
+                                                flow.complete(error);
+                                            });
+                                        } else {
+                                            flow.complete();
+                                        }
+                                    } else {
+                                        flow.complete();
+                                    }
+                                }),
+                                $task(function(flow) {
+                                    var s3Key = "";
+                                    if (options.base) {
+                                        s3Key += options.base + "/";
+                                    }
+                                    s3Key += directoryPath.getRelativePath(filePath);
 
-
-    //-------------------------------------------------------------------------------
-    // Private Class Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     * @param {Path} filePath
-     * @return {string}
-     */
-    autoDiscoverContentType: function(filePath) {
-        var extName = filePath.getExtName();
-        var contentType = S3Api.extToContentType[extName];
-        if (!contentType) {
-            contentType = 'binary/octet-stream';
-        }
-        return contentType;
-    },
-
-    /**
-     * @private
-     */
-    initialize: function() {
-        if (!this.initialized) {
-            this.initialized = true;
-            AWS.config.update(this.awsConfig.toAWSObject());
-            this.s3 = new AWS.S3();
-        }
-    },
-
-    /**
-     * @private
-     * @param {Path} directoryPath
-     * @param {function(Throwable, Set.<Path>=)} callback
-     */
-    buildFilePathSet: function(directoryPath, callback) {
-        var _this = this;
-        var filePathSet = new Set();
-        directoryPath.readDirectory(function(throwable, paths) {
-            if (!throwable) {
-                $forEachParallel(paths, function(flow, path) {
-                    $if (function(flow) {
-                            path.isDirectory(function(throwable, result) {
-                                if (!throwable) {
-                                    flow.assert(result);
-                                } else {
-                                    flow.error(throwable);
-                                }
-                            });
-                        },
-                        $task(function(flow) {
-                            _this.buildFilePathSet(path, function(throwable, returnedFilePathSet) {
-                                if (!throwable) {
-                                    filePathSet.addAll(returnedFilePathSet);
-                                }
+                                    s3Object = new S3Object({
+                                        body: fileData,
+                                        key: s3Key,
+                                        contentType: contentType,
+                                        cacheControl: options.cacheControl
+                                    });
+                                    if (gzipped) {
+                                        s3Object.setContentEncoding(S3Api.ContentEncoding.GZIP);
+                                    }
+                                    if (options.encrypt) {
+                                        s3Object.setServerSideEncryption("AES256");
+                                    }
+                                    _this.putObject(s3Object, s3Bucket, options, function(error) {
+                                        flow.complete(error);
+                                    });
+                                })
+                            ]).execute(function(throwable) {
                                 flow.complete(throwable);
                             });
-                        })
-                    ).$elseIf(function(flow) {
-                            path.isFile(function(throwable, result) {
-                                if (!throwable) {
-                                    flow.assert(result);
-                                } else {
-                                    flow.error(throwable);
-                                }
-                            });
-                        },
-                        $task(function(flow) {
-                            filePathSet.add(path);
-                            flow.complete();
-                        })
-                    ).$else(
-                        $task(function(flow) {
-                            flow.error(new Bug("UnsupportedFileType", {}, "unsupported path type found at '" + path.getAbsolutePath() + "'"));
-                        })
-                    ).execute(function(throwable) {
-                        flow.complete(throwable);
-                    });
-                }).execute(function(throwable) {
-                    if (!throwable) {
-                        callback(null, filePathSet);
-                    } else {
-                        callback(throwable);
-                    }
-                });
-            } else {
-                callback(throwable);
+                        }).execute(function(throwable) {
+                            flow.complete(throwable);
+                        });
+                    })
+                ])
+            ).$else(
+                $task(function(flow) {
+                    flow.error(new Error("Cannot access bucket '" + s3Bucket.getName() + "'"));
+                })
+            ).execute(function(error) {
+                if (!error) {
+                    callback(null, s3Object);
+                } else {
+                    callback(error);
+                }
+            });
+        },
+
+        /**
+         * @param {Path} filePath
+         * @param {string} s3Key
+         * @param {string} contentType
+         * @param {S3Bucket} s3Bucket
+         * @param {{
+         *     acl: ?string,
+         *     encrypt: ?boolean,
+         *     grantFullControl: ?string,
+         *     grantRead: ?string,
+         *     grantReadACP: ?string,
+         *     grantWriteACP: ?string,
+         *     gzip: ?boolean,
+         *     storageClass: ?string
+         * }} options
+         * @param {function(Throwable, S3Object=)} callback
+         */
+        putFile: function(filePath, s3Key, contentType, s3Bucket, options, callback) {
+            var _this = this;
+            var fileData = null;
+            var s3Object = null;
+            if (TypeUtil.isFunction(options)) {
+                callback = options;
+                options = null;
             }
-        })
-    }
+            if (!TypeUtil.isObject(options)) {
+                options = {};
+            }
+            this.initialize();
+            $if (function(flow) {
+                    _this.canAccessBucket(s3Bucket, function(error, canAccess) {
+                        if (!error) {
+                            flow.assert(canAccess);
+                        } else {
+                            flow.error(error);
+                        }
+                    });
+                },
+                $series([
+                    $task(function(flow) {
+                        filePath.readFile(function(error, data) {
+                            if (!error) {
+                                fileData = data;
+                                flow.complete();
+                            } else {
+                                flow.error(error);
+                            }
+                        });
+                    }),
+                    $task(function(flow) {
+                        if (options.gzip) {
+                            zlib.gzip(fileData, function(error, gzipData) {
+                                if (!error) {
+                                    fileData = gzipData;
+                                }
+                                flow.complete(error);
+                            });
+                        } else {
+                            flow.complete();
+                        }
+                    }),
+                    $task(function(flow) {
+                        if (!contentType) {
+                            contentType = _this.autoDiscoverContentType(filePath);
+                        }
+                        s3Object = new S3Object({
+                            body: fileData,
+                            key: s3Key,
+                            contentType: contentType,
+                            cacheControl: options.cacheControl
+                        });
+                        if (options.gzip) {
+                            s3Object.setContentEncoding(S3Api.ContentEncoding.GZIP);
+                        }
+                        if (options.encrypt) {
+                            s3Object.setServerSideEncryption("AES256");
+                        }
+                        _this.putObject(s3Object, s3Bucket, options, function(error) {
+                            flow.complete(error);
+                        });
+                    })
+                ])
+            ).$else(
+                $task(function(flow) {
+                    flow.error(new Error("Cannot access bucket '" + s3Bucket.getName() + "'"));
+                })
+            ).execute(function(error) {
+                if (!error) {
+                    callback(null, s3Object);
+                } else {
+                    callback(error);
+                }
+            });
+        },
+
+        /**
+         * @private
+         * @param {S3Object} s3Object
+         * @param {S3Bucket} s3Bucket
+         * @param {{
+         *     acl: ?string
+         *     grantFullControl: ?string,
+         *     grantRead: ?string,
+         *     grantReadACP: ?string,
+         *     grantWriteACP: ?string,
+         *     storageClass: ?string
+         * }} options
+         * @param {function(Object, Object)} callback
+         */
+        putObject: function(s3Object, s3Bucket, options, callback) {
+            var params = {
+                Body: s3Object.getBody(),
+                Bucket: s3Bucket.getName(),
+                Key: s3Object.getKey()
+            };
+            if (TypeUtil.isFunction(options)) {
+                callback = options;
+                options = null;
+            }
+            if (!TypeUtil.isObject(options)) {
+                options = {};
+            }
+            if (options.acl) {
+                params.ACL = options.acl;
+            }
+            if (s3Object.getCacheControl()) {
+                params.CacheControl = s3Object.getCacheControl();
+            }
+            if (s3Object.getContentDisposition()) {
+                params.ContentDisposition = s3Object.getCacheControl();
+            }
+            if (s3Object.getContentEncoding()) {
+                params.ContentEncoding = s3Object.getContentEncoding();
+            }
+            if (s3Object.getContentLanguage()) {
+                params.ContentLanguage = s3Object.getContentLanguage();
+            }
+            if (s3Object.getContentType()) {
+                params.ContentType = s3Object.getContentType();
+            }
+            if (s3Object.getExpires()) {
+                params.Expires = s3Object.getExpires();
+            }
+            if (options.grantFullControl) {
+                params.GrantFullControl = options.grantFullControl;
+            }
+            if (options.grantRead) {
+                params.GrantRead = options.grantRead;
+            }
+            if (options.grantReadACP) {
+                params.GrantReadACP = options.grantReadACP;
+            }
+            if (options.grantWriteACP) {
+                params.GrantWriteACP = options.grantWriteACP;
+            }
+            if (s3Object.getMetaData()) {
+                params.MetaData = s3Object.getMetaData();
+            }
+            if (s3Object.getServerSideEncryption()) {
+                params.ServerSideEncryption = s3Object.getServerSideEncryption();
+            }
+            if (options.storageClass) {
+                params.StorageClass = options.storageClass;
+            }
+            if (s3Object.getWebsiteRedirectLocation()) {
+                params.WebsiteRedirectLocation = s3Object.getWebsiteRedirectLocation();
+            }
+            this.s3.client.putObject(params, callback);
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Private Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @param {Path} filePath
+         * @return {string}
+         */
+        autoDiscoverContentType: function(filePath) {
+            var extName = filePath.getExtName();
+            var contentType = S3Api.extToContentType[extName];
+            if (!contentType) {
+                contentType = 'binary/octet-stream';
+            }
+            return contentType;
+        },
+
+        /**
+         * @private
+         */
+        initialize: function() {
+            if (!this.initialized) {
+                this.initialized = true;
+                AWS.config.update(this.awsConfig.toAWSObject());
+                this.s3 = new AWS.S3();
+            }
+        },
+
+        /**
+         * @private
+         * @param {Path} directoryPath
+         * @param {function(Throwable, Set.<Path>=)} callback
+         */
+        buildFilePathSet: function(directoryPath, callback) {
+            var _this = this;
+            var filePathSet = new Set();
+            directoryPath.readDirectory(function(throwable, paths) {
+                if (!throwable) {
+                    $forEachParallel(paths, function(flow, path) {
+                        $if (function(flow) {
+                                path.isDirectory(function(throwable, result) {
+                                    if (!throwable) {
+                                        flow.assert(result);
+                                    } else {
+                                        flow.error(throwable);
+                                    }
+                                });
+                            },
+                            $task(function(flow) {
+                                _this.buildFilePathSet(path, function(throwable, returnedFilePathSet) {
+                                    if (!throwable) {
+                                        filePathSet.addAll(returnedFilePathSet);
+                                    }
+                                    flow.complete(throwable);
+                                });
+                            })
+                        ).$elseIf(function(flow) {
+                                path.isFile(function(throwable, result) {
+                                    if (!throwable) {
+                                        flow.assert(result);
+                                    } else {
+                                        flow.error(throwable);
+                                    }
+                                });
+                            },
+                            $task(function(flow) {
+                                filePathSet.add(path);
+                                flow.complete();
+                            })
+                        ).$else(
+                            $task(function(flow) {
+                                flow.error(new Bug("UnsupportedFileType", {}, "unsupported path type found at '" + path.getAbsolutePath() + "'"));
+                            })
+                        ).execute(function(throwable) {
+                            flow.complete(throwable);
+                        });
+                    }).execute(function(throwable) {
+                        if (!throwable) {
+                            callback(null, filePathSet);
+                        } else {
+                            callback(throwable);
+                        }
+                    });
+                } else {
+                    callback(throwable);
+                }
+            })
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Static Properties
+    //-------------------------------------------------------------------------------
+
+    //TODO BRN: This doesn't belong here. Needs to be put in to a library file.
+    /**
+     * @static
+     * @type {Object}
+     */
+    S3Api.extToContentType = {
+        ".css": "text/css",
+        ".gif": "image/gif",
+        ".jpeg": "image/jpeg",
+        ".jpg": "image/jpeg",
+        ".js": "application/x-javascript",
+        ".json": "application/json",
+        ".png": "image/png",
+        ".tgz": "application/x-compressed"
+    };
+
+    /**
+     * @static
+     * @enum {string}
+     */
+    S3Api.ContentEncoding = {
+        GZIP: "gzip"
+    };
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('aws.S3Api', S3Api);
 });
-
-
-//-------------------------------------------------------------------------------
-// Static Variables
-//-------------------------------------------------------------------------------
-
-//TODO BRN: This doesn't belong here. Needs to be put in to a library file.
-/**
- * @type {Object}
- */
-S3Api.extToContentType = {
-    ".css": "text/css",
-    ".gif": "image/gif",
-    ".jpeg": "image/jpeg",
-    ".jpg": "image/jpeg",
-    ".js": "application/x-javascript",
-    ".json": "application/json",
-    ".png": "image/png",
-    ".tgz": "application/x-compressed"
-};
-
-/**
- * @enum {string}
- */
-S3Api.ContentEncoding = {
-    GZIP: "gzip"
-};
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('aws.S3Api', S3Api);

@@ -59,7 +59,7 @@ var EntityDeltaBuilder = Class.extend(DeltaBuilder, {
      */
     initialize: function() {
         this._super();
-        this.getCalculatorResolver().registerCalculatorForClass(Entity, new EntityCalculator(this));
+        this.getCalculatorResolver().registerCalculatorForClass(Entity.getClass(), new EntityCalculator(this));
     }
 });
 

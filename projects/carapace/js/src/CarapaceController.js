@@ -8,6 +8,10 @@
 //@Require('List')
 //@Require('Obj')
 //@Require('backbone.Backbone')
+//@Require('bugdispose.IDisposable')
+//@Require('bugmeta.BugMeta')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
 //@Require('carapace.ControllerRoute')
 
 
@@ -21,11 +25,24 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class           = bugpack.require('Class');
-    var List            = bugpack.require('List');
-    var Obj             = bugpack.require('Obj');
-    var Backbone        = bugpack.require('backbone.Backbone');
-    var ControllerRoute = bugpack.require('carapace.ControllerRoute');
+    var Class                   = bugpack.require('Class');
+    var List                    = bugpack.require('List');
+    var Obj                     = bugpack.require('Obj');
+    var Backbone                = bugpack.require('backbone.Backbone');
+    var IDisposable             = bugpack.require('bugdispose.IDisposable');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+    var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
+    var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+    var ControllerRoute         = bugpack.require('carapace.ControllerRoute');
+
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var autowired               = AutowiredAnnotation.autowired;
+    var bugmeta                 = BugMeta.context();
+    var property                = PropertyAnnotation.property;
 
 
     //-------------------------------------------------------------------------------
@@ -35,6 +52,7 @@ require('bugpack').context("*", function(bugpack) {
     /**
      * @class
      * @extends {Obj}
+     * @implements {IDisposable}
      */
     var CarapaceController = Class.extend(Obj, {
 
@@ -58,25 +76,31 @@ require('bugpack').context("*", function(bugpack) {
              * @private
              * @type {boolean}
              */
-            this.activated      = false;
+            this.activated          = false;
 
             /**
              * @private
              * @type {*}
              */
-            this.containerTop   = null;
+            this.containerTop       = null;
 
             /**
              * @private
              * @type {boolean}
              */
-            this.created        = false;
+            this.created            = false;
+
+            /**
+             * @private
+             * @type {GarbageDisposal}
+             */
+            this.garbageDisposal    = null;
 
             /**
              * @private
              * @type {boolean}
              */
-            this.started        = false;
+            this.started            = false;
         },
 
 
@@ -95,8 +119,17 @@ require('bugpack').context("*", function(bugpack) {
          * @param {CarapaceContainer} container
          */
         setContainerTop: function(container) {
-            this.containerTop = container;
+            this.clearContainerTop();
+            if (container) {
+                this.containerTop = container;
+                this.garbageDisposal.addReference(this, container);
+            }
         },
+
+
+        //-------------------------------------------------------------------------------
+        // Convenience Methods
+        //-------------------------------------------------------------------------------
 
         /**
          * @return {boolean}
@@ -117,6 +150,18 @@ require('bugpack').context("*", function(bugpack) {
          */
         isStarted: function() {
             return this.started;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // IDisposable Implementation
+        //-------------------------------------------------------------------------------
+
+        /**
+         *
+         */
+        dispose: function() {
+            this.destroy();
         },
 
 
@@ -144,6 +189,16 @@ require('bugpack').context("*", function(bugpack) {
                 this.validateController();
                 this.getContainerTop().create(routingArgs);
                 this.initializeController();
+            }
+        },
+
+        /**
+         *
+         */
+        clearContainerTop: function() {
+            if (this.containerTop) {
+                this.garbageDisposal.removeReference(this, this.containerTop);
+                this.containerTop = null;
             }
         },
 
@@ -214,11 +269,10 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @abstract
          * @protected
          */
         createController: function() {
-
+            this.garbageDisposal.addDisposableRoot(this);
         },
 
         /**
@@ -240,7 +294,8 @@ require('bugpack').context("*", function(bugpack) {
          */
         destroyController: function() {
             this.containerTop.destroy();
-            this.containerTop = null;
+            this.clearContainerTop();
+            this.garbageDisposal.removeDisposable(this);
         },
 
         /**
@@ -271,6 +326,24 @@ require('bugpack').context("*", function(bugpack) {
             routingRequest.accept();
         }
     });
+
+
+    //-------------------------------------------------------------------------------
+    // Implement Interfaces
+    //-------------------------------------------------------------------------------
+
+    Class.implement(CarapaceController, IDisposable);
+
+
+    //-------------------------------------------------------------------------------
+    // BugMeta
+    //-------------------------------------------------------------------------------
+
+    bugmeta.annotate(CarapaceController).with(
+        autowired().properties([
+            property("garbageDisposal").ref("garbageDisposal")
+        ])
+    );
 
 
     //-------------------------------------------------------------------------------

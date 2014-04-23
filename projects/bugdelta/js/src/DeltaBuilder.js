@@ -116,9 +116,9 @@ var DeltaBuilder = Class.extend(Obj, {
     initialize: function() {
         this.calculatorResolver.registerCalculatorForDataType("array", new ArrayCalculator(this));
         this.calculatorResolver.registerCalculatorForDataType("object", new ObjectCalculator(this));
-        this.calculatorResolver.registerCalculatorForInterface(IDocument, new DocumentCalculator(this));
-        this.calculatorResolver.registerCalculatorForClass(Map, new MapCalculator(this));
-        this.calculatorResolver.registerCalculatorForClass(Set, new SetCalculator(this));
+        this.calculatorResolver.registerCalculatorForInterface(IDocument.getInterface(), new DocumentCalculator(this));
+        this.calculatorResolver.registerCalculatorForClass(Map.getClass(), new MapCalculator(this));
+        this.calculatorResolver.registerCalculatorForClass(Set.getClass(), new SetCalculator(this));
     }
 });
 

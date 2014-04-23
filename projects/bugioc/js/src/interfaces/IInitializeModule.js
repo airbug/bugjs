@@ -8,46 +8,49 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Interface = bugpack.require('Interface');
-
-
-//-------------------------------------------------------------------------------
-// Declare Interface
-//-------------------------------------------------------------------------------
-
-/**
- * @interface
- */
-var IInitializeModule = Interface.declare({
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Interface Methods
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Interface = bugpack.require('Interface');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Interface
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {function(Throwable=)} callback
+     * @interface
      */
-    deinitializeModule: function(callback) {},
+    var IInitializeModule = Interface.declare({
 
-    /**
-     * @param {function(Throwable=)} callback
-     */
-    initializeModule: function(callback) {}
+        _name: "bugioc.IInitializeModule",
+
+
+        //-------------------------------------------------------------------------------
+        // Interface Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {function(Throwable=)} callback
+         */
+        deinitializeModule: function(callback) {},
+
+        /**
+         * @param {function(Throwable=)} callback
+         */
+        initializeModule: function(callback) {}
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugioc.IInitializeModule', IInitializeModule);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugioc.IInitializeModule', IInitializeModule);

@@ -9,92 +9,100 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class           = bugpack.require('Class');
-var DeltaChange     = bugpack.require('bugdelta.DeltaChange');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var MapChange = Class.extend(DeltaChange, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class           = bugpack.require('Class');
+    var DeltaChange     = bugpack.require('bugdelta.DeltaChange');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @class
+     * @extends {DeltaChange}
      */
-    _constructor: function(changeType, path, key, value) {
-
-        this._super(changeType, path);
-
+    var MapChange = Class.extend(DeltaChange, {
 
         //-------------------------------------------------------------------------------
-        // Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {*}
+         * @constructs
+         * @param {string} changeType
+         * @param {string} path
+         * @param {*} key
+         * @param {*} value
          */
-        this.key    = key;
+        _constructor: function(changeType, path, key, value) {
+
+            this._super(changeType, path);
+
+
+            //-------------------------------------------------------------------------------
+            // Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {*}
+             */
+            this.key    = key;
+
+            /**
+             * @private
+             * @type {*}
+             */
+            this.value  = value;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {*}
+         * @return {*}
          */
-        this.value  = value;
-    },
+        getKey: function() {
+            return this.key;
+        },
+
+        /**
+         * @return {*}
+         */
+        getValue: function() {
+            return this.value;
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Static Variables
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {*}
+     * @static
+     * @enum {string}
      */
-    getKey: function() {
-        return this.key;
-    },
+    MapChange.ChangeTypes = {
+        PUT_TO_MAP: "MapChange:PutToMap",
+        REMOVED_FROM_MAP: "MapChange:RemovedFromMap"
+    };
 
-    /**
-     * @return {*}
-     */
-    getValue: function() {
-        return this.value;
-    }
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugdelta.MapChange', MapChange);
 });
-
-
-//-------------------------------------------------------------------------------
-// Static Variables
-//-------------------------------------------------------------------------------
-
-/**
- * @static
- * @enum {string}
- */
-MapChange.ChangeTypes = {
-    PUT_TO_MAP: "MapChange:PutToMap",
-    REMOVED_FROM_MAP: "MapChange:RemovedFromMap"
-};
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugdelta.MapChange', MapChange);

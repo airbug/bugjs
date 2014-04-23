@@ -2,10 +2,9 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('carapace.CarapaceModel')
+//@Export('bugioc.IProcessModule')
 
-//@Require('Class')
-//@Require('bugmvc.BugModel')
+//@Require('Interface')
 
 
 //-------------------------------------------------------------------------------
@@ -18,24 +17,35 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class           = bugpack.require('Class');
-    var BugModel        = bugpack.require('bugmvc.BugModel');
+    var Interface = bugpack.require('Interface');
 
 
     //-------------------------------------------------------------------------------
-    // Declare Class
+    // Declare Interface
     //-------------------------------------------------------------------------------
 
     /**
-     * @class
-     * @extends {BugModel}
+     * @interface
      */
-    var CarapaceModel = Class.extend(BugModel, {});
+    var IProcessModule = Interface.declare({
+
+        _name: "bugioc.IProcessModule",
+
+
+        //-------------------------------------------------------------------------------
+        // Interface Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {function(Throwable=)} callback
+         */
+        processModule: function(callback) {}
+    });
 
 
     //-------------------------------------------------------------------------------
     // Exports
     //-------------------------------------------------------------------------------
 
-    bugpack.export('carapace.CarapaceModel', CarapaceModel);
+    bugpack.export('bugioc.IProcessModule', IProcessModule);
 });

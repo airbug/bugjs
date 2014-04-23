@@ -62,8 +62,9 @@ var WorkerAnnotationProcessor = Class.extend(Obj, {
      * @param {WorkerAnnotation} workerAnnotation
      */
     process: function(workerAnnotation) {
-        var workerClass = workerAnnotation.getAnnotationReference();
-        var workerName  = workerAnnotation.getWorkerName();
+        var workerConstructor   = workerAnnotation.getAnnotationReference();
+        var workerClass         = workerConstructor.getClass();
+        var workerName          = workerAnnotation.getWorkerName();
         if (!this.workerRegistry.hasRegistryEntryForName(workerName)) {
             var registryEntry = this.factoryWorkerRegistryEntry(workerName, workerClass);
             this.workerRegistry.addRegistryEntry(registryEntry);

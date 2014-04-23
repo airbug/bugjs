@@ -10,48 +10,51 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var MarshAnnotation     = bugpack.require('bugmarsh.MarshAnnotation');
-var AnnotationScan      = bugpack.require('bugmeta.AnnotationScan');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {AnnotationScan}
- */
-var MarshAnnotationScan = Class.extend(AnnotationScan, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class               = bugpack.require('Class');
+    var MarshAnnotation     = bugpack.require('bugmarsh.MarshAnnotation');
+    var AnnotationScan      = bugpack.require('bugmeta.AnnotationScan');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {MetaContext} metaContext
-     * @param {MarshAnnotationProcessor} processor
+     * @class
+     * @extends {AnnotationScan}
      */
-    _constructor: function(metaContext, processor) {
-        this._super(metaContext, processor, MarshAnnotation.TYPE);
-    }
+    var MarshAnnotationScan = Class.extend(AnnotationScan, {
+
+        _name: "bugmarsh.MarshAnnotationScan",
+
+
+        //-------------------------------------------------------------------------------
+        // Constructor
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @constructs
+         * @param {MetaContext} metaContext
+         * @param {MarshAnnotationProcessor} processor
+         */
+        _constructor: function(metaContext, processor) {
+            this._super(metaContext, processor, MarshAnnotation.TYPE);
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugmarsh.MarshAnnotationScan', MarshAnnotationScan);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugmarsh.MarshAnnotationScan', MarshAnnotationScan);

@@ -73,8 +73,9 @@ var ControllerScan = Class.extend(Obj, {
         var controllerAnnotations   = bugmeta.getAnnotationsByType("Controller");
         if (controllerAnnotations) {
             controllerAnnotations.forEach(function(annotation) {
-                var controllerClass = annotation.getAnnotationReference();
-                var controllerRoute = annotation.getRoute();
+                var controllerConstructor   = annotation.getAnnotationReference();
+                var controllerClass         = controllerConstructor.getClass();
+                var controllerRoute         = annotation.getRoute();
                 _this.createController(controllerClass, controllerRoute);
             });
         }
@@ -93,7 +94,8 @@ var ControllerScan = Class.extend(Obj, {
     createController: function(controllerClass, controllerRoute) {
         var _this = this;
         if (!this.controllerClassToControllerMap.containsKey(controllerClass)) {
-            var controller = new controllerClass();
+            var controllerConstructor   = controllerClass.getConstructor();
+            var controller              = new controllerConstructor();
             this.application.registerController(controller);
             this.controllerClassToControllerMap.put(controllerClass, controller);
             _this.application.registerControllerRoute(new ControllerRoute(controllerRoute, controller));

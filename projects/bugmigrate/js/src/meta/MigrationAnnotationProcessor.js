@@ -95,8 +95,8 @@ var MigrationAnnotationProcessor = Class.extend(Obj, {
      * @param {MigrationAnnotation} migrationAnnotation
      */
     buildMigration: function(migrationAnnotation) {
-        var _class = migrationAnnotation.getAnnotationReference();
-        var migration = new _class(migrationAnnotation.getMigrationAppName(), migrationAnnotation.getMigrationAppVersion(), migrationAnnotation.getMigrationName(), migrationAnnotation.getMigrationVersion());
+        var migrationConstructor    = migrationAnnotation.getAnnotationReference();
+        var migration               = new migrationConstructor(migrationAnnotation.getMigrationAppName(), migrationAnnotation.getMigrationAppVersion(), migrationAnnotation.getMigrationName(), migrationAnnotation.getMigrationVersion());
         this.migrationManager.registerMigration(migration);
     },
 

@@ -14,158 +14,166 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                           = bugpack.require('Class');
-var Obj                             = bugpack.require('Obj');
-var Set                             = bugpack.require('Set');
-var AnnotationModuleFactory         = bugpack.require('bugioc.AnnotationModuleFactory');
-var IocArg                          = bugpack.require('bugioc.IocArg');
-var IocModule                       = bugpack.require('bugioc.IocModule');
-var IocProperty                     = bugpack.require('bugioc.IocProperty');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var ModuleAnnotationProcessor = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class                           = bugpack.require('Class');
+    var Obj                             = bugpack.require('Obj');
+    var Set                             = bugpack.require('Set');
+    var AnnotationModuleFactory         = bugpack.require('bugioc.AnnotationModuleFactory');
+    var IocArg                          = bugpack.require('bugioc.IocArg');
+    var IocModule                       = bugpack.require('bugioc.IocModule');
+    var IocProperty                     = bugpack.require('bugioc.IocProperty');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {IocContext} iocContext
+     * @class
+     * @extends {Obj}
      */
-    _constructor: function(iocContext) {
+    var ModuleAnnotationProcessor = Class.extend(Obj, {
 
-        this._super();
+        _name: "bugioc.ModuleAnnotationProcessor",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {IocContext}
+         * @constructs
+         * @param {IocContext} iocContext
          */
-        this.iocContext                     = iocContext;
+        _constructor: function(iocContext) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {IocContext}
+             */
+            this.iocContext                     = iocContext;
+
+            /**
+             * @private
+             * @type {Set.<ModuleAnnotation>}
+             */
+            this.processedModuleAnnotationSet   = new Set();
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Set.<ModuleAnnotation>}
+         * @return {IocContext}
          */
-        this.processedModuleAnnotationSet   = new Set();
-    },
+        getIocContext: function() {
+            return this.iocContext;
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @return {IocContext}
-     */
-    getIocContext: function() {
-        return this.iocContext;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {ModuleAnnotation} moduleAnnotation
-     */
-    process: function(moduleAnnotation) {
-        this.processModuleAnnotation(moduleAnnotation);
-    },
+        /**
+         * @param {ModuleAnnotation} moduleAnnotation
+         */
+        process: function(moduleAnnotation) {
+            this.processModuleAnnotation(moduleAnnotation);
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // Protected Methods
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // Protected Methods
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @protected
-     * @param {ModuleAnnotation} moduleAnnotation
-     * @return {IocModule}
-     */
-    buildIocModule: function(moduleAnnotation) {
-        var moduleClass     = moduleAnnotation.getAnnotationReference();
-        var iocModule       = this.factoryIocModule(moduleAnnotation);
-        var factory         = new AnnotationModuleFactory(this.iocContext, iocModule, moduleClass);
-        iocModule.setModuleFactory(factory);
-        this.iocContext.registerIocModule(iocModule);
-        return iocModule;
-    },
+        /**
+         * @protected
+         * @param {ModuleAnnotation} moduleAnnotation
+         * @return {IocModule}
+         */
+        buildIocModule: function(moduleAnnotation) {
+            var moduleConstructor   = moduleAnnotation.getAnnotationReference();
+            var moduleClass         = moduleConstructor.getClass();
+            var iocModule           = this.factoryIocModule(moduleAnnotation);
+            var factory             = new AnnotationModuleFactory(this.iocContext, iocModule, moduleClass);
+            iocModule.setModuleFactory(factory);
+            this.iocContext.registerIocModule(iocModule);
+            return iocModule;
+        },
 
-    /**
-     * @protected
-     * @param {ArgAnnotation} argAnnotation
-     * @return {IocArg}
-     */
-    factoryIocArg: function(argAnnotation) {
-        return new IocArg(argAnnotation.getArgRef(), argAnnotation.getArgValue());
-    },
+        /**
+         * @protected
+         * @param {ArgAnnotation} argAnnotation
+         * @return {IocArg}
+         */
+        factoryIocArg: function(argAnnotation) {
+            return new IocArg(argAnnotation.getArgRef(), argAnnotation.getArgValue());
+        },
 
-    /**
-     * @protected
-     * @param {ModuleAnnotation} moduleAnnotation
-     * @return {IocModule}
-     */
-    factoryIocModule: function(moduleAnnotation) {
-        var _this = this;
-        var iocModule = new IocModule(moduleAnnotation.getModuleName(), moduleAnnotation.getModuleScope());
-        var argAnnotationArray = moduleAnnotation.getModuleArgs();
-        argAnnotationArray.forEach(function(argAnnotation) {
-            var iocArg = _this.factoryIocArg(argAnnotation);
-            iocModule.addIocArg(iocArg);
-        });
-        var propertyAnnotationArray = moduleAnnotation.getModuleProperties();
-        propertyAnnotationArray.forEach(function(propertyAnnotation) {
-            var iocProperty = _this.factoryIocProperty(propertyAnnotation);
-            iocModule.addIocProperty(iocProperty);
-        });
-        return iocModule;
-    },
+        /**
+         * @protected
+         * @param {ModuleAnnotation} moduleAnnotation
+         * @return {IocModule}
+         */
+        factoryIocModule: function(moduleAnnotation) {
+            var _this = this;
+            var iocModule = new IocModule(moduleAnnotation.getModuleName(), moduleAnnotation.getModuleScope());
+            var argAnnotationArray = moduleAnnotation.getModuleArgs();
+            argAnnotationArray.forEach(function(argAnnotation) {
+                var iocArg = _this.factoryIocArg(argAnnotation);
+                iocModule.addIocArg(iocArg);
+            });
+            var propertyAnnotationArray = moduleAnnotation.getModuleProperties();
+            propertyAnnotationArray.forEach(function(propertyAnnotation) {
+                var iocProperty = _this.factoryIocProperty(propertyAnnotation);
+                iocModule.addIocProperty(iocProperty);
+            });
+            return iocModule;
+        },
 
-    /**
-     * @protected
-     * @param {PropertyAnnotation} propertyAnnotation
-     * @return {IocProperty}
-     */
-    factoryIocProperty: function(propertyAnnotation) {
-        return new IocProperty(propertyAnnotation.getPropertyName(), propertyAnnotation.getPropertyRef(), propertyAnnotation.getPropertyValue());
-    },
+        /**
+         * @protected
+         * @param {PropertyAnnotation} propertyAnnotation
+         * @return {IocProperty}
+         */
+        factoryIocProperty: function(propertyAnnotation) {
+            return new IocProperty(propertyAnnotation.getPropertyName(), propertyAnnotation.getPropertyRef(), propertyAnnotation.getPropertyValue());
+        },
 
-    /**
-     * @protected
-     * @param {ModuleAnnotation} moduleAnnotation
-     */
-    processModuleAnnotation: function(moduleAnnotation) {
-        if (!this.processedModuleAnnotationSet.contains(moduleAnnotation)) {
-            this.buildIocModule(moduleAnnotation);
-            this.processedModuleAnnotationSet.add(moduleAnnotation);
+        /**
+         * @protected
+         * @param {ModuleAnnotation} moduleAnnotation
+         */
+        processModuleAnnotation: function(moduleAnnotation) {
+            if (!this.processedModuleAnnotationSet.contains(moduleAnnotation)) {
+                this.buildIocModule(moduleAnnotation);
+                this.processedModuleAnnotationSet.add(moduleAnnotation);
+            }
         }
-    }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugioc.ModuleAnnotationProcessor', ModuleAnnotationProcessor);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugioc.ModuleAnnotationProcessor', ModuleAnnotationProcessor);

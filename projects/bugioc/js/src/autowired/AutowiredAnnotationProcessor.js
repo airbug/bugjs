@@ -37,6 +37,9 @@ require('bugpack').context("*", function(bugpack) {
      */
     var AutowiredAnnotationProcessor = Class.extend(Obj, {
 
+        _name: "bugioc.AutowiredAnnotationProcessor",
+
+
         //-------------------------------------------------------------------------------
         // Constructor
         //-------------------------------------------------------------------------------
@@ -91,10 +94,10 @@ require('bugpack').context("*", function(bugpack) {
         processAutowiredAnnotation: function(autowiredAnnotation) {
             var _this                   = this;
             if (!this.processedAutowiredAnnotationSet.contains(autowiredAnnotation)) {
-                var autowiredClass          = autowiredAnnotation.getAnnotationReference();
+                var autowiredConstructor    = autowiredAnnotation.getAnnotationReference();
                 var propertyAnnotationArray = autowiredAnnotation.getAutowiredProperties();
-                var currentConstructor      = autowiredClass.prototype._constructor;
-                autowiredClass.prototype._constructor = function() {
+                var currentConstructor      = autowiredConstructor.prototype._constructor;
+                autowiredConstructor.prototype._constructor = function() {
                     var instance = this;
                     currentConstructor.apply(this, arguments);
                     propertyAnnotationArray.forEach(function(propertyAnnotation) {

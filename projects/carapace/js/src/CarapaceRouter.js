@@ -3,159 +3,190 @@
 //-------------------------------------------------------------------------------
 
 //@Export('carapace.CarapaceRouter')
+//@Autoload
 
 //@Require('Class')
 //@Require('List')
 //@Require('backbone.Backbone')
+//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class =     bugpack.require('Class');
-var List =      bugpack.require('List');
-var Backbone =  bugpack.require('backbone.Backbone');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var CarapaceRouter = Class.adapt(Backbone.Router, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function(options) {
+    var Class                   = bugpack.require('Class');
+    var List                    = bugpack.require('List');
+    var Backbone                = bugpack.require('backbone.Backbone');
+    var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');
+    var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
-        this._super(options);
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var arg                     = ArgAnnotation.arg;
+    var bugmeta                 = BugMeta.context();
+    var module                  = ModuleAnnotation.module;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     */
+    var CarapaceRouter = Class.adapt(Backbone.Router, {
+
+        //-------------------------------------------------------------------------------
+        // Constructor
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @constructs
+         */
+        _constructor: function() {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.currentFragment = null;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.previousFragment = null;
+        },
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {string}
+         */
+        getCurrentFragment: function() {
+            return this.currentFragment;
+        },
+
+        /**
+         * @return {string}
+         */
+        getPreviousFragment: function() {
+            return this.previousFragment;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Backbone.Router Extensions
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @protected
+         * @param {Object} options
+         */
+        initialize: function(options) {
+            this._super(options);
+            this.bind("beforeRoute", this.handleBeforeRoute, this);
+        },
+
+        /**
+         * @param {string} route
+         * @param {string} name
+         * @param {function()} callback
+         */
+        route: function(route, name, callback) {
+            var _this = this;
+            this._super(route, name, function() {
+                _this.trigger("beforeRoute");
+                callback.apply(_this, arguments)
+            });
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Class Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         *
+         */
+        /*navigatePrevious: function(options) {
+            if (this.currentPreviousFragment === null) {
+                if (this.historyList.getCount() > 1) {
+                    this.currentPreviousFragment = this.historyList.getAt(this.historyList.getCount() - 2);
+                    this.navigate(this.currentPreviousFragment, options);
+                }
+            } else {
+                var index = this.historyList.indexOf(this.currentPreviousFragment);
+                if (index > 0) {
+                    this.currentPreviousFragment = this.historyList.getAt(index - 1);
+                    this.navigate(this.currentPreviousFragment, options);
+                }
+            }
+        },*/
+
+
+        //-------------------------------------------------------------------------------
+        // Private Class Methods
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {string}
          */
-        this.currentFragment = null;
+        storeRoute: function() {
+            this.previousFragment = this.currentFragment;
+            this.currentFragment = Backbone.history.fragment;
+            //this.historyList.add(Backbone.history.fragment);
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Event Handlers
+        //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {string}
          */
-        this.previousFragment = null;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @return {string}
-     */
-    getCurrentFragment: function() {
-        return this.currentFragment;
-    },
-
-    /**
-     * @return {string}
-     */
-    getPreviousFragment: function() {
-        return this.previousFragment;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Backbone.Router Extensions
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @protected
-     * @param {Object} options
-     */
-    initialize: function(options) {
-        this._super(options);
-        this.bind("beforeRoute", this.handleBeforeRoute, this);
-    },
-
-    /**
-     * @param {string} route
-     * @param {string} name
-     * @param {function()} callback
-     */
-    route: function(route, name, callback) {
-        var _this = this;
-        this._super(route, name, function() {
-            _this.trigger("beforeRoute");
-            callback.apply(_this, arguments)
-        });
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Public Class Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     *
-     */
-    /*navigatePrevious: function(options) {
-        if (this.currentPreviousFragment === null) {
-            if (this.historyList.getCount() > 1) {
-                this.currentPreviousFragment = this.historyList.getAt(this.historyList.getCount() - 2);
-                this.navigate(this.currentPreviousFragment, options);
-            }
-        } else {
-            var index = this.historyList.indexOf(this.currentPreviousFragment);
-            if (index > 0) {
-                this.currentPreviousFragment = this.historyList.getAt(index - 1);
-                this.navigate(this.currentPreviousFragment, options);
-            }
+        handleBeforeRoute: function() {
+            this.storeRoute();
         }
-    },*/
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Private Class Methods
+    // BugMeta
     //-------------------------------------------------------------------------------
 
-    /**
-     * @private
-     */
-    storeRoute: function() {
-        this.previousFragment = this.currentFragment;
-        this.currentFragment = Backbone.history.fragment;
-        //this.historyList.add(Backbone.history.fragment);
-    },
+    bugmeta.annotate(CarapaceRouter).with(
+        module("carapaceRouter")
+    );
 
 
     //-------------------------------------------------------------------------------
-    // Event Handlers
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @private
-     */
-    handleBeforeRoute: function() {
-        this.storeRoute();
-    }
+    bugpack.export('carapace.CarapaceRouter', CarapaceRouter);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('carapace.CarapaceRouter', CarapaceRouter);

@@ -12,139 +12,142 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Bug         = bugpack.require('Bug');
-var Class       = bugpack.require('Class');
-var List        = bugpack.require('List');
-var Map         = bugpack.require('Map');
-var Obj         = bugpack.require('Obj');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {Obj}
- */
-var Marsh = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Bug         = bugpack.require('Bug');
+    var Class       = bugpack.require('Class');
+    var List        = bugpack.require('List');
+    var Map         = bugpack.require('Map');
+    var Obj         = bugpack.require('Obj');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {Class} marshClass
-     * @param {string} marshName
+     * @class
+     * @extends {Obj}
      */
-    _constructor: function(marshClass, marshName) {
+    var Marsh = Class.extend(Obj, {
 
-        this._super();
+        _name: "bugmarsh.Marsh",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Class}
+         * @constructs
+         * @param {Class} marshClass
+         * @param {string} marshName
          */
-        this.marshClass                        = marshClass;
+        _constructor: function(marshClass, marshName) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {Class}
+             */
+            this.marshClass                        = marshClass;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.marshName                         = marshName;
+
+            /**
+             * @private
+             * @type {List.<MarshProperty>}
+             */
+            this.marshPropertyList                 = new List();
+
+            /**
+             * @private
+             * @type {Map.<string, MarshProperty>}
+             */
+            this.propertyNameToMarshPropertyMap    = new Map();
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {string}
+         * @return {Class}
          */
-        this.marshName                         = marshName;
+        getMarshClass: function() {
+            return this.marshClass;
+        },
 
         /**
-         * @private
-         * @type {List.<MarshProperty>}
+         * @return {string}
          */
-        this.marshPropertyList                 = new List();
+        getMarshName: function() {
+            return this.marshName;
+        },
 
         /**
-         * @private
-         * @type {Map.<string, MarshProperty>}
+         * @return {List.<MarshProperty>}
          */
-        this.propertyNameToMarshPropertyMap    = new Map();
-    },
+        getMarshPropertyList: function() {
+            return this.marshPropertyList;
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @return {Class}
-     */
-    getMarshClass: function() {
-        return this.marshClass;
-    },
+        /**
+         * @param {MarshProperty} marshProperty
+         */
+        addProperty: function(marshProperty) {
+            if (!this.hasPropertyByName(marshProperty.getPropertyName())) {
+                this.marshPropertyList.add(marshProperty);
+                this.propertyNameToMarshPropertyMap.put(marshProperty.getPropertyName(), marshProperty);
+            } else {
+                throw new Bug("IllegalState", {}, "Marsh already has property by the name '" + marshProperty.getPropertyName() + "'");
+            }
+        },
 
-    /**
-     * @return {string}
-     */
-    getMarshName: function() {
-        return this.marshName;
-    },
+        /**
+         * @param {string} name
+         * @return {MarshProperty}
+         */
+        getPropertyByName: function(name) {
+            return this.propertyNameToMarshPropertyMap.get(name);
+        },
 
-    /**
-     * @return {List.<MarshProperty>}
-     */
-    getMarshPropertyList: function() {
-        return this.marshPropertyList;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {MarshProperty} marshProperty
-     */
-    addProperty: function(marshProperty) {
-        if (!this.hasPropertyByName(marshProperty.getPropertyName())) {
-            this.marshPropertyList.add(marshProperty);
-            this.propertyNameToMarshPropertyMap.put(marshProperty.getPropertyName(), marshProperty);
-        } else {
-            throw new Bug("IllegalState", {}, "Marsh already has property by the name '" + marshProperty.getPropertyName() + "'");
+        /**
+         * @param {string} name
+         * @return {boolean}
+         */
+        hasPropertyByName: function(name) {
+            return this.propertyNameToMarshPropertyMap.containsKey(name);
         }
-    },
+    });
 
-    /**
-     * @param {string} name
-     * @return {MarshProperty}
-     */
-    getPropertyByName: function(name) {
-        return this.propertyNameToMarshPropertyMap.get(name);
-    },
 
-    /**
-     * @param {string} name
-     * @return {boolean}
-     */
-    hasPropertyByName: function(name) {
-        return this.propertyNameToMarshPropertyMap.containsKey(name);
-    }
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugmarsh.Marsh', Marsh);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugmarsh.Marsh', Marsh);

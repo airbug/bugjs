@@ -43,6 +43,12 @@ var EntitySchema = Class.extend(Obj, {
     // Constructor
     //-------------------------------------------------------------------------------
 
+    /**
+     * @constructs
+     * @param {Class} entityClass
+     * @param {string} entityName
+     * @param {Object} entityOptions
+     */
     _constructor: function(entityClass, entityName, entityOptions) {
 
         this._super();

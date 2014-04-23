@@ -74,7 +74,7 @@ var DocumentCalculator = Class.extend(DeltaCalculator, {
                     if (TypeUtil.toType(currentData) !== TypeUtil.toType(previousData)) {
                         delta.addDeltaChange(new DocumentChange(DocumentChange.ChangeTypes.DATA_SET, currentPath,
                             currentData, previousData));
-                    } else if (TypeUtil.isObject(currentData) && TypeUtil.isFunction(currentData.getClass) && !Class.doesExtend(previousData, currentData.getClass())) {
+                    } else if (TypeUtil.isObject(currentData) && TypeUtil.isFunction(currentData.getClass) && !Class.doesExtend(previousData, currentData.getClass().getConstructor())) {
                         delta.addDeltaChange(new DocumentChange(DocumentChange.ChangeTypes.DATA_SET, currentPath,
                             currentData, previousData));
                     } else {

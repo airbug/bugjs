@@ -111,15 +111,6 @@ var ContainerBuilder = Class.extend(Obj, {
     },
 
     /**
-     * @param {CarapaceCollection} viewCollection
-     * @return {ViewBuilder}
-     */
-    collection: function(viewCollection) {
-        this.viewCollection = viewCollection;
-        return this;
-    },
-
-    /**
      * @param {string} viewId
      * @return {ViewBuilder}
      */
@@ -150,9 +141,6 @@ var ContainerBuilder = Class.extend(Obj, {
         var viewOptions = {};
         if (this.viewAttributes) {
             viewOptions.attributes = this.viewAttributes;
-        }
-        if (this.viewCollection) {
-            viewOptions.collection = this.viewCollection;
         }
         if (this.viewId) {
             viewOptions.id = this.viewId;

@@ -9,102 +9,120 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class           = bugpack.require('Class');
-var Obj             = bugpack.require('Obj');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var MarshProperty = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function(propertyName, getterName, setterName) {
+    var Class           = bugpack.require('Class');
+    var Obj             = bugpack.require('Obj');
 
-        this._super();
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {Obj}
+     */
+    var MarshProperty = Class.extend(Obj, {
+
+        _name: "bugmarsh.MarshProperty",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {string}
+         * @constructs
+         * @param {string} propertyName
+         * @param {string} getterName
+         * @param {string} setterName
          */
-        this.getterName         = getterName;
+        _constructor: function(propertyName, getterName, setterName) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.getterName         = getterName;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.propertyName       = propertyName;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.setterName         = setterName;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {string}
+         * @return {string}
          */
-        this.propertyName       = propertyName;
+        getGetterName: function() {
+            return this.getterName;
+        },
 
         /**
-         * @private
-         * @type {string}
+         * @return {string}
          */
-        this.setterName         = setterName;
-    },
+        getPropertyName: function() {
+            return this.propertyName;
+        },
+
+        /**
+         * @return {string}
+         */
+        getSetterName: function() {
+            return this.setterName;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Convenience Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {boolean}
+         */
+        hasGetter: function() {
+            return !!this.getGetterName();
+        },
+
+        /**
+         * @return {boolean}
+         */
+        hasSetter: function() {
+            return !!this.getSetterName();
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {string}
-     */
-    getGetterName: function() {
-        return this.getterName;
-    },
-
-    /**
-     * @return {string}
-     */
-    getPropertyName: function() {
-        return this.propertyName;
-    },
-
-    /**
-     * @return {string}
-     */
-    getSetterName: function() {
-        return this.setterName;
-    },
-
-    /**
-     * @return {boolean}
-     */
-    hasGetter: function() {
-        return !!this.getGetterName();
-    },
-
-    /**
-     * @return {boolean}
-     */
-    hasSetter: function() {
-        return !!this.getSetterName();
-    }
+    bugpack.export('bugmarsh.MarshProperty', MarshProperty);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugmarsh.MarshProperty', MarshProperty);

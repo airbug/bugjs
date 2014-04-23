@@ -88,7 +88,7 @@ var ObjectCalculator = Class.extend(DeltaCalculator, {
                 if (TypeUtil.toType(previousPropertyValue) !== TypeUtil.toType(currentPropertyValue)) {
                     delta.addDeltaChange(new ObjectChange(ObjectChange.ChangeTypes.PROPERTY_SET, currentPath,
                         propertyName, currentPropertyValue, previousPropertyValue));
-                } else if (TypeUtil.isObject(currentPropertyValue) && TypeUtil.isFunction(currentPropertyValue.getClass) && !Class.doesExtend(previousPropertyValue, currentPropertyValue.getClass())) {
+                } else if (TypeUtil.isObject(currentPropertyValue) && TypeUtil.isFunction(currentPropertyValue.getClass) && !Class.doesExtend(previousPropertyValue, currentPropertyValue.getClass().getConstructor())) {
                     delta.addDeltaChange(new ObjectChange(ObjectChange.ChangeTypes.PROPERTY_SET, currentPath,
                         propertyName, currentPropertyValue, previousPropertyValue));
                 } else {

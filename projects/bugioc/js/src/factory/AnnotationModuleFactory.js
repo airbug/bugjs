@@ -9,68 +9,76 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var ModuleFactory       = bugpack.require('bugioc.ModuleFactory');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var AnnotationModuleFactory = Class.extend(ModuleFactory, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class               = bugpack.require('Class');
+    var ModuleFactory       = bugpack.require('bugioc.ModuleFactory');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {IocContext} iocContext
-     * @param {IocModule} iocModule
-     * @param {Class} moduleClass
+     * @class
+     * @extends {ModuleFactory}
      */
-    _constructor: function(iocContext, iocModule, moduleClass) {
+    var AnnotationModuleFactory = Class.extend(ModuleFactory, {
 
-        this._super(iocContext, iocModule);
+        _name: "bugioc.AnnotationModuleFactory",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Class}
+         * @constructs
+         * @param {IocContext} iocContext
+         * @param {IocModule} iocModule
+         * @param {Class} moduleClass
          */
-        this.moduleClass    = moduleClass;
-    },
+        _constructor: function(iocContext, iocModule, moduleClass) {
+
+            this._super(iocContext, iocModule);
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {Class}
+             */
+            this.moduleClass = moduleClass;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // ModuleFactory Implementation
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {*}
+         */
+        factoryModule: function() {
+            var moduleArgs      = this.buildModuleArgs();
+            return this.moduleClass.newInstance(moduleArgs);
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // ModuleFactory Implementation
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {*}
-     */
-    factoryModule: function() {
-        var moduleArgs      = this.buildModuleArgs();
-        return this.moduleClass.newInstance(moduleArgs);
-    }
+    bugpack.export('bugioc.AnnotationModuleFactory', AnnotationModuleFactory);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugioc.AnnotationModuleFactory', AnnotationModuleFactory);

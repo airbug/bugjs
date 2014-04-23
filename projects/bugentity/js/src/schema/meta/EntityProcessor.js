@@ -12,106 +12,118 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var Obj                 = bugpack.require('Obj');
-var EntitySchema        = bugpack.require('bugentity.EntitySchema');
-var SchemaIndex         = bugpack.require('bugentity.SchemaIndex');
-var SchemaProperty      = bugpack.require('bugentity.SchemaProperty');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var EntityProcessor = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function(schemaManager) {
+    var Class               = bugpack.require('Class');
+    var Obj                 = bugpack.require('Obj');
+    var EntitySchema        = bugpack.require('bugentity.EntitySchema');
+    var SchemaIndex         = bugpack.require('bugentity.SchemaIndex');
+    var SchemaProperty      = bugpack.require('bugentity.SchemaProperty');
 
-        this._super();
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {Obj}
+     */
+    var EntityProcessor = Class.extend(Obj, {
+
+        _name: "bugentity.EntityProcessor",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {SchemaManager}
+         * @constructs
+         * @param {SchemaManager} schemaManager
          */
-        this.schemaManager  = schemaManager;
-    },
+        _constructor: function(schemaManager) {
+
+            this._super();
 
 
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
 
-    /**
-     * @return {SchemaManager}
-     */
-    getSchemaManager: function() {
-        return this.schemaManager;
-    },
+            /**
+             * @private
+             * @type {SchemaManager}
+             */
+            this.schemaManager  = schemaManager;
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @param {EntityAnnotation} entityAnnotation
-     */
-    process: function(entityAnnotation) {
-        var entityClass = entityAnnotation.getAnnotationReference();
-        var entityName  = entityAnnotation.getEntityName();
-        if (!this.schemaManager.hasSchemaForClass(entityClass) && !this.schemaManager.hasSchemaForName(entityName)) {
-            var schema = new EntitySchema(entityClass, entityName, {
-                embedded: entityAnnotation.getEntityEmbedded(),
-                stored: entityAnnotation.getEntityStored()
-            });
+        /**
+         * @return {SchemaManager}
+         */
+        getSchemaManager: function() {
+            return this.schemaManager;
+        },
 
-            entityAnnotation.getEntityProperties().forEach(function(propertyAnnotation) {
-                schema.addProperty(new SchemaProperty(propertyAnnotation.getPropertyName(), propertyAnnotation.getPropertyType(), {
-                    collectionOf: propertyAnnotation.getPropertyCollectionOf(),
-                    'default': propertyAnnotation.getPropertyDefault(),
-                    id: propertyAnnotation.isPropertyId(),
-                    indexed: propertyAnnotation.isPropertyIndexed(),
-                    populates: propertyAnnotation.getPropertyPopulates(),
-                    primaryId: propertyAnnotation.isPropertyPrimaryId(),
-                    required: propertyAnnotation.isPropertyRequired(),
-                    stored: propertyAnnotation.isPropertyStored(),
-                    unique: propertyAnnotation.isPropertyUnique()
-                }));
-            });
 
-            entityAnnotation.getEntityIndexes().forEach(function(indexAnnotation) {
-                schema.addIndex(new SchemaIndex(indexAnnotation.getIndexPropertyObject(), {
-                    unique: indexAnnotation.isIndexUnique()
-                }));
-            });
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
 
-            this.schemaManager.registerSchema(schema);
+        /**
+         * @param {EntityAnnotation} entityAnnotation
+         */
+        process: function(entityAnnotation) {
+            var entityConstructor   = entityAnnotation.getAnnotationReference();
+            var entityClass         = entityConstructor.getClass();
+            var entityName          = entityAnnotation.getEntityName();
+            if (!this.schemaManager.hasSchemaForClass(entityClass) && !this.schemaManager.hasSchemaForName(entityName)) {
+                var schema = new EntitySchema(entityClass, entityName, {
+                    embedded: entityAnnotation.getEntityEmbedded(),
+                    stored: entityAnnotation.getEntityStored()
+                });
+
+                entityAnnotation.getEntityProperties().forEach(function(propertyAnnotation) {
+                    schema.addProperty(new SchemaProperty(propertyAnnotation.getPropertyName(), propertyAnnotation.getPropertyType(), {
+                        collectionOf: propertyAnnotation.getPropertyCollectionOf(),
+                        'default': propertyAnnotation.getPropertyDefault(),
+                        id: propertyAnnotation.isPropertyId(),
+                        indexed: propertyAnnotation.isPropertyIndexed(),
+                        populates: propertyAnnotation.getPropertyPopulates(),
+                        primaryId: propertyAnnotation.isPropertyPrimaryId(),
+                        required: propertyAnnotation.isPropertyRequired(),
+                        stored: propertyAnnotation.isPropertyStored(),
+                        unique: propertyAnnotation.isPropertyUnique()
+                    }));
+                });
+
+                entityAnnotation.getEntityIndexes().forEach(function(indexAnnotation) {
+                    schema.addIndex(new SchemaIndex(indexAnnotation.getIndexPropertyObject(), {
+                        unique: indexAnnotation.isIndexUnique()
+                    }));
+                });
+
+                this.schemaManager.registerSchema(schema);
+            }
         }
-    }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugentity.EntityProcessor', EntityProcessor);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugentity.EntityProcessor', EntityProcessor);

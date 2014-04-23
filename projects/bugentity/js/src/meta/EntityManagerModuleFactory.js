@@ -9,77 +9,85 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var ModuleFactory       = bugpack.require('bugioc.ModuleFactory');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var EntityManagerModuleFactory = Class.extend(ModuleFactory, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class               = bugpack.require('Class');
+    var ModuleFactory       = bugpack.require('bugioc.ModuleFactory');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {IocContext} iocContext
-     * @param {IocModule} iocModule
-     * @param {Class} entityManagerClass
-     * @param {string} entityType
+     * @class
+     * @extends {ModuleFactory}
      */
-    _constructor: function(iocContext, iocModule, entityManagerClass, entityType) {
+    var EntityManagerModuleFactory = Class.extend(ModuleFactory, {
 
-        this._super(iocContext, iocModule);
+        _name: "bugentity.EntityManagerModuleFactory",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Class}
+         * @constructs
+         * @param {IocContext} iocContext
+         * @param {IocModule} iocModule
+         * @param {Class} entityManagerClass
+         * @param {string} entityType
          */
-        this.entityManagerClass     = entityManagerClass;
+        _constructor: function(iocContext, iocModule, entityManagerClass, entityType) {
+
+            this._super(iocContext, iocModule);
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {Class}
+             */
+            this.entityManagerClass         = entityManagerClass;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.entityType                 = entityType;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // ModuleFactory Implementation
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {string}
+         * @return {*}
          */
-        this.entityType             = entityType;
-    },
+        factoryModule: function() {
+            var moduleArgs      = this.buildModuleArgs();
+            var entityManager   = this.entityManagerClass.newInstance(moduleArgs);
+            entityManager.setEntityType(this.entityType);
+            return entityManager;
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // ModuleFactory Implementation
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {*}
-     */
-    factoryModule: function() {
-        var moduleArgs      = this.buildModuleArgs();
-        var entityManager   = this.entityManagerClass.newInstance(moduleArgs);
-        entityManager.setEntityType(this.entityType);
-        return entityManager;
-    }
+    bugpack.export('bugentity.EntityManagerModuleFactory', EntityManagerModuleFactory);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugentity.EntityManagerModuleFactory', EntityManagerModuleFactory);

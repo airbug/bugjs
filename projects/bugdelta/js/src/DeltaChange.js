@@ -9,85 +9,91 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var Obj                 = bugpack.require('Obj');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var DeltaChange = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class               = bugpack.require('Class');
+    var Obj                 = bugpack.require('Obj');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @class
+     * @extends {Obj}
      */
-    _constructor: function(changeType, path) {
-
-        this._super();
-
+    var DeltaChange = Class.extend(Obj, {
 
         //-------------------------------------------------------------------------------
-        // Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {string}
+         * @constructs
+         * @param {string} changeType
+         * @param {string} path
          */
-        this.changeType     = changeType;
+        _constructor: function(changeType, path) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.changeType     = changeType;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.path           = path;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {string}
+         * @return {string}
          */
-        this.path           = path;
-    },
+        getChangeType: function() {
+            return this.changeType;
+        },
+
+        /**
+         * @return {string}
+         */
+        getPath: function() {
+            return this.path;
+        },
+
+        /**
+         * @param {string} path
+         */
+        setPath: function(path) {
+            this.path = path;
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {string}
-     */
-    getChangeType: function() {
-        return this.changeType;
-    },
-
-    /**
-     * @return {string}
-     */
-    getPath: function() {
-        return this.path;
-    },
-
-    /**
-     * @param {string} path
-     */
-    setPath: function(path) {
-        this.path = path;
-    }
+    bugpack.export('bugdelta.DeltaChange', DeltaChange);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugdelta.DeltaChange', DeltaChange);

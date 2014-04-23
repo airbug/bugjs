@@ -5,181 +5,303 @@
 //@Export('bugmvc.BugModel')
 
 //@Require('Class')
+//@Require('Exception')
 //@Require('ISet')
 //@Require('LiteralUtil')
 //@Require('Obj')
 //@Require('ObservableObject')
 //@Require('ObservableSet')
+//@Require('bugdispose.IDisposable')
+//@Require('bugmeta.BugMeta')
+//@Require('bugioc.AutowiredAnnotation')
+//@Require('bugioc.PropertyAnnotation')
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var ISet                = bugpack.require('ISet');
-var LiteralUtil         = bugpack.require('LiteralUtil');
-var Obj                 = bugpack.require('Obj');
-var ObservableObject    = bugpack.require('ObservableObject');
-var ObservableSet       = bugpack.require('ObservableSet');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @constructor
- * @extends {ObservableObject}
- */
-var BugModel = Class.extend(ObservableObject, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class                   = bugpack.require('Class');
+    var Exception               = bugpack.require('Exception');
+    var ISet                    = bugpack.require('ISet');
+    var LiteralUtil             = bugpack.require('LiteralUtil');
+    var Obj                     = bugpack.require('Obj');
+    var ObservableObject        = bugpack.require('ObservableObject');
+    var ObservableSet           = bugpack.require('ObservableSet');
+    var IDisposable             = bugpack.require('bugdispose.IDisposable');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+    var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
+    var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var autowired               = AutowiredAnnotation.autowired;
+    var bugmeta                 = BugMeta.context();
+    var property                = PropertyAnnotation.property;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {Object} dataObject
+     * @class
+     * @extends {ObservableObject}
+     * @implements {IDisposable}
      */
-    _constructor: function(dataObject) {
+    var BugModel = Class.extend(ObservableObject, {
 
-        this._super({});
+        _name: "bugmvc.BugModel",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {boolean}
+         * @constructs
+         * @param {Object} dataObject
          */
-        this.initialized    = false;
+        _constructor: function(dataObject) {
 
-        var _this = this;
-        Obj.forIn(dataObject, function(propertyName, propertyValue) {
-            _this.setProperty(propertyName, propertyValue);
-        });
-        this.initialize();
-    },
+            this._super({});
 
 
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
 
-    /**
-     * @returns {Object}
-     */
-    getData: function() {
-        return this.getObservedObject();
-    },
+            /**
+             * @private
+             * @type {boolean}
+             */
+            this.created            = false;
 
-    /**
-     * @return {boolean}
-     */
-    isInitialized: function() {
-        return this.initialized;
-    },
+            /**
+             * @private
+             * @type {GarbageDisposal}
+             */
+            this.garbageDisposal    = null;
+
+            /**
+             * @private
+             * @type {boolean}
+             */
+            this.initialized        = false;
+
+            var _this = this;
+            Obj.forIn(dataObject, function(propertyName, propertyValue) {
+                _this.setProperty(propertyName, propertyValue);
+            });
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // ObservableObject Methods
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @param {string} propertyName
-     * @param {*} propertyValue
-     */
-    setProperty: function(propertyName, propertyValue) {
-        if (Class.doesImplement(propertyValue, ISet)) {
-            this._super(propertyName, new ObservableSet(propertyValue));
-        } else {
-            this._super(propertyName, propertyValue);
+        /**
+         * @returns {Object}
+         */
+        getData: function() {
+            return this.getObservedObject();
+        },
+
+        /**
+         * @return {boolean}
+         */
+        isInitialized: function() {
+            return this.initialized;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Convenience Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {boolean}
+         */
+        isCreated: function() {
+            return this.created;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // IDisposable Implementation
+        //-------------------------------------------------------------------------------
+
+        /**
+         *
+         */
+        dispose: function() {
+            this.destroy();
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // ObservableObject Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {string} propertyName
+         * @param {*} propertyValue
+         */
+        setProperty: function(propertyName, propertyValue) {
+
+            //TODO BRN: Add support for sub properties and other data types
+
+            if (Class.doesImplement(propertyValue, ISet)) {
+                this._super(propertyName, new ObservableSet(propertyValue));
+            } else {
+                this._super(propertyName, propertyValue);
+            }
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         *
+         */
+        clear: function() {
+            this.clearProperties();
+            if (this.isCreated()) {
+                this.reinitialize();
+            }
+        },
+
+        /**
+         *
+         */
+        create: function() {
+            if (!this.created) {
+                this.created = true;
+                this.createModel();
+                this.initialize();
+            }
+        },
+
+        /**
+         *
+         */
+        destroy: function() {
+            if (this.created) {
+                this.created = false;
+                this.deinitialize();
+                this.destroyModel();
+            }
+        },
+
+        /**
+         *
+         */
+        initialize: function() {
+            if (!this.isCreated()) {
+                throw new Exception("ModelNotCreated", {}, "Model is being initialized before it has been created. Must call .create() first");
+            }
+            if (!this.isInitialized()) {
+                this.initialized = true;
+                this.initializeModel();
+            }
+        },
+
+        /**
+         *
+         */
+        reinitialize: function() {
+            if (this.isInitialized()) {
+                this.deinitialize();
+            }
+            this.initialize();
+        },
+
+        /**
+         *
+         */
+        deinitialize: function() {
+            if (this.isInitialized()) {
+                this.initialized = false;
+                this.deinitializeModel();
+            }
+        },
+
+        /**
+         * @returns {*}
+         */
+        toLiteral: function() {
+            return LiteralUtil.convertToLiteral(this.getData());
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Protected Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @protected
+         */
+        createModel: function() {
+            this.garbageDisposal.addDisposable(this);
+        },
+
+        /**
+         * @protected
+         */
+        destroyModel: function() {
+            this.detachAllObservers();
+            this.clearProperties();
+            this.garbageDisposal.removeDisposable(this);
+        },
+
+        /**
+         * @protected
+         */
+        deinitializeModel: function() {
+
+        },
+
+        /**
+         * @protected
+         */
+        initializeModel: function() {
+
         }
-    },
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Public Methods
+    // Implement Interfaces
     //-------------------------------------------------------------------------------
 
-    /**
-     *
-     */
-    clear: function() {
-        this.clearProperties();
-        this.reinitialize();
-    },
-
-    /**
-     *
-     */
-    initialize: function() {
-        if (!this.isInitialized()) {
-            this.initialized = true;
-            this.initializeModel();
-        }
-    },
-
-    /**
-     *
-     */
-    reinitialize: function() {
-        if (this.isInitialized()) {
-            this.deinitialize();
-        }
-        this.initialize();
-    },
-
-    /**
-     *
-     */
-    deinitialize: function() {
-        if (this.isInitialized()) {
-            this.initialized = false;
-            this.deinitializeModel();
-        }
-    },
-
-    /**
-     * @returns {*}
-     */
-    toLiteral: function() {
-        return LiteralUtil.convertToLiteral(this.getData());
-    },
+    Class.implement(BugModel, IDisposable);
 
 
     //-------------------------------------------------------------------------------
-    // Protected Methods
+    // BugMeta
     //-------------------------------------------------------------------------------
 
-    /**
-     * @protected
-     */
-    deinitializeModel: function() {
+    bugmeta.annotate(BugModel).with(
+        autowired().properties([
+            property("garbageDisposal").ref("garbageDisposal")
+        ])
+    );
 
-    },
 
-    /**
-     * @protected
-     */
-    initializeModel: function() {
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
 
-    }
+    bugpack.export('bugmvc.BugModel', BugModel);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugmvc.BugModel', BugModel);

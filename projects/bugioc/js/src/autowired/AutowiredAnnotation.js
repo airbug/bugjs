@@ -9,107 +9,110 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class           = bugpack.require('Class');
-var Annotation      = bugpack.require('bugmeta.Annotation');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {Annotation}
- */
-var AutowiredAnnotation = Class.extend(Annotation, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class           = bugpack.require('Class');
+    var Annotation      = bugpack.require('bugmeta.Annotation');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
+     * @class
+     * @extends {Annotation}
      */
-    _constructor: function() {
+    var AutowiredAnnotation = Class.extend(Annotation, {
 
-        this._super(AutowiredAnnotation.TYPE);
+        _name: "bugioc.AutowiredAnnotation",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Array.<PropertyAnnotation>}
+         * @constructs
          */
-        this.autowiredPropertyArray = [];
-    },
+        _constructor: function() {
+
+            this._super(AutowiredAnnotation.TYPE);
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {Array.<PropertyAnnotation>}
+             */
+            this.autowiredPropertyArray = [];
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {Array.<PropertyAnnotation>}
+         */
+        getAutowiredProperties: function() {
+            return this.autowiredPropertyArray;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {Array.<PropertyAnnotation>} autowiredPropertyArray
+         * @return {AutowiredAnnotation}
+         */
+        properties: function(autowiredPropertyArray) {
+            this.autowiredPropertyArray = autowiredPropertyArray;
+            return this;
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Static Properties
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {Array.<PropertyAnnotation>}
+     * @static
+     * @const {string}
      */
-    getAutowiredProperties: function() {
-        return this.autowiredPropertyArray;
-    },
+    AutowiredAnnotation.TYPE = "Autowired";
 
 
     //-------------------------------------------------------------------------------
-    // Public Methods
+    // Static Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Array.<PropertyAnnotation>} autowiredPropertyArray
+     * @static
      * @return {AutowiredAnnotation}
      */
-    properties: function(autowiredPropertyArray) {
-        this.autowiredPropertyArray = autowiredPropertyArray;
-        return this;
-    }
+    AutowiredAnnotation.autowired = function() {
+        return new AutowiredAnnotation();
+    };
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugioc.AutowiredAnnotation', AutowiredAnnotation);
 });
-
-
-//-------------------------------------------------------------------------------
-// Static Properties
-//-------------------------------------------------------------------------------
-
-/**
- * @static
- * @const {string}
- */
-AutowiredAnnotation.TYPE = "Autowired";
-
-
-//-------------------------------------------------------------------------------
-// Static Methods
-//-------------------------------------------------------------------------------
-
-/**
- * @static
- * @return {AutowiredAnnotation}
- */
-AutowiredAnnotation.autowired = function() {
-    return new AutowiredAnnotation();
-};
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugioc.AutowiredAnnotation', AutowiredAnnotation);
