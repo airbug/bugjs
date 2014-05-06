@@ -58,6 +58,32 @@ lintbug.lintTask("fixExportAndRemovePackageAnnotations", function(lintFile, call
     callback();
 });
 
+lintbug.lintTask("fixExportAndRemovePackageAnnotations", function(lintFile, callback) {
+    var fileContents = lintFile.getFileContents();
+    var packageAnnotationRegex = /\/\/(\s*)@Package\('([\w|\.]*)'\)(\s*)\n/;
+
+    var packageName = undefined;
+    fileContents = fileContents.replace(packageAnnotationRegex, function(match, p1, p2, p3, offset, string) {
+        if (!packageName) {
+            packageName = p2;
+        } else {
+            throw new Error("More than one @Package annotation in file '" + lintFile.getFilePath().getAbsolutePath() + "'");
+        }
+
+        return "";
+    });
+
+    if (packageName) {
+        var exportAnnotationRegex = /(\s*)\/\/(\s*)@Export\((['"])(\w*)(['"])\)(\s*)\n/g;
+        fileContents = fileContents.replace(exportAnnotationRegex, function(match, p1, p2, p3, p4, p5, p6, offset, string) {
+            return p1 + "//" + p2 + "@Export(" + p3 + packageName + "." + p4 + p5 + ")" + p6 + "\n";
+        });
+    }
+
+    lintFile.setFileContents(fileContents);
+    callback();
+});
+
 lintbug.lintTask("orderAnnotationsInFile", function(lintFile, callback) {
     var _this = this;
     var fileContents = "";

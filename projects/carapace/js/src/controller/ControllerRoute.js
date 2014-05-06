@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -12,137 +21,150 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var ArgUtil             = bugpack.require('ArgUtil');
-var Class               = bugpack.require('Class');
-var Event               = bugpack.require('Event');
-var EventDispatcher     = bugpack.require('EventDispatcher');
-var RoutingRequest      = bugpack.require('carapace.RoutingRequest');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var ControllerRoute = Class.extend(EventDispatcher, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function(route, controller) {
+    var ArgUtil             = bugpack.require('ArgUtil');
+    var Class               = bugpack.require('Class');
+    var Event               = bugpack.require('Event');
+    var EventDispatcher     = bugpack.require('EventDispatcher');
+    var RoutingRequest      = bugpack.require('carapace.RoutingRequest');
 
-        this._super();
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {EventDispatcher}
+     */
+    var ControllerRoute = Class.extend(EventDispatcher, {
+
+        _name: "carapace.ControllerRoute",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {CarapaceController}
+         * @constructs
+         * @param {string} route
+         * @param {CarapaceController} controller
          */
-        this.controller = controller;
+        _constructor: function(route, controller) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {CarapaceController}
+             */
+            this.controller = controller;
+
+            /**
+             * @private
+             * @type {boolean}
+             */
+            this.initialized = false;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.route = route;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.routeId = "ControllerRouter" + this.getInternalId();
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {boolean}
+         * @return {CarapaceController}
          */
-        this.initialized = false;
+        getController: function() {
+            return this.controller;
+        },
 
         /**
-         * @private
-         * @type {string}
+         * @return {String}
          */
-        this.route = route;
+        getRoute: function() {
+            return this.route;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {string}
+         * @param {CarapaceRouter} router
          */
-        this.routeId = "ControllerRouter" + this.getInternalId();
-    },
+        setupRoute: function(router) {
+            if (!this.initialized) {
+                this.initialized = true;
+                var _this = this;
+                router.route(this.route, this.routeId, function() {
+                    var args = ArgUtil.toArray(arguments);
+                    _this.requestRouting(args);
+                });
+            }
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // Protected Methods
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @return {CarapaceController}
-     */
-    getController: function() {
-        return this.controller;
-    },
-
-    /**
-     * @return {String}
-     */
-    getRoute: function() {
-        return this.route;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Public Class Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {CarapaceRouter} router
-     */
-    setupRoute: function(router) {
-        if (!this.initialized) {
-            this.initialized = true;
-            var _this = this;
-            router.route(this.route, this.routeId, function() {
-                var args = ArgUtil.toArray(arguments);
-                _this.requestRouting(args);
-            });
+        /**
+         * @protected
+         * @param {Array.<*>} routingArgs
+         */
+        requestRouting: function(routingArgs) {
+            var routingRequest = new RoutingRequest(this, routingArgs);
+            this.dispatchEvent(new Event(ControllerRoute.EventType.ROUTING_REQUESTED, {
+                routingRequest: routingRequest
+            }));
         }
-    },
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Protected Class Methods
+    // Static Properties
     //-------------------------------------------------------------------------------
 
     /**
-     * @protected
-     * @param {Array.<*>} routingArgs
+     * @static
+     * @enum {string}
      */
-    requestRouting: function(routingArgs) {
-        var routingRequest = new RoutingRequest(this, routingArgs);
-        this.dispatchEvent(new Event(ControllerRoute.EventType.ROUTING_REQUESTED, {
-            routingRequest: routingRequest
-        }));
-    }
+    ControllerRoute.EventType = {
+        ROUTING_REQUESTED: "ControllerRoute:RoutingRequested"
+    };
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('carapace.ControllerRoute', ControllerRoute);
 });
-
-
-//-------------------------------------------------------------------------------
-// Static Variables
-//-------------------------------------------------------------------------------
-
-/**
- * @enum {string}
- */
-ControllerRoute.EventType = {
-    ROUTING_REQUESTED: "ControllerRoute:RoutingRequested"
-};
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('carapace.ControllerRoute', ControllerRoute);

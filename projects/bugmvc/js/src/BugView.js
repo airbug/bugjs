@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -89,7 +99,7 @@ require('bugpack').context("*", function(bugpack) {
             //-------------------------------------------------------------------------------
 
             /**
-             * @type {$}
+             * @type {jQuery}
              */
             this.$el                = null;
 
@@ -266,7 +276,7 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @param {string} selector
-         * @returns {$}
+         * @returns {jQuery}
          */
         $: function(selector) {
             return this.$el.find(selector);
@@ -359,6 +369,20 @@ require('bugpack').context("*", function(bugpack) {
         //
         //        targetEl.eq(index).before(viewChild.el);
         //    },
+
+        /**
+         *
+         */
+        forceReflow: function() {
+            var $el = this.$el;
+            if ($el.size() > 0) {
+                var element = $el[0];
+                var previousDisplay = element.style.display;
+                element.style.display = "none";
+                element.offsetHeight; // no need to store this anywhere, the reference is enough
+                element.style.display = previousDisplay;
+            }
+        },
 
         /**
          * @param {BugView} viewChild
@@ -571,7 +595,7 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @abstract
-         * @return {$}
+         * @return {jQuery}
          */
         make: function() {
             //Override this yourself
@@ -616,8 +640,17 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
+         * @param {(string | Object)} propertyName
+         * @param {(string | number | function())=} value
+         * @return {*}
+         */
+        css: function(propertyName, value) {
+            return this.$el.css(propertyName, value);
+        },
+
+        /**
          * @param {string} domQuery
-         * @return {$}
+         * @return {jQuery}
          */
         findElement: function(domQuery) {
             domQuery = domQuery.replace("{{cid}}", this.getCid());

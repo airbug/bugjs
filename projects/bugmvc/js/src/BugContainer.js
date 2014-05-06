@@ -438,8 +438,22 @@ require('bugpack').context("*", function(bugpack) {
         },
 
 
+        // Helper Methods
         //-------------------------------------------------------------------------------
-        // Protected Class Methods
+
+        /**
+         *
+         */
+        forceReflow: function() {
+            var viewTop = this.getViewTop();
+            if (viewTop) {
+                viewTop.forceReflow();
+            }
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Protected Methods
         //-------------------------------------------------------------------------------
 
         // Container Methods
