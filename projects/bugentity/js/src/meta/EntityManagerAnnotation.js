@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -9,100 +19,112 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var ModuleAnnotation    = bugpack.require('bugioc.ModuleAnnotation');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var EntityManagerAnnotation = Class.extend(ModuleAnnotation, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function(moduleName) {
+    var Class               = bugpack.require('Class');
+    var ModuleAnnotation    = bugpack.require('bugioc.ModuleAnnotation');
 
-        this._super(moduleName, EntityManagerAnnotation.TYPE);
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {ModuleAnnotation}
+     */
+    var EntityManagerAnnotation = Class.extend(ModuleAnnotation, {
+
+        _name: "bugentity.EntityManagerAnnotation",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {string}
+         * @constructs
+         * @param {string} moduleName
          */
-        this.entityType     = "";
-    },
+        _constructor: function(moduleName) {
+
+            this._super(moduleName, EntityManagerAnnotation.TYPE);
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.entityType     = "";
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {string}
+         */
+        getEntityType: function() {
+            return this.entityType;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {string} entityType
+         * @return {EntityManagerAnnotation}
+         */
+        ofType: function(entityType) {
+            this.entityType = entityType;
+            return this;
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Static Properties
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {string}
+     * @static
+     * @const {string}
      */
-    getEntityType: function() {
-        return this.entityType;
-    },
+    EntityManagerAnnotation.TYPE = "EntityManager";
 
 
     //-------------------------------------------------------------------------------
-    // Public Methods
+    // Static Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {string} entityType
+     * @static
+     * @param {string} moduleName
      * @return {EntityManagerAnnotation}
      */
-    ofType: function(entityType) {
-        this.entityType = entityType;
-        return this;
-    }
+    EntityManagerAnnotation.entityManager = function(moduleName) {
+        return new EntityManagerAnnotation(moduleName);
+    };
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugentity.EntityManagerAnnotation', EntityManagerAnnotation);
 });
-
-
-//-------------------------------------------------------------------------------
-// Static Properties
-//-------------------------------------------------------------------------------
-
-/**
- * @static
- * @const {string}
- */
-EntityManagerAnnotation.TYPE = "EntityManager";
-
-
-//-------------------------------------------------------------------------------
-// Static Methods
-//-------------------------------------------------------------------------------
-
-/**
- * @param {string} moduleName
- * @return {EntityManagerAnnotation}
- */
-EntityManagerAnnotation.entityManager = function(moduleName) {
-    return new EntityManagerAnnotation(moduleName);
-};
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugentity.EntityManagerAnnotation', EntityManagerAnnotation);
