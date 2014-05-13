@@ -85,6 +85,12 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
+             * @type {Object}
+             */
+            this.viewConfig             = null;
+
+            /**
+             * @private
              * @type {function(new:CarapaceView)}
              */
             this.viewConstructor        = viewConstructor;
@@ -159,6 +165,15 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
+         * @param {Object} viewConfig
+         * @returns {ViewBuilder}
+         */
+        config: function(viewConfig) {
+            this.viewConfig = viewConfig;
+            return this;
+        },
+
+        /**
          * @param {string} viewId
          * @return {ViewBuilder}
          */
@@ -197,6 +212,9 @@ require('bugpack').context("*", function(bugpack) {
             var viewOptions = {};
             if (this.viewAttributes) {
                 viewOptions.attributes = this.viewAttributes;
+            }
+            if (this.viewConfig) {
+                viewOptions.config = this.viewConfig;
             }
             if (this.viewId) {
                 viewOptions.id = this.viewId;

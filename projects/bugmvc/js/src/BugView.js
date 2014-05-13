@@ -122,6 +122,12 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
+             * @type {Object}
+             */
+            this.config             = this.config ? Obj.clone(this.config, true) : {};
+
+            /**
+             * @private
              * @type {boolean}
              */
             this.created            = false;
@@ -446,6 +452,10 @@ require('bugpack').context("*", function(bugpack) {
             if (options.attributes) {
                 Obj.merge(options.attributes, this.attributes);
                 delete options.attributes;
+            }
+            if (options.config) {
+                Obj.merge(options.config, this.config);
+                delete options.config;
             }
             this.name   = options.name;
 
