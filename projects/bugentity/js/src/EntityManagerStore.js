@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -13,108 +23,118 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                     = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// Bugpack Modules
-//-------------------------------------------------------------------------------
-
-var Class                       = bugpack.require('Class');
-var Obj                         = bugpack.require('Obj');
-var Map                         = bugpack.require('Map');
-var ModuleAnnotation            = bugpack.require('bugioc.ModuleAnnotation');
-var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var bugmeta                     = BugMeta.context();
-var module                      = ModuleAnnotation.module;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var EntityManagerStore = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Bugpack Modules
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    var Class                       = bugpack.require('Class');
+    var Obj                         = bugpack.require('Obj');
+    var Map                         = bugpack.require('Map');
+    var ModuleAnnotation            = bugpack.require('bugioc.ModuleAnnotation');
+    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
-        this._super();
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var bugmeta                     = BugMeta.context();
+    var module                      = ModuleAnnotation.module;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {Obj}
+     */
+    var EntityManagerStore = Class.extend(Obj, {
+
+        _name: "bugentity.EntityManagerStore",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Map.<string, EntityManager>}
+         * @constructs
          */
-        this.entityTypeToEntityManagerMap   = new Map();
-    },
+        _constructor: function() {
+
+            this._super();
 
 
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
 
-    /**
-     * @param {EntityManager} entityManager
-     */
-    deregisterEntityManager: function(entityManager) {
-        this.entityTypeToEntityManagerMap.remove(entityManager.getEntityType());
-    },
+            /**
+             * @private
+             * @type {Map.<string, EntityManager>}
+             */
+            this.entityTypeToEntityManagerMap   = new Map();
+        },
 
-    /**
-     * @param {string} entityType
-     * @return {EntityManager}
-     */
-    getEntityManagerByEntityType: function(entityType) {
-        return this.entityTypeToEntityManagerMap.get(entityType);
-    },
 
-    /**
-     * @param {string} entityType
-     * @return {boolean}
-     */
-    hasEntityManagerForEntityType: function(entityType) {
-        return this.entityTypeToEntityManagerMap.containsKey(entityType);
-    },
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @param {EntityManager} entityManager
-     */
-    registerEntityManager: function(entityManager) {
-        if (this.hasEntityManagerForEntityType(entityManager.getEntityType())) {
-            throw new Error("EntityManager already registered for entityType - entityType:", entityManager.getEntityType());
+        /**
+         * @param {EntityManager} entityManager
+         */
+        deregisterEntityManager: function(entityManager) {
+            this.entityTypeToEntityManagerMap.remove(entityManager.getEntityType());
+        },
+
+        /**
+         * @param {string} entityType
+         * @return {EntityManager}
+         */
+        getEntityManagerByEntityType: function(entityType) {
+            return this.entityTypeToEntityManagerMap.get(entityType);
+        },
+
+        /**
+         * @param {string} entityType
+         * @return {boolean}
+         */
+        hasEntityManagerForEntityType: function(entityType) {
+            return this.entityTypeToEntityManagerMap.containsKey(entityType);
+        },
+
+        /**
+         * @param {EntityManager} entityManager
+         */
+        registerEntityManager: function(entityManager) {
+            if (this.hasEntityManagerForEntityType(entityManager.getEntityType())) {
+                throw new Error("EntityManager already registered for entityType - entityType:", entityManager.getEntityType());
+            }
+            this.entityTypeToEntityManagerMap.put(entityManager.getEntityType(), entityManager);
         }
-        this.entityTypeToEntityManagerMap.put(entityManager.getEntityType(), entityManager);
-    }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // BugMeta
+    //-------------------------------------------------------------------------------
+
+    bugmeta.annotate(EntityManagerStore).with(
+        module("entityManagerStore")
+    );
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugentity.EntityManagerStore', EntityManagerStore);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(EntityManagerStore).with(
-    module("entityManagerStore")
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugentity.EntityManagerStore', EntityManagerStore);

@@ -1,106 +1,119 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('bugroute:socketio.SocketRoute')
+//@Export('bugroute.SocketRoute')
 
 //@Require('Class')
 //@Require('Obj')
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class       = bugpack.require('Class');
-var Obj         = bugpack.require('Obj');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @constructor
- * @extends {Obj}
- */
-var SocketRoute = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class       = bugpack.require('Class');
+    var Obj         = bugpack.require('Obj');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {string} messageType
-     * @param {function(SocketIoConnection, Object, function(Throwable))} listener
+     * @class
+     * @extends {Obj}
      */
-    _constructor: function(messageType, listener) {
+    var SocketRoute = Class.extend(Obj, {
 
-        this._super();
+        _name: "bugroute.SocketRoute",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {function(SocketIoConnection, Object, function(Throwable))}
+         * @constructs
+         * @param {string} messageType
+         * @param {function(SocketIoConnection, Object, function(Throwable))} listener
          */
-        this.listener       = listener;
+        _constructor: function(messageType, listener) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {function(SocketIoConnection, Object, function(Throwable))}
+             */
+            this.listener       = listener;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.messageType    = messageType;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {string}
+         * @return {function(...)}
          */
-        this.messageType    = messageType;
-    },
+        getListener: function() {
+            return this.listener;
+        },
+
+        /**
+         * @return {string}
+         */
+        getMessageType: function() {
+            return this.messageType;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {SocketIoConnection} socket
+         * @param {Object} message
+         * @param {function(Throwable)} callback
+         */
+        route: function(socket, message, callback) {
+            this.listener.call(null, socket, message, callback);
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {function(...)}
-     */
-    getListener: function() {
-        return this.listener;
-    },
-
-    /**
-     * @return {string}
-     */
-    getMessageType: function() {
-        return this.messageType;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {SocketIoConnection} socket
-     * @param {Object} message
-     * @param {function(Throwable)} callback
-     */
-    route: function(socket, message, callback) {
-        this.listener.call(null, socket, message, callback);
-    }
+    bugpack.export('bugroute.SocketRoute', SocketRoute);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugroute:socketio.SocketRoute', SocketRoute);

@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -14,67 +24,70 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                         = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                           = bugpack.require('Class');
-var DeltaBuilder                    = bugpack.require('bugdelta.DeltaBuilder');
-var Entity                          = bugpack.require('bugentity.Entity');
-var EntityCalculator                = bugpack.require('bugentity.EntityCalculator');
-var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
-var BugMeta                         = bugpack.require('bugmeta.BugMeta');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var bugmeta                     = BugMeta.context();
-var module                      = ModuleAnnotation.module;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {DeltaBuilder}
- */
-var EntityDeltaBuilder = Class.extend(DeltaBuilder, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Private Methods
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class                           = bugpack.require('Class');
+    var DeltaBuilder                    = bugpack.require('bugdelta.DeltaBuilder');
+    var Entity                          = bugpack.require('bugentity.Entity');
+    var EntityCalculator                = bugpack.require('bugentity.EntityCalculator');
+    var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
+    var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var bugmeta                     = BugMeta.context();
+    var module                      = ModuleAnnotation.module;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @private
+     * @class
+     * @extends {DeltaBuilder}
      */
-    initialize: function() {
-        this._super();
-        this.getCalculatorResolver().registerCalculatorForClass(Entity.getClass(), new EntityCalculator(this));
-    }
+    var EntityDeltaBuilder = Class.extend(DeltaBuilder, {
+
+        _name: "bugentity.EntityDeltaBuilder",
+
+
+        //-------------------------------------------------------------------------------
+        // Private Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         */
+        initialize: function() {
+            this._super();
+            this.getCalculatorResolver().registerCalculatorForClass(Entity.getClass(), new EntityCalculator(this));
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // BugMeta
+    //-------------------------------------------------------------------------------
+
+    bugmeta.annotate(EntityDeltaBuilder).with(
+        module("entityDeltaBuilder")
+    );
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugentity.EntityDeltaBuilder', EntityDeltaBuilder);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(EntityDeltaBuilder).with(
-    module("entityDeltaBuilder")
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugentity.EntityDeltaBuilder', EntityDeltaBuilder);

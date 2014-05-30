@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -9,180 +19,191 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class       = bugpack.require('Class');
-var Annotation  = bugpack.require('bugmeta.Annotation');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var EntityAnnotation = Class.extend(Annotation, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function(entityName) {
+    var Class       = bugpack.require('Class');
+    var Annotation  = bugpack.require('bugmeta.Annotation');
 
-        this._super(EntityAnnotation.TYPE);
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @type {function(new:Constructor)}
+     */
+    var EntityAnnotation = Class.extend(Annotation, {
+
+        _name: "ugentity.EntityAnnotation",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {boolean}
+         * @constructs
+         * @param {string} entityName
          */
-        this.entityEmbedded         = false;
+        _constructor: function(entityName) {
+
+            this._super(EntityAnnotation.TYPE);
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {boolean}
+             */
+            this.entityEmbedded         = false;
+
+            /**
+             * @private
+             * @type {Array.<IndexAnnotation>}
+             */
+            this.entityIndexArray       = [];
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.entityName             = entityName;
+
+            /**
+             * @private
+             * @type {Array.<PropertyAnnotation>}
+             */
+            this.entityPropertyArray    = [];
+
+            /**
+             * @private
+             * @type {boolean}
+             */
+            this.entityStored           = true;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Array.<IndexAnnotation>}
+         * @return {boolean}
          */
-        this.entityIndexArray       = [];
+        getEntityEmbedded: function() {
+            return this.entityEmbedded;
+        },
 
         /**
-         * @private
-         * @type {string}
+         * @return {Array.<IndexAnnotation>}
          */
-        this.entityName             = entityName;
+        getEntityIndexes: function() {
+            return this.entityIndexArray;
+        },
 
         /**
-         * @private
-         * @type {Array.<PropertyAnnotation>}
+         * @return {string}
          */
-        this.entityPropertyArray    = [];
+        getEntityName: function() {
+            return this.entityName;
+        },
 
         /**
-         * @private
-         * @type {boolean}
+         * @return {Array.<PropertyAnnotation>}
          */
-        this.entityStored           = true;
-    },
+        getEntityProperties: function() {
+            return this.entityPropertyArray;
+        },
+
+        /**
+         * @return {boolean}
+         */
+        getEntityStored: function() {
+            return this.entityStored;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {boolean} embedded
+         * @return {EntityAnnotation}
+         */
+        embed: function(embedded) {
+            this.entityEmbedded = embedded;
+            return this;
+        },
+
+        /**
+         * @param {Array.<IndexAnnotation>} indexArray
+         * @return {EntityAnnotation}
+         */
+        indexes: function(indexArray) {
+            this.entityIndexArray = indexArray;
+            return this;
+        },
+
+        /**
+         * @param {Array.<PropertyAnnotation>} propertyArray
+         * @return {EntityAnnotation}
+         */
+        properties: function(propertyArray) {
+            this.entityPropertyArray = propertyArray;
+            return this;
+        },
+
+        /**
+         * @param {boolean} stored
+         * @return {EntityAnnotation}
+         */
+        store: function(stored) {
+            this.entityStored = stored;
+            return this;
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Static Properties
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {boolean}
+     * @static
+     * @const {string}
      */
-    getEntityEmbedded: function() {
-        return this.entityEmbedded;
-    },
-
-    /**
-     * @return {Array.<IndexAnnotation>}
-     */
-    getEntityIndexes: function() {
-        return this.entityIndexArray;
-    },
-
-    /**
-     * @return {string}
-     */
-    getEntityName: function() {
-        return this.entityName;
-    },
-
-    /**
-     * @return {Array.<PropertyAnnotation>}
-     */
-    getEntityProperties: function() {
-        return this.entityPropertyArray;
-    },
-
-    /**
-     * @return {boolean}
-     */
-    getEntityStored: function() {
-        return this.entityStored;
-    },
+    EntityAnnotation.TYPE   = "Entity";
 
 
     //-------------------------------------------------------------------------------
-    // Public Methods
+    // Static Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {boolean} embedded
+     * @static
+     * @param {string} entityName
      * @return {EntityAnnotation}
      */
-    embed: function(embedded) {
-        this.entityEmbedded = embedded;
-        return this;
-    },
+    EntityAnnotation.entity = function(entityName) {
+        return new EntityAnnotation(entityName);
+    };
 
-    /**
-     * @param {Array.<IndexAnnotation>} indexArray
-     * @return {EntityAnnotation}
-     */
-    indexes: function(indexArray) {
-        this.entityIndexArray = indexArray;
-        return this;
-    },
 
-    /**
-     * @param {Array.<PropertyAnnotation>} propertyArray
-     * @return {EntityAnnotation}
-     */
-    properties: function(propertyArray) {
-        this.entityPropertyArray = propertyArray;
-        return this;
-    },
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
 
-    /**
-     * @param {boolean} stored
-     * @return {EntityAnnotation}
-     */
-    store: function(stored) {
-        this.entityStored = stored;
-        return this;
-    }
+    bugpack.export('bugentity.EntityAnnotation', EntityAnnotation);
 });
-
-
-//-------------------------------------------------------------------------------
-// Static Properties
-//-------------------------------------------------------------------------------
-
-/**
- * @static
- * @const {string}
- */
-EntityAnnotation.TYPE   = "Entity";
-
-
-//-------------------------------------------------------------------------------
-// Static Methods
-//-------------------------------------------------------------------------------
-
-/**
- * @static
- * @param {string} entityName
- * @return {EntityAnnotation}
- */
-EntityAnnotation.entity = function(entityName) {
-    return new EntityAnnotation(entityName);
-};
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugentity.EntityAnnotation', EntityAnnotation);

@@ -1,8 +1,19 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
 
 //@Export('handshaker.Handshaker')
+//@Autoload
 
 //@Require('ArgUtil')
 //@Require('Class')
@@ -12,157 +23,181 @@
 //@Require('Set')
 //@Require('TypeUtil')
 //@Require('bugflow.BugFlow')
+//@Require('bugioc.ModuleAnnotation')
+//@Require('bugmeta.BugMeta')
 //@Require('handshaker.IHand')
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack Modules
-//-------------------------------------------------------------------------------
-
-var ArgUtil             = bugpack.require('ArgUtil');
-var Class               = bugpack.require('Class');
-var Collection          = bugpack.require('Collection');
-var List                = bugpack.require('List');
-var Obj                 = bugpack.require('Obj');
-var Set                 = bugpack.require('Set');
-var TypeUtil            = bugpack.require('TypeUtil');
-var BugFlow             = bugpack.require('bugflow.BugFlow');
-var IHand               = bugpack.require('handshaker.IHand');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var $iterableSeries    = BugFlow.$iterableSeries;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var Handshaker = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack Modules
+    //-------------------------------------------------------------------------------
+
+    var ArgUtil             = bugpack.require('ArgUtil');
+    var Class               = bugpack.require('Class');
+    var Collection          = bugpack.require('Collection');
+    var List                = bugpack.require('List');
+    var Obj                 = bugpack.require('Obj');
+    var Set                 = bugpack.require('Set');
+    var TypeUtil            = bugpack.require('TypeUtil');
+    var BugFlow             = bugpack.require('bugflow.BugFlow');
+    var ModuleAnnotation    = bugpack.require('bugioc.ModuleAnnotation');
+    var BugMeta             = bugpack.require('bugmeta.BugMeta');
+    var IHand               = bugpack.require('handshaker.IHand');
+
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var bugmeta            = BugMeta.context();
+    var module             = ModuleAnnotation.module;
+    var $iterableSeries    = BugFlow.$iterableSeries;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Array.<IHand>} hands
+     * @class
+     * @extends {Obj}
      */
-    _constructor: function(hands) {
+    var Handshaker = Class.extend(Obj, {
 
-        this._super();
+        _name: "handshaker.Handshaker",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Set.<IHand>}
+         * @constructs
+         * @param {Array.<IHand>} hands
          */
-        this.hands = new Set();
+        _constructor: function(hands) {
 
-        if (hands) {
-            this.addHands(hands);
-        }
-    },
+            this._super();
 
 
-    //-------------------------------------------------------------------------------
-    // Public Instance Methods
-    //-------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
 
-    /**
-     * @param {IHand} hand
-     */
-    addHand: function(hand) {
-        if (Class.doesImplement(hand, IHand)) {
-            this.hands.add(hand);
-        } else {
-            throw new Error("parameter 'hand' must implement IHand interface");
-        }
-    },
+            /**
+             * @private
+             * @type {Set.<IHand>}
+             */
+            this.hands = new Set();
 
-    /**
-     * @param {(Array.<IHand> | Collection.<IHand> | ...IHand)} hands
-     */
-    addHands: function(hands) {
-        var _this = this;
-        if (!Class.doesExtend(hands, Collection) && !TypeUtil.isArray(hands)) {
-            var args = ArgUtil.toArray(arguments);
-            hands = this.hands.addAll(args);
-        }
-        hands.forEach(function(hand) {
-            _this.addHand(hand);
-        });
-    },
-
-    /**
-     * @returns {number}
-     */
-    getHandCount: function() {
-        return this.hands.getCount();
-    },
-
-    /**
-     * @param {IHand} hand
-     * @return {boolean}
-     */
-    hasHand: function(hand) {
-        return this.hands.contains(hand);
-    },
-
-    /**
-     * @param {IHand} hand
-     */
-    removeHand: function(hand) {
-        this.hands.remove(hand);
-    },
-
-    /**
-     * @param {
-     *    headers: req.headers       // <Object> the headers of the request
-     *  , time: (new Date) +''       // <String> date time of the connection
-     *  , address: socket.address()  // <Object> remoteAddress and remotePort object
-     *  , xdomain: !!headers.origin  // <Boolean> was it a cross domain request?
-     *  , secure: socket.secure      // <Boolean> https connection
-     *  , issued: +date              // <Number> EPOCH of when the handshake was created
-     *  , url: request.url           // <String> the entrance path of the request
-     *  , query: data.query          // <Object> the result of url.parse().query or a empty object
-     * } handshakeData
-     * @param {function(Throwable, boolean)} callback
-     */
-    shake: function(handshakeData, callback) {
-        var authorizations = new List();
-        $iterableSeries(this.hands, function(flow, hand) {
-            hand.shakeIt(handshakeData, function(throwable, authorized) {
-                if (!throwable) {
-                    authorizations.add(authorized);
-                }
-                flow.complete(throwable);
-            });
-        }).execute(function(throwable) {
-            if (!throwable) {
-                callback(undefined, !authorizations.contains(false));
-            } else {
-                callback(throwable, false);
+            if (hands) {
+                this.addHands(hands);
             }
-        });
-    }
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {IHand} hand
+         */
+        addHand: function(hand) {
+            if (Class.doesImplement(hand, IHand)) {
+                this.hands.add(hand);
+            } else {
+                throw new Error("parameter 'hand' must implement IHand interface");
+            }
+        },
+
+        /**
+         * @param {(Array.<IHand> | Collection.<IHand> | ...IHand)} hands
+         */
+        addHands: function(hands) {
+            var _this = this;
+            if (!Class.doesExtend(hands, Collection) && !TypeUtil.isArray(hands)) {
+                var args = ArgUtil.toArray(arguments);
+                hands = this.hands.addAll(args);
+            }
+            hands.forEach(function(hand) {
+                _this.addHand(hand);
+            });
+        },
+
+        /**
+         * @returns {number}
+         */
+        getHandCount: function() {
+            return this.hands.getCount();
+        },
+
+        /**
+         * @param {IHand} hand
+         * @return {boolean}
+         */
+        hasHand: function(hand) {
+            return this.hands.contains(hand);
+        },
+
+        /**
+         * @param {IHand} hand
+         */
+        removeHand: function(hand) {
+            this.hands.remove(hand);
+        },
+
+        /**
+         * @param {
+         *    headers: req.headers       // <Object> the headers of the request
+         *  , time: (new Date) +''       // <String> date time of the connection
+         *  , address: socket.address()  // <Object> remoteAddress and remotePort object
+         *  , xdomain: !!headers.origin  // <Boolean> was it a cross domain request?
+         *  , secure: socket.secure      // <Boolean> https connection
+         *  , issued: +date              // <Number> EPOCH of when the handshake was created
+         *  , url: request.url           // <String> the entrance path of the request
+         *  , query: data.query          // <Object> the result of url.parse().query or a empty object
+         * } handshakeData
+         * @param {function(Throwable, boolean)} callback
+         */
+        shake: function(handshakeData, callback) {
+            var authorizations = new List();
+            $iterableSeries(this.hands, function(flow, hand) {
+                hand.shakeIt(handshakeData, function(throwable, authorized) {
+                    if (!throwable) {
+                        authorizations.add(authorized);
+                    }
+                    flow.complete(throwable);
+                });
+            }).execute(function(throwable) {
+                if (!throwable) {
+                    callback(undefined, !authorizations.contains(false));
+                } else {
+                    callback(throwable, false);
+                }
+            });
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // BugMeta
+    //-------------------------------------------------------------------------------
+
+    bugmeta.annotate(Handshaker).with(
+        module("handshaker")
+    );
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('handshaker.Handshaker', Handshaker);
 });
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('handshaker.Handshaker', Handshaker);

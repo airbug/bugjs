@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -6,61 +16,61 @@
 
 //@Require('bugdouble.BugDouble')
 //@Require('bugmeta.BugMeta')
-//@Require('bugroute:bugcall.BugCallRouter')
+//@Require('bugroute.BugCallRouter')
 //@Require('bugunit.TestAnnotation')
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var BugDouble           = bugpack.require('bugdouble.BugDouble');
-var BugMeta             = bugpack.require('bugmeta.BugMeta');
-var BugCallRouter       = bugpack.require('bugroute:bugcall.BugCallRouter');
-var TestAnnotation      = bugpack.require('bugunit.TestAnnotation');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var bugmeta             = BugMeta.context();
-var spyOnFunction       = BugDouble.spyOnFunction;
-var test                = TestAnnotation.test;
-
-
-//-------------------------------------------------------------------------------
-// Declare Tests
-//-------------------------------------------------------------------------------
-
-var bugCallRouterInstantiationTest = {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Setup Test
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    setup: function() {
-        this.testBugCallRouter   = new BugCallRouter();
-    },
+    var BugDouble           = bugpack.require('bugdouble.BugDouble');
+    var BugMeta             = bugpack.require('bugmeta.BugMeta');
+    var BugCallRouter       = bugpack.require('bugroute.BugCallRouter');
+    var TestAnnotation      = bugpack.require('bugunit.TestAnnotation');
 
 
     //-------------------------------------------------------------------------------
-    // Run Test
+    // Simplify References
     //-------------------------------------------------------------------------------
 
-    test: function(test) {
-        test.assertTrue(this.testBugCallRouter.getRouteMap().isEmpty(),
-            "Assert routeMap is empty");
+    var bugmeta             = BugMeta.context();
+    var spyOnFunction       = BugDouble.spyOnFunction;
+    var test                = TestAnnotation.test;
 
-    }
-};
-bugmeta.annotate(bugCallRouterInstantiationTest).with(
-    test().name("BugCallRouter - instantiation Test")
-);
+
+    //-------------------------------------------------------------------------------
+    // Declare Tests
+    //-------------------------------------------------------------------------------
+
+    var bugCallRouterInstantiationTest = {
+
+        //-------------------------------------------------------------------------------
+        // Setup Test
+        //-------------------------------------------------------------------------------
+
+        setup: function() {
+            this.testBugCallRouter   = new BugCallRouter();
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Run Test
+        //-------------------------------------------------------------------------------
+
+        test: function(test) {
+            test.assertTrue(this.testBugCallRouter.getRouteMap().isEmpty(),
+                "Assert routeMap is empty");
+
+        }
+    };
+    bugmeta.annotate(bugCallRouterInstantiationTest).with(
+        test().name("BugCallRouter - instantiation Test")
+    );
+});

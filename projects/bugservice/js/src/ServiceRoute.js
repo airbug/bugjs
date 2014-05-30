@@ -8,7 +8,7 @@
 //@Require('Class')
 //@Require('Exception')
 //@Require('Obj')
-//@Require('bugroute:bugcall.ICallRoute')
+//@Require('bugroute.ICallRoute')
 //@Require('bugservice.ServiceContext')
 
 
@@ -27,7 +27,7 @@ var ArgUtil         = bugpack.require('ArgUtil');
 var Class           = bugpack.require('Class');
 var Exception       = bugpack.require('Exception');
 var Obj             = bugpack.require('Obj');
-var ICallRoute      = bugpack.require('bugroute:bugcall.ICallRoute');
+var ICallRoute      = bugpack.require('bugroute.ICallRoute');
 var ServiceContext  = bugpack.require('bugservice.ServiceContext');
 
 
@@ -154,7 +154,7 @@ var ServiceRoute = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // Private Instance Methods
+    // Private Methods
     //-------------------------------------------------------------------------------
 
     /**

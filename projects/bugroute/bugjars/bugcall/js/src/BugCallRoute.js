@@ -1,116 +1,129 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('bugroute:bugcall.BugCallRoute')
+//@Export('bugroute.BugCallRoute')
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('bugroute:bugcall.ICallRoute')
+//@Require('bugroute.ICallRoute')
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class       = bugpack.require('Class');
-var Obj         = bugpack.require('Obj');
-var ICallRoute  = bugpack.require('bugroute:bugcall.ICallRoute');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @constructor
- * @extends {Obj}
- * @implements {ICallRoute}
- */
-var BugCallRoute = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class       = bugpack.require('Class');
+    var Obj         = bugpack.require('Obj');
+    var ICallRoute  = bugpack.require('bugroute.ICallRoute');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {string} requestType
-     * @param {function(CallRequest, CallResponder, function(Throwable))} listener
+     * @class
+     * @extends {Obj}
+     * @implements {ICallRoute}
      */
-    _constructor: function(requestType, listener) {
+    var BugCallRoute = Class.extend(Obj, {
 
-        this._super();
+        _name: "bugroute.BugCallRoute",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {function(CallRequest, CallResponder, function(Throwable))} listener
+         * @constructs
+         * @param {string} requestType
+         * @param {function(CallRequest, CallResponder, function(Throwable))} listener
          */
-        this.listener       = listener;
+        _constructor: function(requestType, listener) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {function(CallRequest, CallResponder, function(Throwable))} listener
+             */
+            this.listener       = listener;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.requestType    = requestType;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {string}
+         * @returns {function(CallRequest, CallResponder, function(Throwable))}
          */
-        this.requestType    = requestType;
-    },
+        getListener: function() {
+            return this.listener;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // ICallRoute Implementation
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {string}
+         */
+        getRequestType: function() {
+            return this.requestType;
+        },
+
+        /**
+         * @param {CallRequest} request
+         * @param {CallResponder} responder
+         * @param {function(Throwable)} callback
+         */
+        route: function(request, responder, callback) {
+            this.listener.call(null, request, responder, callback);
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Interfaces
     //-------------------------------------------------------------------------------
 
-    /**
-     * @returns {function(CallRequest, CallResponder, function(Throwable))}
-     */
-    getListener: function() {
-        return this.listener;
-    },
+    Class.implement(BugCallRoute, ICallRoute);
 
 
     //-------------------------------------------------------------------------------
-    // ICallRoute Implementation
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {string}
-     */
-    getRequestType: function() {
-        return this.requestType;
-    },
-
-    /**
-     * @param {CallRequest} request
-     * @param {CallResponder} responder
-     * @param {function(Throwable)} callback
-     */
-    route: function(request, responder, callback) {
-        this.listener.call(null, request, responder, callback);
-    }
+    bugpack.export('bugroute.BugCallRoute', BugCallRoute);
 });
-
-
-//-------------------------------------------------------------------------------
-// Interfaces
-//-------------------------------------------------------------------------------
-
-Class.implement(BugCallRoute, ICallRoute);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugroute:bugcall.BugCallRoute', BugCallRoute);

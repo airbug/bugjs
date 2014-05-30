@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -10,106 +20,126 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-var express = require('express');
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class   = bugpack.require('Class');
-var Obj     = bugpack.require('Obj');
-var Proxy   = bugpack.require('Proxy');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var ExpressApp = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Common Modules
     //-------------------------------------------------------------------------------
 
-    _constructor: function(express) {
-
-        this._super();
-
-
-        //-------------------------------------------------------------------------------
-        // Private Properties
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {*}
-         */
-        this.app        = express();
-
-        /**
-         * @private
-         * @type {Express}
-         */
-        this.express    = express;
-
-        Proxy.proxy(this, this.app, [
-            "configure",
-            "delete",
-            "engine",
-            "head",
-            "get",
-            "on",
-            "post",
-            "put",
-            "set",
-            "use"
-        ]);
-    },
+    var express = require('express');
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class   = bugpack.require('Class');
+    var Obj     = bugpack.require('Obj');
+    var Proxy   = bugpack.require('Proxy');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {express}
+     * @class
+     * @extends {Obj}
      */
-    getApp: function() {
-        return this.app;
-    },
+    var ExpressApp = Class.extend(Obj, {
+
+        _name: "express.ExpressApp",
 
 
-    //-------------------------------------------------------------------------------
-    // Public Class Methods
-    //-------------------------------------------------------------------------------
-
-    initialize: function(callback) {
-        var _this = this;
-
-        // Shut Down
+        //-------------------------------------------------------------------------------
+        // Constructor
         //-------------------------------------------------------------------------------
 
-        // Graceful Shutdown
-        process.on('SIGTERM', function () {
-            console.log("Server Closing");
-            _this.app.close();
-        });
+        /**
+         * @constructs
+         * @param {*} express
+         */
+        _constructor: function(express) {
 
-        this.on('close', function () {
-            console.log("Server Closed");
-        });
-        callback();
-    }
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {*}
+             */
+            this.app        = express();
+
+            /**
+             * @private
+             * @type {Express}
+             */
+            this.express    = express;
+
+            Proxy.proxy(this, this.app, [
+                "configure",
+                "delete",
+                "engine",
+                "head",
+                "get",
+                "on",
+                "post",
+                "put",
+                "set",
+                "use"
+            ]);
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {express}
+         */
+        getApp: function() {
+            return this.app;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {function(Throwable=)} callback
+         */
+        initialize: function(callback) {
+            var _this = this;
+
+            // Shut Down
+            //-------------------------------------------------------------------------------
+
+            // Graceful Shutdown
+            process.on('SIGTERM', function () {
+                console.log("Server Closing");
+                _this.app.close();
+            });
+
+            this.on('close', function () {
+                console.log("Server Closed");
+            });
+            callback();
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('express.ExpressApp', ExpressApp);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('express.ExpressApp', ExpressApp);

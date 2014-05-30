@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -10,96 +20,114 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
-var http            = require('http');
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class           = bugpack.require('Class');
-var Obj             = bugpack.require('Obj');
-var Proxy           = bugpack.require('Proxy');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var ExpressServer = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Common Modules
     //-------------------------------------------------------------------------------
 
-    _constructor: function(http, expressApp) {
+    var http            = require('http');
 
-        this._super();
+
+    //-------------------------------------------------------------------------------
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class           = bugpack.require('Class');
+    var Obj             = bugpack.require('Obj');
+    var Proxy           = bugpack.require('Proxy');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {Obj}
+     */
+    var ExpressServer = Class.extend(Obj, {
+
+        _name: "express.ExpressServer",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {ExpressApp}
+         * @constructs
+         * @param {*} http
+         * @param {ExpressApp} expressApp
          */
-        this.expressApp     = expressApp;
+        _constructor: function(http, expressApp) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {ExpressApp}
+             */
+            this.expressApp     = expressApp;
+
+            /**
+             * @private
+             * @type {http}
+             */
+            this.http           = http;
+
+            /**
+             * @private
+             * @type {http.Server}
+             */
+            this.httpServer     = http.createServer(this.expressApp.getApp());
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {http}
+         * @return {http}
          */
-        this.http           = http;
+        getHttp: function() {
+            return this.http;
+        },
 
         /**
-         * @private
-         * @type {http.Server}
+         * @return {http.Server}
          */
-        this.httpServer     = http.createServer(this.expressApp.getApp());
-    },
+        getHttpServer: function() {
+            return this.httpServer;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param callback
+         */
+        start: function(callback) {
+            console.log("starting express server on port " + this.expressApp.get('port'));
+            this.httpServer.listen(this.expressApp.get('port'), callback);
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {http}
-     */
-    getHttp: function() {
-        return this.http;
-    },
-
-    /**
-     * @return {http.Server}
-     */
-    getHttpServer: function() {
-        return this.httpServer;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param callback
-     */
-    start: function(callback) {
-        console.log("starting express server on port " + this.expressApp.get('port'));
-        this.httpServer.listen(this.expressApp.get('port'), callback);
-    }
+    bugpack.export('express.ExpressServer', ExpressServer);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('express.ExpressServer', ExpressServer);

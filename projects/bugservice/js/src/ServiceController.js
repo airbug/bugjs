@@ -60,7 +60,7 @@ var ServiceController = Class.extend(Obj, {
 
 
     //-------------------------------------------------------------------------------
-    // Instance Methods
+    // Methods
     //-------------------------------------------------------------------------------
 
     registerServiceRoute: function(serviceRoute) {

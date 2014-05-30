@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -9,314 +19,322 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class           = bugpack.require('Class');
-var Annotation      = bugpack.require('bugmeta.Annotation');
-
-
-//-------------------------------------------------------------------------------
-// Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {Annotation}
- */
-var PropertyAnnotation = Class.extend(Annotation, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function(propertyName) {
+    var Class           = bugpack.require('Class');
+    var Annotation      = bugpack.require('bugmeta.Annotation');
 
-        this._super("Property");
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {Annotation}
+     */
+    var PropertyAnnotation = Class.extend(Annotation, {
+
+        _name: "bugentity.PropertyAnnotation",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {string}
+         * @constructs
+         * @param {string} propertyName
          */
-        this.propertyCollectionOf       = null;
+        _constructor: function(propertyName) {
+
+            this._super("Property");
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.propertyCollectionOf       = null;
+
+            /**
+             * @private
+             * @type {*}
+             */
+            this.propertyDefault            = null;
+
+            /**
+             * @private
+             * @type {boolean}
+             */
+            this.propertyId                 = false;
+
+            /**
+             * @private
+             * @type {boolean}
+             */
+            this.propertyIndexed            = false;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.propertyName               = propertyName;
+
+            /**
+             * @private
+             * @type {boolean}
+             */
+            this.propertyPopulates          = false;
+
+            /**
+             * @private
+             * @type {boolean}
+             */
+            this.propertyPrimaryId          = false;
+
+            /**
+             * @private
+             * @type {boolean}
+             */
+            this.propertyRequired           = false;
+
+            /**
+             * @private
+             * @type {boolean}
+             */
+            this.propertyStored             = true;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.propertyType               = null;
+
+            /**
+             * @private
+             * @type {boolean}
+             */
+            this.propertyUnique             = false;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {*}
+         * @return {string}
          */
-        this.propertyDefault            = null;
+        getPropertyCollectionOf: function() {
+            return this.propertyCollectionOf;
+        },
 
         /**
-         * @private
-         * @type {boolean}
+         * @return {*}
          */
-        this.propertyId                 = false;
+        getPropertyDefault: function() {
+            return this.propertyDefault;
+        },
 
         /**
-         * @private
-         * @type {boolean}
+         * @return {string}
          */
-        this.propertyIndexed            = false;
+        getPropertyName: function() {
+            return this.propertyName;
+        },
 
         /**
-         * @private
-         * @type {string}
+         * @return {boolean}
          */
-        this.propertyName               = propertyName;
+        getPropertyPopulates: function() {
+            return this.propertyPopulates;
+        },
 
         /**
-         * @private
-         * @type {boolean}
+         * @return {boolean}
          */
-        this.propertyPopulates          = false;
+        getPropertyRequired: function() {
+            return this.propertyRequired;
+        },
 
         /**
-         * @private
-         * @type {boolean}
+         * @return {string}
          */
-        this.propertyPrimaryId          = false;
+        getPropertyType: function() {
+            return this.propertyType;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Convenience Methods
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {boolean}
+         * @return {boolean}
          */
-        this.propertyRequired           = false;
+        isPropertyId: function() {
+            return this.propertyId;
+        },
 
         /**
-         * @private
-         * @type {boolean}
+         * @return {boolean}
          */
-        this.propertyStored             = true;
+        isPropertyIndexed: function() {
+            return this.propertyIndexed;
+        },
 
         /**
-         * @private
-         * @type {string}
+         * @return {boolean}
          */
-        this.propertyType               = null;
+        isPropertyPrimaryId: function() {
+            return this.propertyPrimaryId;
+        },
 
         /**
-         * @private
-         * @type {boolean}
+         * @return {boolean}
          */
-        this.propertyUnique             = false;
-    },
+        isPropertyRequired: function() {
+            return this.propertyRequired;
+        },
+
+        /**
+         * @return {boolean}
+         */
+        isPropertyStored: function() {
+            return this.propertyStored;
+        },
+
+        /**
+         * @return {boolean}
+         */
+        isPropertyUnique: function() {
+            return this.propertyUnique;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {string} propertyCollectionOf
+         * @return {PropertyAnnotation}
+         */
+        collectionOf: function(propertyCollectionOf) {
+            this.propertyCollectionOf = propertyCollectionOf;
+            return this;
+        },
+
+        /**
+         * @param {*} propertyDefault
+         * @returns {PropertyAnnotation}
+         */
+        'default': function(propertyDefault) {
+            this.propertyDefault = propertyDefault;
+            return this;
+        },
+
+        /**
+         * @return {PropertyAnnotation}
+         */
+        id: function() {
+            this.propertyId = true;
+            return this;
+        },
+
+        /**
+         * @param {boolean} index
+         * @return {PropertyAnnotation}
+         */
+        index: function(index) {
+            this.propertyIndexed = index;
+            return this;
+        },
+
+        /**
+         * @param {boolean} populates
+         * @return {PropertyAnnotation}
+         */
+        populates: function(populates) {
+            this.propertyPopulates = populates;
+            return this;
+        },
+
+        /**
+         * @return {PropertyAnnotation}
+         */
+        primaryId: function() {
+            this.propertyPrimaryId = true;
+            return this;
+        },
+
+        /**
+         * @param {boolean} required
+         * @return {PropertyAnnotation}
+         */
+        require: function(required) {
+            this.propertyRequired = required;
+            return this;
+        },
+
+        /**
+         * @param {boolean} stored
+         * @return {PropertyAnnotation}
+         */
+        store: function(stored) {
+            this.propertyStored = stored;
+            return this;
+        },
+
+        /**
+         * @param {string} propertyType
+         * @return {PropertyAnnotation}
+         */
+        type: function(propertyType) {
+            this.propertyType = propertyType;
+            return this;
+        },
+
+        /**
+         * @param {boolean} unique
+         * @return {PropertyAnnotation}
+         */
+        unique: function(unique) {
+            this.propertyUnique = unique;
+            return this;
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Static Methods
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {string}
+     * @static
+     * @param {string} propertyName
+     * @return {PropertyAnnotation}
      */
-    getPropertyCollectionOf: function() {
-        return this.propertyCollectionOf;
-    },
-
-    /**
-     * @return {*}
-     */
-    getPropertyDefault: function() {
-        return this.propertyDefault;
-    },
-
-    /**
-     * @return {string}
-     */
-    getPropertyName: function() {
-        return this.propertyName;
-    },
-
-    /**
-     * @return {boolean}
-     */
-    getPropertyPopulates: function() {
-        return this.propertyPopulates;
-    },
-
-    /**
-     * @return {boolean}
-     */
-    getPropertyRequired: function() {
-        return this.propertyRequired;
-    },
-
-    /**
-     * @return {string}
-     */
-    getPropertyType: function() {
-        return this.propertyType;
-    },
+    PropertyAnnotation.property = function(propertyName) {
+        return new PropertyAnnotation(propertyName);
+    };
 
 
     //-------------------------------------------------------------------------------
-    // Convenience Methods
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {boolean}
-     */
-    isPropertyId: function() {
-        return this.propertyId;
-    },
-
-    /**
-     * @return {boolean}
-     */
-    isPropertyIndexed: function() {
-        return this.propertyIndexed;
-    },
-
-    /**
-     * @return {boolean}
-     */
-    isPropertyPrimaryId: function() {
-        return this.propertyPrimaryId;
-    },
-
-    /**
-     * @return {boolean}
-     */
-    isPropertyRequired: function() {
-        return this.propertyRequired;
-    },
-
-    /**
-     * @return {boolean}
-     */
-    isPropertyStored: function() {
-        return this.propertyStored;
-    },
-
-    /**
-     * @return {boolean}
-     */
-    isPropertyUnique: function() {
-        return this.propertyUnique;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Public Instance Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {string} propertyCollectionOf
-     * @return {PropertyAnnotation}
-     */
-    collectionOf: function(propertyCollectionOf) {
-        this.propertyCollectionOf = propertyCollectionOf;
-        return this;
-    },
-
-    /**
-     * @param {*} propertyDefault
-     * @returns {PropertyAnnotation}
-     */
-    'default': function(propertyDefault) {
-        this.propertyDefault = propertyDefault;
-        return this;
-    },
-
-    /**
-     * @return {PropertyAnnotation}
-     */
-    id: function() {
-        this.propertyId = true;
-        return this;
-    },
-
-    /**
-     * @param {boolean} index
-     * @return {PropertyAnnotation}
-     */
-    index: function(index) {
-        this.propertyIndexed = index;
-        return this;
-    },
-
-    /**
-     * @param {boolean} populates
-     * @return {PropertyAnnotation}
-     */
-    populates: function(populates) {
-        this.propertyPopulates = populates;
-        return this;
-    },
-
-    /**
-     * @return {PropertyAnnotation}
-     */
-    primaryId: function() {
-        this.propertyPrimaryId = true;
-        return this;
-    },
-
-    /**
-     * @param {boolean} required
-     * @return {PropertyAnnotation}
-     */
-    require: function(required) {
-        this.propertyRequired = required;
-        return this;
-    },
-
-    /**
-     * @param {boolean} stored
-     * @return {PropertyAnnotation}
-     */
-    store: function(stored) {
-        this.propertyStored = stored;
-        return this;
-    },
-
-    /**
-     * @param {string} propertyType
-     * @return {PropertyAnnotation}
-     */
-    type: function(propertyType) {
-        this.propertyType = propertyType;
-        return this;
-    },
-
-    /**
-     * @param {boolean} unique
-     * @return {PropertyAnnotation}
-     */
-    unique: function(unique) {
-        this.propertyUnique = unique;
-        return this;
-    }
+    bugpack.export('bugentity.PropertyAnnotation', PropertyAnnotation);
 });
-
-
-//-------------------------------------------------------------------------------
-// Static Methods
-//-------------------------------------------------------------------------------
-
-/**
- * @param {string} propertyName
- * @return {PropertyAnnotation}
- */
-PropertyAnnotation.property = function(propertyName) {
-    return new PropertyAnnotation(propertyName);
-};
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugentity.PropertyAnnotation', PropertyAnnotation);

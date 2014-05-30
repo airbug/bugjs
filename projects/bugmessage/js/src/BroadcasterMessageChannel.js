@@ -69,7 +69,7 @@ var BroadcasterMessageChannel = Class.extend(AbstractMessageChannel, {
 
 
     //-------------------------------------------------------------------------------
-    // Instance Methods
+    // Methods
     //-------------------------------------------------------------------------------
 
     /**

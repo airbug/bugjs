@@ -72,7 +72,7 @@ var AbstractMessageRouter = Class.extend(AbstractMessageReceiver, {
 
 
     //-------------------------------------------------------------------------------
-    // Abstract Instance Methods
+    // Abstract Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -84,7 +84,7 @@ var AbstractMessageRouter = Class.extend(AbstractMessageReceiver, {
 
 
     //-------------------------------------------------------------------------------
-    // Instance Methods
+    // Methods
     //-------------------------------------------------------------------------------
 
     /**

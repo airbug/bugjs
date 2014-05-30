@@ -87,7 +87,7 @@ var OperationBatchRunner = Class.extend(EventDispatcher, {
 
 
     //-------------------------------------------------------------------------------
-    // Public Instance Methods
+    // Public Methods
     //-------------------------------------------------------------------------------
 
     /**
@@ -102,7 +102,7 @@ var OperationBatchRunner = Class.extend(EventDispatcher, {
 
 
     //-------------------------------------------------------------------------------
-    // Private Instance Methods
+    // Private Methods
     //-------------------------------------------------------------------------------
 
     /**

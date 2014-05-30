@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -11,130 +21,133 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                 = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// Bugpack Modules
-//-------------------------------------------------------------------------------
-
-var Bug                     = bugpack.require('Bug');
-var Class                   = bugpack.require('Class');
-var Obj                     = bugpack.require('Obj');
-var Set                     = bugpack.require('Set');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {Obj}
- */
-var EntityDataStore = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Bugpack Modules
+    //-------------------------------------------------------------------------------
+
+    var Bug                     = bugpack.require('Bug');
+    var Class                   = bugpack.require('Class');
+    var Obj                     = bugpack.require('Obj');
+    var Set                     = bugpack.require('Set');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {Logger} logger
-     * @param {SchemaManager} schemaManager
+     * @class
+     * @extends {Obj}
      */
-    _constructor: function(logger, schemaManager) {
+    var EntityDataStore = Class.extend(Obj, {
 
-        this._super();
+        _name: "bugentity.EntityDataStore",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Logger}
+         * @constructs
+         * @param {Logger} logger
+         * @param {SchemaManager} schemaManager
          */
-        this.logger                 = logger;
+        _constructor: function(logger, schemaManager) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {Logger}
+             */
+            this.logger                 = logger;
+
+            /**
+             * @private
+             * @type {SchemaManager}
+             */
+            this.schemaManager          = schemaManager;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {SchemaManager}
+         * @return {Logger}
          */
-        this.schemaManager          = schemaManager;
-    },
+        getLogger: function() {
+            return this.logger;
+        },
+
+        /**
+         * @return {SchemaManager}
+         */
+        getSchemaManager: function() {
+            return this.schemaManager;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         *
+         */
+        processSchemas: function() {
+            var _this = this;
+            var embeddedSchemaSet   = new Set();
+            var primarySchemaSet    = new Set();
+
+            // TODO BRN: This only works for a double layer schema system. Really need to implement a system that determines
+            // the dependency structure of the Schemas
+
+            this.schemaManager.getSchemaCollection().forEach(function(entitySchema) {
+                if (entitySchema.getEntityEmbedded()) {
+                    embeddedSchemaSet.add(entitySchema);
+                } else {
+                    primarySchemaSet.add(entitySchema);
+                }
+            });
+            embeddedSchemaSet.forEach(function(entitySchema) {
+                _this.processSchema(entitySchema);
+            });
+            primarySchemaSet.forEach(function(entitySchema) {
+                _this.processSchema(entitySchema);
+            })
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Abstract Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @abstract
+         * @param {EntitySchema} entitySchema
+         */
+        processSchema: function(entitySchema) {
+            throw new Bug("AbstractMethodNotImplemented", {}, "Abstract method 'processSchema' has not been implemented");
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {Logger}
-     */
-    getLogger: function() {
-        return this.logger;
-    },
-
-    /**
-     * @return {SchemaManager}
-     */
-    getSchemaManager: function() {
-        return this.schemaManager;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     *
-     */
-    processSchemas: function() {
-        var _this = this;
-        var embeddedSchemaSet   = new Set();
-        var primarySchemaSet    = new Set();
-
-        // TODO BRN: This only works for a double layer schema system. Really need to implement a system that determines
-        // the dependency structure of the Schemas
-
-        this.schemaManager.getSchemaCollection().forEach(function(entitySchema) {
-            if (entitySchema.getEntityEmbedded()) {
-                embeddedSchemaSet.add(entitySchema);
-            } else {
-                primarySchemaSet.add(entitySchema);
-            }
-        });
-        embeddedSchemaSet.forEach(function(entitySchema) {
-            _this.processSchema(entitySchema);
-        });
-        primarySchemaSet.forEach(function(entitySchema) {
-            _this.processSchema(entitySchema);
-        })
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Abstract Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @abstract
-     * @param {EntitySchema} entitySchema
-     */
-    processSchema: function(entitySchema) {
-        throw new Bug("AbstractMethodNotImplemented", {}, "Abstract method 'processSchema' has not been implemented");
-    }
+    bugpack.export('bugentity.EntityDataStore', EntityDataStore);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugentity.EntityDataStore', EntityDataStore);

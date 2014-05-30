@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -10,94 +20,106 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class       = bugpack.require('Class');
-var Obj         = bugpack.require('Obj');
-var TypeUtil    = bugpack.require('TypeUtil');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var SchemaIndex = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function(propertyObject, options) {
+    var Class       = bugpack.require('Class');
+    var Obj         = bugpack.require('Obj');
+    var TypeUtil    = bugpack.require('TypeUtil');
 
-        this._super();
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {Obj}
+     */
+    var SchemaIndex = Class.extend(Obj, {
+
+        _name: "bugentity.SchemaIndex",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Object}
+         * @constructs
+         * @param {Object} propertyObject
+         * @param {Object} options
          */
-        this.propertyObject     = propertyObject;
+        _constructor: function(propertyObject, options) {
 
-        /**
-         * @private
-         * @type {boolean}
-         */
-        this.unique             = false;
+            this._super();
 
-        if (options) {
-            if (TypeUtil.isBoolean(options.unique)) {
-                this.unique = options.unique;
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {Object}
+             */
+            this.propertyObject     = propertyObject;
+
+            /**
+             * @private
+             * @type {boolean}
+             */
+            this.unique             = false;
+
+            if (options) {
+                if (TypeUtil.isBoolean(options.unique)) {
+                    this.unique = options.unique;
+                }
             }
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {Object}
+         */
+        getPropertyObject: function() {
+            return this.propertyObject;
+        },
+
+        /**
+         * @return {boolean}
+         */
+        getUnique: function() {
+            return this.unique;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Convenience Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {boolean}
+         */
+        isUnique: function() {
+            return this.unique;
         }
-    },
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {Object}
-     */
-    getPropertyObject: function() {
-        return this.propertyObject;
-    },
-
-    /**
-     * @return {boolean}
-     */
-    getUnique: function() {
-        return this.unique;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Convenience Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @return {boolean}
-     */
-    isUnique: function() {
-        return this.unique;
-    }
+    bugpack.export('bugentity.SchemaIndex', SchemaIndex);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugentity.SchemaIndex', SchemaIndex);
