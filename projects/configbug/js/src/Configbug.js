@@ -12,7 +12,7 @@
 //@Require('TypeUtil')
 //@Require('bugflow.BugFlow')
 //@Require('bugfs.BugFs')
-//@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -33,7 +33,7 @@ require('bugpack').context("*", function(bugpack) {
     var TypeUtil                = bugpack.require('TypeUtil');
     var BugFlow                 = bugpack.require('bugflow.BugFlow');
     var BugFs                   = bugpack.require('bugfs.BugFs');
-    var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
+    var ModuleTag        = bugpack.require('bugioc.ModuleTag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
@@ -42,7 +42,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta                 = BugMeta.context();
-    var module                  = ModuleAnnotation.module;
+    var module                  = ModuleTag.module;
     var $if                     = BugFlow.$if;
     var $series                 = BugFlow.$series;
     var $task                   = BugFlow.$task;
@@ -280,7 +280,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(Configbug).with(
+    bugmeta.tag(Configbug).with(
         module("configbug")
     );
 

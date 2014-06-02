@@ -6,7 +6,7 @@
 
 //@Require('Class')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 //@Require('socketio:server.SocketIoManager')
 
@@ -24,7 +24,7 @@ var bugpack                 = require('bugpack').context();
 
 var Class                   = bugpack.require('Class');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 var SocketIoManager         = bugpack.require('socketio:server.SocketIoManager');
 
@@ -35,7 +35,7 @@ var SocketIoManager         = bugpack.require('socketio:server.SocketIoManager')
 
 var bugmeta                 = BugMeta.context();
 var bugyarn                 = BugYarn.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -85,6 +85,6 @@ var socketIoManagerInstantiationTest = {
             "Assert .namespace was set correctly");
     }
 };
-bugmeta.annotate(socketIoManagerInstantiationTest).with(
+bugmeta.tag(socketIoManagerInstantiationTest).with(
     test().name("SocketIoManager - instantiation test")
 );

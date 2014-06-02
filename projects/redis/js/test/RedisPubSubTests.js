@@ -6,7 +6,7 @@
 
 //@Require('Class')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 //@Require('redis.RedisPubSub')
 
@@ -24,7 +24,7 @@ var bugpack                 = require('bugpack').context();
 
 var Class                   = bugpack.require('Class');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 var RedisPubSub             = bugpack.require('redis.RedisPubSub');
 
@@ -35,7 +35,7 @@ var RedisPubSub             = bugpack.require('redis.RedisPubSub');
 
 var bugmeta                 = BugMeta.context();
 var bugyarn                 = BugYarn.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -86,6 +86,6 @@ var redisPubSubInstantiationTest = {
             "Assert .subscriberRedisClient was set correctly");
     }
 };
-bugmeta.annotate(redisPubSubInstantiationTest).with(
+bugmeta.tag(redisPubSubInstantiationTest).with(
     test().name("RedisPubSub - instantiation test")
 );

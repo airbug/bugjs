@@ -7,7 +7,7 @@
 //@Require('Class')
 //@Require('bugdelta.DeltaChange')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 
 
 //-------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ var bugpack                 = require('bugpack').context();
 var Class                   = bugpack.require('Class');
 var DeltaChange             = bugpack.require('bugdelta.DeltaChange');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 
 
 //-------------------------------------------------------------------------------
@@ -32,7 +32,7 @@ var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
 //-------------------------------------------------------------------------------
 
 var bugmeta                 = BugMeta.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ var deltaChangeInstantiationWithoutParametersTest = {
             "Assert testDeltaChange.path was NOT set");
     }
 };
-bugmeta.annotate(deltaChangeInstantiationWithoutParametersTest).with(
+bugmeta.tag(deltaChangeInstantiationWithoutParametersTest).with(
     test().name("DeltaChange - instantiation without parameters test")
 );
 
@@ -92,7 +92,7 @@ var deltaChangeInstantiationWithParametersTest = {
             "Assert testDeltaChange.path was set correctly");
     }
 };
-bugmeta.annotate(deltaChangeInstantiationWithParametersTest).with(
+bugmeta.tag(deltaChangeInstantiationWithParametersTest).with(
     test().name("DeltaChange - instantiation with parameters test")
 );
 
@@ -121,6 +121,6 @@ var deltaChangeSetPathTest = {
             "Assert testDeltaChange.path was set correctly");
     }
 };
-bugmeta.annotate(deltaChangeSetPathTest).with(
+bugmeta.tag(deltaChangeSetPathTest).with(
     test().name("DeltaChange - #setPath test")
 );

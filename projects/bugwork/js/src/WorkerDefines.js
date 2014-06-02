@@ -4,53 +4,70 @@
 
 //@Export('bugwork.WorkerDefines')
 
-
-//-------------------------------------------------------------------------------
-// Common Modules
-//-------------------------------------------------------------------------------
-
-var bugpack = require('bugpack').context();
+//@Require('Class')
+//@Require('Obj')
 
 
 //-------------------------------------------------------------------------------
-// Declare Class
+// Context
 //-------------------------------------------------------------------------------
 
-var WorkerDefines = {};
+require('bugpack').context("*", function(bugpack) {
+
+    //-------------------------------------------------------------------------------
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class                   = bugpack.require('Class');
+    var Obj          = bugpack.require('Obj');
 
 
-//-------------------------------------------------------------------------------
-// Static Properties
-//-------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
 
-/**
- * @static
- * @enum {string}
- */
-WorkerDefines.MessageTypes = {
-    START_WORKER: "WorkerDefines:StartWorker",
-    STOP_WORKER: "WorkerDefines:StopWorker",
-    WORKER_ERROR: "WorkerDefines:WorkerError",
-    WORKER_READY: "WorkerDefines:WorkerReady",
-    WORKER_STARTED: "WorkerDefines:WorkerStarted",
-    WORKER_STOPPED: "WorkerDefines:WorkerStopped",
-    WORKER_THROWABLE: "WorkerDefines:WorkerThrowable"
-};
+    /**
+     * @class
+     * @extends {Obj}
+     */
+    var WorkerDefines = Class.extend(Obj, {
+        _name: "bugwork.WorkerDefines"
+    });
 
 
-/**
- * @static
- * @enum {string}
- */
- WorkerDefines.State = {
-    NOT_READY: "WorkerDefines:State:NotReady",
-    READY: "WorkerDefines:State:Ready",
-    RUNNING: "WorkerDefines:State:Running"
-};
+    //-------------------------------------------------------------------------------
+    // Static Properties
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @static
+     * @enum {string}
+     */
+    WorkerDefines.MessageTypes = {
+        START_WORKER: "WorkerDefines:StartWorker",
+        STOP_WORKER: "WorkerDefines:StopWorker",
+        WORKER_ERROR: "WorkerDefines:WorkerError",
+        WORKER_READY: "WorkerDefines:WorkerReady",
+        WORKER_STARTED: "WorkerDefines:WorkerStarted",
+        WORKER_STOPPED: "WorkerDefines:WorkerStopped",
+        WORKER_THROWABLE: "WorkerDefines:WorkerThrowable"
+    };
 
 
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
+    /**
+     * @static
+     * @enum {string}
+     */
+     WorkerDefines.State = {
+        NOT_READY: "WorkerDefines:State:NotReady",
+        READY: "WorkerDefines:State:Ready",
+        RUNNING: "WorkerDefines:State:Running"
+    };
 
-bugpack.export("bugwork.WorkerDefines", WorkerDefines);
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export("bugwork.WorkerDefines", WorkerDefines);
+});

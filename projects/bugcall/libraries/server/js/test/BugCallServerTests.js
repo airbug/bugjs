@@ -10,7 +10,7 @@
 //@Require('bugcall.Call')
 //@Require('bugdouble.BugDouble')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 //@Require('loggerbug.Logger')
 
@@ -32,7 +32,7 @@ var CallEvent               = bugpack.require('bugcall.CallEvent');
 var Call                    = bugpack.require('bugcall.Call');
 var BugDouble               = bugpack.require('bugdouble.BugDouble');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 var Logger                  = bugpack.require('loggerbug.Logger');
 
@@ -45,7 +45,7 @@ var bugmeta                 = BugMeta.context();
 var bugyarn                 = BugYarn.context();
 var spyOnObject             = BugDouble.spyOnObject;
 var stubObject              = BugDouble.stubObject;
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -120,7 +120,7 @@ var bugCallServerHandleConnectionFailedTest = {
             "Assert call is closed");
     }
 };
-bugmeta.annotate(bugCallServerHandleConnectionFailedTest).with(
+bugmeta.tag(bugCallServerHandleConnectionFailedTest).with(
     test().name("BugCallServer - #handleConnectionFailed Test")
 );
 
@@ -174,7 +174,7 @@ var bugCallServerHandleConnectionClosedTest = {
             "Assert call is closed");
     }
 };
-bugmeta.annotate(bugCallServerHandleConnectionClosedTest).with(
+bugmeta.tag(bugCallServerHandleConnectionClosedTest).with(
     test().name("BugCallServer - #handleConnectionClosed Test")
 );
 
@@ -231,6 +231,6 @@ var bugCallServerHandleConnectionEstablishedTest = {
             "Assert that the CallEvent.CLOSED event was heard by the testListener");
     }
 };
-bugmeta.annotate(bugCallServerHandleConnectionEstablishedTest).with(
+bugmeta.tag(bugCallServerHandleConnectionEstablishedTest).with(
     test().name("BugCallServer - #handleConnectionEstablished Test")
 );

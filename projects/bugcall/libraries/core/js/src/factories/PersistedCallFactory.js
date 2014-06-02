@@ -18,7 +18,7 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('bugcall.PersistedCall')
-//@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -35,7 +35,7 @@ require('bugpack').context("*", function(bugpack) {
     var Class                       = bugpack.require('Class');
     var Obj                         = bugpack.require('Obj');
     var PersistedCall               = bugpack.require('bugcall.PersistedCall');
-    var ModuleAnnotation            = bugpack.require('bugioc.ModuleAnnotation');
+    var ModuleTag            = bugpack.require('bugioc.ModuleTag');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
 
@@ -44,7 +44,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta                     = BugMeta.context();
-    var module                      = ModuleAnnotation.module;
+    var module                      = ModuleTag.module;
 
 
     //-------------------------------------------------------------------------------
@@ -112,7 +112,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(PersistedCallFactory).with(
+    bugmeta.tag(PersistedCallFactory).with(
         module("persistedCallFactory")
     );
 

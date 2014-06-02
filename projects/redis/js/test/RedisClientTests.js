@@ -9,7 +9,7 @@
 //@Require('bugdouble.BugDouble')
 //@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 //@Require('redis.DummyRedis')
 //@Require('redis.RedisClient')
@@ -32,7 +32,7 @@ var Exception               = bugpack.require('Exception');
 var BugDouble               = bugpack.require('bugdouble.BugDouble');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 var DummyRedis              = bugpack.require('redis.DummyRedis');
 var RedisClient             = bugpack.require('redis.RedisClient');
@@ -46,7 +46,7 @@ var RedisEvent              = bugpack.require('redis.RedisEvent');
 var bugmeta                 = BugMeta.context();
 var bugyarn                 = BugYarn.context();
 var spyOnFunction           = BugDouble.spyOnFunction;
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 var $series                 = BugFlow.$series;
 var $task                   = BugFlow.$task;
 
@@ -371,22 +371,22 @@ var redisClientPublishWithSubscriberTest = {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(redisClientInstantiationTest).with(
+bugmeta.tag(redisClientInstantiationTest).with(
     test().name("RedisClient - instantiation test")
 );
 
-bugmeta.annotate(redisClientConnectTest).with(
+bugmeta.tag(redisClientConnectTest).with(
     test().name("RedisClient - #connect test")
 );
 
-bugmeta.annotate(redisClientSubscribeTest).with(
+bugmeta.tag(redisClientSubscribeTest).with(
     test().name("RedisClient - #subscribe test")
 );
 
-bugmeta.annotate(redisClientPublishTest).with(
+bugmeta.tag(redisClientPublishTest).with(
     test().name("RedisClient - #publish test")
 );
 
-bugmeta.annotate(redisClientPublishWithSubscriberTest).with(
+bugmeta.tag(redisClientPublishWithSubscriberTest).with(
     test().name("RedisClient - #publish with subscriber test")
 );

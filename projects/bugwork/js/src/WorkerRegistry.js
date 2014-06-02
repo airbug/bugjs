@@ -10,10 +10,10 @@
 //@Require('Map')
 //@Require('Obj')
 //@Require('bugioc.IInitializeModule')
-//@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
-//@Require('bugwork.WorkerAnnotationProcessor')
-//@Require('bugwork.WorkerScan')
+//@Require('bugwork.WorkerTagProcessor')
+//@Require('bugwork.WorkerTagScan')
 
 
 //-------------------------------------------------------------------------------
@@ -31,10 +31,10 @@ require('bugpack').context("*", function(bugpack) {
     var Map                             = bugpack.require('Map');
     var Obj                             = bugpack.require('Obj');
     var IInitializeModule               = bugpack.require('bugioc.IInitializeModule');
-    var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
+    var ModuleTag                = bugpack.require('bugioc.ModuleTag');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
-    var WorkerAnnotationProcessor       = bugpack.require('bugwork.WorkerAnnotationProcessor');
-    var WorkerScan                      = bugpack.require('bugwork.WorkerScan');
+    var WorkerTagProcessor       = bugpack.require('bugwork.WorkerTagProcessor');
+    var WorkerTagScan                      = bugpack.require('bugwork.WorkerTagScan');
 
 
     //-------------------------------------------------------------------------------
@@ -42,7 +42,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta                         = BugMeta.context();
-    var module                          = ModuleAnnotation.module;
+    var module                          = ModuleTag.module;
 
 
     //-------------------------------------------------------------------------------
@@ -99,7 +99,7 @@ require('bugpack').context("*", function(bugpack) {
          * @param {function(Throwable=)} callback
          */
         initializeModule: function(callback) {
-            var scan = new WorkerScan(bugmeta, new WorkerAnnotationProcessor(this));
+            var scan = new WorkerTagScan(bugmeta, new WorkerTagProcessor(this));
             scan.scanAll();
             callback();
         },
@@ -148,7 +148,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(WorkerRegistry).with(
+    bugmeta.tag(WorkerRegistry).with(
         module("workerRegistry")
     );
 

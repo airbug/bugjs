@@ -15,9 +15,9 @@
 //@TestFile
 
 //@Require('Class')
-//@Require('bugentity.EntityProcessor')
+//@Require('bugentity.EntityTagProcessor')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 
 
@@ -32,9 +32,9 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                   = bugpack.require('Class');
-    var EntityProcessor         = bugpack.require('bugentity.EntityProcessor');
+    var EntityTagProcessor         = bugpack.require('bugentity.EntityTagProcessor');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+    var TestTag          = bugpack.require('bugunit.TestTag');
     var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 
@@ -44,19 +44,19 @@ require('bugpack').context("*", function(bugpack) {
 
     var bugmeta                 = BugMeta.context();
     var bugyarn                 = BugYarn.context();
-    var test                    = TestAnnotation.test;
+    var test                    = TestTag.test;
 
 
     //-------------------------------------------------------------------------------
     // BugYarn
     //-------------------------------------------------------------------------------
 
-    bugyarn.registerWinder("setupTestEntityProcessor", function(yarn) {
+    bugyarn.registerWinder("setupTestEntityTagProcessor", function(yarn) {
         yarn.spin([
             "setupTestSchemaManager"
         ]);
         yarn.wind({
-            entityProcessor: new EntityProcessor(this.schemaManager)
+            entityProcessor: new EntityTagProcessor(this.schemaManager)
         });
     });
 
@@ -76,7 +76,7 @@ require('bugpack').context("*", function(bugpack) {
             yarn.spin([
                 "setupTestSchemaManager"
             ]);
-            this.testEntityProcessor    = new EntityProcessor(this.schemaManager);
+            this.testEntityTagProcessor    = new EntityTagProcessor(this.schemaManager);
         },
 
         //-------------------------------------------------------------------------------
@@ -84,13 +84,13 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         test: function(test) {
-            test.assertTrue(Class.doesExtend(this.testEntityProcessor, EntityProcessor),
-                "Assert instance of EntityProcessor");
-            test.assertEqual(this.testEntityProcessor.getSchemaManager(), this.schemaManager,
+            test.assertTrue(Class.doesExtend(this.testEntityTagProcessor, EntityTagProcessor),
+                "Assert instance of EntityTagProcessor");
+            test.assertEqual(this.testEntityTagProcessor.getSchemaManager(), this.schemaManager,
                 "Assert .schemaManager was set correctly");
         }
     };
-    bugmeta.annotate(entityProcessorInstantiationTest).with(
-        test().name("EntityProcessor - instantiation test")
+    bugmeta.tag(entityProcessorInstantiationTest).with(
+        test().name("EntityTagProcessor - instantiation test")
     );
 });

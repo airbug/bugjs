@@ -7,13 +7,13 @@
 //@Require('Class')
 //@Require('bugapp.Application')
 //@Require('bugdouble.BugDouble')
-//@Require('bugioc.ConfigurationAnnotationProcessor')
-//@Require('bugioc.ConfigurationScan')
+//@Require('bugioc.ConfigurationTagProcessor')
+//@Require('bugioc.ConfigurationTagScan')
 //@Require('bugioc.IocContext')
-//@Require('bugioc.ModuleAnnotationProcessor')
-//@Require('bugioc.ModuleScan')
+//@Require('bugioc.ModuleTagProcessor')
+//@Require('bugioc.ModuleTagScan')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 
 
@@ -31,13 +31,13 @@ var bugpack                             = require('bugpack').context();
 var Class                               = bugpack.require('Class');
 var Application                         = bugpack.require('bugapp.Application');
 var BugDouble                           = bugpack.require('bugdouble.BugDouble');
-var ConfigurationAnnotationProcessor    = bugpack.require('bugioc.ConfigurationAnnotationProcessor');
-var ConfigurationScan                   = bugpack.require('bugioc.ConfigurationScan');
+var ConfigurationTagProcessor    = bugpack.require('bugioc.ConfigurationTagProcessor');
+var ConfigurationTagScan                   = bugpack.require('bugioc.ConfigurationTagScan');
 var IocContext                          = bugpack.require('bugioc.IocContext');
-var ModuleAnnotationProcessor           = bugpack.require('bugioc.ModuleAnnotationProcessor');
-var ModuleScan                          = bugpack.require('bugioc.ModuleScan');
+var ModuleTagProcessor           = bugpack.require('bugioc.ModuleTagProcessor');
+var ModuleTagScan                          = bugpack.require('bugioc.ModuleTagScan');
 var BugMeta                             = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation                      = bugpack.require('bugunit.TestAnnotation');
+var TestTag                      = bugpack.require('bugunit.TestTag');
 var BugYarn                             = bugpack.require('bugyarn.BugYarn');
 
 
@@ -48,7 +48,7 @@ var BugYarn                             = bugpack.require('bugyarn.BugYarn');
 var bugmeta                             = BugMeta.context();
 var bugyarn                             = BugYarn.context();
 var stubObject                          = BugDouble.stubObject;
-var test                                = TestAnnotation.test;
+var test                                = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -85,12 +85,12 @@ var applicationInstantiationTest = {
             "Assert instance of Application");
         test.assertEqual(this.testApplication.getState(), Application.States.STOPPED,
             "Assert .state defaults to Application.States.STOPPED");
-        test.assertTrue(Class.doesExtend(this.testApplication.getConfigurationScan(), ConfigurationScan),
-            "Assert .configurationScan is an instance of ConfigurationScan");
+        test.assertTrue(Class.doesExtend(this.testApplication.getConfigurationTagScan(), ConfigurationTagScan),
+            "Assert .configurationTagScan is an instance of ConfigurationTagScan");
         test.assertTrue(Class.doesExtend(this.testApplication.getIocContext(), IocContext),
             "Assert .iocContext is an instance of IocContext");
-        test.assertTrue(Class.doesExtend(this.testApplication.getModuleScan(), ModuleScan),
-            "Assert .moduleScan is an instance of ModuleScan");
+        test.assertTrue(Class.doesExtend(this.testApplication.getModuleTagScan(), ModuleTagScan),
+            "Assert .moduleTagScan is an instance of ModuleTagScan");
     }
 };
 
@@ -99,6 +99,6 @@ var applicationInstantiationTest = {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(applicationInstantiationTest).with(
+bugmeta.tag(applicationInstantiationTest).with(
     test().name("Application - instantiation test")
 );

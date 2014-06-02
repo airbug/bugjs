@@ -8,66 +8,79 @@
 //@Require('List')
 //@Require('bugioc.Scope')
 
-//-------------------------------------------------------------------------------
-// Common Modules
-//-------------------------------------------------------------------------------
-
-var bugpack = require('bugpack').context();
-
 
 //-------------------------------------------------------------------------------
-// BugPack
+// Context
 //-------------------------------------------------------------------------------
 
-var Class = bugpack.require('Class');
-var List = bugpack.require('List');
-var Scope = bugpack.require('bugioc.Scope');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var PrototypeScope = Class.extend(Scope, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function(bugIOC, iocModule) {
-
-        this._super(bugIOC, iocModule);
-
-
-        //-------------------------------------------------------------------------------
-        // Private Properties
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {List<*>}
-         */
-        this.generatedModuleList = new List();
-    },
+    var Class = bugpack.require('Class');
+    var List = bugpack.require('List');
+    var Scope = bugpack.require('bugioc.Scope');
 
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {*}
+     * @class
+     * @extends {Scope}
      */
-    generateModule: function() {
-        var module = this.factoryModule();
-        this.generatedModuleList.add(module);
-        return module;
-    }
+    var PrototypeScope = Class.extend(Scope, {
+
+        _name: "bugioc.PrototypeScope",
+
+
+        //-------------------------------------------------------------------------------
+        // Constructor
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @constructs
+         * @param {IocContext} iocContext
+         * @param {IocModule} iocModule
+         */
+        _constructor: function(iocContext, iocModule) {
+
+            this._super(iocContext, iocModule);
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {List<*>}
+             */
+            this.generatedModuleList = new List();
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {*}
+         */
+        generateModule: function() {
+            var module = this.factoryModule();
+            this.generatedModuleList.add(module);
+            return module;
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugioc.PrototypeScope', PrototypeScope);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugioc.PrototypeScope', PrototypeScope);

@@ -8,8 +8,8 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('bugcall.CallResponse')
-//@Require('bugioc.ArgAnnotation')
-//@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.ArgTag')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -27,8 +27,8 @@ var bugpack                     = require('bugpack').context();
 var Class                       = bugpack.require('Class');
 var Obj                         = bugpack.require('Obj');
 var CallResponse                = bugpack.require('bugcall.CallResponse');
-var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
-var ModuleAnnotation            = bugpack.require('bugioc.ModuleAnnotation');
+var ArgTag               = bugpack.require('bugioc.ArgTag');
+var ModuleTag            = bugpack.require('bugioc.ModuleTag');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
 
@@ -36,9 +36,9 @@ var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var arg                         = ArgAnnotation.arg;
+var arg                         = ArgTag.arg;
 var bugmeta                     = BugMeta.context();
-var module                      = ModuleAnnotation.module;
+var module                      = ModuleTag.module;
 
 
 //-------------------------------------------------------------------------------
@@ -104,7 +104,7 @@ var CallResponseFactory = Class.extend(Obj, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(CallResponseFactory).with(
+bugmeta.tag(CallResponseFactory).with(
     module("callResponseFactory")
 );
 

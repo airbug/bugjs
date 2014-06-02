@@ -7,7 +7,7 @@
 //@Require('Class')
 //@Require('bugdelta.DeltaCalculator')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 
 
 //-------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ var bugpack                 = require('bugpack').context();
 var Class                   = bugpack.require('Class');
 var DeltaCalculator         = bugpack.require('bugdelta.DeltaCalculator');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 
 
 //-------------------------------------------------------------------------------
@@ -32,7 +32,7 @@ var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
 //-------------------------------------------------------------------------------
 
 var bugmeta                 = BugMeta.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -61,7 +61,7 @@ var deltaCalculatorInstantiationWithoutParametersTest = {
             "Assert testDeltaCalculator.deltaBuilder was NOT set");
     }
 };
-bugmeta.annotate(deltaCalculatorInstantiationWithoutParametersTest).with(
+bugmeta.tag(deltaCalculatorInstantiationWithoutParametersTest).with(
     test().name("DeltaCalculator - instantiation without parameters test")
 );
 
@@ -87,6 +87,6 @@ var deltaCalculatorInstantiationWithParametersTest = {
             "Assert testDeltaCalculator.deltaBuilder was set correctly");
     }
 };
-bugmeta.annotate(deltaCalculatorInstantiationWithParametersTest).with(
+bugmeta.tag(deltaCalculatorInstantiationWithParametersTest).with(
     test().name("DeltaCalculator - instantiation with parameters test")
 );

@@ -8,7 +8,7 @@
 //@Require('bugcall.CallManager')
 //@Require('bugdouble.BugDouble')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 //@Require('loggerbug.Logger')
 
@@ -28,7 +28,7 @@ var Class                   = bugpack.require('Class');
 var CallManager             = bugpack.require('bugcall.CallManager');
 var BugDouble               = bugpack.require('bugdouble.BugDouble');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 var Logger                  = bugpack.require('loggerbug.Logger');
 
@@ -41,7 +41,7 @@ var bugmeta                 = BugMeta.context();
 var bugyarn                 = BugYarn.context();
 var spyOnObject             = BugDouble.spyOnObject;
 var stubObject              = BugDouble.stubObject;
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -95,6 +95,6 @@ var callManagerInstantiationTest = {
             "Assert .persistedCallFactory was set correctly");
     }
 };
-bugmeta.annotate(callManagerInstantiationTest).with(
+bugmeta.tag(callManagerInstantiationTest).with(
     test().name("CallManager - instantiation Test")
 );

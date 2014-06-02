@@ -10,7 +10,7 @@
 //@Require('bugdelta.DeltaDocument')
 //@Require('bugdelta.SetChange')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 
 
 //-------------------------------------------------------------------------------
@@ -30,7 +30,7 @@ var DeltaBuilder        = bugpack.require('bugdelta.DeltaBuilder');
 var DeltaDocument       = bugpack.require('bugdelta.DeltaDocument');
 var SetChange           = bugpack.require('bugdelta.SetChange');
 var BugMeta             = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation      = bugpack.require('bugunit.TestAnnotation');
+var TestTag      = bugpack.require('bugunit.TestTag');
 
 
 //-------------------------------------------------------------------------------
@@ -38,7 +38,7 @@ var TestAnnotation      = bugpack.require('bugunit.TestAnnotation');
 //-------------------------------------------------------------------------------
 
 var bugmeta             = BugMeta.context();
-var test                = TestAnnotation.test;
+var test                = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -70,7 +70,7 @@ var deltaDocumentGetPathTest = {
             "Assert deltaDocument#getPath properly returns the value of a complex path");
     }
 };
-bugmeta.annotate(deltaDocumentGetPathTest).with(
+bugmeta.tag(deltaDocumentGetPathTest).with(
     test().name("DeltaDocument #getPath Test")
 );
 
@@ -100,7 +100,7 @@ var deltaDocumentObjectChangePropertyToSameValueTest = {
             "Assert that the Delta's deltaChangeList is empty after setting the same value on the same property in an object");
     }
 };
-bugmeta.annotate(deltaDocumentObjectChangePropertyToSameValueTest).with(
+bugmeta.tag(deltaDocumentObjectChangePropertyToSameValueTest).with(
     test().name("DeltaDocument - set property of object to same value test")
 );
 
@@ -131,7 +131,7 @@ var deltaDocumentSetPropertyRemovePropertyOnObjectNoChangeTest = {
             "Assert that the Delta's deltaChangeList is empty after setting a value and then removing it");
     }
 };
-bugmeta.annotate(deltaDocumentSetPropertyRemovePropertyOnObjectNoChangeTest).with(
+bugmeta.tag(deltaDocumentSetPropertyRemovePropertyOnObjectNoChangeTest).with(
     test().name("DeltaDocument - set property then remove property on an object and assert no change test")
 );
 
@@ -172,6 +172,6 @@ var deltaDocumentSimpleSetChangeTest = {
         }
     }
 };
-bugmeta.annotate(deltaDocumentSimpleSetChangeTest).with(
+bugmeta.tag(deltaDocumentSimpleSetChangeTest).with(
     test().name("DeltaDocument - simple Set change test")
 );

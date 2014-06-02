@@ -24,7 +24,7 @@
 //@Require('bugcall.RequestFailedException')
 //@Require('bugdouble.BugDouble')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 //@Require('loggerbug.Logger')
 
@@ -49,7 +49,7 @@ require('bugpack').context("*", function(bugpack) {
     var RequestFailedException  = bugpack.require('bugcall.RequestFailedException');
     var BugDouble               = bugpack.require('bugdouble.BugDouble');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+    var TestTag          = bugpack.require('bugunit.TestTag');
     var BugYarn                 = bugpack.require('bugyarn.BugYarn');
     var Logger                  = bugpack.require('loggerbug.Logger')
 
@@ -61,7 +61,7 @@ require('bugpack').context("*", function(bugpack) {
     var bugmeta                 = BugMeta.context();
     var bugyarn                 = BugYarn.context();
     var spyOnFunction           = BugDouble.spyOnFunction;
-    var test                    = TestAnnotation.test;
+    var test                    = TestTag.test;
 
 
     //-------------------------------------------------------------------------------
@@ -149,7 +149,7 @@ require('bugpack').context("*", function(bugpack) {
                 "Assert Call is not a reconnect by default");
         }
     };
-    bugmeta.annotate(callInstantiationNoArgumentsTest).with(
+    bugmeta.tag(callInstantiationNoArgumentsTest).with(
         test().name("Call - instantiation with no arguments Test")
     );
 
@@ -190,7 +190,7 @@ require('bugpack').context("*", function(bugpack) {
                 "Assert Call reconnect value was set by constructor");
         }
     };
-    bugmeta.annotate(callInstantiationWithArgumentsTest).with(
+    bugmeta.tag(callInstantiationWithArgumentsTest).with(
         test().name("Call - instantiation with arguments Test")
     );
 
@@ -247,7 +247,7 @@ require('bugpack').context("*", function(bugpack) {
                 "Assert testSendCallback was called");
         }
     };
-    bugmeta.annotate(callSendRequestQueuesWhenNotOpenTest).with(
+    bugmeta.tag(callSendRequestQueuesWhenNotOpenTest).with(
         test().name("Call - #sendRequest should queue the request when call is not open test")
     );
 
@@ -313,7 +313,7 @@ require('bugpack').context("*", function(bugpack) {
             this.testCall.sendRequest(this.testRequest, this.testCallResponseHandler, this.testSendCallback);
         }
     };
-    bugmeta.annotate(callCloseCallTest).with(
+    bugmeta.tag(callCloseCallTest).with(
         test().name("Call - #closeCall test")
     );
 });

@@ -8,7 +8,7 @@
 //@Require('bugflow.BugFlow')
 //@Require('bugmeta.BugMeta')
 //@Require('bugtask.TaskManager')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 
 
@@ -27,7 +27,7 @@ var Class                   = bugpack.require('Class');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var TaskManager             = bugpack.require('bugtask.TaskManager');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 
@@ -37,7 +37,7 @@ var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 var bugmeta                 = BugMeta.context();
 var bugyarn                 = BugYarn.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 var $series                 = BugFlow.$series;
 var $task                   = BugFlow.$task;
 
@@ -240,12 +240,12 @@ var taskManagerQueueTaskTest = {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(taskManagerInstantiationTest).with(
+bugmeta.tag(taskManagerInstantiationTest).with(
     test().name("TaskManager - instantiation test")
 );
-bugmeta.annotate(taskManagerSubscribeToTaskResultTest).with(
+bugmeta.tag(taskManagerSubscribeToTaskResultTest).with(
     test().name("TaskManager - #subscribeToTaskResult test")
 );
-bugmeta.annotate(taskManagerQueueTaskTest).with(
+bugmeta.tag(taskManagerQueueTaskTest).with(
     test().name("TaskManager - #queueTask test")
 );

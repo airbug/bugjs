@@ -9,128 +9,145 @@
 //@Require('Obj')
 //@Require('Set')
 //@Require('bugioc.IProcessModule')
-//@Require('bugioc.ModuleAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.ModuleTag')
+//@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
-//@Require('bugmigrate.MigrationAnnotationProcessor')
-//@Require('bugmigrate.MigrationAnnotationScan')
+//@Require('bugmigrate.MigrationTagProcessor')
+//@Require('bugmigrate.MigrationTagScan')
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                                     = require('bugpack').context();
-var mongoose                                    = require('mongoose');
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                                       = bugpack.require('Class');
-var Obj                                         = bugpack.require('Obj');
-var Set                                         = bugpack.require('Set');
-var IProcessModule                              = bugpack.require('bugioc.IProcessModule');
-var ModuleAnnotation                            = bugpack.require('bugioc.ModuleAnnotation');
-var PropertyAnnotation                          = bugpack.require('bugioc.PropertyAnnotation');
-var BugMeta                                     = bugpack.require('bugmeta.BugMeta');
-var MigrationAnnotationProcessor                = bugpack.require('bugmigrate.MigrationAnnotationProcessor');
-var MigrationAnnotationScan                     = bugpack.require('bugmigrate.MigrationAnnotationScan');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var bugmeta                                     = BugMeta.context();
-var module                                      = ModuleAnnotation.module;
-var property                                    = PropertyAnnotation.property;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var MigrationManager = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Common Modules
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    var mongoose                                    = require('mongoose');
 
-        this._super();
+
+    //-------------------------------------------------------------------------------
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class                                       = bugpack.require('Class');
+    var Obj                                         = bugpack.require('Obj');
+    var Set                                         = bugpack.require('Set');
+    var IProcessModule                              = bugpack.require('bugioc.IProcessModule');
+    var ModuleTag                            = bugpack.require('bugioc.ModuleTag');
+    var PropertyTag                          = bugpack.require('bugioc.PropertyTag');
+    var BugMeta                                     = bugpack.require('bugmeta.BugMeta');
+    var MigrationTagProcessor                = bugpack.require('bugmigrate.MigrationTagProcessor');
+    var MigrationTagScan                     = bugpack.require('bugmigrate.MigrationTagScan');
+
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var bugmeta                                     = BugMeta.context();
+    var module                                      = ModuleTag.module;
+    var property                                    = PropertyTag.property;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {Obj}
+     * @implements {IProcessModule}
+     */
+    var MigrationManager = Class.extend(Obj, {
+
+        _name: "bugmigrate.MigrationManager",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Set.<Migration>}
+         * @constructs
          */
-        this.migrationSet       = new Set();
-    },
+        _constructor: function() {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {Set.<Migration>}
+             */
+            this.migrationSet       = new Set();
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {Set.<Migration>}
+         */
+        getMigrationSet: function() {
+            return this.migrationSet;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // IProcessModule Implementation
+        //-------------------------------------------------------------------------------
+
+        /**
+         *
+         */
+        processModule: function() {
+            var scan = new MigrationTagScan(bugmeta, new MigrationTagProcessor(this));
+            scan.scanAll();
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {Migration} migration
+         */
+        registerMigration: function(migration) {
+            this.migrationSet.add(migration);
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Interfaces
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {Set.<Migration>}
-     */
-    getMigrationSet: function() {
-        return this.migrationSet;
-    },
+    Class.implement(MigrationManager, IProcessModule);
 
 
     //-------------------------------------------------------------------------------
-    // IProcessModule Implementation
+    // BugMeta
     //-------------------------------------------------------------------------------
 
-    /**
-     *
-     */
-    processModule: function() {
-        var scan = new MigrationAnnotationScan(bugmeta, new MigrationAnnotationProcessor(this));
-        scan.scanAll();
-    },
+    bugmeta.tag(MigrationManager).with(
+        module("migrationManager")
+    );
 
 
     //-------------------------------------------------------------------------------
-    // Public Methods
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @param {Migration} migration
-     */
-    registerMigration: function(migration) {
-        this.migrationSet.add(migration);
-    }
+    bugpack.export('bugmigrate.MigrationManager', MigrationManager);
 });
-
-
-//-------------------------------------------------------------------------------
-// Interfaces
-//-------------------------------------------------------------------------------
-
-Class.implement(MigrationManager, IProcessModule);
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(MigrationManager).with(
-    module("migrationManager")
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugmigrate.MigrationManager', MigrationManager);

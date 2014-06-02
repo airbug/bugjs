@@ -11,9 +11,9 @@
 //@Require('Set')
 //@Require('bugcall.CallConnection')
 //@Require('bugcall.CallServerConnection')
-//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ArgTag')
 //@Require('bugioc.IInitializeModule')
-//@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 //@Require('socketio:server.SocketIoManager')
 
@@ -35,9 +35,9 @@ var EventDispatcher             = bugpack.require('EventDispatcher');
 var Set                         = bugpack.require('Set');
 var CallConnection              = bugpack.require('bugcall.CallConnection');
 var CallServerConnection        = bugpack.require('bugcall.CallServerConnection');
-var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
+var ArgTag               = bugpack.require('bugioc.ArgTag');
 var IInitializeModule           = bugpack.require('bugioc.IInitializeModule');
-var ModuleAnnotation            = bugpack.require('bugioc.ModuleAnnotation');
+var ModuleTag            = bugpack.require('bugioc.ModuleTag');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 var SocketIoManager             = bugpack.require('socketio:server.SocketIoManager');
 
@@ -46,9 +46,9 @@ var SocketIoManager             = bugpack.require('socketio:server.SocketIoManag
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var arg                         = ArgAnnotation.arg;
+var arg                         = ArgTag.arg;
 var bugmeta                     = BugMeta.context();
-var module                      = ModuleAnnotation.module;
+var module                      = ModuleTag.module;
 
 
 //-------------------------------------------------------------------------------
@@ -255,7 +255,7 @@ Class.implement(CallServer, IInitializeModule);
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(CallServer).with(
+bugmeta.tag(CallServer).with(
     module("callServer")
         .args([
             arg().ref("socketIoManager"),

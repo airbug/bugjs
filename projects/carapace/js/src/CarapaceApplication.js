@@ -19,8 +19,8 @@
 //@Require('EventDispatcher')
 //@Require('Set')
 //@Require('backbone.Backbone')
-//@Require('bugioc.ArgAnnotation')
-//@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.ArgTag')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 //@Require('carapace.CarapaceController')
 //@Require('carapace.ControllerRoute')
@@ -42,8 +42,8 @@ require('bugpack').context("*", function(bugpack) {
     var EventDispatcher         = bugpack.require('EventDispatcher');
     var Set                     = bugpack.require('Set');
     var Backbone                = bugpack.require('backbone.Backbone');
-    var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');
-    var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
+    var ArgTag           = bugpack.require('bugioc.ArgTag');
+    var ModuleTag        = bugpack.require('bugioc.ModuleTag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
     var ControllerRoute         = bugpack.require('carapace.ControllerRoute');
     var RoutingRequest          = bugpack.require('carapace.RoutingRequest');
@@ -53,9 +53,9 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                     = ArgAnnotation.arg;
+    var arg                     = ArgTag.arg;
     var bugmeta                 = BugMeta.context();
-    var module                  = ModuleAnnotation.module;
+    var module                  = ModuleTag.module;
 
 
     //-------------------------------------------------------------------------------
@@ -288,7 +288,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(CarapaceApplication).with(
+    bugmeta.tag(CarapaceApplication).with(
         module("carapaceApplication")
             .args([
                 arg().ref("logger"),

@@ -17,7 +17,7 @@
 //@Require('bugdouble.BugDouble')
 //@Require('bugmeta.BugMeta')
 //@Require('bugroute.BugCallRouter')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 
 
 //-------------------------------------------------------------------------------
@@ -33,7 +33,7 @@ require('bugpack').context("*", function(bugpack) {
     var BugDouble           = bugpack.require('bugdouble.BugDouble');
     var BugMeta             = bugpack.require('bugmeta.BugMeta');
     var BugCallRouter       = bugpack.require('bugroute.BugCallRouter');
-    var TestAnnotation      = bugpack.require('bugunit.TestAnnotation');
+    var TestTag      = bugpack.require('bugunit.TestTag');
 
 
     //-------------------------------------------------------------------------------
@@ -42,7 +42,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var bugmeta             = BugMeta.context();
     var spyOnFunction       = BugDouble.spyOnFunction;
-    var test                = TestAnnotation.test;
+    var test                = TestTag.test;
 
 
     //-------------------------------------------------------------------------------
@@ -70,7 +70,7 @@ require('bugpack').context("*", function(bugpack) {
 
         }
     };
-    bugmeta.annotate(bugCallRouterInstantiationTest).with(
+    bugmeta.tag(bugCallRouterInstantiationTest).with(
         test().name("BugCallRouter - instantiation Test")
     );
 });

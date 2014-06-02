@@ -5,7 +5,7 @@
 //@TestFile
 
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('socketio:client.SocketIoConfig')
 
 
@@ -21,7 +21,7 @@ var bugpack         = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var BugMeta         = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation  = bugpack.require('bugunit.TestAnnotation');
+var TestTag  = bugpack.require('bugunit.TestTag');
 var SocketIoConfig  = bugpack.require('socketio:client.SocketIoConfig');
 
 
@@ -30,7 +30,7 @@ var SocketIoConfig  = bugpack.require('socketio:client.SocketIoConfig');
 //-------------------------------------------------------------------------------
 
 var bugmeta         = BugMeta.context();
-var test            = TestAnnotation.test;
+var test            = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ var socketIoConfigConstructorTest = {
             "Assert ");
     }
 };
-bugmeta.annotate(socketIoConfigConstructorTest).with(
+bugmeta.tag(socketIoConfigConstructorTest).with(
     test().name("SocketIoConfig constructor Test")
 );
 
@@ -87,6 +87,6 @@ var socketIoConfigGetSetTest = {
 
     }
 };
-bugmeta.annotate(socketIoConfigGetSetTest).with(
+bugmeta.tag(socketIoConfigGetSetTest).with(
     test().name("SocketIoConfig get and set Test")
 );

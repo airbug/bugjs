@@ -7,11 +7,11 @@
 //@Require('Class')
 //@Require('Event')
 //@Require('EventDispatcher')
-//@Require('bugioc.ConfigurationAnnotationProcessor')
-//@Require('bugioc.ConfigurationScan')
+//@Require('bugioc.ConfigurationTagProcessor')
+//@Require('bugioc.ConfigurationTagScan')
 //@Require('bugioc.IocContext')
-//@Require('bugioc.ModuleAnnotationProcessor')
-//@Require('bugioc.ModuleScan')
+//@Require('bugioc.ModuleTagProcessor')
+//@Require('bugioc.ModuleTagScan')
 //@Require('bugmeta.BugMeta')
 
 
@@ -28,11 +28,11 @@ require('bugpack').context("*", function(bugpack) {
     var Class                               = bugpack.require('Class');
     var Event                               = bugpack.require('Event');
     var EventDispatcher                     = bugpack.require('EventDispatcher');
-    var ConfigurationAnnotationProcessor    = bugpack.require('bugioc.ConfigurationAnnotationProcessor');
-    var ConfigurationScan                   = bugpack.require('bugioc.ConfigurationScan');
+    var ConfigurationTagProcessor    = bugpack.require('bugioc.ConfigurationTagProcessor');
+    var ConfigurationTagScan                   = bugpack.require('bugioc.ConfigurationTagScan');
     var IocContext                          = bugpack.require('bugioc.IocContext');
-    var ModuleAnnotationProcessor           = bugpack.require('bugioc.ModuleAnnotationProcessor');
-    var ModuleScan                          = bugpack.require('bugioc.ModuleScan');
+    var ModuleTagProcessor           = bugpack.require('bugioc.ModuleTagProcessor');
+    var ModuleTagScan                          = bugpack.require('bugioc.ModuleTagScan');
     var BugMeta                             = bugpack.require('bugmeta.BugMeta');
 
 
@@ -73,15 +73,15 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
-             * @type {ConfigurationScan}
+             * @type {ConfigurationTagScan}
              */
-            this.configurationScan  = new ConfigurationScan(BugMeta.context(), new ConfigurationAnnotationProcessor(this.iocContext));
+            this.configurationTagScan  = new ConfigurationTagScan(BugMeta.context(), new ConfigurationTagProcessor(this.iocContext));
 
             /**
              * @private
-             * @type {ModuleScan}
+             * @type {ModuleTagScan}
              */
-            this.moduleScan         = new ModuleScan(BugMeta.context(), new ModuleAnnotationProcessor(this.iocContext));
+            this.moduleTagScan         = new ModuleTagScan(BugMeta.context(), new ModuleTagProcessor(this.iocContext));
 
             /**
              * @private
@@ -96,10 +96,10 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @return {ConfigurationScan}
+         * @return {ConfigurationTagScan}
          */
-        getConfigurationScan: function() {
-            return this.configurationScan;
+        getConfigurationTagScan: function() {
+            return this.configurationTagScan;
         },
 
         /**
@@ -110,10 +110,10 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @return {ModuleScan}
+         * @return {ModuleTagScan}
          */
-        getModuleScan: function() {
-            return this.moduleScan;
+        getModuleTagScan: function() {
+            return this.moduleTagScan;
         },
 
         /**

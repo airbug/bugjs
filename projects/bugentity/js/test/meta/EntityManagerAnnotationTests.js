@@ -15,9 +15,9 @@
 //@TestFile
 
 //@Require('Class')
-//@Require('bugentity.EntityManagerAnnotation')
+//@Require('bugentity.EntityManagerTag')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 
 
 //-------------------------------------------------------------------------------
@@ -31,9 +31,9 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                       = bugpack.require('Class');
-    var EntityManagerAnnotation     = bugpack.require('bugentity.EntityManagerAnnotation');
+    var EntityManagerTag     = bugpack.require('bugentity.EntityManagerTag');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-    var TestAnnotation              = bugpack.require('bugunit.TestAnnotation');
+    var TestTag              = bugpack.require('bugunit.TestTag');
 
 
     //-------------------------------------------------------------------------------
@@ -41,7 +41,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta = BugMeta.context();
-    var test = TestAnnotation.test;
+    var test = TestTag.test;
 
 
     //-------------------------------------------------------------------------------
@@ -51,13 +51,13 @@ require('bugpack').context("*", function(bugpack) {
     /**
      *
      */
-    var entityManagerAnnotationInstantiationTest = {
+    var entityManagerTagInstantiationTest = {
 
         // Setup Test
         //-------------------------------------------------------------------------------
 
         setup: function() {
-            this.entityManagerAnnotation = EntityManagerAnnotation.entityManager("moduleName");
+            this.entityManagerTag = EntityManagerTag.entityManager("moduleName");
         },
 
 
@@ -65,13 +65,13 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         test: function(test) {
-            test.assertEqual(this.entityManagerAnnotation.getModuleName(), "moduleName",
+            test.assertEqual(this.entityManagerTag.getModuleName(), "moduleName",
                 "Assert moduleName was successfully set");
-            test.assertEqual(this.entityManagerAnnotation.getAnnotationType(), "EntityManager",
+            test.assertEqual(this.entityManagerTag.getTagType(), "EntityManager",
                 "Assert annotationType was successfully set");
         }
     };
-    bugmeta.annotate(entityManagerAnnotationInstantiationTest).with(
-        test().name("EntityManagerAnnotation - instantiation test")
+    bugmeta.tag(entityManagerTagInstantiationTest).with(
+        test().name("EntityManagerTag - instantiation test")
     );
 });

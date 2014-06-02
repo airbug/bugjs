@@ -20,7 +20,7 @@
 //@Require('Obj')
 //@Require('bugcall.IncomingRequest')
 //@Require('bugflow.BugFlow')
-//@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 //@Require('bugrequest.IBuildRequestContext')
 //@Require('bugrequest.IPreProcessRequest')
@@ -42,7 +42,7 @@ require('bugpack').context("*", function(bugpack) {
     var Obj                     = bugpack.require('Obj');
     var IncomingRequest         = bugpack.require('bugcall.IncomingRequest');
     var BugFlow                 = bugpack.require('bugflow.BugFlow');
-    var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
+    var ModuleTag        = bugpack.require('bugioc.ModuleTag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
     var IBuildRequestContext    = bugpack.require('bugrequest.IBuildRequestContext');
     var IPreProcessRequest      = bugpack.require('bugrequest.IPreProcessRequest');
@@ -54,7 +54,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta                = BugMeta.context();
-    var module                 = ModuleAnnotation.module;
+    var module                 = ModuleTag.module;
     var $iterableSeries        = BugFlow.$iterableSeries;
 
 
@@ -195,7 +195,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(RequestContextBuilder).with(
+    bugmeta.tag(RequestContextBuilder).with(
         module("requestContextBuilder")
     );
 

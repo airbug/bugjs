@@ -16,7 +16,7 @@
 
 //@Require('bugmeta.BugMeta')
 //@Require('bugroute.SocketRoute')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 
 
 //-------------------------------------------------------------------------------
@@ -31,7 +31,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var BugMeta             = bugpack.require('bugmeta.BugMeta');
     var SocketRoute         = bugpack.require('bugroute.SocketRoute');
-    var TestAnnotation      = bugpack.require('bugunit.TestAnnotation');
+    var TestTag      = bugpack.require('bugunit.TestTag');
 
 
     //-------------------------------------------------------------------------------
@@ -39,7 +39,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta             = BugMeta.context();
-    var test                = TestAnnotation.test;
+    var test                = TestTag.test;
 
 
     //-------------------------------------------------------------------------------
@@ -73,7 +73,7 @@ require('bugpack').context("*", function(bugpack) {
                 "Asserts that the socketRoute's listener is assigned properly on construction");
         }
     };
-    bugmeta.annotate(socketRouteInstantiationTest).with(
+    bugmeta.tag(socketRouteInstantiationTest).with(
         test().name("SocketRoute - instantiation Test")
     );
 });

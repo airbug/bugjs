@@ -9,96 +9,108 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class = bugpack.require('Class');
-var Obj = bugpack.require('Obj');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var Scope = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function(iocContext, iocModule) {
+    var Class = bugpack.require('Class');
+    var Obj = bugpack.require('Obj');
 
-        this._super();
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {Obj}
+     */
+    var Scope = Class.extend(Obj, {
+
+        _name: "bugioc.Scope",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {IocContext}
+         * @constructs
+         * @param {IocContext} iocContext
+         * @param {IocModule} iocModule
          */
-        this.iocContext     = iocContext;
+        _constructor: function(iocContext, iocModule) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {IocContext}
+             */
+            this.iocContext     = iocContext;
+
+            /**
+             * @private
+             * @type {IocModule}
+             */
+            this.iocModule      = iocModule;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {IocModule}
+         * @return {IocContext}
          */
-        this.iocModule      = iocModule;
-    },
+        getIocContext: function() {
+            return this.iocContext;
+        },
+
+        /**
+         * @return {IocModule}
+         */
+        getIocModule: function() {
+            return this.iocModule;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {*}
+         */
+        factoryModule: function() {
+            var moduleFactory = this.iocModule.getModuleFactory();
+            return moduleFactory.factoryModule(this.iocModule);
+        },
+
+        /**
+         * @abstract
+         * @return {*}
+         */
+        generateModule: function() {
+
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {IocContext}
-     */
-    getIocContext: function() {
-        return this.iocContext;
-    },
-
-    /**
-     * @return {IocModule}
-     */
-    getIocModule: function() {
-        return this.iocModule;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @return {*}
-     */
-    factoryModule: function() {
-        var moduleFactory = this.iocModule.getModuleFactory();
-        return moduleFactory.factoryModule(this.iocModule);
-    },
-
-    /**
-     * @abstract
-     * @return {*}
-     */
-    generateModule: function() {
-
-    }
+    bugpack.export('bugioc.Scope', Scope);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugioc.Scope', Scope);

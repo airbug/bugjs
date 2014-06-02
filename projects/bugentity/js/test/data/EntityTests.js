@@ -17,7 +17,7 @@
 //@Require('TypeUtil')
 //@Require('bugentity.Entity')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 
 
 //-------------------------------------------------------------------------------
@@ -33,7 +33,7 @@ require('bugpack').context("*", function(bugpack) {
     var TypeUtil                = bugpack.require('TypeUtil');
     var Entity                  = bugpack.require('bugentity.Entity');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+    var TestTag          = bugpack.require('bugunit.TestTag');
 
 
     //-------------------------------------------------------------------------------
@@ -41,7 +41,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta                 = BugMeta.context();
-    var test                    = TestAnnotation.test;
+    var test                    = TestTag.test;
 
 
     //-------------------------------------------------------------------------------
@@ -79,7 +79,7 @@ require('bugpack').context("*", function(bugpack) {
                 "Assert Entity.createdAt was set correctly");
         }
     };
-    bugmeta.annotate(entityInstantiationTest).with(
+    bugmeta.tag(entityInstantiationTest).with(
         test().name("Entity - instantiation Test")
     );
 
@@ -111,7 +111,7 @@ require('bugpack').context("*", function(bugpack) {
             }, "Assert Entity.id cannot be set twice");
         }
     };
-    bugmeta.annotate(entityGetIdAndSetIdTest).with(
+    bugmeta.tag(entityGetIdAndSetIdTest).with(
         test().name("Entity - #getId and #setId Test")
     );
 
@@ -139,7 +139,7 @@ require('bugpack').context("*", function(bugpack) {
                 "Assert Entity.createdAt was set correctly using setCreatedAt");
         }
     };
-    bugmeta.annotate(entityGetCreatedAtAndSetCreatedAtTest).with(
+    bugmeta.tag(entityGetCreatedAtAndSetCreatedAtTest).with(
         test().name("Entity - #getCreatedAt and #setCreatedAt Test")
     );
 
@@ -167,7 +167,7 @@ require('bugpack').context("*", function(bugpack) {
                 "Assert Entity.updatedAt was set correctly using setUpdatedAt");
         }
     };
-    bugmeta.annotate(entityGetUpdatedAtAndSetUpdatedAtTest).with(
+    bugmeta.tag(entityGetUpdatedAtAndSetUpdatedAtTest).with(
         test().name("Entity - #getUpdatedAt and #setUpdatedAt Test")
     );
 });

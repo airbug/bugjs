@@ -11,9 +11,9 @@
 //@Require('Obj')
 //@Require('UuidGenerator')
 //@Require('bugflow.BugFlow')
-//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ArgTag')
 //@Require('bugioc.IInitializeModule')
-//@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 //@Require('bugsub.Message')
 //@Require('bugsub.Subscriber')
@@ -37,9 +37,9 @@ var Map                     = bugpack.require('Map');
 var Obj                     = bugpack.require('Obj');
 var UuidGenerator           = bugpack.require('UuidGenerator');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
-var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');
+var ArgTag           = bugpack.require('bugioc.ArgTag');
 var IInitializeModule       = bugpack.require('bugioc.IInitializeModule');
-var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
+var ModuleTag        = bugpack.require('bugioc.ModuleTag');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var Message                 = bugpack.require('bugsub.Message');
 var Subscriber              = bugpack.require('bugsub.Subscriber');
@@ -50,9 +50,9 @@ var RedisPubSub             = bugpack.require('redis.RedisPubSub');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var arg                     = ArgAnnotation.arg;
+var arg                     = ArgTag.arg;
 var bugmeta                 = BugMeta.context();
-var module                  = ModuleAnnotation.module;
+var module                  = ModuleTag.module;
 var $series                 = BugFlow.$series;
 var $task                   = BugFlow.$task;
 
@@ -444,7 +444,7 @@ Class.implement(PubSub, IInitializeModule);
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(PubSub).with(
+bugmeta.tag(PubSub).with(
     module("pubSub")
         .args([
             arg().ref("logger"),

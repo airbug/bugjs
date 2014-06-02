@@ -26,9 +26,9 @@
 //@Require('bugcall.CallEvent')
 //@Require('bugcall.CallResponder')
 //@Require('bugcall.CallServer')
-//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ArgTag')
 //@Require('bugioc.IInitializeModule')
-//@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -53,9 +53,9 @@ require('bugpack').context("*", function(bugpack) {
     var CallEvent                   = bugpack.require('bugcall.CallEvent');
     var CallResponder               = bugpack.require('bugcall.CallResponder');
     var CallServer                  = bugpack.require('bugcall.CallServer');
-    var ArgAnnotation               = bugpack.require('bugioc.ArgAnnotation');
+    var ArgTag               = bugpack.require('bugioc.ArgTag');
     var IInitializeModule           = bugpack.require('bugioc.IInitializeModule');
-    var ModuleAnnotation            = bugpack.require('bugioc.ModuleAnnotation');
+    var ModuleTag            = bugpack.require('bugioc.ModuleTag');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
 
@@ -63,9 +63,9 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                         = ArgAnnotation.arg;
+    var arg                         = ArgTag.arg;
     var bugmeta                     = BugMeta.context();
-    var module                      = ModuleAnnotation.module;
+    var module                      = ModuleTag.module;
 
 
     //-------------------------------------------------------------------------------
@@ -414,7 +414,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(BugCallServer).with(
+    bugmeta.tag(BugCallServer).with(
         module("bugCallServer")
             .args([
                 arg().ref("logger"),

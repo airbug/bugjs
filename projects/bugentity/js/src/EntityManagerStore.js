@@ -18,7 +18,7 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('Map')
-//@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -35,7 +35,7 @@ require('bugpack').context("*", function(bugpack) {
     var Class                       = bugpack.require('Class');
     var Obj                         = bugpack.require('Obj');
     var Map                         = bugpack.require('Map');
-    var ModuleAnnotation            = bugpack.require('bugioc.ModuleAnnotation');
+    var ModuleTag            = bugpack.require('bugioc.ModuleTag');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
 
@@ -44,7 +44,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta                     = BugMeta.context();
-    var module                      = ModuleAnnotation.module;
+    var module                      = ModuleTag.module;
 
 
     //-------------------------------------------------------------------------------
@@ -127,7 +127,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(EntityManagerStore).with(
+    bugmeta.tag(EntityManagerStore).with(
         module("entityManagerStore")
     );
 

@@ -7,7 +7,7 @@
 //@Require('Class')
 //@Require('bugdelta.SetChange')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 
 
 //-------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ var bugpack                 = require('bugpack').context();
 var Class                   = bugpack.require('Class');
 var SetChange               = bugpack.require('bugdelta.SetChange');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 
 
 //-------------------------------------------------------------------------------
@@ -32,7 +32,7 @@ var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
 //-------------------------------------------------------------------------------
 
 var bugmeta                 = BugMeta.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -65,7 +65,7 @@ var setChangeInstantiationWithoutParametersTest = {
             "Assert SetChange.setValue was NOT set");
     }
 };
-bugmeta.annotate(setChangeInstantiationWithoutParametersTest).with(
+bugmeta.tag(setChangeInstantiationWithoutParametersTest).with(
     test().name("SetChange - instantiation without parameters test")
 );
 
@@ -97,6 +97,6 @@ var setChangeInstantiationWithParametersTest = {
             "Assert SetChange.setValue was set correctly");
     }
 };
-bugmeta.annotate(setChangeInstantiationWithParametersTest).with(
+bugmeta.tag(setChangeInstantiationWithParametersTest).with(
     test().name("SetChange - instantiation with parameters test")
 );

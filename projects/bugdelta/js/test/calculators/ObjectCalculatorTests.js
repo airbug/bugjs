@@ -9,7 +9,7 @@
 //@Require('bugdelta.DeltaBuilder')
 //@Require('bugdelta.ObjectCalculator')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 
 
 //-------------------------------------------------------------------------------
@@ -28,7 +28,7 @@ var Delta                   = bugpack.require('bugdelta.Delta');
 var DeltaBuilder            = bugpack.require('bugdelta.DeltaBuilder');
 var ObjectCalculator        = bugpack.require('bugdelta.ObjectCalculator');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 
 
 //-------------------------------------------------------------------------------
@@ -36,7 +36,7 @@ var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
 //-------------------------------------------------------------------------------
 
 var bugmeta                 = BugMeta.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -76,7 +76,7 @@ var objectCalculatorInstantiationWithoutParametersTest = {
             "Assert testObjectCalculator.deltaBuilder was NOT set");
     }
 };
-bugmeta.annotate(objectCalculatorInstantiationWithoutParametersTest).with(
+bugmeta.tag(objectCalculatorInstantiationWithoutParametersTest).with(
     test().name("ObjectCalculator - instantiation without parameters test")
 );
 
@@ -102,7 +102,7 @@ var objectCalculatorInstantiationWithParametersTest = {
             "Assert testObjectCalculator.deltaBuilder was set correctly");
     }
 };
-bugmeta.annotate(objectCalculatorInstantiationWithParametersTest).with(
+bugmeta.tag(objectCalculatorInstantiationWithParametersTest).with(
     test().name("ObjectCalculator - instantiation with parameters test")
 );
 
@@ -129,7 +129,7 @@ var objectCalculatorCalculateDeltaNoChangeEmptyObjectTest = {
             "Assert that no changes were found");
     }
 };
-bugmeta.annotate(objectCalculatorCalculateDeltaNoChangeEmptyObjectTest).with(
+bugmeta.tag(objectCalculatorCalculateDeltaNoChangeEmptyObjectTest).with(
     test().name("ObjectCalculator - calculate delta no change empty object test")
 );
 
@@ -191,7 +191,7 @@ var objectCalculatorCalculateDeltaNoChangeTypesTest = {
 
     }
 };
-bugmeta.annotate(objectCalculatorCalculateDeltaNoChangeTypesTest).with(
+bugmeta.tag(objectCalculatorCalculateDeltaNoChangeTypesTest).with(
     test().name("ObjectCalculator - calculate delta no change types test")
 );
 
@@ -221,6 +221,6 @@ var objectCalculatorCalculateDeltaPropertySetChangeTest = {
             "Assert there is one change");
     }
 };
-bugmeta.annotate(objectCalculatorCalculateDeltaPropertySetChangeTest).with(
+bugmeta.tag(objectCalculatorCalculateDeltaPropertySetChangeTest).with(
     test().name("ObjectCalculator - calculate delta property set change test")
 );

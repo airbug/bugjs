@@ -11,190 +11,202 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class   = bugpack.require('Class');
-var List    = bugpack.require('List');
-var Obj     = bugpack.require('Obj');
-var Set     = bugpack.require('Set');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var IocModule = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function(name, scope) {
+    var Class   = bugpack.require('Class');
+    var List    = bugpack.require('List');
+    var Obj     = bugpack.require('Obj');
+    var Set     = bugpack.require('Set');
 
-        this._super();
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {Obj}
+     */
+    var IocModule = Class.extend(Obj, {
+
+        _name: "bugioc.IocModule",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {List<IocArg>}
+         * @constructs
+         * @param {string} name
+         * @param {IocModule.Scope} scope
          */
-        this.iocArgList         = new List();
+        _constructor: function(name, scope) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {List<IocArg>}
+             */
+            this.iocArgList         = new List();
+
+            /**
+             * @private
+             * @type {Set<IocProperty>}
+             */
+            this.iocPropertySet     = new Set();
+
+            /**
+             * @private
+             * @type {ModuleFactory}
+             */
+            this.moduleFactory      = undefined;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.name               = name;
+
+            /**
+             * @private
+             * @type {IocModule.Scope}
+             */
+            this.scope              = scope ? scope : IocModule.Scope.SINGLETON;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Set<IocProperty>}
+         * @return {List.<IocArg>}
          */
-        this.iocPropertySet     = new Set();
+        getIocArgList: function() {
+            return this.iocArgList;
+        },
 
         /**
-         * @private
-         * @type {ModuleFactory}
+         *
+         * @return {Set}
          */
-        this.moduleFactory      = undefined;
+        getIocPropertySet: function() {
+            return this.iocPropertySet;
+        },
 
         /**
-         * @private
-         * @type {string}
+         * @return {ModuleFactory}
          */
-        this.name               = name;
+        getModuleFactory: function() {
+            return this.moduleFactory;
+        },
 
         /**
-         * @private
-         * @type {IocModule.Scope}
+         * @param {ModuleFactory} moduleFactory
          */
-        this.scope              = scope ? scope : IocModule.Scope.SINGLETON;
-    },
+        setModuleFactory: function(moduleFactory) {
+            this.moduleFactory = moduleFactory;
+        },
+
+        /**
+         * @return {string}
+         */
+        getName: function() {
+            return this.name;
+        },
+
+        /**
+         * @return {IocModule.Scope}
+         */
+        getScope: function() {
+            return this.scope;
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // Object Implementation
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @return {List.<IocArg>}
-     */
-    getIocArgList: function() {
-        return this.iocArgList;
-    },
+        /**
+         * @param {*} value
+         * @return {boolean}
+         */
+        equals: function(value) {
+            if (Class.doesExtend(value, IocModule)) {
+                return Obj.equals(value.getName(), this.getName());
+            }
+            return false;
+        },
 
-    /**
-     *
-     * @return {Set}
-     */
-    getIocPropertySet: function() {
-        return this.iocPropertySet;
-    },
-
-    /**
-     * @return {ModuleFactory}
-     */
-    getModuleFactory: function() {
-        return this.moduleFactory;
-    },
-
-    /**
-     * @param {ModuleFactory} moduleFactory
-     */
-    setModuleFactory: function(moduleFactory) {
-        this.moduleFactory = moduleFactory;
-    },
-
-    /**
-     * @return {string}
-     */
-    getName: function() {
-        return this.name;
-    },
-
-    /**
-     * @return {IocModule.Scope}
-     */
-    getScope: function() {
-        return this.scope;
-    },
+        /**
+         * @return {number}
+         */
+        hashCode: function() {
+            if (!this._hashCode) {
+                this._hashCode = Obj.hashCode("[IocModule]" + Obj.hashCode(this.name));
+            }
+            return this._hashCode;
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // Object Implementation
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // Class Methods
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @param {*} value
-     * @return {boolean}
-     */
-    equals: function(value) {
-        if (Class.doesExtend(value, IocModule)) {
-            return Obj.equals(value.getName(), this.getName());
+        /**
+         * @param {IocArg} iocArg
+         */
+        addIocArg: function(iocArg) {
+            if (!this.iocArgList.contains(iocArg)) {
+                this.iocArgList.add(iocArg);
+            } else {
+                throw new Error("Module already contains this IocArg");
+            }
+        },
+
+        /**
+         * @param {IocProperty} iocProperty
+         */
+        addIocProperty: function(iocProperty) {
+            if (!this.iocPropertySet.contains(iocProperty)) {
+                this.iocPropertySet.add(iocProperty);
+            } else {
+                throw new Error("Module already contains this IocProperty");
+            }
         }
-        return false;
-    },
-
-    /**
-     * @return {number}
-     */
-    hashCode: function() {
-        if (!this._hashCode) {
-            this._hashCode = Obj.hashCode("[IocModule]" + Obj.hashCode(this.name));
-        }
-        return this._hashCode;
-    },
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Static Variables
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {IocArg} iocArg
+     * @enum {string}
      */
-    addIocArg: function(iocArg) {
-        if (!this.iocArgList.contains(iocArg)) {
-            this.iocArgList.add(iocArg);
-        } else {
-            throw new Error("Module already contains this IocArg");
-        }
-    },
+    IocModule.Scope = {
+        PROTOTYPE: "prototype",
+        SINGLETON: "singleton"
+    };
 
-    /**
-     * @param {IocProperty} iocProperty
-     */
-    addIocProperty: function(iocProperty) {
-        if (!this.iocPropertySet.contains(iocProperty)) {
-            this.iocPropertySet.add(iocProperty);
-        } else {
-            throw new Error("Module already contains this IocProperty");
-        }
-    }
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugioc.IocModule', IocModule);
 });
-
-
-//-------------------------------------------------------------------------------
-// Static Variables
-//-------------------------------------------------------------------------------
-
-/**
- * @enum {string}
- */
-IocModule.Scope = {
-    PROTOTYPE: "prototype",
-    SINGLETON: "singleton"
-};
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugioc.IocModule', IocModule);

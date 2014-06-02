@@ -7,7 +7,7 @@
 //@Require('Class')
 //@Require('bugcli.BugCli')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 
 
 //-------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ var bugpack             = require('bugpack').context();
 var Class               = bugpack.require('Class');
 var BugCli              = bugpack.require('bugcli.BugCli');
 var BugMeta             = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation      = bugpack.require('bugunit.TestAnnotation');
+var TestTag      = bugpack.require('bugunit.TestTag');
 
 
 //-------------------------------------------------------------------------------
@@ -32,7 +32,7 @@ var TestAnnotation      = bugpack.require('bugunit.TestAnnotation');
 //-------------------------------------------------------------------------------
 
 var bugmeta             = BugMeta.context();
-var test                = TestAnnotation.test;
+var test                = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -126,7 +126,7 @@ var registerActionOptionAndRunTest = {
         });
     }
 };
-bugmeta.annotate(registerActionOptionAndRunTest).with(
+bugmeta.tag(registerActionOptionAndRunTest).with(
     test().name("Register CliAction and CliOption then configure and run")
 );
 
@@ -218,6 +218,6 @@ var defaultActionOptionAndRunTest = {
         });
     }
 };
-bugmeta.annotate(defaultActionOptionAndRunTest).with(
+bugmeta.tag(defaultActionOptionAndRunTest).with(
     test().name("Register a default CliAction and a CliOption then configure and run")
 );

@@ -10,122 +10,129 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// Bugpack Modules
-//-------------------------------------------------------------------------------
-
-var Bug             = bugpack.require('Bug');
-var Class           = bugpack.require('Class');
-var Obj             = bugpack.require('Obj');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var Migration = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Bugpack Modules
+    //-------------------------------------------------------------------------------
+
+    var Bug             = bugpack.require('Bug');
+    var Class           = bugpack.require('Class');
+    var Obj             = bugpack.require('Obj');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {string} appName
-     * @param {string} appVersion
-     * @param {string} name
-     * @param {string} version
+     * @class
+     * @extends {Obj}
      */
-    _constructor: function(appName, appVersion, name, version) {
+    var Migration = Class.extend(Obj, {
 
-        this._super();
+        _name: "bugmigrate.Migration",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {string}
+         * @constructs
+         * @param {string} appName
+         * @param {string} appVersion
+         * @param {string} name
+         * @param {string} version
          */
-        this.appName        = appName;
+        _constructor: function(appName, appVersion, name, version) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.appName        = appName;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.appVersion     = appVersion;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.name           = name;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.version        = version;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {string}
+         * @return {string}
          */
-        this.appVersion     = appVersion;
+        getAppName: function(){
+            return this.appName;
+        },
 
         /**
-         * @private
-         * @type {string}
+         * @return {string}
          */
-        this.name           = name;
+        getAppVersion: function(){
+            return this.appVersion;
+        },
 
         /**
-         * @private
-         * @type {string}
+         * @return {string}
          */
-        this.version        = version;
-    },
+        getName: function() {
+            return this.name;
+        },
+
+        /**
+         * @return {string}
+         */
+        getVersion: function() {
+            return this.version;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Abstract Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @abstract
+         * @param {function(Throwable=)} callback
+         */
+        up: function(callback) {
+            throw new Bug("AbstractMethodNotImplemented", {}, "Abstract method 'up' not implemented");
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {string}
-     */
-    getAppName: function(){
-        return this.appName;
-    },
-
-    /**
-     * @return {string}
-     */
-    getAppVersion: function(){
-        return this.appVersion;
-    },
-
-    /**
-     * @return {string}
-     */
-    getName: function() {
-        return this.name;
-    },
-
-    /**
-     * @return {string}
-     */
-    getVersion: function() {
-        return this.version;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Abstract Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @abstract
-     * @param {function(Throwable=)} callback
-     */
-    up: function(callback) {
-        throw new Bug("AbstractMethodNotImplemented", {}, "Abstract method 'up' not implemented");
-    }
+    bugpack.export('bugmigrate.Migration', Migration);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugmigrate.Migration', Migration);

@@ -6,7 +6,7 @@
 
 //@Require('TypeUtil')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 //@Require('handshaker.DummyHand');
 //@Require('handshaker.Handshaker')
@@ -25,7 +25,7 @@ var bugpack                 = require('bugpack').context();
 
 var TypeUtil                = bugpack.require('TypeUtil');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 var DummyHand               = bugpack.require('handshaker.DummyHand');
 var Handshaker              = bugpack.require('handshaker.Handshaker');
@@ -37,7 +37,7 @@ var Handshaker              = bugpack.require('handshaker.Handshaker');
 
 var bugmeta                 = BugMeta.context();
 var bugyarn                 = BugYarn.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -153,15 +153,15 @@ var handshakerShakeAuthorizedTrueWithThrowableShouldFailAuthorization = {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(handshakerInstantiationTest).with(
+bugmeta.tag(handshakerInstantiationTest).with(
     test().name("Handshaker - instantiation Test")
 );
-bugmeta.annotate(handshakerInstantiationWithHandsTest).with(
+bugmeta.tag(handshakerInstantiationWithHandsTest).with(
     test().name("Handshaker - instantiation with hands Test")
 );
-bugmeta.annotate(handshakerInstantiationWithNonHandsTest).with(
+bugmeta.tag(handshakerInstantiationWithNonHandsTest).with(
     test().name("Handshaker - instantiation with non hands Test")
 );
-bugmeta.annotate(handshakerShakeAuthorizedTrueWithThrowableShouldFailAuthorization).with(
+bugmeta.tag(handshakerShakeAuthorizedTrueWithThrowableShouldFailAuthorization).with(
     test().name("Handshaker - shake that returns true authorization but contains a throwable should fail authorization")
 );

@@ -19,10 +19,10 @@
 //@Require('Class')
 //@Require('Map')
 //@Require('Obj')
-//@Require('bugentity.EntityProcessor')
-//@Require('bugentity.EntityScan')
+//@Require('bugentity.EntityTagProcessor')
+//@Require('bugentity.EntityTagScan')
 //@Require('bugioc.IProcessModule')
-//@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -40,10 +40,10 @@ require('bugpack').context("*", function(bugpack) {
     var Class               = bugpack.require('Class');
     var Map                 = bugpack.require('Map');
     var Obj                 = bugpack.require('Obj');
-    var EntityProcessor     = bugpack.require('bugentity.EntityProcessor');
-    var EntityScan          = bugpack.require('bugentity.EntityScan');
+    var EntityTagProcessor     = bugpack.require('bugentity.EntityTagProcessor');
+    var EntityTagScan          = bugpack.require('bugentity.EntityTagScan');
     var IProcessModule      = bugpack.require('bugioc.IProcessModule');
-    var ModuleAnnotation    = bugpack.require('bugioc.ModuleAnnotation');
+    var ModuleTag    = bugpack.require('bugioc.ModuleTag');
     var BugMeta             = bugpack.require('bugmeta.BugMeta');
 
 
@@ -52,7 +52,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta              = BugMeta.context();
-    var module               = ModuleAnnotation.module;
+    var module               = ModuleTag.module;
 
 
     //-------------------------------------------------------------------------------
@@ -115,8 +115,8 @@ require('bugpack').context("*", function(bugpack) {
         processModule: function() {
             if (!this.processed) {
                 this.processed = true;
-                var entityScan = new EntityScan(bugmeta, new EntityProcessor(this));
-                entityScan.scanAll();
+                var entityTagScan = new EntityTagScan(bugmeta, new EntityTagProcessor(this));
+                entityTagScan.scanAll();
             } else {
                 throw new Bug("IllegalState", {}, "Already processed module SchemaManager");
             }
@@ -212,7 +212,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(SchemaManager).with(
+    bugmeta.tag(SchemaManager).with(
         module("schemaManager")
     );
 

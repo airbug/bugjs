@@ -17,7 +17,7 @@
 //@Require('Class')
 //@Require('bugentity.EntityManagerStore')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 
 
@@ -34,7 +34,7 @@ require('bugpack').context("*", function(bugpack) {
     var Class                   = bugpack.require('Class');
     var EntityManagerStore      = bugpack.require('bugentity.EntityManagerStore');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+    var TestTag          = bugpack.require('bugunit.TestTag');
     var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 
@@ -44,7 +44,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var bugmeta                 = BugMeta.context();
     var bugyarn                 = BugYarn.context();
-    var test                    = TestAnnotation.test;
+    var test                    = TestTag.test;
 
 
     //-------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ require('bugpack').context("*", function(bugpack) {
                 "Assert instance of EntityManagerStore");
         }
     };
-    bugmeta.annotate(entityManagerStoreInstantiationTest).with(
+    bugmeta.tag(entityManagerStoreInstantiationTest).with(
         test().name("EntityManagerStore - instantiation test")
     );
 });

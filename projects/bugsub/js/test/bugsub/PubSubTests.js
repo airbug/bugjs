@@ -6,7 +6,7 @@
 
 //@Require('Class')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 //@Require('bugsub.PubSub')
 
@@ -24,7 +24,7 @@ var bugpack                 = require('bugpack').context();
 
 var Class                   = bugpack.require('Class');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 var PubSub                  = bugpack.require('bugsub.PubSub');
 
@@ -35,7 +35,7 @@ var PubSub                  = bugpack.require('bugsub.PubSub');
 
 var bugmeta                 = BugMeta.context();
 var bugyarn                 = BugYarn.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -89,6 +89,6 @@ var pubSubInstantiationTest = {
             "Assert .redisPubSub was set correctly");
     }
 };
-bugmeta.annotate(pubSubInstantiationTest).with(
+bugmeta.tag(pubSubInstantiationTest).with(
     test().name("PubSub - instantiation test")
 );

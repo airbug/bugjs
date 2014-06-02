@@ -5,7 +5,7 @@
 //@TestFile
 
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('socketio:client.DummySocketFactory')
 //@Require('socketio:socket.SocketIoClient')
 
@@ -22,7 +22,7 @@ var bugpack             = require('bugpack').context();
 //-------------------------------------------------------------------------------
 
 var BugMeta             = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation      = bugpack.require('bugunit.TestAnnotation');
+var TestTag      = bugpack.require('bugunit.TestTag');
 var DummySocketFactory  = bugpack.require('socketio:client.DummySocketFactory');
 var SocketIoClient      = bugpack.require('socketio:socket.SocketIoClient');
 
@@ -32,7 +32,7 @@ var SocketIoClient      = bugpack.require('socketio:socket.SocketIoClient');
 //-------------------------------------------------------------------------------
 
 var bugmeta             = BugMeta.context();
-var test                = TestAnnotation.test;
+var test                = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -61,7 +61,7 @@ var socketIoClientConstructorTest = {
             "Asserts that socketIoClient does not start with the 'connecting' flag as true");
     }
 };
-bugmeta.annotate(socketIoClientConstructorTest).with(
+bugmeta.tag(socketIoClientConstructorTest).with(
     test().name("SocketIoClient constructor Test")
 );
 
@@ -86,6 +86,6 @@ var socketIoClientConnectTest = {
 
     }
 };
-bugmeta.annotate(socketIoClientConnectTest).with(
+bugmeta.tag(socketIoClientConnectTest).with(
     test().name("SocketIoClient connect Test")
 );

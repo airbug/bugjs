@@ -10,7 +10,7 @@
 //@Require('Obj')
 //@Require('ReferenceGraph')
 //@Require('bugdispose.IDisposable')
-//@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -29,7 +29,7 @@ require('bugpack').context("*", function(bugpack) {
     var Obj                 = bugpack.require('Obj');
     var ReferenceGraph      = bugpack.require('ReferenceGraph');
     var IDisposable         = bugpack.require('bugdispose.IDisposable');
-    var ModuleAnnotation    = bugpack.require('bugioc.ModuleAnnotation');
+    var ModuleTag    = bugpack.require('bugioc.ModuleTag');
     var BugMeta             = bugpack.require('bugmeta.BugMeta');
 
 
@@ -38,7 +38,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta             = BugMeta.context();
-    var module              = ModuleAnnotation.module;
+    var module              = ModuleTag.module;
 
 
     //-------------------------------------------------------------------------------
@@ -216,7 +216,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(GarbageDisposal).with(
+    bugmeta.tag(GarbageDisposal).with(
         module("garbageDisposal")
     );
 

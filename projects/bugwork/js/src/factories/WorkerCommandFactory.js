@@ -7,8 +7,8 @@
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('bugioc.ArgAnnotation')
-//@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.ArgTag')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 //@Require('bugwork.WorkerProcess')
 //@Require('bugwork.CreateWorkerProcessCommand')
@@ -18,143 +18,155 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                         = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                           = bugpack.require('Class');
-var Obj                             = bugpack.require('Obj');
-var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
-var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
-var BugMeta                         = bugpack.require('bugmeta.BugMeta');
-var WorkerProcess                   = bugpack.require('bugwork.WorkerProcess');
-var CreateWorkerProcessCommand      = bugpack.require('bugwork.CreateWorkerProcessCommand');
-var DestroyWorkerProcessCommand     = bugpack.require('bugwork.DestroyWorkerProcessCommand');
-var StartWorkerCommand              = bugpack.require('bugwork.StartWorkerCommand');
-var StopWorkerCommand               = bugpack.require('bugwork.StopWorkerCommand');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var arg                             = ArgAnnotation.arg;
-var bugmeta                         = BugMeta.context();
-var module                          = ModuleAnnotation.module;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var WorkerCommandFactory = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function(marshaller, workerProcessFactory) {
+    var Class                           = bugpack.require('Class');
+    var Obj                             = bugpack.require('Obj');
+    var ArgTag                   = bugpack.require('bugioc.ArgTag');
+    var ModuleTag                = bugpack.require('bugioc.ModuleTag');
+    var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+    var WorkerProcess                   = bugpack.require('bugwork.WorkerProcess');
+    var CreateWorkerProcessCommand      = bugpack.require('bugwork.CreateWorkerProcessCommand');
+    var DestroyWorkerProcessCommand     = bugpack.require('bugwork.DestroyWorkerProcessCommand');
+    var StartWorkerCommand              = bugpack.require('bugwork.StartWorkerCommand');
+    var StopWorkerCommand               = bugpack.require('bugwork.StopWorkerCommand');
 
-        this._super();
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var arg                             = ArgTag.arg;
+    var bugmeta                         = BugMeta.context();
+    var module                          = ModuleTag.module;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {Obj}
+     */
+    var WorkerCommandFactory = Class.extend(Obj, {
+
+        _name: "bugwork.WorkerCommandFactory",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Marshaller}
+         * @constructs
+         * @param {Marshaller} marshaller
+         * @param {WorkerProcessFactory} workerProcessFactory
          */
-        this.marshaller                 = marshaller;
+        _constructor: function(marshaller, workerProcessFactory) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {Marshaller}
+             */
+            this.marshaller                 = marshaller;
+
+            /**
+             * @private
+             * @type {WorkerProcessFactory}
+             */
+            this.workerProcessFactory       = workerProcessFactory;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {WorkerProcessFactory}
+         * @return {Marshaller}
          */
-        this.workerProcessFactory       = workerProcessFactory;
-    },
+        getMarshaller: function() {
+            return this.marshaller;
+        },
+
+        /**
+         * @return {WorkerProcessFactory}
+         */
+        getWorkerProcessFactory: function() {
+            return this.workerProcessFactory;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {WorkerContext} workerContext
+         * @return {CreateWorkerProcessCommand}
+         */
+        factoryCreateWorkerProcessCommand: function(workerContext) {
+            return new CreateWorkerProcessCommand(workerContext, this.workerProcessFactory);
+        },
+
+        /**
+         * @param {WorkerContext} workerContext
+         * @return {DestroyWorkerProcessCommand}
+         */
+        factoryDestroyWorkerProcessCommand: function(workerContext) {
+            return new DestroyWorkerProcessCommand(workerContext);
+        },
+
+        /**
+         * @param {WorkerContext} workerContext
+         * @return {StartWorkerCommand}
+         */
+        factoryStartWorkerCommand: function(workerContext) {
+            return new StartWorkerCommand(workerContext, this.marshaller);
+        },
+
+        /**
+         * @param {WorkerContext} workerContext
+         * @return {StopWorkerCommand}
+         */
+        factoryStopWorkerCommand: function(workerContext) {
+            return new StopWorkerCommand(workerContext);
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // BugMeta
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {Marshaller}
-     */
-    getMarshaller: function() {
-        return this.marshaller;
-    },
+    bugmeta.tag(WorkerCommandFactory).with(
+        module("workerCommandFactory")
+            .args([
+                arg().ref("marshaller"),
+                arg().ref("workerProcessFactory")
+            ])
+    );
 
-    /**
-     * @return {WorkerProcessFactory}
-     */
-    getWorkerProcessFactory: function() {
-        return this.workerProcessFactory;
-    },
 
 
     //-------------------------------------------------------------------------------
-    // Public Methods
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @param {WorkerContext} workerContext
-     * @return {CreateWorkerProcessCommand}
-     */
-    factoryCreateWorkerProcessCommand: function(workerContext) {
-        return new CreateWorkerProcessCommand(workerContext, this.workerProcessFactory);
-    },
-
-    /**
-     * @param {WorkerContext} workerContext
-     * @return {DestroyWorkerProcessCommand}
-     */
-    factoryDestroyWorkerProcessCommand: function(workerContext) {
-        return new DestroyWorkerProcessCommand(workerContext);
-    },
-
-    /**
-     * @param {WorkerContext} workerContext
-     * @return {StartWorkerCommand}
-     */
-    factoryStartWorkerCommand: function(workerContext) {
-        return new StartWorkerCommand(workerContext, this.marshaller);
-    },
-
-    /**
-     * @param {WorkerContext} workerContext
-     * @return {StopWorkerCommand}
-     */
-    factoryStopWorkerCommand: function(workerContext) {
-        return new StopWorkerCommand(workerContext);
-    }
+    bugpack.export('bugwork.WorkerCommandFactory', WorkerCommandFactory);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(WorkerCommandFactory).with(
-    module("workerCommandFactory")
-        .args([
-            arg().ref("marshaller"),
-            arg().ref("workerProcessFactory")
-        ])
-);
-
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugwork.WorkerCommandFactory', WorkerCommandFactory);

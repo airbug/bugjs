@@ -10,67 +10,74 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var Command             = bugpack.require('Command');
-var Obj                 = bugpack.require('Obj');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {Command}
- */
-var WorkerCommand = Class.extend(Command, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function(workerContext) {
-
-        this._super();
-
-
-        //-------------------------------------------------------------------------------
-        // Private Properties
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {WorkerContext}
-         */
-        this.workerContext  = workerContext;
-    },
+    var Class               = bugpack.require('Class');
+    var Command             = bugpack.require('Command');
+    var Obj                 = bugpack.require('Obj');
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {WorkerContext}
+     * @class
+     * @extends {Command}
      */
-    getWorkerContext: function() {
-        return this.workerContext;
-    }
+    var WorkerCommand = Class.extend(Command, {
+
+        _name: "bugwork.WorkerCommand",
+
+
+        //-------------------------------------------------------------------------------
+        // Constructor
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @constructs
+         * @param {WorkerContext} workerContext
+         */
+        _constructor: function(workerContext) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {WorkerContext}
+             */
+            this.workerContext  = workerContext;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {WorkerContext}
+         */
+        getWorkerContext: function() {
+            return this.workerContext;
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugwork.WorkerCommand', WorkerCommand);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugwork.WorkerCommand', WorkerCommand);

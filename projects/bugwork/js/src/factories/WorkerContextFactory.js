@@ -7,124 +7,136 @@
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('bugioc.ArgAnnotation')
-//@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.ArgTag')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 //@Require('bugwork.WorkerContext')
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                         = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                           = bugpack.require('Class');
-var Obj                             = bugpack.require('Obj');
-var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
-var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
-var BugMeta                         = bugpack.require('bugmeta.BugMeta');
-var WorkerContext                   = bugpack.require('bugwork.WorkerContext');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var arg                             = ArgAnnotation.arg;
-var bugmeta                         = BugMeta.context();
-var module                          = ModuleAnnotation.module;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var WorkerContextFactory = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function(logger, workerCommandFactory) {
+    var Class                           = bugpack.require('Class');
+    var Obj                             = bugpack.require('Obj');
+    var ArgTag                   = bugpack.require('bugioc.ArgTag');
+    var ModuleTag                = bugpack.require('bugioc.ModuleTag');
+    var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+    var WorkerContext                   = bugpack.require('bugwork.WorkerContext');
 
-        this._super();
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var arg                             = ArgTag.arg;
+    var bugmeta                         = BugMeta.context();
+    var module                          = ModuleTag.module;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {Obj}
+     */
+    var WorkerContextFactory = Class.extend(Obj, {
+
+        _name: "bugwork.WorkerContextFactory",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Logger}
+         * @constructs
+         * @param {Logger} logger
+         * @param {WorkerCommandFactory} workerCommandFactory
          */
-        this.logger                     = logger;
+        _constructor: function(logger, workerCommandFactory) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {Logger}
+             */
+            this.logger                     = logger;
+
+            /**
+             * @private
+             * @type {WorkerCommandFactory}
+             */
+            this.workerCommandFactory       = workerCommandFactory;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {WorkerCommandFactory}
+         * @return {Logger}
          */
-        this.workerCommandFactory       = workerCommandFactory;
-    },
+        getLogger: function() {
+            return this.logger;
+        },
+
+        /**
+         * @return {WorkerCommandFactory}
+         */
+        getWorkerCommandFactory: function() {
+            return this.workerCommandFactory;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {string} workerName
+         * @param {boolean} debug
+         * @param {number} debugPort
+         * @return {WorkerContext}
+         */
+        factoryWorkerContext: function(workerName, debug, debugPort) {
+            return new WorkerContext(workerName, debug, debugPort, this.logger, this.workerCommandFactory);
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // BugMeta
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {Logger}
-     */
-    getLogger: function() {
-        return this.logger;
-    },
+    bugmeta.tag(WorkerContextFactory).with(
+        module("workerContextFactory")
+            .args([
+                arg().ref("logger"),
+                arg().ref("workerCommandFactory")
+            ])
+    );
 
-    /**
-     * @return {WorkerCommandFactory}
-     */
-    getWorkerCommandFactory: function() {
-        return this.workerCommandFactory;
-    },
 
 
     //-------------------------------------------------------------------------------
-    // Public Methods
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @param {string} workerName
-     * @param {boolean} debug
-     * @param {number} debugPort
-     * @return {WorkerContext}
-     */
-    factoryWorkerContext: function(workerName, debug, debugPort) {
-        return new WorkerContext(workerName, debug, debugPort, this.logger, this.workerCommandFactory);
-    }
+    bugpack.export('bugwork.WorkerContextFactory', WorkerContextFactory);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.annotate(WorkerContextFactory).with(
-    module("workerContextFactory")
-        .args([
-            arg().ref("logger"),
-            arg().ref("workerCommandFactory")
-        ])
-);
-
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugwork.WorkerContextFactory', WorkerContextFactory);

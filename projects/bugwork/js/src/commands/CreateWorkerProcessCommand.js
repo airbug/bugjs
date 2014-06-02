@@ -12,197 +12,205 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Bug                 = bugpack.require('Bug');
-var Class               = bugpack.require('Class');
-var WorkerCommand       = bugpack.require('bugwork.WorkerCommand');
-var WorkerDefines       = bugpack.require('bugwork.WorkerDefines');
-var WorkerProcess       = bugpack.require('bugwork.WorkerProcess');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {WorkerCommand}
- */
-var CreateWorkerProcessCommand = Class.extend(WorkerCommand, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function(workerContext, workerProcessFactory) {
+    var Bug                 = bugpack.require('Bug');
+    var Class               = bugpack.require('Class');
+    var WorkerCommand       = bugpack.require('bugwork.WorkerCommand');
+    var WorkerDefines       = bugpack.require('bugwork.WorkerDefines');
+    var WorkerProcess       = bugpack.require('bugwork.WorkerProcess');
 
-        this._super(workerContext);
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {WorkerCommand}
+     */
+    var CreateWorkerProcessCommand = Class.extend(WorkerCommand, {
+
+        _name: "bugwork.CreateWorkerProcessCommand",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @constructs
+         * @param {WorkerContext} workerContext
+         * @param {WorkerProcessFactory} workerProcessFactory
+         */
+        _constructor: function(workerContext, workerProcessFactory) {
+
+            this._super(workerContext);
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {function(Throwable=)}
+             */
+            this.callback                   = null;
+
+            /**
+             * @private
+             * @type {boolean}
+             */
+            this.completed                  = false;
+
+            /**
+             * @private
+             * @type {WorkerProcessFactory}
+             */
+            this.workerProcessFactory       = workerProcessFactory;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {function(Throwable, WorkerProcess=)}
+         */
+        getCallback: function() {
+            return this.callback;
+        },
+
+        /**
+         * @return {boolean}
+         */
+        getCompleted: function() {
+            return this.completed;
+        },
+
+        /**
+         * @return {WorkerProcessFactory}
+         */
+        getWorkerProcessFactory: function() {
+            return this.workerProcessFactory;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Command Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @protected
+         * @param {function(Throwable, WorkerProcess=)} callback
+         */
+        executeCommand: function(callback) {
+            this.callback       = callback;
+            if (!this.getWorkerContext().hasWorkerProcess()) {
+                this.createWorkerProcess();
+            } else {
+                this.complete();
+            }
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Private Methods
         //-------------------------------------------------------------------------------
 
         /**
          * @private
-         * @type {function(Throwable=)}
+         * @param {WorkerProcess} workerProcess
          */
-        this.callback                   = null;
+        addProcessListeners: function(workerProcess) {
+            workerProcess.addEventListener(WorkerProcess.EventTypes.CLOSED, this.hearProcessClosed, this);
+            workerProcess.addEventListener(WorkerProcess.EventTypes.READY, this.hearProcessReady, this);
+            workerProcess.addEventListener(WorkerProcess.EventTypes.THROWABLE, this.hearProcessThrowable, this);
+        },
 
         /**
          * @private
-         * @type {boolean}
+         * @param {Throwable=} throwable
          */
-        this.completed                  = false;
+        complete: function(throwable) {
+            if (!this.completed) {
+                this.completed = true;
+                this.removeProcessListeners(this.getWorkerContext().getWorkerProcess());
+                this.workerContext = null;
+                if (!throwable) {
+                    this.callback();
+                } else {
+                    this.callback(throwable);
+                }
+            } else {
+                throw new Bug("IllegalState", {}, "Creator already complete");
+            }
+        },
 
         /**
          * @private
-         * @type {WorkerProcessFactory}
          */
-        this.workerProcessFactory       = workerProcessFactory;
-    },
+        createWorkerProcess: function() {
+            var workerProcess  = this.workerProcessFactory.factoryWorkerProcess(this.getWorkerContext().isDebug(), this.getWorkerContext().getDebugPort());
+            this.getWorkerContext().updateWorkerProcess(workerProcess);
+            this.addProcessListeners(workerProcess);
+            workerProcess.createProcess();
+        },
+
+        /**
+         * @private
+         * @param {WorkerProcess} workerProcess
+         */
+        removeProcessListeners: function(workerProcess) {
+            workerProcess.removeEventListener(WorkerProcess.EventTypes.CLOSED, this.hearProcessClosed, this);
+            workerProcess.removeEventListener(WorkerProcess.EventTypes.READY, this.hearProcessReady, this);
+            workerProcess.removeEventListener(WorkerProcess.EventTypes.THROWABLE, this.hearProcessThrowable, this);
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // Event Listeners
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @return {function(Throwable, WorkerProcess=)}
-     */
-    getCallback: function() {
-        return this.callback;
-    },
+        /**
+         * @private
+         * @param {Event} event
+         */
+        hearProcessClosed: function(event) {
+            this.complete(new Bug("Worker closed before ready event"));
+        },
 
-    /**
-     * @return {boolean}
-     */
-    getCompleted: function() {
-        return this.completed;
-    },
+        /**
+         * @private
+         * @param {Event} event
+         */
+        hearProcessThrowable: function(event) {
+            this.complete(event.getData().throwable);
+        },
 
-    /**
-     * @return {WorkerProcessFactory}
-     */
-    getWorkerProcessFactory: function() {
-        return this.workerProcessFactory;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Command Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @protected
-     * @param {function(Throwable, WorkerProcess=)} callback
-     */
-    executeCommand: function(callback) {
-        this.callback       = callback;
-        if (!this.getWorkerContext().hasWorkerProcess()) {
-            this.createWorkerProcess();
-        } else {
+        /**
+         * @private
+         * @param {Event} event
+         */
+        hearProcessReady: function(event) {
+            this.getWorkerContext().updateWorkerState(WorkerDefines.State.READY);
             this.complete();
         }
-    },
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Private Methods
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @private
-     * @param {WorkerProcess} workerProcess
-     */
-    addProcessListeners: function(workerProcess) {
-        workerProcess.addEventListener(WorkerProcess.EventTypes.CLOSED, this.hearProcessClosed, this);
-        workerProcess.addEventListener(WorkerProcess.EventTypes.READY, this.hearProcessReady, this);
-        workerProcess.addEventListener(WorkerProcess.EventTypes.THROWABLE, this.hearProcessThrowable, this);
-    },
-
-    /**
-     * @private
-     * @param {Throwable=} throwable
-     */
-    complete: function(throwable) {
-        if (!this.completed) {
-            this.completed = true;
-            this.removeProcessListeners(this.getWorkerContext().getWorkerProcess());
-            this.workerContext = null;
-            if (!throwable) {
-                this.callback();
-            } else {
-                this.callback(throwable);
-            }
-        } else {
-            throw new Bug("IllegalState", {}, "Creator already complete");
-        }
-    },
-
-    /**
-     * @private
-     */
-    createWorkerProcess: function() {
-        var workerProcess  = this.workerProcessFactory.factoryWorkerProcess(this.getWorkerContext().isDebug(), this.getWorkerContext().getDebugPort());
-        this.getWorkerContext().updateWorkerProcess(workerProcess);
-        this.addProcessListeners(workerProcess);
-        workerProcess.createProcess();
-    },
-
-    /**
-     * @private
-     * @param {WorkerProcess} workerProcess
-     */
-    removeProcessListeners: function(workerProcess) {
-        workerProcess.removeEventListener(WorkerProcess.EventTypes.CLOSED, this.hearProcessClosed, this);
-        workerProcess.removeEventListener(WorkerProcess.EventTypes.READY, this.hearProcessReady, this);
-        workerProcess.removeEventListener(WorkerProcess.EventTypes.THROWABLE, this.hearProcessThrowable, this);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Event Listeners
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     * @param {Event} event
-     */
-    hearProcessClosed: function(event) {
-        this.complete(new Bug("Worker closed before ready event"));
-    },
-
-    /**
-     * @private
-     * @param {Event} event
-     */
-    hearProcessThrowable: function(event) {
-        this.complete(event.getData().throwable);
-    },
-
-    /**
-     * @private
-     * @param {Event} event
-     */
-    hearProcessReady: function(event) {
-        this.getWorkerContext().updateWorkerState(WorkerDefines.State.READY);
-        this.complete();
-    }
+    bugpack.export('bugwork.CreateWorkerProcessCommand', CreateWorkerProcessCommand);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugwork.CreateWorkerProcessCommand', CreateWorkerProcessCommand);

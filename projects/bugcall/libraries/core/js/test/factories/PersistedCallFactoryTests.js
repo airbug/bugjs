@@ -19,7 +19,7 @@
 //@Require('bugcall.PersistedCall')
 //@Require('bugcall.PersistedCallFactory')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 
 
@@ -38,7 +38,7 @@ require('bugpack').context("*", function(bugpack) {
     var PersistedCall           = bugpack.require('bugcall.PersistedCall');
     var PersistedCallFactory    = bugpack.require('bugcall.PersistedCallFactory');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+    var TestTag          = bugpack.require('bugunit.TestTag');
     var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 
@@ -48,7 +48,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var bugmeta                 = BugMeta.context();
     var bugyarn                 = BugYarn.context();
-    var test                    = TestAnnotation.test;
+    var test                    = TestTag.test;
 
 
     //-------------------------------------------------------------------------------
@@ -85,7 +85,7 @@ require('bugpack').context("*", function(bugpack) {
                 "Assert testPersistedCallFactory is an instance of PersistedCallFactory");
         }
     };
-    bugmeta.annotate(persistedCallFactoryInstantiationTest).with(
+    bugmeta.tag(persistedCallFactoryInstantiationTest).with(
         test().name("PersistedCallFactory - instantiation Test")
     );
 
@@ -125,7 +125,7 @@ require('bugpack').context("*", function(bugpack) {
                 "Assert .reconnect was set correctly");
         }
     };
-    bugmeta.annotate(persistedCallFactoryFactoryPersistedCallTest).with(
+    bugmeta.tag(persistedCallFactoryFactoryPersistedCallTest).with(
         test().name("PersistedCallFactory - #factoryPersistedCall Test")
     );
 });

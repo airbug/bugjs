@@ -19,7 +19,7 @@
 //@Require('bugdelta.DeltaBuilder')
 //@Require('bugentity.Entity')
 //@Require('bugentity.EntityCalculator')
-//@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -37,7 +37,7 @@ require('bugpack').context("*", function(bugpack) {
     var DeltaBuilder                    = bugpack.require('bugdelta.DeltaBuilder');
     var Entity                          = bugpack.require('bugentity.Entity');
     var EntityCalculator                = bugpack.require('bugentity.EntityCalculator');
-    var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
+    var ModuleTag                = bugpack.require('bugioc.ModuleTag');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
 
 
@@ -46,7 +46,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta                     = BugMeta.context();
-    var module                      = ModuleAnnotation.module;
+    var module                      = ModuleTag.module;
 
 
     //-------------------------------------------------------------------------------
@@ -80,7 +80,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(EntityDeltaBuilder).with(
+    bugmeta.tag(EntityDeltaBuilder).with(
         module("entityDeltaBuilder")
     );
 

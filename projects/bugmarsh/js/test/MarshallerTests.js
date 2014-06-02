@@ -16,10 +16,10 @@
 
 //@Require('Class')
 //@Require('bugmarsh.Marshaller')
-//@Require('bugmeta.Annotation')
+//@Require('bugmeta.Tag')
 //@Require('bugmeta.BugMeta')
 //@Require('bugmeta.MetaContext')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 
 
@@ -35,10 +35,10 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class                   = bugpack.require('Class');
     var Marshaller              = bugpack.require('bugmarsh.Marshaller');
-    var Annotation              = bugpack.require('bugmeta.Annotation');
+    var Tag              = bugpack.require('bugmeta.Tag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
     var MetaContext             = bugpack.require('bugmeta.MetaContext');
-    var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+    var TestTag          = bugpack.require('bugunit.TestTag');
     var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 
@@ -48,7 +48,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var bugmeta                 = BugMeta.context();
     var bugyarn                 = BugYarn.context();
-    var test                    = TestAnnotation.test;
+    var test                    = TestTag.test;
 
 
     //-------------------------------------------------------------------------------
@@ -99,7 +99,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(marshallerInstantiationTest).with(
+    bugmeta.tag(marshallerInstantiationTest).with(
         test().name("Marshaller - instantiation test")
     );
 });

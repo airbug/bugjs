@@ -21,7 +21,7 @@
 //@Require('Map')
 //@Require('Obj')
 //@Require('TypeUtil')
-//@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 //@Require('bugrequest.IProcessRequest')
 //@Require('bugroute.BugCallRoute')
@@ -43,7 +43,7 @@ require('bugpack').context("*", function(bugpack) {
     var Map                 = bugpack.require('Map');
     var Obj                 = bugpack.require('Obj');
     var TypeUtil            = bugpack.require('TypeUtil');
-    var ModuleAnnotation    = bugpack.require('bugioc.ModuleAnnotation');
+    var ModuleTag    = bugpack.require('bugioc.ModuleTag');
     var BugMeta             = bugpack.require('bugmeta.BugMeta');
     var IProcessRequest     = bugpack.require('bugrequest.IProcessRequest');
     var BugCallRoute        = bugpack.require('bugroute.BugCallRoute');
@@ -54,7 +54,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta             = BugMeta.context();
-    var module              = ModuleAnnotation.module;
+    var module              = ModuleTag.module;
 
 
     //-------------------------------------------------------------------------------
@@ -184,7 +184,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(BugCallRouter).with(
+    bugmeta.tag(BugCallRouter).with(
         module("bugCallRouter")
     );
 

@@ -9,124 +9,127 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class       = bugpack.require('Class');
-var Obj         = bugpack.require('Obj');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {Obj}
- */
-var IocProperty = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class       = bugpack.require('Class');
+    var Obj         = bugpack.require('Obj');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {string} name
-     * @param {string} ref
-     * @param {*} value
+     * @class
+     * @extends {Obj}
      */
-    _constructor: function(name, ref, value) {
+    var IocProperty = Class.extend(Obj, {
 
-        this._super();
+        _name: "bugioc.IocProperty",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {string}
+         * @constructs
+         * @param {string} name
+         * @param {string} ref
+         * @param {*} value
          */
-        this.name       = name;
+        _constructor: function(name, ref, value) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.name       = name;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.ref        = ref;
+
+            /**
+             * @private
+             * @type {*}
+             */
+            this.value      = value;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {string}
+         * @return {string}
          */
-        this.ref        = ref;
+        getName: function() {
+            return this.name;
+        },
 
         /**
-         * @private
-         * @type {*}
+         * @return {string}
          */
-        this.value      = value;
-    },
+        getRef: function() {
+            return this.ref;
+        },
+
+        /**
+         * @return {*}
+         */
+        getValue: function() {
+            return this.value;
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // Obj Methods
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @return {string}
-     */
-    getName: function() {
-        return this.name;
-    },
+        /**
+         * @param {*} value
+         * @return {boolean}
+         */
+        equals: function(value) {
+            if (Class.doesExtend(value, IocProperty)) {
+                return Obj.equals(value.getName(), this.getName());
+            }
+            return false;
+        },
 
-    /**
-     * @return {string}
-     */
-    getRef: function() {
-        return this.ref;
-    },
-
-    /**
-     * @return {*}
-     */
-    getValue: function() {
-        return this.value;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Obj Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {*} value
-     * @return {boolean}
-     */
-    equals: function(value) {
-        if (Class.doesExtend(value, IocProperty)) {
-            return Obj.equals(value.getName(), this.getName());
+        /**
+         * @return {number}
+         */
+        hashCode: function() {
+            if (!this._hashCode) {
+                this._hashCode = Obj.hashCode("[IocProperty]" + Obj.hashCode(this.name));
+            }
+            return this._hashCode;
         }
-        return false;
-    },
+    });
 
-    /**
-     * @return {number}
-     */
-    hashCode: function() {
-        if (!this._hashCode) {
-            this._hashCode = Obj.hashCode("[IocProperty]" + Obj.hashCode(this.name));
-        }
-        return this._hashCode;
-    }
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugioc.IocProperty', IocProperty);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugioc.IocProperty', IocProperty);

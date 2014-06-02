@@ -26,9 +26,9 @@
 //@Require('Pair')
 //@Require('Set')
 //@Require('TypeUtil')
-//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ArgTag')
 //@Require('bugioc.IInitializeModule')
-//@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -53,9 +53,9 @@ require('bugpack').context("*", function(bugpack) {
     var Pair                            = bugpack.require('Pair');
     var Set                             = bugpack.require('Set');
     var TypeUtil                        = bugpack.require('TypeUtil');
-    var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
+    var ArgTag                   = bugpack.require('bugioc.ArgTag');
     var IInitializeModule               = bugpack.require('bugioc.IInitializeModule');
-    var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
+    var ModuleTag                = bugpack.require('bugioc.ModuleTag');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
 
 
@@ -63,9 +63,9 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                             = ArgAnnotation.arg;
+    var arg                             = ArgTag.arg;
     var bugmeta                         = BugMeta.context();
-    var module                          = ModuleAnnotation.module;
+    var module                          = ModuleTag.module;
 
 
     //-------------------------------------------------------------------------------
@@ -757,7 +757,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(Marshaller).with(
+    bugmeta.tag(Marshaller).with(
         module("marshaller")
             .args([
                 arg().ref("marshRegistry")

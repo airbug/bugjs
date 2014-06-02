@@ -9,7 +9,7 @@
 //@Require('bugcall.CallRequest')
 //@Require('bugcall.CallRequestFactory')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 
 
@@ -29,7 +29,7 @@ var TypeUtil                = bugpack.require('TypeUtil');
 var CallRequest             = bugpack.require('bugcall.CallRequest');
 var CallRequestFactory      = bugpack.require('bugcall.CallRequestFactory');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 
@@ -39,7 +39,7 @@ var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 var bugmeta                 = BugMeta.context();
 var bugyarn                 = BugYarn.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -76,7 +76,7 @@ var callRequestFactoryInstantiationTest = {
             "Assert testCallRequestFactory is an instance of CallRequestFactory");
     }
 };
-bugmeta.annotate(callRequestFactoryInstantiationTest).with(
+bugmeta.tag(callRequestFactoryInstantiationTest).with(
     test().name("CallRequestFactory - instantiation Test")
 );
 
@@ -109,6 +109,6 @@ var callRequestFactoryFactoryCallRequestTest = {
             "Assert request data was set correctly");
     }
 };
-bugmeta.annotate(callRequestFactoryFactoryCallRequestTest).with(
+bugmeta.tag(callRequestFactoryFactoryCallRequestTest).with(
     test().name("CallRequestFactory - #factoryCallRequest Test")
 );

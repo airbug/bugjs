@@ -6,7 +6,7 @@
 
 //@Require('Class')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 //@Require('socketio:server.SocketIoServer')
 
@@ -24,7 +24,7 @@ var bugpack                 = require('bugpack').context();
 
 var Class                   = bugpack.require('Class');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 var SocketIoServer          = bugpack.require('socketio:server.SocketIoServer');
 
@@ -35,7 +35,7 @@ var SocketIoServer          = bugpack.require('socketio:server.SocketIoServer');
 
 var bugmeta                 = BugMeta.context();
 var bugyarn                 = BugYarn.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -95,6 +95,6 @@ var socketIoServerInstantiationTest = {
             "Assert .handshaker was set correctly");
     }
 };
-bugmeta.annotate(socketIoServerInstantiationTest).with(
+bugmeta.tag(socketIoServerInstantiationTest).with(
     test().name("SocketIoServer - instantiation test")
 );

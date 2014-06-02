@@ -6,7 +6,7 @@
 
 //@Require('Class')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('configbug.Configbug')
 
 
@@ -23,7 +23,7 @@ var bugpack         = require('bugpack').context();
 
 var Class           = bugpack.require('Class');
 var BugMeta         = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation  = bugpack.require('bugunit.TestAnnotation');
+var TestTag  = bugpack.require('bugunit.TestTag');
 var Configbug       = bugpack.require('configbug.Configbug');
 
 
@@ -32,7 +32,7 @@ var Configbug       = bugpack.require('configbug.Configbug');
 //-------------------------------------------------------------------------------
 
 var bugmeta         = BugMeta.context();
-var test            = TestAnnotation.test;
+var test            = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -64,6 +64,6 @@ var configbugInstantiationTest = {
             "Assert testConfigbug.builtConfigMap starts empty");
     }
 };
-bugmeta.annotate(configbugInstantiationTest).with(
+bugmeta.tag(configbugInstantiationTest).with(
     test().name("Configbug - instantiation test")
 );

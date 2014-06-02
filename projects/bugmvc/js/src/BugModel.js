@@ -13,8 +13,8 @@
 //@Require('ObservableSet')
 //@Require('bugdispose.IDisposable')
 //@Require('bugmeta.BugMeta')
-//@Require('bugioc.AutowiredAnnotation')
-//@Require('bugioc.PropertyAnnotation')
+//@Require('bugioc.AutowiredTag')
+//@Require('bugioc.PropertyTag')
 
 
 //-------------------------------------------------------------------------------
@@ -36,17 +36,17 @@ require('bugpack').context("*", function(bugpack) {
     var ObservableSet           = bugpack.require('ObservableSet');
     var IDisposable             = bugpack.require('bugdispose.IDisposable');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var AutowiredAnnotation     = bugpack.require('bugioc.AutowiredAnnotation');
-    var PropertyAnnotation      = bugpack.require('bugioc.PropertyAnnotation');
+    var AutowiredTag     = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag      = bugpack.require('bugioc.PropertyTag');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired               = AutowiredAnnotation.autowired;
+    var autowired               = AutowiredTag.autowired;
     var bugmeta                 = BugMeta.context();
-    var property                = PropertyAnnotation.property;
+    var property                = PropertyTag.property;
 
 
     //-------------------------------------------------------------------------------
@@ -292,7 +292,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(BugModel).with(
+    bugmeta.tag(BugModel).with(
         autowired().properties([
             property("garbageDisposal").ref("garbageDisposal")
         ])

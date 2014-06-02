@@ -9,75 +9,87 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var Obj                 = bugpack.require('Obj');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var WorkerRegistryEntry = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function(workerName, workerClass) {
-
-        this._super();
-
-
-        //-------------------------------------------------------------------------------
-        // Private Properties
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {Class}
-         */
-        this.workerClass    = workerClass;
-
-        /**
-         * @private
-         * @type {string}
-         */
-        this.workerName     = workerName;
-    },
+    var Class               = bugpack.require('Class');
+    var Obj                 = bugpack.require('Obj');
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {Class}
+     * @class
+     * @extends {Obj}
      */
-    getWorkerClass: function() {
-        return this.workerClass;
-    },
+    var WorkerRegistryEntry = Class.extend(Obj, {
 
-    /**
-     * @return {string}
-     */
-    getWorkerName: function() {
-        return this.workerName;
-    }
+        _name: "bugwork.WorkerRegistryEntry",
+
+
+        //-------------------------------------------------------------------------------
+        // Constructor
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @constructs
+         * @param {string} workerName
+         * @param {Class} workerClass
+         */
+        _constructor: function(workerName, workerClass) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {Class}
+             */
+            this.workerClass    = workerClass;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.workerName     = workerName;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {Class}
+         */
+        getWorkerClass: function() {
+            return this.workerClass;
+        },
+
+        /**
+         * @return {string}
+         */
+        getWorkerName: function() {
+            return this.workerName;
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugwork.WorkerRegistryEntry', WorkerRegistryEntry);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugwork.WorkerRegistryEntry', WorkerRegistryEntry);

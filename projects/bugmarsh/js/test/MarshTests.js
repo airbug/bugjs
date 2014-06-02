@@ -17,10 +17,10 @@
 //@Require('Class')
 //@Require('bugmarsh.Marsh')
 //@Require('bugmarsh.MarshProperty')
-//@Require('bugmeta.Annotation')
+//@Require('bugmeta.Tag')
 //@Require('bugmeta.BugMeta')
 //@Require('bugmeta.MetaContext')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 
 
 //-------------------------------------------------------------------------------
@@ -36,10 +36,10 @@ require('bugpack').context("*", function(bugpack) {
     var Class                   = bugpack.require('Class');
     var Marsh                   = bugpack.require('bugmarsh.Marsh');
     var MarshProperty           = bugpack.require('bugmarsh.MarshProperty');
-    var Annotation              = bugpack.require('bugmeta.Annotation');
+    var Tag              = bugpack.require('bugmeta.Tag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
     var MetaContext             = bugpack.require('bugmeta.MetaContext');
-    var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+    var TestTag          = bugpack.require('bugunit.TestTag');
 
 
     //-------------------------------------------------------------------------------
@@ -47,7 +47,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta                 = BugMeta.context();
-    var test                    = TestAnnotation.test;
+    var test                    = TestTag.test;
 
 
     //-------------------------------------------------------------------------------
@@ -116,10 +116,10 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(marshInstantiationTest).with(
+    bugmeta.tag(marshInstantiationTest).with(
         test().name("Marsh - instantiation test")
     );
-    bugmeta.annotate(marshAddPropertyTest).with(
+    bugmeta.tag(marshAddPropertyTest).with(
         test().name("Marsh - #addProperty test")
     );
 });

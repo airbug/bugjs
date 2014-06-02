@@ -7,7 +7,7 @@
 //@Require('Class')
 //@Require('bugdelta.ObjectChange')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 
 
 //-------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ var bugpack                 = require('bugpack').context();
 var Class                   = bugpack.require('Class');
 var ObjectChange            = bugpack.require('bugdelta.ObjectChange');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 
 
 //-------------------------------------------------------------------------------
@@ -32,7 +32,7 @@ var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
 //-------------------------------------------------------------------------------
 
 var bugmeta                 = BugMeta.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -69,7 +69,7 @@ var objectChangeInstantiationWithoutParametersTest = {
             "Assert ObjectChange.previousValue was Not set");
     }
 };
-bugmeta.annotate(objectChangeInstantiationWithoutParametersTest).with(
+bugmeta.tag(objectChangeInstantiationWithoutParametersTest).with(
     test().name("ObjectChange - instantiation without parameters test")
 );
 
@@ -107,6 +107,6 @@ var objectChangeInstantiationWithParametersTest = {
             "Assert ObjectChange.previousValue was set correctly");
     }
 };
-bugmeta.annotate(objectChangeInstantiationWithParametersTest).with(
+bugmeta.tag(objectChangeInstantiationWithParametersTest).with(
     test().name("ObjectChange - instantiation with parameters test")
 );

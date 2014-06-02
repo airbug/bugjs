@@ -12,8 +12,8 @@
 //@Require('Set')
 //@Require('bugcall.CallDefines')
 //@Require('bugflow.BugFlow')
-//@Require('bugioc.ArgAnnotation')
-//@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.ArgTag')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 //@Require('bugtrace.BugTrace')
 
@@ -36,8 +36,8 @@ var Obj                     = bugpack.require('Obj');
 var Set                     = bugpack.require('Set');
 var CallDefines             = bugpack.require('bugcall.CallDefines');
 var BugFlow                 = bugpack.require('bugflow.BugFlow');
-var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');
-var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
+var ArgTag           = bugpack.require('bugioc.ArgTag');
+var ModuleTag        = bugpack.require('bugioc.ModuleTag');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var BugTrace                = bugpack.require('bugtrace.BugTrace');
 
@@ -46,9 +46,9 @@ var BugTrace                = bugpack.require('bugtrace.BugTrace');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var arg                     = ArgAnnotation.arg;
+var arg                     = ArgTag.arg;
 var bugmeta                 = BugMeta.context();
-var module                  = ModuleAnnotation.module;
+var module                  = ModuleTag.module;
 var $iterableParallel       = BugFlow.$iterableParallel;
 var $parallel               = BugFlow.$parallel;
 var $series                 = BugFlow.$series;
@@ -337,7 +337,7 @@ var CallRequestPublisher = Class.extend(Obj, {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(CallRequestPublisher).with(
+bugmeta.tag(CallRequestPublisher).with(
     module("callRequestPublisher")
         .args([
             arg().ref("logger"),

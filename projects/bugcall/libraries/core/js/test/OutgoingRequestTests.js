@@ -8,7 +8,7 @@
 //@Require('TypeUtil')
 //@Require('bugcall.OutgoingRequest')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 
 
 //-------------------------------------------------------------------------------
@@ -26,7 +26,7 @@ var Class                   = bugpack.require('Class');
 var TypeUtil                = bugpack.require('TypeUtil');
 var OutgoingRequest         = bugpack.require('bugcall.OutgoingRequest');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 
 
 //-------------------------------------------------------------------------------
@@ -34,7 +34,7 @@ var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
 //-------------------------------------------------------------------------------
 
 var bugmeta                 = BugMeta.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -65,7 +65,7 @@ var outgoingRequestInstantiationTest = {
             "Assert #getState defaults to OutgoingRequest.State.READY");
     }
 };
-bugmeta.annotate(outgoingRequestInstantiationTest).with(
+bugmeta.tag(outgoingRequestInstantiationTest).with(
     test().name("OutgoingRequest - instantiation Test")
 );
 
@@ -93,7 +93,7 @@ var outgoingRequestChangeStateQueuedTest = {
             "Assert #getState returns OutgoingRequest.State.QUEUED");
     }
 };
-bugmeta.annotate(outgoingRequestChangeStateQueuedTest).with(
+bugmeta.tag(outgoingRequestChangeStateQueuedTest).with(
     test().name("OutgoingRequest - #changeStateQueued Test")
 );
 
@@ -120,6 +120,6 @@ var outgoingRequestChangeStateSentTest = {
             "Assert #getState returns OutgoingRequest.State.SENT");
     }
 };
-bugmeta.annotate(outgoingRequestChangeStateSentTest).with(
+bugmeta.tag(outgoingRequestChangeStateSentTest).with(
     test().name("OutgoingRequest - #changeStateSent Test")
 );

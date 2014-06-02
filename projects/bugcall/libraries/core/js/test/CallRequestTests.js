@@ -7,7 +7,7 @@
 //@Require('TypeUtil')
 //@Require('bugcall.CallRequest')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 
 
 //-------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ var bugpack                 = require('bugpack').context();
 var TypeUtil                = bugpack.require('TypeUtil');
 var CallRequest             = bugpack.require('bugcall.CallRequest');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 
 
 //-------------------------------------------------------------------------------
@@ -32,7 +32,7 @@ var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
 //-------------------------------------------------------------------------------
 
 var bugmeta                 = BugMeta.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -64,6 +64,6 @@ var callRequestInstantiationTest = {
             "Assert #getUuid returns a string");
     }
 };
-bugmeta.annotate(callRequestInstantiationTest).with(
+bugmeta.tag(callRequestInstantiationTest).with(
     test().name("CallRequest - instantiation Test")
 );

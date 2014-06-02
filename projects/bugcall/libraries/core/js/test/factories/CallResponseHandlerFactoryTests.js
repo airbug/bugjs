@@ -9,7 +9,7 @@
 //@Require('bugcall.CallResponseHandler')
 //@Require('bugcall.CallResponseHandlerFactory')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 
 
@@ -29,7 +29,7 @@ var TypeUtil                        = bugpack.require('TypeUtil');
 var CallResponseHandler             = bugpack.require('bugcall.CallResponseHandler');
 var CallResponseHandlerFactory      = bugpack.require('bugcall.CallResponseHandlerFactory');
 var BugMeta                         = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation                  = bugpack.require('bugunit.TestAnnotation');
+var TestTag                  = bugpack.require('bugunit.TestTag');
 var BugYarn                         = bugpack.require('bugyarn.BugYarn');
 
 
@@ -39,7 +39,7 @@ var BugYarn                         = bugpack.require('bugyarn.BugYarn');
 
 var bugmeta                         = BugMeta.context();
 var bugyarn                         = BugYarn.context();
-var test                            = TestAnnotation.test;
+var test                            = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -76,7 +76,7 @@ var callResponseHandlerFactoryInstantiationTest = {
             "Assert testCallResponseHandlerFactory is an instance of CallResponseHandlerFactory");
     }
 };
-bugmeta.annotate(callResponseHandlerFactoryInstantiationTest).with(
+bugmeta.tag(callResponseHandlerFactoryInstantiationTest).with(
     test().name("CallResponseHandlerFactory - instantiation Test")
 );
 
@@ -109,6 +109,6 @@ var callResponseHandlerFactoryFactoryCallResponseHandlerTest = {
             "Assert responseHandler.responseHandlerFunction was set correctly");
     }
 };
-bugmeta.annotate(callResponseHandlerFactoryFactoryCallResponseHandlerTest).with(
+bugmeta.tag(callResponseHandlerFactoryFactoryCallResponseHandlerTest).with(
     test().name("CallResponseHandlerFactory - #factoryCallResponseHandler Test")
 );

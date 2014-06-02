@@ -9,65 +9,77 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class = bugpack.require('Class');
-var Scope = bugpack.require('bugioc.Scope');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var SingletonScope = Class.extend(Scope, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function(bugIOC, iocModule) {
-
-        this._super(bugIOC, iocModule);
-
-
-        //-------------------------------------------------------------------------------
-        // Private Properties
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {*}
-         */
-        this.singletonModule = null;
-    },
+    var Class = bugpack.require('Class');
+    var Scope = bugpack.require('bugioc.Scope');
 
 
     //-------------------------------------------------------------------------------
-    // Class Methods
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {*}
+     * @class
+     * @extends {Scope}
      */
-    generateModule: function() {
-        if (!this.singletonModule) {
-            this.singletonModule = this.factoryModule();
+    var SingletonScope = Class.extend(Scope, {
+
+        _name: "bugioc.SingletonScope",
+
+
+        //-------------------------------------------------------------------------------
+        // Constructor
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @constructs
+         * @param {IocContext} iocContext
+         * @param {IocModule} iocModule
+         */
+        _constructor: function(iocContext, iocModule) {
+
+            this._super(iocContext, iocModule);
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {*}
+             */
+            this.singletonModule = null;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Class Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {*}
+         */
+        generateModule: function() {
+            if (!this.singletonModule) {
+                this.singletonModule = this.factoryModule();
+            }
+            return this.singletonModule;
         }
-        return this.singletonModule;
-    }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugioc.SingletonScope', SingletonScope);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugioc.SingletonScope', SingletonScope);

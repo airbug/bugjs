@@ -20,9 +20,9 @@
 //@Require('Map')
 //@Require('Obj')
 //@Require('bugioc.IProcessModule')
-//@Require('bugioc.ModuleAnnotation')
-//@Require('bugmarsh.MarshAnnotationProcessor')
-//@Require('bugmarsh.MarshAnnotationScan')
+//@Require('bugioc.ModuleTag')
+//@Require('bugmarsh.MarshTagProcessor')
+//@Require('bugmarsh.MarshTagScan')
 //@Require('bugmeta.BugMeta')
 
 
@@ -41,9 +41,9 @@ require('bugpack').context("*", function(bugpack) {
     var Map                             = bugpack.require('Map');
     var Obj                             = bugpack.require('Obj');
     var IProcessModule                  = bugpack.require('bugioc.IProcessModule');
-    var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
-    var MarshAnnotationProcessor        = bugpack.require('bugmarsh.MarshAnnotationProcessor');
-    var MarshAnnotationScan             = bugpack.require('bugmarsh.MarshAnnotationScan');
+    var ModuleTag                = bugpack.require('bugioc.ModuleTag');
+    var MarshTagProcessor        = bugpack.require('bugmarsh.MarshTagProcessor');
+    var MarshTagScan             = bugpack.require('bugmarsh.MarshTagScan');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
 
 
@@ -52,7 +52,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var bugmeta                         = BugMeta.context();
-    var module                          = ModuleAnnotation.module;
+    var module                          = ModuleTag.module;
 
 
     //-------------------------------------------------------------------------------
@@ -115,7 +115,7 @@ require('bugpack').context("*", function(bugpack) {
         processModule: function() {
             if (!this.processed) {
                 this.processed = true;
-                var scan = new MarshAnnotationScan(bugmeta, new MarshAnnotationProcessor(this));
+                var scan = new MarshTagScan(bugmeta, new MarshTagProcessor(this));
                 scan.scanAll();
             } else {
                 throw new Bug("IllegalState", {}, "Already processed module MarshRegistry");
@@ -205,7 +205,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(MarshRegistry).with(
+    bugmeta.tag(MarshRegistry).with(
         module("marshRegistry")
     );
 

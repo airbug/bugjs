@@ -8,8 +8,8 @@
 //@Require('IObjectable')
 //@Require('Obj')
 //@Require('UuidGenerator')
-//@Require('bugmarsh.MarshAnnotation');
-//@Require('bugmarsh.MarshPropertyAnnotation');
+//@Require('bugmarsh.MarshTag');
+//@Require('bugmarsh.MarshPropertyTag');
 //@Require('bugmeta.BugMeta')
 
 
@@ -28,8 +28,8 @@ var Class                       = bugpack.require('Class');
 var IObjectable                 = bugpack.require('IObjectable');
 var Obj                         = bugpack.require('Obj');
 var UuidGenerator               = bugpack.require('UuidGenerator');
-var MarshAnnotation             = bugpack.require('bugmarsh.MarshAnnotation');
-var MarshPropertyAnnotation     = bugpack.require('bugmarsh.MarshPropertyAnnotation');
+var MarshTag             = bugpack.require('bugmarsh.MarshTag');
+var MarshPropertyTag     = bugpack.require('bugmarsh.MarshPropertyTag');
 var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
 
@@ -38,8 +38,8 @@ var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 //-------------------------------------------------------------------------------
 
 var bugmeta                     = BugMeta.context();
-var marsh                       = MarshAnnotation.marsh;
-var property                    = MarshPropertyAnnotation.property;
+var marsh                       = MarshTag.marsh;
+var property                    = MarshPropertyTag.property;
 
 
 //-------------------------------------------------------------------------------
@@ -158,7 +158,7 @@ Class.implement(CallResponse, IObjectable);
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(CallResponse).with(
+bugmeta.tag(CallResponse).with(
     marsh("CallResponse")
         .properties([
             property("data"),

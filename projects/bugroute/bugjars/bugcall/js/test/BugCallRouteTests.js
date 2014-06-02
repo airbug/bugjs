@@ -17,7 +17,7 @@
 //@Require('bugdouble.BugDouble')
 //@Require('bugmeta.BugMeta')
 //@Require('bugroute.BugCallRoute')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 
 
 //-------------------------------------------------------------------------------
@@ -33,7 +33,7 @@ require('bugpack').context("*", function(bugpack) {
     var BugDouble           = bugpack.require('bugdouble.BugDouble');
     var BugMeta             = bugpack.require('bugmeta.BugMeta');
     var BugCallRoute        = bugpack.require('bugroute.BugCallRoute');
-    var TestAnnotation      = bugpack.require('bugunit.TestAnnotation');
+    var TestTag      = bugpack.require('bugunit.TestTag');
 
 
     //-------------------------------------------------------------------------------
@@ -42,7 +42,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var bugmeta             = BugMeta.context();
     var spyOnFunction       = BugDouble.spyOnFunction;
-    var test                = TestAnnotation.test;
+    var test                = TestTag.test;
 
 
     //-------------------------------------------------------------------------------
@@ -74,7 +74,7 @@ require('bugpack').context("*", function(bugpack) {
 
         }
     };
-    bugmeta.annotate(bugCallRouteInstantiationTest).with(
+    bugmeta.tag(bugCallRouteInstantiationTest).with(
         test().name("BugCallRoute - instantiation Test")
     );
 
@@ -114,7 +114,7 @@ require('bugpack').context("*", function(bugpack) {
                 "Assert testListener was called");
         }
     };
-    bugmeta.annotate(bugCallRouteRouteTest).with(
+    bugmeta.tag(bugCallRouteRouteTest).with(
         test().name("BugCallRoute - #route Test")
     );
 });

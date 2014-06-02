@@ -8,7 +8,7 @@
 //@Require('bugdouble.BugDouble')
 //@Require('bugmeta.BugMeta')
 //@Require('bugtask.Task')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 
 
@@ -27,7 +27,7 @@ var Class                   = bugpack.require('Class');
 var BugDouble               = bugpack.require('bugdouble.BugDouble');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var Task                    = bugpack.require('bugtask.Task');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 
@@ -38,7 +38,7 @@ var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 var bugmeta                 = BugMeta.context();
 var bugyarn                 = BugYarn.context();
 var stubObject              = BugDouble.stubObject;
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -88,6 +88,6 @@ var taskInstantiationTest = {
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(taskInstantiationTest).with(
+bugmeta.tag(taskInstantiationTest).with(
     test().name("Task - instantiation test")
 );

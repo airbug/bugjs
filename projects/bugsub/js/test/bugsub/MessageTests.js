@@ -9,7 +9,7 @@
 //@Require('bugdouble.BugDouble')
 //@Require('bugmeta.BugMeta')
 //@Require('bugsub.Message')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 
 
 //-------------------------------------------------------------------------------
@@ -28,7 +28,7 @@ var TypeUtil                = bugpack.require('TypeUtil');
 var BugDouble               = bugpack.require('bugdouble.BugDouble');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var Message                 = bugpack.require('bugsub.Message');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 
 
 //-------------------------------------------------------------------------------
@@ -37,7 +37,7 @@ var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
 
 var bugmeta                 = BugMeta.context();
 var spyOnFunction           = BugDouble.spyOnFunction;
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -74,7 +74,7 @@ var messageInstantiationNoArgumentsTest = {
             "Assert #getMessageUuid returns null");
     }
 };
-bugmeta.annotate(messageInstantiationNoArgumentsTest).with(
+bugmeta.tag(messageInstantiationNoArgumentsTest).with(
     test().name("Message - instantiation with no arguments Test")
 );
 
@@ -108,6 +108,6 @@ var messageInstantiationWithArgumentsTest = {
             "Assert #getMessageUuid returns null");
     }
 };
-bugmeta.annotate(messageInstantiationWithArgumentsTest).with(
+bugmeta.tag(messageInstantiationWithArgumentsTest).with(
     test().name("Message - instantiation with arguments Test")
 );

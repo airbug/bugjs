@@ -10,8 +10,8 @@
 //@Require('Map')
 //@Require('Obj')
 //@Require('Throwable')
-//@Require('bugioc.ArgAnnotation')
-//@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.ArgTag')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -30,8 +30,8 @@ require('bugpack').context("*", function(bugpack) {
     var Map                             = bugpack.require('Map');
     var Obj                             = bugpack.require('Obj');
     var Throwable                       = bugpack.require('Throwable');
-    var ArgAnnotation                   = bugpack.require('bugioc.ArgAnnotation');
-    var ModuleAnnotation                = bugpack.require('bugioc.ModuleAnnotation');
+    var ArgTag                   = bugpack.require('bugioc.ArgTag');
+    var ModuleTag                = bugpack.require('bugioc.ModuleTag');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
 
 
@@ -39,9 +39,9 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                             = ArgAnnotation.arg;
+    var arg                             = ArgTag.arg;
     var bugmeta                         = BugMeta.context();
-    var module                          = ModuleAnnotation.module;
+    var module                          = ModuleTag.module;
 
 
     //-------------------------------------------------------------------------------
@@ -238,7 +238,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(Logger).with(
+    bugmeta.tag(Logger).with(
         module("logger")
             .args([
                 arg().ref("console")

@@ -17,7 +17,7 @@
 //@Require('Class')
 //@Require('bugmeta.BugMeta')
 //@Require('bugrequest.RequestProcessor')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 
 
@@ -34,7 +34,7 @@ require('bugpack').context("*", function(bugpack) {
     var Class                   = bugpack.require('Class');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
     var RequestProcessor        = bugpack.require('bugrequest.RequestProcessor');
-    var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+    var TestTag          = bugpack.require('bugunit.TestTag');
     var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 
@@ -44,7 +44,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var bugmeta                 = BugMeta.context();
     var bugyarn                 = BugYarn.context();
-    var test                    = TestAnnotation.test;
+    var test                    = TestTag.test;
 
 
     //-------------------------------------------------------------------------------
@@ -91,7 +91,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(requestProcessorInstantiationTest).with(
+    bugmeta.tag(requestProcessorInstantiationTest).with(
         test().name("RequestProcessor - instantiation test")
     );
 });

@@ -6,7 +6,7 @@
 
 //@Require('Class')
 //@Require('bugmeta.BugMeta')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 //@Require('socketio:server.SocketIoServerConfig')
 
@@ -24,7 +24,7 @@ var bugpack                 = require('bugpack').context();
 
 var Class                   = bugpack.require('Class');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+var TestTag          = bugpack.require('bugunit.TestTag');
 var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 var SocketIoServerConfig    = bugpack.require('socketio:server.SocketIoServerConfig');
 
@@ -35,7 +35,7 @@ var SocketIoServerConfig    = bugpack.require('socketio:server.SocketIoServerCon
 
 var bugmeta                 = BugMeta.context();
 var bugyarn                 = BugYarn.context();
-var test                    = TestAnnotation.test;
+var test                    = TestTag.test;
 
 
 //-------------------------------------------------------------------------------
@@ -82,6 +82,6 @@ var socketIoServerConfigInstantiationEmptyDataTest = {
             "Assert getTransports[1] is 'jsonp-polling'");
     }
 };
-bugmeta.annotate(socketIoServerConfigInstantiationEmptyDataTest).with(
+bugmeta.tag(socketIoServerConfigInstantiationEmptyDataTest).with(
     test().name("SocketIoServerConfig - instantiation with empty data test")
 );

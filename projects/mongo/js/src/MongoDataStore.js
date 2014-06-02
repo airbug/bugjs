@@ -11,9 +11,9 @@
 //@Require('Obj')
 //@Require('TypeUtil')
 //@Require('bugentity.EntityDataStore')
-//@Require('bugioc.ArgAnnotation')
+//@Require('bugioc.ArgTag')
 //@Require('bugioc.IProcessModule')
-//@Require('bugioc.ModuleAnnotation')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 //@Require('mongo.MongoManager')
 
@@ -35,9 +35,9 @@ var Map                     = bugpack.require('Map');
 var Obj                     = bugpack.require('Obj');
 var TypeUtil                = bugpack.require('TypeUtil');
 var EntityDataStore         = bugpack.require('bugentity.EntityDataStore');
-var ArgAnnotation           = bugpack.require('bugioc.ArgAnnotation');
+var ArgTag           = bugpack.require('bugioc.ArgTag');
 var IProcessModule          = bugpack.require('bugioc.IProcessModule');
-var ModuleAnnotation        = bugpack.require('bugioc.ModuleAnnotation');
+var ModuleTag        = bugpack.require('bugioc.ModuleTag');
 var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 var MongoManager            = bugpack.require('mongo.MongoManager');
 
@@ -46,9 +46,9 @@ var MongoManager            = bugpack.require('mongo.MongoManager');
 // Simplify References
 //-------------------------------------------------------------------------------
 
-var arg                 = ArgAnnotation.arg;
+var arg                 = ArgTag.arg;
 var bugmeta             = BugMeta.context();
-var module              = ModuleAnnotation.module;
+var module              = ModuleTag.module;
 
 
 //-------------------------------------------------------------------------------
@@ -418,7 +418,7 @@ Class.implement(MongoDataStore, IProcessModule);
 // BugMeta
 //-------------------------------------------------------------------------------
 
-bugmeta.annotate(MongoDataStore).with(
+bugmeta.tag(MongoDataStore).with(
     module("mongoDataStore")
         .args([
             arg().ref("logger"),

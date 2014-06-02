@@ -17,7 +17,7 @@
 //@Require('Class')
 //@Require('bugmeta.BugMeta')
 //@Require('bugrequest.RequestContext')
-//@Require('bugunit.TestAnnotation')
+//@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 
 
@@ -34,7 +34,7 @@ require('bugpack').context("*", function(bugpack) {
     var Class                   = bugpack.require('Class');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
     var RequestContext          = bugpack.require('bugrequest.RequestContext');
-    var TestAnnotation          = bugpack.require('bugunit.TestAnnotation');
+    var TestTag          = bugpack.require('bugunit.TestTag');
     var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 
@@ -44,7 +44,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var bugmeta                 = BugMeta.context();
     var bugyarn                 = BugYarn.context();
-    var test                    = TestAnnotation.test;
+    var test                    = TestTag.test;
 
 
     //-------------------------------------------------------------------------------
@@ -88,7 +88,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.annotate(requestContextInstantiationTest).with(
+    bugmeta.tag(requestContextInstantiationTest).with(
         test().name("RequestContext - instantiation test")
     );
 });
