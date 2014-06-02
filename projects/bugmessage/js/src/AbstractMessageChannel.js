@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -10,58 +20,65 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+require('bugpack').context("*", function(bugpack) {
 
+    //-------------------------------------------------------------------------------
+    // BugPack
+    //-------------------------------------------------------------------------------
 
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var EventPropagator     = bugpack.require('EventPropagator');
-var IMessageChannel     = bugpack.require('bugmessage.IMessageChannel');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var AbstractMessageChannel = Class.extend(EventPropagator, {
-
-    /**
-     * @abstract
-     * @param message
-     * @param messageResponder
-     */
-    //doChannelMessage: function(message, messageResponder) {},
+    var Class               = bugpack.require('Class');
+    var EventPropagator     = bugpack.require('EventPropagator');
+    var IMessageChannel     = bugpack.require('bugmessage.IMessageChannel');
 
 
     //-------------------------------------------------------------------------------
-    // IMessageChannel Implementation
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Message} message
-     * @param {MessageResponder} messageResponder
+     * @class
+     * @extends {EventPropagator}
      */
-    channelMessage: function(message, messageResponder) {
-        this.doChannelMessage(message, messageResponder);
-    }
+    var AbstractMessageChannel = Class.extend(EventPropagator, {
+
+        _name: "bugmessage.AbstractMessageChannel",
+
+
+        /**
+         * @abstract
+         * @param message
+         * @param messageResponder
+         */
+        //doChannelMessage: function(message, messageResponder) {},
+
+
+        //-------------------------------------------------------------------------------
+        // IMessageChannel Implementation
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {Message} message
+         * @param {MessageResponder} messageResponder
+         */
+        channelMessage: function(message, messageResponder) {
+            this.doChannelMessage(message, messageResponder);
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Interfaces
+    //-------------------------------------------------------------------------------
+
+    Class.implement(AbstractMessageChannel, IMessageChannel);
+
+
+    //-------------------------------------------------------------------------------
+    // Export
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugmessage.AbstractMessageChannel', AbstractMessageChannel);
 });
-
-
-//-------------------------------------------------------------------------------
-// Interfaces
-//-------------------------------------------------------------------------------
-
-Class.implement(AbstractMessageChannel, IMessageChannel);
-
-
-//-------------------------------------------------------------------------------
-// Export
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugmessage.AbstractMessageChannel', AbstractMessageChannel);

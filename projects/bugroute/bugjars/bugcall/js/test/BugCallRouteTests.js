@@ -30,19 +30,19 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var BugDouble           = bugpack.require('bugdouble.BugDouble');
-    var BugMeta             = bugpack.require('bugmeta.BugMeta');
-    var BugCallRoute        = bugpack.require('bugroute.BugCallRoute');
-    var TestTag      = bugpack.require('bugunit.TestTag');
+    var BugDouble       = bugpack.require('bugdouble.BugDouble');
+    var BugMeta         = bugpack.require('bugmeta.BugMeta');
+    var BugCallRoute    = bugpack.require('bugroute.BugCallRoute');
+    var TestTag         = bugpack.require('bugunit.TestTag');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta             = BugMeta.context();
-    var spyOnFunction       = BugDouble.spyOnFunction;
-    var test                = TestTag.test;
+    var bugmeta         = BugMeta.context();
+    var spyOnFunction   = BugDouble.spyOnFunction;
+    var test            = TestTag.test;
 
 
     //-------------------------------------------------------------------------------
@@ -74,10 +74,6 @@ require('bugpack').context("*", function(bugpack) {
 
         }
     };
-    bugmeta.tag(bugCallRouteInstantiationTest).with(
-        test().name("BugCallRoute - instantiation Test")
-    );
-
 
     var bugCallRouteRouteTest = {
 
@@ -114,6 +110,15 @@ require('bugpack').context("*", function(bugpack) {
                 "Assert testListener was called");
         }
     };
+
+
+    //-------------------------------------------------------------------------------
+    // BugMeta
+    //-------------------------------------------------------------------------------
+
+    bugmeta.tag(bugCallRouteInstantiationTest).with(
+        test().name("BugCallRoute - instantiation Test")
+    );
     bugmeta.tag(bugCallRouteRouteTest).with(
         test().name("BugCallRoute - #route Test")
     );

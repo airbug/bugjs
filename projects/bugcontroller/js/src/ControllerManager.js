@@ -36,24 +36,24 @@ require('bugpack').context("*", function(bugpack) {
     // Bugpack Modules
     //-------------------------------------------------------------------------------
 
-    var ArgumentBug         = bugpack.require('ArgumentBug');
-    var Class               = bugpack.require('Class');
-    var Obj                 = bugpack.require('Obj');
-    var Set                 = bugpack.require('Set');
-    var Controller          = bugpack.require('bugcontroller.Controller');
-    var BugFlow             = bugpack.require('bugflow.BugFlow');
-    var ArgTag       = bugpack.require('bugioc.ArgTag');
-    var ModuleTag    = bugpack.require('bugioc.ModuleTag');
-    var BugMeta             = bugpack.require('bugmeta.BugMeta');
+    var ArgumentBug     = bugpack.require('ArgumentBug');
+    var Class           = bugpack.require('Class');
+    var Obj             = bugpack.require('Obj');
+    var Set             = bugpack.require('Set');
+    var Controller      = bugpack.require('bugcontroller.Controller');
+    var BugFlow         = bugpack.require('bugflow.BugFlow');
+    var ArgTag          = bugpack.require('bugioc.ArgTag');
+    var ModuleTag       = bugpack.require('bugioc.ModuleTag');
+    var BugMeta         = bugpack.require('bugmeta.BugMeta');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                 = ArgTag.arg;
-    var bugmeta             = BugMeta.context();
-    var module              = ModuleTag.module;
+    var arg             = ArgTag.arg;
+    var bugmeta         = BugMeta.context();
+    var module          = ModuleTag.module;
     var $iterableParallel   = BugFlow.$iterableParallel;
 
 

@@ -35,22 +35,22 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                       = bugpack.require('Class');
-    var Obj                         = bugpack.require('Obj');
-    var Set                         = bugpack.require('Set');
-    var BugFlow                     = bugpack.require('bugflow.BugFlow');
-    var ModuleTag            = bugpack.require('bugioc.ModuleTag');
-    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-    var IPreProcessRequest          = bugpack.require('bugrequest.IPreProcessRequest');
-    var IProcessRequest             = bugpack.require('bugrequest.IProcessRequest');
+    var Class               = bugpack.require('Class');
+    var Obj                 = bugpack.require('Obj');
+    var Set                 = bugpack.require('Set');
+    var BugFlow             = bugpack.require('bugflow.BugFlow');
+    var ModuleTag           = bugpack.require('bugioc.ModuleTag');
+    var BugMeta             = bugpack.require('bugmeta.BugMeta');
+    var IPreProcessRequest  = bugpack.require('bugrequest.IPreProcessRequest');
+    var IProcessRequest     = bugpack.require('bugrequest.IProcessRequest');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta                     = BugMeta.context();
-    var module                      = ModuleTag.module;
+    var bugmeta             = BugMeta.context();
+    var module              = ModuleTag.module;
     var $iterableSeries             = BugFlow.$iterableSeries;
     var $series                     = BugFlow.$series;
     var $task                       = BugFlow.$task;

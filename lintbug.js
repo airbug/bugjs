@@ -1,3 +1,12 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
 
 //-------------------------------------------------------------------------------
 // Common Modules
@@ -78,7 +87,7 @@ lintbug.lintTask("indentEqualSignsForPreClassVars", function(lintFile, callback)
     var lines           = fileContents.split("\n");
     var startIndex      = bugcore.ArrayUtil.indexOf(lines, /^\s*\/\/ Context\s*$/);
     var endIndex        = bugcore.ArrayUtil.indexOf(lines, /^\s*\/\/ (Declare Class|Declare Interface|Declare Tests|BugYarn)\s*$/);
-    var varRegex        = /^(\s*)var (\w+)\s*=(.*)$/;
+    var varRegex        = /^(\s*)var ([\w|\$]+)\s*=(?:\s*)(.*)$/;
     var varObjects      = [];
     var longestIndent   = 0;
     if (startIndex > -1 && endIndex > -1) {
@@ -105,7 +114,7 @@ lintbug.lintTask("indentEqualSignsForPreClassVars", function(lintFile, callback)
         varObjects.forEach(function(varObject) {
             var numberCharsBeforeEquals = longestIndent * indentSpacing;
             var preEqualsText = bugcore.StringUtil.rpad(varObject.indent + "var " + varObject.name, " ", numberCharsBeforeEquals);
-            lines[varObject.index] = preEqualsText + "=" + varObject.afterEqualsContent;
+            lines[varObject.index] = preEqualsText + "= " + varObject.afterEqualsContent;
         });
     }
     lintFile.setFileContents(lines.join("\n"));

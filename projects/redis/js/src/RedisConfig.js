@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -10,75 +20,78 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack     = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class       = bugpack.require('Class');
-var Config      = bugpack.require('Config');
-var TypeUtil    = bugpack.require('TypeUtil');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {Config}
- */
-var RedisConfig = Class.extend(Config, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class       = bugpack.require('Class');
+    var Config      = bugpack.require('Config');
+    var TypeUtil    = bugpack.require('TypeUtil');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @returns {number}
+     * @class
+     * @extends {Config}
      */
-    getPort: function() {
-        var port = this.getProperty("port");
-        if (!TypeUtil.isNumber(port)) {
-            port = 6379;
+    var RedisConfig = Class.extend(Config, {
+
+        _name: "redis.RedisConfig",
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @returns {number}
+         */
+        getPort: function() {
+            var port = this.getProperty("port");
+            if (!TypeUtil.isNumber(port)) {
+                port = 6379;
+            }
+            return port;
+        },
+
+        /**
+         * @param {number} port
+         */
+        setPort: function(port) {
+            this.setProperty("port", port);
+        },
+
+        /**
+         * @returns {string}
+         */
+        getHost: function() {
+            var host = this.getProperty("host");
+            if (!TypeUtil.isString(host)) {
+                host = "127.0.0.1";
+            }
+            return host;
+        },
+
+        /**
+         * @param {string} host
+         */
+        setHost: function(host) {
+            this.setProperty("host", host);
         }
-        return port;
-    },
+    });
 
-    /**
-     * @param {number} port
-     */
-    setPort: function(port) {
-        this.setProperty("port", port);
-    },
 
-    /**
-     * @returns {string}
-     */
-    getHost: function() {
-        var host = this.getProperty("host");
-        if (!TypeUtil.isString(host)) {
-            host = "127.0.0.1";
-        }
-        return host;
-    },
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
 
-    /**
-     * @param {string} host
-     */
-    setHost: function(host) {
-        this.setProperty("host", host);
-    }
+    bugpack.export("redis.RedisConfig", RedisConfig);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export("redis.RedisConfig", RedisConfig);

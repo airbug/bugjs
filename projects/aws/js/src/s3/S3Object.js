@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -9,399 +19,410 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class =     bugpack.require('Class');
-var AwsObject = bugpack.require('aws.AwsObject');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var S3Object = Class.extend(AwsObject, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function(params) {
+    var Class =     bugpack.require('Class');
+    var AwsObject = bugpack.require('aws.AwsObject');
 
-        this._super();
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {AwsObject}
+     */
+    var S3Object = Class.extend(AwsObject, {
+
+        _name: "aws.S3Object",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {string}
+         * @constructs
+         * @param {} params
          */
-        this.body = params.body;
+        _constructor: function(params) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.body = params.body;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.cacheControl = params.cacheControl;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.contentDisposition = params.contentDisposition;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.contentEncoding = params.contentEncoding;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.contentLanguage = params.contentLanguage;
+
+            /**
+             * @private
+             * @type {number}
+             */
+            this.contentLength = params.contentLength;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.contentType = params.contentType;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.deleteMarker = params.deleteMarker;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.eTag = params.eTag;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.expiration = params.expiration;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.expires = params.expires;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.key = params.key;
+
+            /**
+             * @private
+             * @type {Date}
+             */
+            this.lastModified = params.lastModified;
+
+            /**
+             * @private
+             * @type {Object.<string>}
+             */
+            this.metaData = params.metaData;
+
+            /**
+             * @private
+             * @type {number}
+             */
+            this.missingMeta = params.missingMeta;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.restore = params.restore;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.serverSideEncryption = params.serverSideEncryption;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.versionId = params.versionId;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.websiteRedirectLocation = params.websiteRedirectLocation;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {string}
+         * @return {string}
          */
-        this.cacheControl = params.cacheControl;
+        getBody: function() {
+            return this.body;
+        },
 
         /**
-         * @private
-         * @type {string}
+         * @param {string} body
          */
-        this.contentDisposition = params.contentDisposition;
+        setBody: function(body) {
+            this.body = body;
+        },
 
         /**
-         * @private
-         * @type {string}
+         * @return {string}
          */
-        this.contentEncoding = params.contentEncoding;
+        getCacheControl: function() {
+            return this.cacheControl;
+        },
 
         /**
-         * @private
-         * @type {string}
+         * @param {string} cacheControl
          */
-        this.contentLanguage = params.contentLanguage;
+        setCacheControl: function(cacheControl) {
+            if (this.cacheControl !== cacheControl) {
+                this.setChangedFlag('cacheControl');
+                this.cacheControl = cacheControl;
+            }
+        },
 
         /**
-         * @private
-         * @type {number}
+         * @return {string}
          */
-        this.contentLength = params.contentLength;
+        getContentDisposition: function() {
+            return this.contentDisposition;
+        },
 
         /**
-         * @private
-         * @type {string}
+         * @param {string} contentDisposition
          */
-        this.contentType = params.contentType;
+        setContentDisposition: function(contentDisposition) {
+            if (this.contentDisposition !== contentDisposition) {
+                this.setChangedFlag('contentDisposition');
+                this.contentDisposition = contentDisposition;
+            }
+        },
 
         /**
-         * @private
-         * @type {string}
+         * @return {string}
          */
-        this.deleteMarker = params.deleteMarker;
+        getContentEncoding: function() {
+            return this.contentEncoding;
+        },
 
         /**
-         * @private
-         * @type {string}
+         * @param {string} contentEncoding
          */
-        this.eTag = params.eTag;
+        setContentEncoding: function(contentEncoding) {
+            if (this.contentEncoding !== contentEncoding) {
+                this.setChangedFlag('contentEncoding');
+                this.contentEncoding = contentEncoding;
+            }
+        },
 
         /**
-         * @private
-         * @type {string}
+         * @return {string}
          */
-        this.expiration = params.expiration;
+        getContentLanguage: function() {
+            return this.contentLanguage;
+        },
 
         /**
-         * @private
-         * @type {string}
+         * @param {string} contentLanguage
          */
-        this.expires = params.expires;
+        setContentLanguage: function(contentLanguage) {
+            if (this.contentLanguage !== contentLanguage) {
+                this.setChangedFlag('contentLanguage');
+                this.contentLanguage = contentLanguage;
+            }
+        },
 
         /**
-         * @private
-         * @type {string}
+         * @return {number}
          */
-        this.key = params.key;
+        getContentLength: function() {
+            return this.contentLength;
+        },
 
         /**
-         * @private
-         * @type {Date}
+         * @return {string}
          */
-        this.lastModified = params.lastModified;
+        getContentType: function() {
+            return this.contentType;
+        },
 
         /**
-         * @private
-         * @type {Object.<string>}
+         * @param {string} contentType
          */
-        this.metaData = params.metaData;
+        setContentType: function(contentType) {
+            if (this.contentType !== contentType) {
+                this.setChangedFlag('contentType');
+                this.contentType = contentType;
+            }
+        },
 
         /**
-         * @private
-         * @type {number}
+         * @return {string}
          */
-        this.missingMeta = params.missingMeta;
+        getDeleteMarker: function() {
+            return this.deleteMarker;
+        },
 
         /**
-         * @private
-         * @type {string}
+         * @return {string}
          */
-        this.restore = params.restore;
+        getETag: function() {
+            return this.eTag;
+        },
 
         /**
-         * @private
-         * @type {string}
+         * @return {string}
          */
-        this.serverSideEncryption = params.serverSideEncryption;
+        getExpiration: function() {
+            return this.expiration;
+        },
 
         /**
-         * @private
-         * @type {string}
+         * @return {string}
          */
-        this.versionId = params.versionId;
+        getExpires: function() {
+            return this.expires;
+        },
 
         /**
-         * @private
-         * @type {string}
+         * @param {string} expires
          */
-        this.websiteRedirectLocation = params.websiteRedirectLocation;
-    },
+        setExpires: function(expires) {
+            if (this.expires !== expires) {
+                this.setChangedFlag('expires');
+                this.expires = expires;
+            }
+        },
 
+        /**
+         * @return {string}
+         */
+        getKey: function() {
+            return this.key;
+        },
 
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
+        /**
+         * @return {Date}
+         */
+        getLastModified: function() {
+            return this.lastModified;
+        },
 
-    /**
-     * @return {string}
-     */
-    getBody: function() {
-        return this.body;
-    },
+        /**
+         * @return {Object.<string>}
+         */
+        getMetaData: function() {
+            return this.metaData;
+        },
 
-    /**
-     * @param {string} body
-     */
-    setBody: function(body) {
-        this.body = body;
-    },
-
-    /**
-     * @return {string}
-     */
-    getCacheControl: function() {
-        return this.cacheControl;
-    },
-
-    /**
-     * @param {string} cacheControl
-     */
-    setCacheControl: function(cacheControl) {
-        if (this.cacheControl !== cacheControl) {
-            this.setChangedFlag('cacheControl');
-            this.cacheControl = cacheControl;
-        }
-    },
-
-    /**
-     * @return {string}
-     */
-    getContentDisposition: function() {
-        return this.contentDisposition;
-    },
-
-    /**
-     * @param {string} contentDisposition
-     */
-    setContentDisposition: function(contentDisposition) {
-        if (this.contentDisposition !== contentDisposition) {
-            this.setChangedFlag('contentDisposition');
-            this.contentDisposition = contentDisposition;
-        }
-    },
-
-    /**
-     * @return {string}
-     */
-    getContentEncoding: function() {
-        return this.contentEncoding;
-    },
-
-    /**
-     * @param {string} contentEncoding
-     */
-    setContentEncoding: function(contentEncoding) {
-        if (this.contentEncoding !== contentEncoding) {
-            this.setChangedFlag('contentEncoding');
-            this.contentEncoding = contentEncoding;
-        }
-    },
-
-    /**
-     * @return {string}
-     */
-    getContentLanguage: function() {
-        return this.contentLanguage;
-    },
-
-    /**
-     * @param {string} contentLanguage
-     */
-    setContentLanguage: function(contentLanguage) {
-        if (this.contentLanguage !== contentLanguage) {
-            this.setChangedFlag('contentLanguage');
-            this.contentLanguage = contentLanguage;
-        }
-    },
-
-    /**
-     * @return {number}
-     */
-    getContentLength: function() {
-        return this.contentLength;
-    },
-
-    /**
-     * @return {string}
-     */
-    getContentType: function() {
-        return this.contentType;
-    },
-
-    /**
-     * @param {string} contentType
-     */
-    setContentType: function(contentType) {
-        if (this.contentType !== contentType) {
-            this.setChangedFlag('contentType');
-            this.contentType = contentType;
-        }
-    },
-
-    /**
-     * @return {string}
-     */
-    getDeleteMarker: function() {
-        return this.deleteMarker;
-    },
-
-    /**
-     * @return {string}
-     */
-    getETag: function() {
-        return this.eTag;
-    },
-
-    /**
-     * @return {string}
-     */
-    getExpiration: function() {
-        return this.expiration;
-    },
-
-    /**
-     * @return {string}
-     */
-    getExpires: function() {
-        return this.expires;
-    },
-
-    /**
-     * @param {string} expires
-     */
-    setExpires: function(expires) {
-        if (this.expires !== expires) {
-            this.setChangedFlag('expires');
-            this.expires = expires;
-        }
-    },
-
-    /**
-     * @return {string}
-     */
-    getKey: function() {
-        return this.key;
-    },
-
-    /**
-     * @return {Date}
-     */
-    getLastModified: function() {
-        return this.lastModified;
-    },
-
-    /**
-     * @return {Object.<string>}
-     */
-    getMetaData: function() {
-        return this.metaData;
-    },
-
-    /**
-     * @param {Object} metaData
-     */
-    setMetaData: function(metaData) {
-        //TODO BRN: don't think this will work
-        this.setChangedFlag('metaData');
-        this.metaData = metaData;
-        /*if (this.metaData !== metaData) {
+        /**
+         * @param {Object} metaData
+         */
+        setMetaData: function(metaData) {
+            //TODO BRN: don't think this will work
+            this.setChangedFlag('metaData');
             this.metaData = metaData;
-        }*/
-    },
+            /*if (this.metaData !== metaData) {
+                this.metaData = metaData;
+            }*/
+        },
 
-    /**
-     * @return {number}
-     */
-    getMissingMeta: function() {
-        return this.missingMeta;
-    },
+        /**
+         * @return {number}
+         */
+        getMissingMeta: function() {
+            return this.missingMeta;
+        },
 
-    /**
-     * @return {string}
-     */
-    getRestore: function() {
-        return this.restore;
-    },
+        /**
+         * @return {string}
+         */
+        getRestore: function() {
+            return this.restore;
+        },
 
-    /**
-     * @return {string}
-     */
-    getServerSideEncryption: function() {
-        return this.serverSideEncryption;
-    },
+        /**
+         * @return {string}
+         */
+        getServerSideEncryption: function() {
+            return this.serverSideEncryption;
+        },
 
-    /**
-     * @param {string} serverSideEncryption
-     */
-    setServerSideEncryption: function(serverSideEncryption) {
-        if (this.serverSideEncryption !== serverSideEncryption) {
-            this.setChangedFlag('serverSideEncryption');
-            this.serverSideEncryption = serverSideEncryption;
+        /**
+         * @param {string} serverSideEncryption
+         */
+        setServerSideEncryption: function(serverSideEncryption) {
+            if (this.serverSideEncryption !== serverSideEncryption) {
+                this.setChangedFlag('serverSideEncryption');
+                this.serverSideEncryption = serverSideEncryption;
+            }
+        },
+
+        /**
+         * @return {string}
+         */
+        getVersionId: function() {
+            return this.versionId;
+        },
+
+        /**
+         * @return {string}
+         */
+        getWebsiteRedirectLocation: function() {
+            return this.websiteRedirectLocation;
+        },
+
+        /**
+         * @param {string} websiteRedirectLocation
+         */
+        setWebsiteRedirectLocation: function(websiteRedirectLocation) {
+            if (this.websiteRedirectLocation !== websiteRedirectLocation) {
+                this.setChangedFlag('websiteRedirectLocation');
+                this.websiteRedirectLocation = websiteRedirectLocation;
+            }
         }
-    },
 
-    /**
-     * @return {string}
-     */
-    getVersionId: function() {
-        return this.versionId;
-    },
+        //-------------------------------------------------------------------------------
+        // Public Class Methods
+        //-------------------------------------------------------------------------------
+    });
 
-    /**
-     * @return {string}
-     */
-    getWebsiteRedirectLocation: function() {
-        return this.websiteRedirectLocation;
-    },
-
-    /**
-     * @param {string} websiteRedirectLocation
-     */
-    setWebsiteRedirectLocation: function(websiteRedirectLocation) {
-        if (this.websiteRedirectLocation !== websiteRedirectLocation) {
-            this.setChangedFlag('websiteRedirectLocation');
-            this.websiteRedirectLocation = websiteRedirectLocation;
-        }
-    }
 
     //-------------------------------------------------------------------------------
-    // Public Class Methods
+    // Exports
     //-------------------------------------------------------------------------------
+
+    bugpack.export('aws.S3Object', S3Object);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('aws.S3Object', S3Object);

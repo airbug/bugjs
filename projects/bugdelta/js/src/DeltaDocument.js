@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -10,83 +20,86 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var Document            = bugpack.require('Document');
-var Obj                 = bugpack.require('Obj');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {Document}
- */
-var DeltaDocument = Class.extend(Document, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class               = bugpack.require('Class');
+    var Document            = bugpack.require('Document');
+    var Obj                 = bugpack.require('Obj');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {*} data
+     * @class
+     * @extends {Document}
      */
-    _constructor: function(data) {
+    var DeltaDocument = Class.extend(Document, {
 
-        this._super(data);
+        _name: "bugdelta.DeltaDocument",
 
 
         //-------------------------------------------------------------------------------
-        // Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Document}
+         * @constructs
+         * @param {*} data
          */
-        this.previousDocument   = undefined;
-    },
+        _constructor: function(data) {
+
+            this._super(data);
+
+
+            //-------------------------------------------------------------------------------
+            // Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {Document}
+             */
+            this.previousDocument   = undefined;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {Document}
+         */
+        getPreviousDocument: function() {
+            return this.previousDocument;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         *
+         */
+        commitDelta: function() {
+            this.previousDocument = new Document(Obj.clone(this.getData(), true));
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {Document}
-     */
-    getPreviousDocument: function() {
-        return this.previousDocument;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     *
-     */
-    commitDelta: function() {
-        this.previousDocument = new Document(Obj.clone(this.getData(), true));
-    }
+    bugpack.export('bugdelta.DeltaDocument', DeltaDocument);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugdelta.DeltaDocument', DeltaDocument);

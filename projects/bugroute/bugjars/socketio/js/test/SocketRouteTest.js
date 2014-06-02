@@ -29,17 +29,17 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var BugMeta             = bugpack.require('bugmeta.BugMeta');
-    var SocketRoute         = bugpack.require('bugroute.SocketRoute');
-    var TestTag      = bugpack.require('bugunit.TestTag');
+    var BugMeta         = bugpack.require('bugmeta.BugMeta');
+    var SocketRoute     = bugpack.require('bugroute.SocketRoute');
+    var TestTag         = bugpack.require('bugunit.TestTag');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta             = BugMeta.context();
-    var test                = TestTag.test;
+    var bugmeta         = BugMeta.context();
+    var test            = TestTag.test;
 
 
     //-------------------------------------------------------------------------------
@@ -73,6 +73,12 @@ require('bugpack').context("*", function(bugpack) {
                 "Asserts that the socketRoute's listener is assigned properly on construction");
         }
     };
+
+
+    //-------------------------------------------------------------------------------
+    // BugMeta
+    //-------------------------------------------------------------------------------
+
     bugmeta.tag(socketRouteInstantiationTest).with(
         test().name("SocketRoute - instantiation Test")
     );

@@ -1,74 +1,87 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('sharejs:client.ShareJsClientConfig')
+//@Export('sharejs.ShareJsClientConfig')
 
 //@Require('Class')
 //@Require('Config')
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack Modules
-//-------------------------------------------------------------------------------
-
-var Class           = bugpack.require('Class');
-var Config          = bugpack.require('Config');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @constructor
- * @extends {Config}
- */
-var ShareJsClientConfig = Class.extend(Config, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Public Class Methods
+    // BugPack Modules
+    //-------------------------------------------------------------------------------
+
+    var Class           = bugpack.require('Class');
+    var Config          = bugpack.require('Config');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {Object}
+     * @class
+     * @extends {Config}
      */
-    getAuthentication: function() {
-        return this.getProperties().getProperty("authentication");
-    },
+    var ShareJsClientConfig = Class.extend(Config, {
 
-    /**
-     * @param {Object} authentication
-     */
-    setAuthentication: function(authentication) {
-        this.getProperties().setProperty("authentication", authentication);
-    },
+        _name: "sharejs.ShareJsClientConfig",
 
-    /**
-     * @return {string}
-     */
-    getOrigin: function() {
-        return this.getProperties().getProperty("origin");
-    },
 
-    /**
-     * @param {string} origin
-     */
-    setOrigin: function(origin) {
-        this.getProperties().setProperty("origin", origin);
-    }
+        //-------------------------------------------------------------------------------
+        // Public Class Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {Object}
+         */
+        getAuthentication: function() {
+            return this.getProperties().getProperty("authentication");
+        },
+
+        /**
+         * @param {Object} authentication
+         */
+        setAuthentication: function(authentication) {
+            this.getProperties().setProperty("authentication", authentication);
+        },
+
+        /**
+         * @return {string}
+         */
+        getOrigin: function() {
+            return this.getProperties().getProperty("origin");
+        },
+
+        /**
+         * @param {string} origin
+         */
+        setOrigin: function(origin) {
+            this.getProperties().setProperty("origin", origin);
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('sharejs.ShareJsClientConfig', ShareJsClientConfig);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('sharejs:client.ShareJsClientConfig', ShareJsClientConfig);

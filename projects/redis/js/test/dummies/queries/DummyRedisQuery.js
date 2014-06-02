@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -10,107 +20,110 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// Bugpack Modules
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var Obj                 = bugpack.require('Obj');
-var BugTrace            = bugpack.require('bugtrace.BugTrace');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var $trace          = BugTrace.$trace;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @constructor
- * @extends {Obj}
- */
-var DummyRedisQuery = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Bugpack Modules
+    //-------------------------------------------------------------------------------
+
+    var Class               = bugpack.require('Class');
+    var Obj                 = bugpack.require('Obj');
+    var BugTrace            = bugpack.require('bugtrace.BugTrace');
+
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var $trace          = BugTrace.$trace;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {DummyRedis} dummyRedisClient
+     * @class
+     * @extends {Obj}
      */
-    _constructor: function(dummyRedisClient) {
+    var DummyRedisQuery = Class.extend(Obj, {
 
-        this._super();
+        _name: "redis.DummyRedisQuery",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {DummyRedisClient}
+         * @constructs
+         * @param {DummyRedis} dummyRedisClient
          */
-        this.dummyRedisClient = dummyRedisClient;
-    },
+        _constructor: function(dummyRedisClient) {
+
+            this._super();
 
 
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
 
-    /**
-     * @return {DummyRedisClient}
-     */
-    getDummyRedisClient: function() {
-        return this.dummyRedisClient;
-    },
+            /**
+             * @private
+             * @type {DummyRedisClient}
+             */
+            this.dummyRedisClient = dummyRedisClient;
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @param {function(Error, *=)} callback
-     */
-    exec: function(callback) {
-        var _this   = this;
-        var result  = null;
-        var error   = null;
-        if (!callback) {
-            throw new Error("callback is undefined");
+        /**
+         * @return {DummyRedisClient}
+         */
+        getDummyRedisClient: function() {
+            return this.dummyRedisClient;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {function(Error, *=)} callback
+         */
+        exec: function(callback) {
+            var _this   = this;
+            var result  = null;
+            var error   = null;
+            if (!callback) {
+                throw new Error("callback is undefined");
+            }
+            setTimeout($trace(function() {
+                try {
+                    result = _this.query();
+                } catch(e) {
+                    error = e;
+                }
+                if (!error) {
+                    callback(null, result);
+                } else {
+                    callback(error);
+                }
+            }), 0);
         }
-        setTimeout($trace(function() {
-            try {
-                result = _this.query();
-            } catch(e) {
-                error = e;
-            }
-            if (!error) {
-                callback(null, result);
-            } else {
-                callback(error);
-            }
-        }), 0);
-    }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('redis.DummyRedisQuery', DummyRedisQuery);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('redis.DummyRedisQuery', DummyRedisQuery);

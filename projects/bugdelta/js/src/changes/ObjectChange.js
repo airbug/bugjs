@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -9,123 +19,135 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class           = bugpack.require('Class');
-var DeltaChange     = bugpack.require('bugdelta.DeltaChange');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var ObjectChange = Class.extend(DeltaChange, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class           = bugpack.require('Class');
+    var DeltaChange     = bugpack.require('bugdelta.DeltaChange');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @class
+     * @extends {DeltaChange}
      */
-    _constructor: function(changeType, path, propertyName, propertyValue, previousValue) {
+    var ObjectChange = Class.extend(DeltaChange, {
 
-        this._super(changeType, path);
+        _name: "bugdelta.ObjectChange",
 
 
         //-------------------------------------------------------------------------------
-        // Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {*}
+         * @constructs
+         * @param {string} changeType
+         * @param {string} path
+         * @param {string} propertyName
+         * @param {*} propertyValue
+         * @param {*} previousValue
          */
-        this.previousValue  = previousValue;
+        _constructor: function(changeType, path, propertyName, propertyValue, previousValue) {
+
+            this._super(changeType, path);
+
+
+            //-------------------------------------------------------------------------------
+            // Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {*}
+             */
+            this.previousValue  = previousValue;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.propertyName   = propertyName;
+
+            /**
+             * @private
+             * @type {*}
+             */
+            this.propertyValue  = propertyValue;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {string}
+         * @return {*}
          */
-        this.propertyName   = propertyName;
+        getPreviousValue: function() {
+            return this.previousValue;
+        },
 
         /**
-         * @private
-         * @type {*}
+         * @return {string}
          */
-        this.propertyValue  = propertyValue;
-    },
+        getPropertyName: function() {
+            return this.propertyName;
+        },
+
+        /**
+         * @return {*}
+         */
+        getPropertyValue: function() {
+            return this.propertyValue;
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // Convenience Methods
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @return {*}
-     */
-    getPreviousValue: function() {
-        return this.previousValue;
-    },
-
-    /**
-     * @return {string}
-     */
-    getPropertyName: function() {
-        return this.propertyName;
-    },
-
-    /**
-     * @return {*}
-     */
-    getPropertyValue: function() {
-        return this.propertyValue;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Convenience Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @return {string}
-     */
-    getPropertyPath: function() {
-        var path = this.getPath() || "";
-        if (path) {
-            path += "." + this.getPropertyName();
-        } else {
-            path = this.getPropertyName();
+        /**
+         * @return {string}
+         */
+        getPropertyPath: function() {
+            var path = this.getPath() || "";
+            if (path) {
+                path += "." + this.getPropertyName();
+            } else {
+                path = this.getPropertyName();
+            }
+            return path;
         }
-        return path;
-    }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Static Variables
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @static
+     * @enum {string}
+     */
+    ObjectChange.ChangeTypes = {
+        PROPERTY_REMOVED: "ObjectChange:PropertyRemoved",
+        PROPERTY_SET: "ObjectChange:PropertySet"
+    };
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugdelta.ObjectChange', ObjectChange);
 });
-
-
-//-------------------------------------------------------------------------------
-// Static Variables
-//-------------------------------------------------------------------------------
-
-/**
- * @static
- * @enum {string}
- */
-ObjectChange.ChangeTypes = {
-    PROPERTY_REMOVED: "ObjectChange:PropertyRemoved",
-    PROPERTY_SET: "ObjectChange:PropertySet"
-};
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugdelta.ObjectChange', ObjectChange);

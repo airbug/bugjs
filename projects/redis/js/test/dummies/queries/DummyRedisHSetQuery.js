@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -10,102 +20,105 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// Bugpack Modules
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var Map                 = bugpack.require('Map');
-var DummyRedisQuery     = bugpack.require('redis.DummyRedisQuery');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {DummyRedisQuery}
- */
-var DummyRedisHSetQuery = Class.extend(DummyRedisQuery, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Bugpack Modules
+    //-------------------------------------------------------------------------------
+
+    var Class               = bugpack.require('Class');
+    var Map                 = bugpack.require('Map');
+    var DummyRedisQuery     = bugpack.require('redis.DummyRedisQuery');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {DummyRedisClient} dummyRedisClient
-     * @param {string} key
-     * @param {string} field
-     * @param {*} value
+     * @class
+     * @extends {DummyRedisQuery}
      */
-    _constructor: function(dummyRedisClient, key, field, value) {
+    var DummyRedisHSetQuery = Class.extend(DummyRedisQuery, {
 
-        this._super(dummyRedisClient);
+        _name: "redis.DummyRedisHSetQuery",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {string}
+         * @constructs
+         * @param {DummyRedisClient} dummyRedisClient
+         * @param {string} key
+         * @param {string} field
+         * @param {*} value
          */
-        this.field      = field;
+        _constructor: function(dummyRedisClient, key, field, value) {
 
-        /**
-         * @private
-         * @type {string}
-         */
-        this.key        = key;
-
-        /**
-         * @private
-         * @type {*}
-         */
-        this.value      = value;
-    },
+            this._super(dummyRedisClient);
 
 
-    //-------------------------------------------------------------------------------
-    // DummyRedisQuery Methods
-    //-------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
 
-    query: function() {
-        var dummyRedisClient  = this.getDummyRedisClient();
-        if (!dummyRedisClient.isSubscribedState()) {
-            var dataMap     = dummyRedisClient.getKeyToEntryMap();
-            var returnedMap = dataMap.get(this.key);
-            if (!returnedMap) {
-                returnedMap = new Map();
-                dataMap.put(this.key, returnedMap);
-            }
-            if (!Class.doesExtend(returnedMap, Map)) {
-                throw new Error("WRONGTYPE Operation against a key holding the wrong kind of value");
-            }
-            var result = returnedMap.put(this.key.toString(), this.value.toString());
-            if (result) {
-                return result;
+            /**
+             * @private
+             * @type {string}
+             */
+            this.field      = field;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.key        = key;
+
+            /**
+             * @private
+             * @type {*}
+             */
+            this.value      = value;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // DummyRedisQuery Methods
+        //-------------------------------------------------------------------------------
+
+        query: function() {
+            var dummyRedisClient  = this.getDummyRedisClient();
+            if (!dummyRedisClient.isSubscribedState()) {
+                var dataMap     = dummyRedisClient.getKeyToEntryMap();
+                var returnedMap = dataMap.get(this.key);
+                if (!returnedMap) {
+                    returnedMap = new Map();
+                    dataMap.put(this.key, returnedMap);
+                }
+                if (!Class.doesExtend(returnedMap, Map)) {
+                    throw new Error("WRONGTYPE Operation against a key holding the wrong kind of value");
+                }
+                var result = returnedMap.put(this.key.toString(), this.value.toString());
+                if (result) {
+                    return result;
+                } else {
+                    return null;
+                }
             } else {
-                return null;
+                throw new Error("Connection in subscriber mode, only subscriber commands may be used");
             }
-        } else {
-            throw new Error("Connection in subscriber mode, only subscriber commands may be used");
         }
-    }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('redis.DummyRedisHSetQuery', DummyRedisHSetQuery);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('redis.DummyRedisHSetQuery', DummyRedisHSetQuery);

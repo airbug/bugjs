@@ -29,16 +29,16 @@ require('bugpack').context("*", function(bugpack) {
     // Common Modules
     //-------------------------------------------------------------------------------
 
-    var http            = require('http');
+    var http    = require('http');
 
 
     //-------------------------------------------------------------------------------
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class           = bugpack.require('Class');
-    var Obj             = bugpack.require('Obj');
-    var Proxy           = bugpack.require('Proxy');
+    var Class   = bugpack.require('Class');
+    var Obj     = bugpack.require('Obj');
+    var Proxy   = bugpack.require('Proxy');
 
 
     //-------------------------------------------------------------------------------
@@ -116,7 +116,7 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @param callback
+         * @param {function(Throwable=)} callback
          */
         start: function(callback) {
             console.log("starting express server on port " + this.expressApp.get('port'));

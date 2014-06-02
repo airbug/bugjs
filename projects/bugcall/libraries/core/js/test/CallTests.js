@@ -16,8 +16,8 @@
 
 //@Require('Class')
 //@Require('TypeUtil')
-//@Require('bugcall.CallConnection')
 //@Require('bugcall.Call')
+//@Require('bugcall.CallConnection')
 //@Require('bugcall.CallRequest')
 //@Require('bugcall.CallResponseHandler')
 //@Require('bugcall.OutgoingRequest')
@@ -49,9 +49,9 @@ require('bugpack').context("*", function(bugpack) {
     var RequestFailedException  = bugpack.require('bugcall.RequestFailedException');
     var BugDouble               = bugpack.require('bugdouble.BugDouble');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var TestTag          = bugpack.require('bugunit.TestTag');
+    var TestTag                 = bugpack.require('bugunit.TestTag');
     var BugYarn                 = bugpack.require('bugyarn.BugYarn');
-    var Logger                  = bugpack.require('loggerbug.Logger')
+    var Logger                  = bugpack.require('loggerbug.Logger');
 
 
     //-------------------------------------------------------------------------------

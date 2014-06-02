@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -26,24 +36,24 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                                       = bugpack.require('Class');
-    var Obj                                         = bugpack.require('Obj');
-    var BugFlow                                     = bugpack.require('bugflow.BugFlow');
-    var BugFs                                       = bugpack.require('bugfs.BugFs');
-    var IInitializeModule                           = bugpack.require('bugioc.IInitializeModule');
-    var ModuleTag                            = bugpack.require('bugioc.ModuleTag');
-    var PropertyTag                          = bugpack.require('bugioc.PropertyTag');
-    var BugMeta                                     = bugpack.require('bugmeta.BugMeta');
-    var MigrationModel                              = bugpack.require('bugmigrate.MigrationModel');
+    var Class               = bugpack.require('Class');
+    var Obj                 = bugpack.require('Obj');
+    var BugFlow             = bugpack.require('bugflow.BugFlow');
+    var BugFs               = bugpack.require('bugfs.BugFs');
+    var IInitializeModule   = bugpack.require('bugioc.IInitializeModule');
+    var ModuleTag           = bugpack.require('bugioc.ModuleTag');
+    var PropertyTag         = bugpack.require('bugioc.PropertyTag');
+    var BugMeta             = bugpack.require('bugmeta.BugMeta');
+    var MigrationModel      = bugpack.require('bugmigrate.MigrationModel');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta                                     = BugMeta.context();
-    var module                                      = ModuleTag.module;
-    var property                                    = PropertyTag.property;
+    var bugmeta             = BugMeta.context();
+    var module              = ModuleTag.module;
+    var property            = PropertyTag.property;
     var $iterableSeries                             = BugFlow.$iterableSeries;
     var $series                                     = BugFlow.$series;
     var $task                                       = BugFlow.$task;

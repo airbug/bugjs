@@ -36,23 +36,23 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Bug                             = bugpack.require('Bug');
-    var Class                           = bugpack.require('Class');
-    var Map                             = bugpack.require('Map');
-    var Obj                             = bugpack.require('Obj');
-    var IProcessModule                  = bugpack.require('bugioc.IProcessModule');
-    var ModuleTag                = bugpack.require('bugioc.ModuleTag');
-    var MarshTagProcessor        = bugpack.require('bugmarsh.MarshTagProcessor');
-    var MarshTagScan             = bugpack.require('bugmarsh.MarshTagScan');
-    var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+    var Bug                 = bugpack.require('Bug');
+    var Class               = bugpack.require('Class');
+    var Map                 = bugpack.require('Map');
+    var Obj                 = bugpack.require('Obj');
+    var IProcessModule      = bugpack.require('bugioc.IProcessModule');
+    var ModuleTag           = bugpack.require('bugioc.ModuleTag');
+    var MarshTagProcessor   = bugpack.require('bugmarsh.MarshTagProcessor');
+    var MarshTagScan        = bugpack.require('bugmarsh.MarshTagScan');
+    var BugMeta             = bugpack.require('bugmeta.BugMeta');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta                         = BugMeta.context();
-    var module                          = ModuleTag.module;
+    var bugmeta             = BugMeta.context();
+    var module              = ModuleTag.module;
 
 
     //-------------------------------------------------------------------------------

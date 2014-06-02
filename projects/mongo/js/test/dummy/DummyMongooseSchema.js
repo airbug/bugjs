@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -9,82 +19,85 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                         = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// Bugpack Modules
-//-------------------------------------------------------------------------------
-
-var Class                           = bugpack.require('Class');
-var Obj                             = bugpack.require('Obj');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @constructor
- * @extends {Obj}
- */
-var DummyMongooseSchema = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Bugpack Modules
+    //-------------------------------------------------------------------------------
+
+    var Class                           = bugpack.require('Class');
+    var Obj                             = bugpack.require('Obj');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {Object} schemaObject
+     * @class
+     * @extends {Obj}
      */
-    _constructor: function(schemaObject) {
+    var DummyMongooseSchema = Class.extend(Obj, {
 
-        this._super();
+        _name: "mongo.DummyMongooseSchema",
 
 
         //-------------------------------------------------------------------------------
-        // Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Object}
+         * @constructs
+         * @param {Object} schemaObject
          */
-        this.schemaObject   = schemaObject
-    },
+        _constructor: function(schemaObject) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {Object}
+             */
+            this.schemaObject   = schemaObject
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Mongoose Methods
+        //-------------------------------------------------------------------------------
+
+        index: function(indexObject, indexOptions) {
+            //TODO BRN:
+        },
+        pre: function() {
+            //TODO BRN:
+        },
+        post: function() {
+            //TODO BRN:
+        },
+        virtual: function() {
+            //TODO BRN:
+        }
+    });
+
+
+    DummyMongooseSchema.Types = {
+        Mixed: function() {},
+        ObjectId: function() {}
+    };
 
 
     //-------------------------------------------------------------------------------
-    // Mongoose Methods
+    // Exports
     //-------------------------------------------------------------------------------
 
-    index: function(indexObject, indexOptions) {
-        //TODO BRN:
-    },
-    pre: function() {
-        //TODO BRN:
-    },
-    post: function() {
-        //TODO BRN:
-    },
-    virtual: function() {
-        //TODO BRN:
-    }
+    bugpack.export('mongo.DummyMongooseSchema', DummyMongooseSchema);
 });
-
-
-DummyMongooseSchema.Types = {
-    Mixed: function() {},
-    ObjectId: function() {}
-};
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('mongo.DummyMongooseSchema', DummyMongooseSchema);

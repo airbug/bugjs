@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -9,79 +19,89 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class           = bugpack.require('Class');
-var DeltaChange     = bugpack.require('bugdelta.DeltaChange');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var SetChange = Class.extend(DeltaChange, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class           = bugpack.require('Class');
+    var DeltaChange     = bugpack.require('bugdelta.DeltaChange');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @class
+     * @extends {DeltaChange}
      */
-    _constructor: function(changeType, path, setValue) {
+    var SetChange = Class.extend(DeltaChange, {
 
-        this._super(changeType, path);
+        _name: "bugdelta.SetChange",
 
 
         //-------------------------------------------------------------------------------
-        // Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {*}
+         * @constructs
+         * @param {string} changeType
+         * @param {string} path
+         * @param {*} setValue
          */
-        this.setValue       = setValue;
-    },
+        _constructor: function(changeType, path, setValue) {
+
+            this._super(changeType, path);
+
+
+            //-------------------------------------------------------------------------------
+            // Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {*}
+             */
+            this.setValue       = setValue;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {*}
+         */
+        getSetValue: function() {
+            return this.setValue;
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Static Properties
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {*}
+     * @static
+     * @enum {string}
      */
-    getSetValue: function() {
-        return this.setValue;
-    }
+    SetChange.ChangeTypes = {
+        ADDED_TO_SET: "SetChange:AddedToSet",
+        REMOVED_FROM_SET: "SetChange:RemovedFromSet"
+    };
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugdelta.SetChange', SetChange);
 });
-
-
-//-------------------------------------------------------------------------------
-// Static Variables
-//-------------------------------------------------------------------------------
-
-/**
- * @static
- * @enum {string}
- */
-SetChange.ChangeTypes = {
-    ADDED_TO_SET: "SetChange:AddedToSet",
-    REMOVED_FROM_SET: "SetChange:RemovedFromSet"
-};
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugdelta.SetChange', SetChange);

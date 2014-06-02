@@ -40,10 +40,10 @@ require('bugpack').context("*", function(bugpack) {
     var Class               = bugpack.require('Class');
     var Map                 = bugpack.require('Map');
     var Obj                 = bugpack.require('Obj');
-    var EntityTagProcessor     = bugpack.require('bugentity.EntityTagProcessor');
-    var EntityTagScan          = bugpack.require('bugentity.EntityTagScan');
+    var EntityTagProcessor  = bugpack.require('bugentity.EntityTagProcessor');
+    var EntityTagScan       = bugpack.require('bugentity.EntityTagScan');
     var IProcessModule      = bugpack.require('bugioc.IProcessModule');
-    var ModuleTag    = bugpack.require('bugioc.ModuleTag');
+    var ModuleTag           = bugpack.require('bugioc.ModuleTag');
     var BugMeta             = bugpack.require('bugmeta.BugMeta');
 
 
@@ -51,8 +51,8 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta              = BugMeta.context();
-    var module               = ModuleTag.module;
+    var bugmeta             = BugMeta.context();
+    var module              = ModuleTag.module;
 
 
     //-------------------------------------------------------------------------------

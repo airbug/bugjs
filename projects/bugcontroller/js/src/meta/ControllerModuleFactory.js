@@ -28,8 +28,8 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class               = bugpack.require('Class');
-    var ModuleFactory       = bugpack.require('bugioc.ModuleFactory');
+    var Class           = bugpack.require('Class');
+    var ModuleFactory   = bugpack.require('bugioc.ModuleFactory');
 
 
     //-------------------------------------------------------------------------------
@@ -73,7 +73,19 @@ require('bugpack').context("*", function(bugpack) {
 
 
         //-------------------------------------------------------------------------------
-        // ModuleFactory Implementation
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {Class}
+         */
+        getControllerClass: function() {
+            return this.controllerClass;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // ModuleFactory Methods
         //-------------------------------------------------------------------------------
 
         /**

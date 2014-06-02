@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -10,49 +20,52 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                         = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack Modules
-//-------------------------------------------------------------------------------
-
-
-var Class                           = bugpack.require('Class');
-var EventDispatcher                 = bugpack.require('EventDispatcher');
-var CallEvent                       = bugpack.require('bugcall.CallEvent');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @constructor
- * @extends {EventDispatcher}
- */
-var DummyBugCallServer = Class.extend(EventDispatcher, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Public Methods
+    // BugPack Modules
+    //-------------------------------------------------------------------------------
+
+
+    var Class                           = bugpack.require('Class');
+    var EventDispatcher                 = bugpack.require('EventDispatcher');
+    var CallEvent                       = bugpack.require('bugcall.CallEvent');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {*} call
+     * @class
+     * @extends {EventDispatcher}
      */
-    connect: function(call) {
-        this.dispatchEvent(new CallEvent(CallEvent.OPENED, {
-            call: call
-        }));
-    }
+    var DummyBugCallServer = Class.extend(EventDispatcher, {
+
+        _name: "bugcall.DummyBugCallServer",
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {*} call
+         */
+        connect: function(call) {
+            this.dispatchEvent(new CallEvent(CallEvent.OPENED, {
+                call: call
+            }));
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugcall.DummyBugCallServer', DummyBugCallServer);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugcall.DummyBugCallServer', DummyBugCallServer);

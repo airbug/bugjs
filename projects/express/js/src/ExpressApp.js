@@ -29,16 +29,16 @@ require('bugpack').context("*", function(bugpack) {
     // Common Modules
     //-------------------------------------------------------------------------------
 
-    var express = require('express');
+    var express     = require('express');
 
 
     //-------------------------------------------------------------------------------
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class   = bugpack.require('Class');
-    var Obj     = bugpack.require('Obj');
-    var Proxy   = bugpack.require('Proxy');
+    var Class       = bugpack.require('Class');
+    var Obj         = bugpack.require('Obj');
+    var Proxy       = bugpack.require('Proxy');
 
 
     //-------------------------------------------------------------------------------

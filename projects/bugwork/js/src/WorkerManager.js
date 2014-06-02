@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -29,27 +39,27 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Bug                             = bugpack.require('Bug');
-    var Class                           = bugpack.require('Class');
-    var Exception                       = bugpack.require('Exception');
-    var Obj                             = bugpack.require('Obj');
-    var Set                             = bugpack.require('Set');
-    var TypeUtil                        = bugpack.require('TypeUtil');
-    var BugFlow                         = bugpack.require('bugflow.BugFlow');
-    var ArgTag                   = bugpack.require('bugioc.ArgTag');
-    var IInitializeModule               = bugpack.require('bugioc.IInitializeModule');
-    var ModuleTag                = bugpack.require('bugioc.ModuleTag');
-    var BugMeta                         = bugpack.require('bugmeta.BugMeta');
-    var WorkerMaster                    = bugpack.require('bugwork.WorkerMaster');
+    var Bug                 = bugpack.require('Bug');
+    var Class               = bugpack.require('Class');
+    var Exception           = bugpack.require('Exception');
+    var Obj                 = bugpack.require('Obj');
+    var Set                 = bugpack.require('Set');
+    var TypeUtil            = bugpack.require('TypeUtil');
+    var BugFlow             = bugpack.require('bugflow.BugFlow');
+    var ArgTag              = bugpack.require('bugioc.ArgTag');
+    var IInitializeModule   = bugpack.require('bugioc.IInitializeModule');
+    var ModuleTag           = bugpack.require('bugioc.ModuleTag');
+    var BugMeta             = bugpack.require('bugmeta.BugMeta');
+    var WorkerMaster        = bugpack.require('bugwork.WorkerMaster');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                             = ArgTag.arg;
-    var bugmeta                         = BugMeta.context();
-    var module                          = ModuleTag.module;
+    var arg                 = ArgTag.arg;
+    var bugmeta             = BugMeta.context();
+    var module              = ModuleTag.module;
     var $iterableParallel               = BugFlow.$iterableParallel;
     var $series                         = BugFlow.$series;
     var $task                           = BugFlow.$task;

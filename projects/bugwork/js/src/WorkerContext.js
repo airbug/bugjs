@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -25,15 +35,15 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Bug                         = bugpack.require('Bug');
-    var Class                       = bugpack.require('Class');
-    var CommandProcessor            = bugpack.require('CommandProcessor');
-    var Event                       = bugpack.require('Event');
-    var EventDispatcher             = bugpack.require('EventDispatcher');
-    var Exception                   = bugpack.require('Exception');
-    var BugFlow                     = bugpack.require('bugflow.BugFlow');
-    var WorkerDefines               = bugpack.require('bugwork.WorkerDefines');
-    var WorkerProcess               = bugpack.require('bugwork.WorkerProcess');
+    var Bug                 = bugpack.require('Bug');
+    var Class               = bugpack.require('Class');
+    var CommandProcessor    = bugpack.require('CommandProcessor');
+    var Event               = bugpack.require('Event');
+    var EventDispatcher     = bugpack.require('EventDispatcher');
+    var Exception           = bugpack.require('Exception');
+    var BugFlow             = bugpack.require('bugflow.BugFlow');
+    var WorkerDefines       = bugpack.require('bugwork.WorkerDefines');
+    var WorkerProcess       = bugpack.require('bugwork.WorkerProcess');
 
 
     //-------------------------------------------------------------------------------

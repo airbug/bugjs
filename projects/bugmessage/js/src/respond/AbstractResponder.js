@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -13,145 +23,152 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class           = bugpack.require('Class');
-var Obj             = bugpack.require('Obj');
-var TypeUtil        = bugpack.require('TypeUtil');
-var UuidGenerator   = bugpack.require('UuidGenerator');
-var IResponder      = bugpack.require('bugmessage.IResponder');
-var Response        = bugpack.require('bugmessage.Response');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var MessageResponder = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function(responseChannel) {
+    var Class           = bugpack.require('Class');
+    var Obj             = bugpack.require('Obj');
+    var TypeUtil        = bugpack.require('TypeUtil');
+    var UuidGenerator   = bugpack.require('UuidGenerator');
+    var IResponder      = bugpack.require('bugmessage.IResponder');
+    var Response        = bugpack.require('bugmessage.Response');
 
-        this._super();
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {Obj}
+     */
+    var AbstractResponder = Class.extend(Obj, {
+
+        _name: "bugmessage.AbstractResponder",
+
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
+        //-------------------------------------------------------------------------------
+
+        _constructor: function(responseChannel) {
+
+            this._super();
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {boolean}
+             */
+            this.closed = false;
+
+            /**
+             * @private
+             * @type {IResponseChannel}
+             */
+            this.responseChannel = responseChannel;
+
+            this.responseChannel.addEventPropagator(this);
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {boolean}
+         * @return {IResponseChannel}
          */
-        this.closed = false;
+        getResponseChannel: function() {
+            return this.responseChannel;
+        },
 
         /**
-         * @private
-         * @type {IResponseChannel}
+         * @return {boolean}
          */
-        this.responseChannel = responseChannel;
-
-        this.responseChannel.addEventPropagator(this);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @return {IResponseChannel}
-     */
-    getResponseChannel: function() {
-        return this.responseChannel;
-    },
-
-    /**
-     * @return {boolean}
-     */
-    isClosed: function() {
-        return this.closed;
-    },
+        isClosed: function() {
+            return this.closed;
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // IResponder Implementation
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // IResponder Implementation
+        //-------------------------------------------------------------------------------
 
-    /**
-     *
-     */
-    close: function() {
-        if (!this.isClosed()) {
-            this.responseChannel.closeChannel();
-            this.responseChannel.removeEventPropagator(this);
-            this.responseChannel = null;
-        }
-    },
-
-    //doSendResponse: function(response, callback) {},
-
-    /**
-     * @param {Response} response
-     * @param {function(Error)} callback
-     */
-    sendResponse: function(response, callback) {
-        if (!this.isClosed()) {
-            try {
-                this.doSendResponse(response, callback);
-                callback();
-            } catch (error) {
-                callback(error);
+        /**
+         *
+         */
+        close: function() {
+            if (!this.isClosed()) {
+                this.responseChannel.closeChannel();
+                this.responseChannel.removeEventPropagator(this);
+                this.responseChannel = null;
             }
-        } else {
-            callback(new Error("Cannot send a response after the responder is closed"));
+        },
+
+        //doSendResponse: function(response, callback) {},
+
+        /**
+         * @param {Response} response
+         * @param {function(Error)} callback
+         */
+        sendResponse: function(response, callback) {
+            if (!this.isClosed()) {
+                try {
+                    this.doSendResponse(response, callback);
+                    callback();
+                } catch (error) {
+                    callback(error);
+                }
+            } else {
+                callback(new Error("Cannot send a response after the responder is closed"));
+            }
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {Object} data
+         * @param {function(Error)} callback
+         */
+        respond: function(data, callback) {
+            var response = new Response(data);
+            this.sendResponse(response, callback);
+        },
+
+        /**
+         * @return {Object}
+         */
+        toObject: function() {
+            return {
+                responseChannel: this.responseChannel.toObject()
+            };
         }
-    },
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Methods
+    // Interfaces
     //-------------------------------------------------------------------------------
 
-    /**
-     * @param {Object} data
-     * @param {function(Error)} callback
-     */
-    respond: function(data, callback) {
-        var response = new Response(data);
-        this.sendResponse(response, callback);
-    },
+    Class.implement(AbstractResponder, IResponder);
 
-    /**
-     * @return {Object}
-     */
-    toObject: function() {
-        return {
-            responseChannel: this.responseChannel.toObject()
-        };
-    }
+
+    //-------------------------------------------------------------------------------
+    // Export
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugmessage.AbstractResponder', AbstractResponder);
 });
-
-
-//-------------------------------------------------------------------------------
-// Interfaces
-//-------------------------------------------------------------------------------
-
-Class.implement(AbstractResponder, IResponder);
-
-
-//-------------------------------------------------------------------------------
-// Export
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugmessage.AbstractResponder', AbstractResponder);

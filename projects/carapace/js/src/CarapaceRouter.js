@@ -7,6 +7,7 @@
  * States copyright law and other international copyright treaties and conventions.
  */
 
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -32,21 +33,21 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                   = bugpack.require('Class');
-    var List                    = bugpack.require('List');
-    var Backbone                = bugpack.require('backbone.Backbone');
-    var ArgTag           = bugpack.require('bugioc.ArgTag');
-    var ModuleTag        = bugpack.require('bugioc.ModuleTag');
-    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+    var Class       = bugpack.require('Class');
+    var List        = bugpack.require('List');
+    var Backbone    = bugpack.require('backbone.Backbone');
+    var ArgTag      = bugpack.require('bugioc.ArgTag');
+    var ModuleTag   = bugpack.require('bugioc.ModuleTag');
+    var BugMeta     = bugpack.require('bugmeta.BugMeta');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                     = ArgTag.arg;
-    var bugmeta                 = BugMeta.context();
-    var module                  = ModuleTag.module;
+    var arg         = ArgTag.arg;
+    var bugmeta     = BugMeta.context();
+    var module      = ModuleTag.module;
 
 
     //-------------------------------------------------------------------------------

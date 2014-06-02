@@ -43,7 +43,7 @@ require('bugpack').context("*", function(bugpack) {
     var Map                 = bugpack.require('Map');
     var Obj                 = bugpack.require('Obj');
     var TypeUtil            = bugpack.require('TypeUtil');
-    var ModuleTag    = bugpack.require('bugioc.ModuleTag');
+    var ModuleTag           = bugpack.require('bugioc.ModuleTag');
     var BugMeta             = bugpack.require('bugmeta.BugMeta');
     var IProcessRequest     = bugpack.require('bugrequest.IProcessRequest');
     var BugCallRoute        = bugpack.require('bugroute.BugCallRoute');

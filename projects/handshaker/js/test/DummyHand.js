@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -10,95 +20,99 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack Modules
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var Obj                 = bugpack.require('Obj');
-var IHand               = bugpack.require('handshaker.IHand');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @constructor
- * @extends {Obj}
- */
-var DummyHand = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack Modules
+    //-------------------------------------------------------------------------------
+
+    var Class               = bugpack.require('Class');
+    var Obj                 = bugpack.require('Obj');
+    var IHand               = bugpack.require('handshaker.IHand');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {boolean} shakeResult
-     * @param {Throwable} shakeThrowable
+     * @class
+     * @extends {Obj}
+     * @implement {IHand}
      */
-    _constructor: function(shakeResult, shakeThrowable) {
+    var DummyHand = Class.extend(Obj, {
 
-        this._super();
+        _name: "handshaker.DummyHand",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {boolean}
+         * @constructs
+         * @param {boolean} shakeResult
+         * @param {Throwable} shakeThrowable
          */
-        this.shakeResult        = shakeResult;
+        _constructor: function(shakeResult, shakeThrowable) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {boolean}
+             */
+            this.shakeResult        = shakeResult;
+
+            /**
+             * @private
+             * @type {Throwable}
+             */
+            this.shakeThrowable     = shakeThrowable;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // IHand Implementation
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Throwable}
+         * @param {{
+         *    headers: Object,
+         *    time: Date,
+         *    address: Object,
+         *    xdomain: boolean,
+         *    secure: boolean,
+         *    issued: number,
+         *    url: string,
+         *    query: Object
+         * }} handshakeData
+         * @param {function(Throwable, boolean)} callback
          */
-        this.shakeThrowable     = shakeThrowable;
-    },
+        shakeIt: function(handshakeData, callback) {
+            callback(this.shakeThrowable, this.shakeResult);
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // IHand Implementation
+    // Interfaces
     //-------------------------------------------------------------------------------
 
-    /**
-     * @param {{
-     *    headers: Object,
-     *    time: Date,
-     *    address: Object,
-     *    xdomain: boolean,
-     *    secure: boolean,
-     *    issued: number,
-     *    url: string,
-     *    query: Object
-     * }} handshakeData
-     * @param {function(Throwable, boolean)} callback
-     */
-    shakeIt: function(handshakeData, callback) {
-        callback(this.shakeThrowable, this.shakeResult);
-    }
+    Class.implement(DummyHand, IHand);
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('handshaker.DummyHand', DummyHand);
 });
-
-
-//-------------------------------------------------------------------------------
-// Interfaces
-//-------------------------------------------------------------------------------
-
-Class.implement(DummyHand, IHand);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('handshaker.DummyHand', DummyHand);

@@ -42,7 +42,7 @@ require('bugpack').context("*", function(bugpack) {
     var Obj                     = bugpack.require('Obj');
     var IncomingRequest         = bugpack.require('bugcall.IncomingRequest');
     var BugFlow                 = bugpack.require('bugflow.BugFlow');
-    var ModuleTag        = bugpack.require('bugioc.ModuleTag');
+    var ModuleTag               = bugpack.require('bugioc.ModuleTag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
     var IBuildRequestContext    = bugpack.require('bugrequest.IBuildRequestContext');
     var IPreProcessRequest      = bugpack.require('bugrequest.IPreProcessRequest');
@@ -53,8 +53,8 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta                = BugMeta.context();
-    var module                 = ModuleTag.module;
+    var bugmeta                 = BugMeta.context();
+    var module                  = ModuleTag.module;
     var $iterableSeries        = BugFlow.$iterableSeries;
 
 

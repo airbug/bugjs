@@ -7,6 +7,7 @@
  * States copyright law and other international copyright treaties and conventions.
  */
 
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -18,9 +19,9 @@
 //@Require('Obj')
 //@Require('backbone.Backbone')
 //@Require('bugdispose.IDisposable')
-//@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
+//@Require('bugmeta.BugMeta')
 //@Require('carapace.ControllerRoute')
 
 
@@ -34,24 +35,24 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                   = bugpack.require('Class');
-    var List                    = bugpack.require('List');
-    var Obj                     = bugpack.require('Obj');
-    var Backbone                = bugpack.require('backbone.Backbone');
-    var IDisposable             = bugpack.require('bugdispose.IDisposable');
-    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var AutowiredTag     = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag      = bugpack.require('bugioc.PropertyTag');
-    var ControllerRoute         = bugpack.require('carapace.ControllerRoute');
+    var Class               = bugpack.require('Class');
+    var List                = bugpack.require('List');
+    var Obj                 = bugpack.require('Obj');
+    var Backbone            = bugpack.require('backbone.Backbone');
+    var IDisposable         = bugpack.require('bugdispose.IDisposable');
+    var AutowiredTag        = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag         = bugpack.require('bugioc.PropertyTag');
+    var BugMeta             = bugpack.require('bugmeta.BugMeta');
+    var ControllerRoute     = bugpack.require('carapace.ControllerRoute');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var autowired               = AutowiredTag.autowired;
-    var bugmeta                 = BugMeta.context();
-    var property                = PropertyTag.property;
+    var autowired           = AutowiredTag.autowired;
+    var bugmeta             = BugMeta.context();
+    var property            = PropertyTag.property;
 
 
     //-------------------------------------------------------------------------------

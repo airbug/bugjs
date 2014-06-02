@@ -16,8 +16,8 @@
 //@Autoload
 
 //@Require('Class')
-//@Require('Obj')
 //@Require('Map')
+//@Require('Obj')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 
@@ -32,19 +32,19 @@ require('bugpack').context("*", function(bugpack) {
     // Bugpack Modules
     //-------------------------------------------------------------------------------
 
-    var Class                       = bugpack.require('Class');
-    var Obj                         = bugpack.require('Obj');
-    var Map                         = bugpack.require('Map');
-    var ModuleTag            = bugpack.require('bugioc.ModuleTag');
-    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+    var Class       = bugpack.require('Class');
+    var Map         = bugpack.require('Map');
+    var Obj         = bugpack.require('Obj');
+    var ModuleTag   = bugpack.require('bugioc.ModuleTag');
+    var BugMeta     = bugpack.require('bugmeta.BugMeta');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta                     = BugMeta.context();
-    var module                      = ModuleTag.module;
+    var bugmeta     = BugMeta.context();
+    var module      = ModuleTag.module;
 
 
     //-------------------------------------------------------------------------------

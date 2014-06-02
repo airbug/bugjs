@@ -29,9 +29,9 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                       = bugpack.require('Class');
-    var ControllerTag        = bugpack.require('bugcontroller.ControllerTag');
-    var TagScan              = bugpack.require('bugmeta.TagScan');
+    var Class           = bugpack.require('Class');
+    var ControllerTag   = bugpack.require('bugcontroller.ControllerTag');
+    var TagScan         = bugpack.require('bugmeta.TagScan');
 
 
     //-------------------------------------------------------------------------------

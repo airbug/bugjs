@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -14,133 +24,141 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var Lock                = bugpack.require('Lock');
-var LockStriped         = bugpack.require('LockStriped');
-var Map                 = bugpack.require('Map');
-var Obj                 = bugpack.require('Obj');
-var ILockOperator       = bugpack.require('bugatomic.ILockOperator');
-var BugFlow             = bugpack.require('bugflow.BugFlow');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var $task           = BugFlow.$task;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var LockOperator = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class               = bugpack.require('Class');
+    var Lock                = bugpack.require('Lock');
+    var LockStriped         = bugpack.require('LockStriped');
+    var Map                 = bugpack.require('Map');
+    var Obj                 = bugpack.require('Obj');
+    var ILockOperator       = bugpack.require('bugatomic.ILockOperator');
+    var BugFlow             = bugpack.require('bugflow.BugFlow');
+
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var $task           = BugFlow.$task;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {number} numberStripes
+     * @class
+     * @extends {Obj}
      */
-    _constructor: function(numberStripes) {
+    var LockOperator = Class.extend(Obj, {
 
-        this._super();
+        _name: "bugatomic.LockOperator",
+
 
         //-------------------------------------------------------------------------------
-        // Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {number}
+         * @constructs
+         * @param {number} numberStripes
          */
-        this.numberStripes              = numberStripes;
+        _constructor: function(numberStripes) {
+
+            this._super();
+
+            //-------------------------------------------------------------------------------
+            // Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {number}
+             */
+            this.numberStripes              = numberStripes;
+
+            /**
+             * @private
+             * @type {LockStriped}
+             */
+            this.lockTypeToLockStripedMap   = new Map();
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // ILockOperator Implementation
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {LockStriped}
+         * @param {string} key
+         * @param {string} type
+         * @param {function(Lock} callback
          */
-        this.lockTypeToLockStripedMap   = new Map();
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // ILockOperator Implementation
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {string} key
-     * @param {string} type
-     * @param {function(Lock} callback
-     */
-    acquireLock: function(key, type, callback) {
-        var _this = this;
-        var lock = null;
-        $task(function(flow) {
-            var lockStriped = _this.lockTypeToLockStripedMap.get(type);
-            if (!lockStriped) {
-                lockStriped = new LockStriped(_this.numberStripes);
-                _this.lockTypeToLockStripedMap.put(type, lockStriped);
-            }
-            lock = lockStriped.getForKey(key);
-            lock.waitLock(function() {
-                flow.complete();
+        acquireLock: function(key, type, callback) {
+            var _this = this;
+            var lock = null;
+            $task(function(flow) {
+                var lockStriped = _this.lockTypeToLockStripedMap.get(type);
+                if (!lockStriped) {
+                    lockStriped = new LockStriped(_this.numberStripes);
+                    _this.lockTypeToLockStripedMap.put(type, lockStriped);
+                }
+                lock = lockStriped.getForKey(key);
+                lock.waitLock(function() {
+                    flow.complete();
+                });
+            }).execute(function() {
+                callback(lock);
             });
-        }).execute(function() {
-            callback(lock);
-        });
-    },
+        },
 
-    /**
-     * @param {string} key
-     * @param {string} type
-     * @return {boolean}
-     */
-    isLockedForType: function(key, type) {
-        var lockStriped = this.lockTypeToLockStripedMap.get(type);
-        if (lockStriped) {
-            var lock = lockStriped.getForKey(key);
-            if (lock) {
-                return lock.isLocked();
+        /**
+         * @param {string} key
+         * @param {string} type
+         * @return {boolean}
+         */
+        isLockedForType: function(key, type) {
+            var lockStriped = this.lockTypeToLockStripedMap.get(type);
+            if (lockStriped) {
+                var lock = lockStriped.getForKey(key);
+                if (lock) {
+                    return lock.isLocked();
+                }
+            }
+            return false;
+        },
+
+        /**
+         * @param {string} key
+         * @param {string} type
+         */
+        releaseLock: function(key, type) {
+            var lockStriped = this.lockTypeToLockStripedMap.get(type);
+            if (lockStriped) {
+                var lock = lockStriped.getForKey(key);
+                lock.unlock();
             }
         }
-        return false;
-    },
+    });
 
-    /**
-     * @param {string} key
-     * @param {string} type
-     */
-    releaseLock: function(key, type) {
-        var lockStriped = this.lockTypeToLockStripedMap.get(type);
-        if (lockStriped) {
-            var lock = lockStriped.getForKey(key);
-            lock.unlock();
-        }
-    }
+
+    //-------------------------------------------------------------------------------
+    // Interfaces
+    //-------------------------------------------------------------------------------
+
+    Class.implement(LockOperator, ILockOperator);
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugatomic.LockOperator', LockOperator);
 });
-
-
-//-------------------------------------------------------------------------------
-// Interfaces
-//-------------------------------------------------------------------------------
-
-Class.implement(LockOperator, ILockOperator);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugatomic.LockOperator', LockOperator);

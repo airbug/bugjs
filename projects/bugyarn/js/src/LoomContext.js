@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -14,142 +24,145 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                 = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Bug                     = bugpack.require('Bug');
-var Class                   = bugpack.require('Class');
-var Map                     = bugpack.require('Map');
-var Obj                     = bugpack.require('Obj');
-var Weaver                  = bugpack.require('bugyarn.Weaver');
-var Winder                  = bugpack.require('bugyarn.Winder');
-var Yarn                    = bugpack.require('bugyarn.Yarn');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {Obj}
- */
-var LoomContext = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Bug                     = bugpack.require('Bug');
+    var Class                   = bugpack.require('Class');
+    var Map                     = bugpack.require('Map');
+    var Obj                     = bugpack.require('Obj');
+    var Weaver                  = bugpack.require('bugyarn.Weaver');
+    var Winder                  = bugpack.require('bugyarn.Winder');
+    var Yarn                    = bugpack.require('bugyarn.Yarn');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
+     * @class
+     * @extends {Obj}
      */
-    _constructor: function() {
+    var LoomContext = Class.extend(Obj, {
 
-        this._super();
+        _name: "bugyarn.LoomContext",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Map.<string, Weaver>}
+         * @constructs
          */
-        this.weaverMap      = new Map();
+        _constructor: function() {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {Map.<string, Weaver>}
+             */
+            this.weaverMap      = new Map();
+
+            /**
+             * @private
+             * @type {Map.<string, Winder>}
+             */
+            this.winderMap      = new Map();
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Map.<string, Winder>}
+         * @return {Map.<string, Weaver>}
          */
-        this.winderMap      = new Map();
-    },
+        getWeaverMap: function() {
+            return this.weaverMap;
+        },
+
+        /**
+         * @return {Map.<string, Winder>}
+         */
+        getWinderMap: function() {
+            return this.winderMap;
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @return {Map.<string, Weaver>}
-     */
-    getWeaverMap: function() {
-        return this.weaverMap;
-    },
+        /**
+         * @param {string} weaverName
+         * @return {Weaver}
+         */
+        getWeaverByName: function(weaverName) {
+            return this.weaverMap.get(weaverName);
+        },
 
-    /**
-     * @return {Map.<string, Winder>}
-     */
-    getWinderMap: function() {
-        return this.winderMap;
-    },
+        /**
+         * @param {string} winderName
+         * @return {Winder}
+         */
+        getWinderByName: function(winderName) {
+            return this.winderMap.get(winderName);
+        },
 
+        /**
+         * @param {string} weaverName
+         * @param {function(Yarn):*} weaverFunction
+         */
+        registerWeaver: function(weaverName, weaverFunction) {
+            var weaver = new Weaver(weaverName, weaverFunction);
+            if (!this.weaverMap.containsKey(weaverName)) {
+                this.weaverMap.put(weaverName, weaver);
+            } else {
+                throw new Bug("IllegalState", {}, "Weaver already registered with the name '" + weaverName + "'");
+            }
+        },
 
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
+        /**
+         * @param {string} winderName
+         * @param {function(Yarn)} winderFunction
+         */
+        registerWinder: function(winderName, winderFunction) {
+            var winder = new Winder(winderName, winderFunction);
+            if (!this.winderMap.containsKey(winderName)) {
+                this.winderMap.put(winderName, winder);
+            } else {
+                throw new Bug("IllegalState", {}, "Winder already registered with the name '" + winderName + "'");
+            }
+        },
 
-    /**
-     * @param {string} weaverName
-     * @return {Weaver}
-     */
-    getWeaverByName: function(weaverName) {
-        return this.weaverMap.get(weaverName);
-    },
-
-    /**
-     * @param {string} winderName
-     * @return {Winder}
-     */
-    getWinderByName: function(winderName) {
-        return this.winderMap.get(winderName);
-    },
-
-    /**
-     * @param {string} weaverName
-     * @param {function(Yarn):*} weaverFunction
-     */
-    registerWeaver: function(weaverName, weaverFunction) {
-        var weaver = new Weaver(weaverName, weaverFunction);
-        if (!this.weaverMap.containsKey(weaverName)) {
-            this.weaverMap.put(weaverName, weaver);
-        } else {
-            throw new Bug("IllegalState", {}, "Weaver already registered with the name '" + weaverName + "'");
+        /**
+         * @param {Object} yarnContext
+         * @return {Yarn}
+         */
+        yarn: function(yarnContext) {
+            return new Yarn(yarnContext, this);
         }
-    },
+    });
 
-    /**
-     * @param {string} winderName
-     * @param {function(Yarn)} winderFunction
-     */
-    registerWinder: function(winderName, winderFunction) {
-        var winder = new Winder(winderName, winderFunction);
-        if (!this.winderMap.containsKey(winderName)) {
-            this.winderMap.put(winderName, winder);
-        } else {
-            throw new Bug("IllegalState", {}, "Winder already registered with the name '" + winderName + "'");
-        }
-    },
 
-    /**
-     * @param {Object} yarnContext
-     * @return {Yarn}
-     */
-    yarn: function(yarnContext) {
-        return new Yarn(yarnContext, this);
-    }
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugyarn.LoomContext', LoomContext);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugyarn.LoomContext', LoomContext);

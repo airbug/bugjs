@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -11,84 +21,87 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// Bugpack Modules
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var Set                 = bugpack.require('Set');
-var TypeUtil            = bugpack.require('TypeUtil');
-var DummyRedisQuery     = bugpack.require('redis.DummyRedisQuery');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {DummyRedisQuery}
- */
-var DummyRedisSMembersQuery = Class.extend(DummyRedisQuery, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Bugpack Modules
+    //-------------------------------------------------------------------------------
+
+    var Class               = bugpack.require('Class');
+    var Set                 = bugpack.require('Set');
+    var TypeUtil            = bugpack.require('TypeUtil');
+    var DummyRedisQuery     = bugpack.require('redis.DummyRedisQuery');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {DummyRedisClient} dummyRedisClient
-     * @param {string} key
+     * @class
+     * @extends {DummyRedisQuery}
      */
-    _constructor: function(dummyRedisClient, key) {
+    var DummyRedisSMembersQuery = Class.extend(DummyRedisQuery, {
 
-        this._super(dummyRedisClient);
+        _name: "redis.DummyRedisSMembersQuery",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {string}
+         * @constructs
+         * @param {DummyRedisClient} dummyRedisClient
+         * @param {string} key
          */
-        this.key        = key;
-    },
+        _constructor: function(dummyRedisClient, key) {
+
+            this._super(dummyRedisClient);
 
 
-    //-------------------------------------------------------------------------------
-    // DummyRedisQuery Methods
-    //-------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
 
-    query: function() {
-        var dummyRedisClient  = this.getDummyRedisClient();
-        if (!dummyRedisClient.isSubscribedState()) {
-            var dataMap = dummyRedisClient.getKeyToEntryMap();
-            var returnedSet = dataMap.get(this.key);
-            if (!TypeUtil.isUndefined(returnedSet)) {
-                if (!Class.doesExtend(returnedSet, Set)) {
-                    throw new Error("WRONGTYPE Operation against a key holding the wrong kind of value");
+            /**
+             * @private
+             * @type {string}
+             */
+            this.key        = key;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // DummyRedisQuery Methods
+        //-------------------------------------------------------------------------------
+
+        query: function() {
+            var dummyRedisClient  = this.getDummyRedisClient();
+            if (!dummyRedisClient.isSubscribedState()) {
+                var dataMap = dummyRedisClient.getKeyToEntryMap();
+                var returnedSet = dataMap.get(this.key);
+                if (!TypeUtil.isUndefined(returnedSet)) {
+                    if (!Class.doesExtend(returnedSet, Set)) {
+                        throw new Error("WRONGTYPE Operation against a key holding the wrong kind of value");
+                    }
+                } else {
+                    returnedSet = new Set();
                 }
+                return returnedSet.toArray();
             } else {
-                returnedSet = new Set();
+                throw new Error("Connection in subscriber mode, only subscriber commands may be used");
             }
-            return returnedSet.toArray();
-        } else {
-            throw new Error("Connection in subscriber mode, only subscriber commands may be used");
         }
-    }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('redis.DummyRedisSMembersQuery', DummyRedisSMembersQuery);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('redis.DummyRedisSMembersQuery', DummyRedisSMembersQuery);

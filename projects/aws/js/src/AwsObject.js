@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -10,110 +20,120 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class =             bugpack.require('Class');
-var Obj =               bugpack.require('Obj');
-var Set =              bugpack.require('Set');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var AwsObject = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    var Class =             bugpack.require('Class');
+    var Obj =               bugpack.require('Obj');
+    var Set =              bugpack.require('Set');
 
-        this._super();
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {Obj}
+     */
+    var AwsObject = Class.extend(Obj, {
+
+        _name: "aws.AwsObject",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Set.<string>}
+         * @constructs
          */
-        this.changedFlags = new Set();
-    },
+        _constructor: function() {
+
+            this._super();
 
 
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {Set.<string>}
+             */
+            this.changedFlags = new Set();
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // Public Class Methods
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @param {string} property
-     * @return {boolean}
-     */
-    hasChanged: function(property) {
-        if (property) {
-            return this.changedFlags.contains(property);
-        } else {
-            return this.changedFlags.isEmpty();
+
+        //-------------------------------------------------------------------------------
+        // Public Class Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {string} property
+         * @return {boolean}
+         */
+        hasChanged: function(property) {
+            if (property) {
+                return this.changedFlags.contains(property);
+            } else {
+                return this.changedFlags.isEmpty();
+            }
+        },
+
+        /**
+         * @param {string} property
+         */
+        setChangedFlag: function(property) {
+            this.changedFlags.add(property);
+        },
+
+        /**
+         *
+         */
+        clearChangedFlags: function() {
+            this.changedFlags.clear();
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Protected Class Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @abstract
+         * @protected
+         * @param {Object} jsonObject
+         */
+        jsonCreate: function(jsonObject) {
+
+        },
+
+        /**
+         * @abstract
+         * @protected
+         * @param {Object} awsObject
+         */
+        syncCreate: function(awsObject) {
+
         }
-    },
-
-    /**
-     * @param {string} property
-     */
-    setChangedFlag: function(property) {
-        this.changedFlags.add(property);
-    },
-
-    /**
-     *
-     */
-    clearChangedFlags: function() {
-        this.changedFlags.clear();
-    },
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Protected Class Methods
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @abstract
-     * @protected
-     * @param {Object} jsonObject
-     */
-    jsonCreate: function(jsonObject) {
-
-    },
-
-    /**
-     * @abstract
-     * @protected
-     * @param {Object} awsObject
-     */
-    syncCreate: function(awsObject) {
-
-    }
+    bugpack.export('aws.AwsObject', AwsObject);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('aws.AwsObject', AwsObject);

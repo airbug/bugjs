@@ -16,9 +16,9 @@
 
 //@Require('Class')
 //@Require('bugmarsh.MarshRegistry')
-//@Require('bugmeta.Tag')
 //@Require('bugmeta.BugMeta')
 //@Require('bugmeta.MetaContext')
+//@Require('bugmeta.Tag')
 //@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 
@@ -33,22 +33,22 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                   = bugpack.require('Class');
-    var MarshRegistry           = bugpack.require('bugmarsh.MarshRegistry');
-    var Tag              = bugpack.require('bugmeta.Tag');
-    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var MetaContext             = bugpack.require('bugmeta.MetaContext');
-    var TestTag          = bugpack.require('bugunit.TestTag');
-    var BugYarn                 = bugpack.require('bugyarn.BugYarn');
+    var Class           = bugpack.require('Class');
+    var MarshRegistry   = bugpack.require('bugmarsh.MarshRegistry');
+    var BugMeta         = bugpack.require('bugmeta.BugMeta');
+    var MetaContext     = bugpack.require('bugmeta.MetaContext');
+    var Tag             = bugpack.require('bugmeta.Tag');
+    var TestTag         = bugpack.require('bugunit.TestTag');
+    var BugYarn         = bugpack.require('bugyarn.BugYarn');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta                 = BugMeta.context();
-    var bugyarn                 = BugYarn.context();
-    var test                    = TestTag.test;
+    var bugmeta         = BugMeta.context();
+    var bugyarn         = BugYarn.context();
+    var test            = TestTag.test;
 
 
     //-------------------------------------------------------------------------------

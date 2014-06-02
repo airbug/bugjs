@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -9,96 +19,99 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class           = bugpack.require('Class');
-var Obj             = bugpack.require('Obj');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @constructor
- * @extends {Obj}
- */
-var CallResponseHandler = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class           = bugpack.require('Class');
+    var Obj             = bugpack.require('Obj');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {function(Throwable, CallResponse=)} responseHandlerFunction
-     * @param {Object=} responseHandlerContext
+     * @class
+     * @extends {Obj}
      */
-    _constructor: function(responseHandlerFunction, responseHandlerContext) {
+    var CallResponseHandler = Class.extend(Obj, {
 
-        this._super();
+        _name: "bugcall.CallResponseHandler",
+
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Object}
+         * @constructs
+         * @param {function(Throwable, CallResponse=)} responseHandlerFunction
+         * @param {Object=} responseHandlerContext
          */
-        this.responseHandlerContext     = responseHandlerContext;
+        _constructor: function(responseHandlerFunction, responseHandlerContext) {
+
+            this._super();
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {Object}
+             */
+            this.responseHandlerContext     = responseHandlerContext;
+
+            /**
+             * @private
+             * @type {function(Throwable, CallResponse=)}
+             */
+            this.responseHandlerFunction    = responseHandlerFunction;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {function(Throwable, CallResponse=)}
+         * @return {Object}
          */
-        this.responseHandlerFunction    = responseHandlerFunction;
-    },
+        getResponseHandlerContext: function() {
+            return this.responseHandlerContext;
+        },
+
+        /**
+         * @return {function(Throwable, CallResponse=)}
+         */
+        getResponseHandlerFunction: function() {
+            return this.responseHandlerFunction;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {Throwable} throwable
+         * @param {CallResponse} callResponse
+         */
+        handle: function(throwable, callResponse) {
+            this.responseHandlerFunction.call(this.responseHandlerContext, throwable, callResponse);
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Export
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {Object}
-     */
-    getResponseHandlerContext: function() {
-        return this.responseHandlerContext;
-    },
-
-    /**
-     * @return {function(Throwable, CallResponse=)}
-     */
-    getResponseHandlerFunction: function() {
-        return this.responseHandlerFunction;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {Throwable} throwable
-     * @param {CallResponse} callResponse
-     */
-    handle: function(throwable, callResponse) {
-        this.responseHandlerFunction.call(this.responseHandlerContext, throwable, callResponse);
-    }
+    bugpack.export('bugcall.CallResponseHandler', CallResponseHandler);
 });
-
-
-//-------------------------------------------------------------------------------
-// Export
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugcall.CallResponseHandler', CallResponseHandler);

@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -10,90 +20,101 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class =             bugpack.require('Class');
-var Obj =               bugpack.require('Obj');
-var CliFlagInstance =   bugpack.require('bugcli.CliFlagInstance');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var CliActionInstance = Class.extend(CliFlagInstance, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function(cliAction) {
+    var Class =             bugpack.require('Class');
+    var Obj =               bugpack.require('Obj');
+    var CliFlagInstance =   bugpack.require('bugcli.CliFlagInstance');
 
-        this._super(cliAction);
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {CliFlagInstance}
+     */
+    var CliActionInstance = Class.extend(CliFlagInstance, {
+
+        _name: "bugcli.CliActionInstance",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {CliAction}
+         * @constructs
+         * @param {CliAction} cliAction
          */
-        this.cliAction = cliAction;
-    },
+        _constructor: function(cliAction) {
+
+            this._super(cliAction);
 
 
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
 
-    /**
-     * @return {CliAction}
-     */
-    getCliAction: function() {
-        return this.cliAction;
-    },
+            /**
+             * @private
+             * @type {CliAction}
+             */
+            this.cliAction = cliAction;
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // Object Implementation
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @param {*} value
-     * @return {boolean}
-     */
-    equals: function(value) {
-        if (Class.doesExtend(value, CliActionInstance)) {
-            return Obj.equals(this.cliAction, value.getCliAction());
+        /**
+         * @return {CliAction}
+         */
+        getCliAction: function() {
+            return this.cliAction;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Obj Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {*} value
+         * @return {boolean}
+         */
+        equals: function(value) {
+            if (Class.doesExtend(value, CliActionInstance)) {
+                return Obj.equals(this.cliAction, value.getCliAction());
+            }
+            return false;
+        },
+
+        /**
+         * @return {number}
+         */
+        hashCode: function() {
+            if (!this._hashCode) {
+                this._hashCode = Obj.hashCode("[CliActionInstance]" +
+                    Obj.hashCode(this.cliAction));
+            }
+            return this._hashCode;
         }
-        return false;
-    },
+    });
 
-    /**
-     * @return {number}
-     */
-    hashCode: function() {
-        if (!this._hashCode) {
-            this._hashCode = Obj.hashCode("[CliActionInstance]" +
-                Obj.hashCode(this.cliAction));
-        }
-        return this._hashCode;
-    }
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugcli.CliActionInstance', CliActionInstance);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugcli.CliActionInstance', CliActionInstance);

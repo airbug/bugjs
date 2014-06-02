@@ -42,22 +42,22 @@ require('bugpack').context("*", function(bugpack) {
     // Bugpack Modules
     //-------------------------------------------------------------------------------
 
-    var Bug                     = bugpack.require('Bug');
-    var Class                   = bugpack.require('Class');
-    var Exception               = bugpack.require('Exception');
-    var Map                     = bugpack.require('Map');
-    var Obj                     = bugpack.require('Obj');
-    var Pair                    = bugpack.require('Pair');
-    var Set                     = bugpack.require('Set');
-    var StringUtil              = bugpack.require('StringUtil');
-    var TypeUtil                = bugpack.require('TypeUtil');
-    var DocumentChange          = bugpack.require('bugdelta.DocumentChange');
-    var ObjectChange            = bugpack.require('bugdelta.ObjectChange');
-    var SetChange               = bugpack.require('bugdelta.SetChange');
-    var Entity                  = bugpack.require('bugentity.Entity');
-    var BugFlow                 = bugpack.require('bugflow.BugFlow');
-    var IInitializeModule       = bugpack.require('bugioc.IInitializeModule');
-    var MongoUpdateChanges      = bugpack.require('mongo.MongoUpdateChanges');
+    var Bug                 = bugpack.require('Bug');
+    var Class               = bugpack.require('Class');
+    var Exception           = bugpack.require('Exception');
+    var Map                 = bugpack.require('Map');
+    var Obj                 = bugpack.require('Obj');
+    var Pair                = bugpack.require('Pair');
+    var Set                 = bugpack.require('Set');
+    var StringUtil          = bugpack.require('StringUtil');
+    var TypeUtil            = bugpack.require('TypeUtil');
+    var DocumentChange      = bugpack.require('bugdelta.DocumentChange');
+    var ObjectChange        = bugpack.require('bugdelta.ObjectChange');
+    var SetChange           = bugpack.require('bugdelta.SetChange');
+    var Entity              = bugpack.require('bugentity.Entity');
+    var BugFlow             = bugpack.require('bugflow.BugFlow');
+    var IInitializeModule   = bugpack.require('bugioc.IInitializeModule');
+    var MongoUpdateChanges  = bugpack.require('mongo.MongoUpdateChanges');
 
 
     //-------------------------------------------------------------------------------

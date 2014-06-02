@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -9,74 +19,81 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var ModuleFactory       = bugpack.require('bugioc.ModuleFactory');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var ConfigurationModuleFactory = Class.extend(ModuleFactory, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class               = bugpack.require('Class');
+    var ModuleFactory       = bugpack.require('bugioc.ModuleFactory');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {IocContext} iocContext
-     * @param {IocModule} iocModule
-     * @param {IocModule} configurationIocModule
+     * @class
+     * @extends {ModuleFactory}
      */
-    _constructor: function(iocContext, iocModule, configurationIocModule) {
+    var ConfigurationModuleFactory = Class.extend(ModuleFactory, {
 
-        this._super(iocContext, iocModule);
+        _name: "bugioc.ConfigurationModuleFactory",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {IocModule}
+         * @constructs
+         * @param {IocContext} iocContext
+         * @param {IocModule} iocModule
+         * @param {IocModule} configurationIocModule
          */
-        this.configurationIocModule = configurationIocModule;
-    },
+        _constructor: function(iocContext, iocModule, configurationIocModule) {
+
+            this._super(iocContext, iocModule);
 
 
-    //-------------------------------------------------------------------------------
-    // ModuleFactory Methods
-    //-------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
 
-    /**
-     * @return {*}
-     */
-    factoryModule: function() {
-        var configuration   = this.getIocContext().getModuleByName(this.configurationIocModule.getName());
-        var moduleMethod    = configuration[this.getIocModule().getName()];
-        if (!moduleMethod) {
-            throw new Error("Cannot find module method in configuration that matches '" + this.getIocModule().getName() + "'");
+            /**
+             * @private
+             * @type {IocModule}
+             */
+            this.configurationIocModule = configurationIocModule;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // ModuleFactory Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {*}
+         */
+        factoryModule: function() {
+            var configuration   = this.getIocContext().getModuleByName(this.configurationIocModule.getName());
+            var moduleMethod    = configuration[this.getIocModule().getName()];
+            if (!moduleMethod) {
+                throw new Error("Cannot find module method in configuration that matches '" + this.getIocModule().getName() + "'");
+            }
+            var moduleArgs      = this.buildModuleArgs();
+            return moduleMethod.apply(configuration, moduleArgs);
         }
-        var moduleArgs      = this.buildModuleArgs();
-        return moduleMethod.apply(configuration, moduleArgs);
-    }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugioc.ConfigurationModuleFactory', ConfigurationModuleFactory);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugioc.ConfigurationModuleFactory', ConfigurationModuleFactory);

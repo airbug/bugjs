@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -9,62 +19,73 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class = bugpack.require('Class');
-var AwsObject =   bugpack.require('aws.AwsObject');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var S3Bucket = Class.extend(AwsObject, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function(params) {
-
-        this._super();
-
-
-        //-------------------------------------------------------------------------------
-        // Private Properties
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {string}
-         */
-        this.name = params.name;
-    },
+    var Class = bugpack.require('Class');
+    var AwsObject =   bugpack.require('aws.AwsObject');
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {string}
+     * @class
+     * @extends {AwsObject}
      */
-    getName: function() {
-        return this.name;
-    }
+    var S3Bucket = Class.extend(AwsObject, {
+
+        _name: "aws.S3Bucket",
+
+
+        //-------------------------------------------------------------------------------
+        // Constructor
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @constructs
+         * @param {} params
+         */
+        _constructor: function(params) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.name = params.name;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {string}
+         */
+        getName: function() {
+            return this.name;
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('aws.S3Bucket', S3Bucket);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('aws.S3Bucket', S3Bucket);

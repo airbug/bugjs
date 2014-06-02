@@ -32,12 +32,12 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class               = bugpack.require('Class');
-    var Obj                 = bugpack.require('Obj');
-    var EntitySchema        = bugpack.require('bugentity.EntitySchema');
-    var SchemaIndex         = bugpack.require('bugentity.SchemaIndex');
-    var SchemaProperty      = bugpack.require('bugentity.SchemaProperty');
-    var ITagProcessor       = bugpack.require('bugmeta.ITagProcessor');
+    var Class           = bugpack.require('Class');
+    var Obj             = bugpack.require('Obj');
+    var EntitySchema    = bugpack.require('bugentity.EntitySchema');
+    var SchemaIndex     = bugpack.require('bugentity.SchemaIndex');
+    var SchemaProperty  = bugpack.require('bugentity.SchemaProperty');
+    var ITagProcessor   = bugpack.require('bugmeta.ITagProcessor');
 
 
     //-------------------------------------------------------------------------------

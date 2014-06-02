@@ -1,94 +1,114 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('DirectMessageChannel')
+//@Export('bugmessage.DirectMessageChannel')
 
 //@Require('Class')
 //@Require('bugmessage.AbstractMessageChannel')
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                   = bugpack.require('Class');
-var AbstractMessageChannel  = bugpack.require('bugmessage.AbstractMessageChannel');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var DirectMessageChannel = Class.extend(AbstractMessageChannel, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    var Class                   = bugpack.require('Class');
+    var AbstractMessageChannel  = bugpack.require('bugmessage.AbstractMessageChannel');
 
-        this._super();
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {AbstractMessageChannel}
+     */
+    var DirectMessageChannel = Class.extend(AbstractMessageChannel, {
+
+        _name: "bugmessage.DirectMessageChannel",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {IMessageReceiver}
+         * @constructs
          */
-        this.messageReceiver = null;
-    },
+        _constructor: function() {
+
+            this._super();
 
 
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
 
-    /**
-     * @return {IMessageReceiver}
-     */
-    getMessageReceiver: function() {
-        return this.messageReceiver;
-    },
+            /**
+             * @private
+             * @type {IMessageReceiver}
+             */
+            this.messageReceiver = null;
+        },
 
-    /**
-     * @param {IMessageReceiver} messageReceiver
-     */
-    setMessageReceiver: function(messageReceiver) {
-        if (this.messageReceiver) {
-            this.messageReceiver.removeEventPropagator(this);
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {IMessageReceiver}
+         */
+        getMessageReceiver: function() {
+            return this.messageReceiver;
+        },
+
+        /**
+         * @param {IMessageReceiver} messageReceiver
+         */
+        setMessageReceiver: function(messageReceiver) {
+            if (this.messageReceiver) {
+                this.messageReceiver.removeEventPropagator(this);
+            }
+            this.messageReceiver = messageReceiver;
+            this.messageReceiver.addEventPropagator(this);
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // AbstractMessageChannel Implementation
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {Message} message
+         * @param {MessageResponder} messageResponder
+         */
+        doChannelMessage: function(message, messageResponder) {
+            this.messageReceiver.receiveMessage(message, messageResponder);
         }
-        this.messageReceiver = messageReceiver;
-        this.messageReceiver.addEventPropagator(this);
-    },
+    });
 
 
     //-------------------------------------------------------------------------------
-    // AbstractMessageChannel Implementation
+    // Export
     //-------------------------------------------------------------------------------
 
-    /**
-     * @param {Message} message
-     * @param {MessageResponder} messageResponder
-     */
-    doChannelMessage: function(message, messageResponder) {
-        this.messageReceiver.receiveMessage(message, messageResponder);
-    }
+    bugpack.export('bugmessage.DirectMessageChannel', DirectMessageChannel);
 });
-
-
-//-------------------------------------------------------------------------------
-// Export
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugmessage.DirectMessageChannel', DirectMessageChannel);

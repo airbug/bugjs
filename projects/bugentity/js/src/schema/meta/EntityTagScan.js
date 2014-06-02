@@ -29,9 +29,9 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class               = bugpack.require('Class');
-    var EntityTag    = bugpack.require('bugentity.EntityTag');
-    var TagScan      = bugpack.require('bugmeta.TagScan');
+    var Class       = bugpack.require('Class');
+    var EntityTag   = bugpack.require('bugentity.EntityTag');
+    var TagScan     = bugpack.require('bugmeta.TagScan');
 
 
     //-------------------------------------------------------------------------------

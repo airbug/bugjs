@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -14,145 +24,156 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class =         bugpack.require('Class');
-var List =          bugpack.require('List');
-var Map =           bugpack.require('Map');
-var Obj =           bugpack.require('Obj');
-var Set =           bugpack.require('Set');
-var TypeUtil =      bugpack.require('TypeUtil');
-var CliParameter =  bugpack.require('bugcli.CliParameter');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var CliFlag = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function(cliFlagObject) {
+    var Class =         bugpack.require('Class');
+    var List =          bugpack.require('List');
+    var Map =           bugpack.require('Map');
+    var Obj =           bugpack.require('Obj');
+    var Set =           bugpack.require('Set');
+    var TypeUtil =      bugpack.require('TypeUtil');
+    var CliParameter =  bugpack.require('bugcli.CliParameter');
 
-        this._super();
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {Obj}
+     */
+    var CliFlag = Class.extend(Obj, {
+
+        _name: "bugcli.CliFlag",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Set.<string>}
+         * @constructs
+         * @param {} cliFlagObject
          */
-        this.flagSet = new Set();
+        _constructor: function(cliFlagObject) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {Set.<string>}
+             */
+            this.flagSet = new Set();
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.name = "";
+
+            /**
+             * @private
+             * @type {List.<CliParameter>}
+             */
+            this.cliParameterList = new List();
+
+            /**
+             * @private
+             * @type {Map.<string, CliParameter>}
+             */
+            this.cliParameterMap = new Map();
+
+            //TODO BRN: We should replace this with the BugMarshaller
+
+            var _this = this;
+            if (TypeUtil.isObject(cliFlagObject)) {
+                if (TypeUtil.isString(cliFlagObject.name)) {
+                    this.name = cliFlagObject.name;
+                }
+                if (TypeUtil.isArray(cliFlagObject.flags)) {
+                    cliFlagObject.flags.forEach(function(flag) {
+                        if (TypeUtil.isString(flag)) {
+                            _this.flagSet.add(flag);
+                        }
+                    });
+                }
+                if (TypeUtil.isArray(cliFlagObject.parameters)) {
+                    cliFlagObject.parameters.forEach(function(parameterObject) {
+
+                        //TODO BRN: We should replace this with the BugMarshaller
+
+                        var cliParameter = new CliParameter(parameterObject);
+                        _this.cliParameterList.add(cliParameter);
+                        _this.cliParameterMap.put(cliParameter.getName(), cliParameter);
+                    });
+                }
+            }
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {string}
+         * @return {Set.<string>}
          */
-        this.name = "";
+        getFlagSet: function() {
+            return this.flagSet;
+        },
 
         /**
-         * @private
-         * @type {List.<CliParameter>}
+         * @return {string}
          */
-        this.cliParameterList = new List();
+        getName: function() {
+            return this.name;
+        },
 
         /**
-         * @private
-         * @type {Map.<string, CliParameter>}
+         * @return {List.<CliParameter>}
          */
-        this.cliParameterMap = new Map();
+        getCliParameterList: function() {
+            return this.cliParameterList;
+        },
 
-        //TODO BRN: We should replace this with the BugMarshaller
 
-        var _this = this;
-        if (TypeUtil.isObject(cliFlagObject)) {
-            if (TypeUtil.isString(cliFlagObject.name)) {
-                this.name = cliFlagObject.name;
-            }
-            if (TypeUtil.isArray(cliFlagObject.flags)) {
-                cliFlagObject.flags.forEach(function(flag) {
-                    if (TypeUtil.isString(flag)) {
-                        _this.flagSet.add(flag);
-                    }
-                });
-            }
-            if (TypeUtil.isArray(cliFlagObject.parameters)) {
-                cliFlagObject.parameters.forEach(function(parameterObject) {
+        //-------------------------------------------------------------------------------
+        // Class Methods
+        //-------------------------------------------------------------------------------
 
-                    //TODO BRN: We should replace this with the BugMarshaller
+        /**
+         * @param {string} parameterName
+         * @return {CliParameter}
+         */
+        getCliParameterByName: function(parameterName) {
+            return this.cliParameterMap.get(parameterName);
+        },
 
-                    var cliParameter = new CliParameter(parameterObject);
-                    _this.cliParameterList.add(cliParameter);
-                    _this.cliParameterMap.put(cliParameter.getName(), cliParameter);
-                });
-            }
+        /**
+         * @return {boolean}
+         */
+        hasParameters: function() {
+            return !this.cliParameterMap.isEmpty();
         }
-    },
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {Set.<string>}
-     */
-    getFlagSet: function() {
-        return this.flagSet;
-    },
-
-    /**
-     * @return {string}
-     */
-    getName: function() {
-        return this.name;
-    },
-
-    /**
-     * @return {List.<CliParameter>}
-     */
-    getCliParameterList: function() {
-        return this.cliParameterList;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {string} parameterName
-     * @return {CliParameter}
-     */
-    getCliParameterByName: function(parameterName) {
-        return this.cliParameterMap.get(parameterName);
-    },
-
-    /**
-     * @return {boolean}
-     */
-    hasParameters: function() {
-        return !this.cliParameterMap.isEmpty();
-    }
+    bugpack.export('bugcli.CliFlag', CliFlag);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugcli.CliFlag', CliFlag);

@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -9,91 +19,102 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class           = bugpack.require('Class');
-var DeltaChange     = bugpack.require('bugdelta.DeltaChange');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var DocumentChange = Class.extend(DeltaChange, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class           = bugpack.require('Class');
+    var DeltaChange     = bugpack.require('bugdelta.DeltaChange');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @class
+     * @extends {DeltaChange}
      */
-    _constructor: function(changeType, path, data, previousData) {
+    var DocumentChange = Class.extend(DeltaChange, {
 
-        this._super(changeType, path);
+        _name: "bugdelta.DocumentChange",
 
 
         //-------------------------------------------------------------------------------
-        // Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {*}
+         * @constructs
+         * @param {string} changeType
+         * @param {string} path
+         * @param {*} data
+         * @param {*} previousData
          */
-        this.data           = data;
+        _constructor: function(changeType, path, data, previousData) {
+
+            this._super(changeType, path);
+
+
+            //-------------------------------------------------------------------------------
+            // Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {*}
+             */
+            this.data           = data;
+
+            /**
+             * @private
+             * @type {*}
+             */
+            this.previousData   = previousData;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {*}
+         * @return {*}
          */
-        this.previousData   = previousData;
-    },
+        getData: function() {
+            return this.data;
+        },
+
+        /**
+         * @return {*}
+         */
+        getPreviousData: function() {
+            return this.previousData;
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Static Variables
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {*}
+     * @static
+     * @enum {string}
      */
-    getData: function() {
-        return this.data;
-    },
+    DocumentChange.ChangeTypes = {
+        DATA_SET: "DocumentChange:DataSet"
+    };
 
-    /**
-     * @return {*}
-     */
-    getPreviousData: function() {
-        return this.previousData;
-    }
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugdelta.DocumentChange', DocumentChange);
 });
-
-
-//-------------------------------------------------------------------------------
-// Static Variables
-//-------------------------------------------------------------------------------
-
-/**
- * @static
- * @enum {string}
- */
-DocumentChange.ChangeTypes = {
-    DATA_SET: "DocumentChange:DataSet"
-};
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugdelta.DocumentChange', DocumentChange);

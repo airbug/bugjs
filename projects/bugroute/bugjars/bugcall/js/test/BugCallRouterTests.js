@@ -30,19 +30,19 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var BugDouble           = bugpack.require('bugdouble.BugDouble');
-    var BugMeta             = bugpack.require('bugmeta.BugMeta');
-    var BugCallRouter       = bugpack.require('bugroute.BugCallRouter');
-    var TestTag      = bugpack.require('bugunit.TestTag');
+    var BugDouble       = bugpack.require('bugdouble.BugDouble');
+    var BugMeta         = bugpack.require('bugmeta.BugMeta');
+    var BugCallRouter   = bugpack.require('bugroute.BugCallRouter');
+    var TestTag         = bugpack.require('bugunit.TestTag');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta             = BugMeta.context();
-    var spyOnFunction       = BugDouble.spyOnFunction;
-    var test                = TestTag.test;
+    var bugmeta         = BugMeta.context();
+    var spyOnFunction   = BugDouble.spyOnFunction;
+    var test            = TestTag.test;
 
 
     //-------------------------------------------------------------------------------
@@ -70,6 +70,12 @@ require('bugpack').context("*", function(bugpack) {
 
         }
     };
+
+
+    //-------------------------------------------------------------------------------
+    // BugMeta
+    //-------------------------------------------------------------------------------
+
     bugmeta.tag(bugCallRouterInstantiationTest).with(
         test().name("BugCallRouter - instantiation Test")
     );

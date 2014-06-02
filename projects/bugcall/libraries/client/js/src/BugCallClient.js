@@ -22,8 +22,8 @@
 //@Require('Set')
 //@Require('TypeUtil')
 //@Require('UuidGenerator')
-//@Require('bugcall.CallClientEvent')
 //@Require('bugcall.Call')
+//@Require('bugcall.CallClientEvent')
 //@Require('bugcall.CallEvent')
 //@Require('bugcall.CallResponder')
 //@Require('bugflow.BugFlow')
@@ -43,31 +43,31 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                       = bugpack.require('Class');
-    var EventDispatcher             = bugpack.require('EventDispatcher');
-    var Exception                   = bugpack.require('Exception');
-    var Proxy                       = bugpack.require('Proxy');
-    var Set                         = bugpack.require('Set');
-    var TypeUtil                    = bugpack.require('TypeUtil');
-    var UuidGenerator               = bugpack.require('UuidGenerator');
-    var CallClientEvent             = bugpack.require('bugcall.CallClientEvent');
-    var Call                        = bugpack.require('bugcall.Call');
-    var CallEvent                   = bugpack.require('bugcall.CallEvent');
-    var CallResponder               = bugpack.require('bugcall.CallResponder');
-    var BugFlow                     = bugpack.require('bugflow.BugFlow');
-    var ArgTag               = bugpack.require('bugioc.ArgTag');
-    var IInitializeModule           = bugpack.require('bugioc.IInitializeModule');
-    var ModuleTag            = bugpack.require('bugioc.ModuleTag');
-    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+    var Class               = bugpack.require('Class');
+    var EventDispatcher     = bugpack.require('EventDispatcher');
+    var Exception           = bugpack.require('Exception');
+    var Proxy               = bugpack.require('Proxy');
+    var Set                 = bugpack.require('Set');
+    var TypeUtil            = bugpack.require('TypeUtil');
+    var UuidGenerator       = bugpack.require('UuidGenerator');
+    var Call                = bugpack.require('bugcall.Call');
+    var CallClientEvent     = bugpack.require('bugcall.CallClientEvent');
+    var CallEvent           = bugpack.require('bugcall.CallEvent');
+    var CallResponder       = bugpack.require('bugcall.CallResponder');
+    var BugFlow             = bugpack.require('bugflow.BugFlow');
+    var ArgTag              = bugpack.require('bugioc.ArgTag');
+    var IInitializeModule   = bugpack.require('bugioc.IInitializeModule');
+    var ModuleTag           = bugpack.require('bugioc.ModuleTag');
+    var BugMeta             = bugpack.require('bugmeta.BugMeta');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                         = ArgTag.arg;
-    var bugmeta                     = BugMeta.context();
-    var module                      = ModuleTag.module;
+    var arg                 = ArgTag.arg;
+    var bugmeta             = BugMeta.context();
+    var module              = ModuleTag.module;
     var $series                     = BugFlow.$series;
     var $task                       = BugFlow.$task;
 

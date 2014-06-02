@@ -30,10 +30,10 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                           = bugpack.require('Class');
-    var Set                             = bugpack.require('Set');
-    var ControllerModuleFactory         = bugpack.require('bugcontroller.ControllerModuleFactory');
-    var ModuleTagProcessor       = bugpack.require('bugioc.ModuleTagProcessor');
+    var Class                       = bugpack.require('Class');
+    var Set                         = bugpack.require('Set');
+    var ControllerModuleFactory     = bugpack.require('bugcontroller.ControllerModuleFactory');
+    var ModuleTagProcessor          = bugpack.require('bugioc.ModuleTagProcessor');
 
 
     //-------------------------------------------------------------------------------

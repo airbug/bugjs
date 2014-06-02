@@ -34,22 +34,22 @@ require('bugpack').context("*", function(bugpack) {
     // Bugpack Modules
     //-------------------------------------------------------------------------------
 
-    var Class                       = bugpack.require('Class');
-    var Exception                   = bugpack.require('Exception');
-    var Obj                         = bugpack.require('Obj');
-    var ArgTag               = bugpack.require('bugioc.ArgTag');
-    var ModuleTag            = bugpack.require('bugioc.ModuleTag');
-    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-    var BugTrace                    = bugpack.require('bugtrace.BugTrace');
+    var Class       = bugpack.require('Class');
+    var Exception   = bugpack.require('Exception');
+    var Obj         = bugpack.require('Obj');
+    var ArgTag      = bugpack.require('bugioc.ArgTag');
+    var ModuleTag   = bugpack.require('bugioc.ModuleTag');
+    var BugMeta     = bugpack.require('bugmeta.BugMeta');
+    var BugTrace    = bugpack.require('bugtrace.BugTrace');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                         = ArgTag.arg;
-    var bugmeta                     = BugMeta.context();
-    var module                      = ModuleTag.module;
+    var arg         = ArgTag.arg;
+    var bugmeta     = BugMeta.context();
+    var module      = ModuleTag.module;
     var $traceWithError             = BugTrace.$traceWithError;
 
 
@@ -153,7 +153,6 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         *
          * @param {string} callUuid
          * @param {function(Throwable, PersistedCall=)} callback
          */

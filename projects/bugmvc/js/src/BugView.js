@@ -26,9 +26,9 @@
 //@Require('RemovePropertyChange')
 //@Require('SetPropertyChange')
 //@Require('bugdispose.IDisposable')
-//@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
+//@Require('bugmeta.BugMeta')
 
 
 //-------------------------------------------------------------------------------
@@ -53,9 +53,9 @@ require('bugpack').context("*", function(bugpack) {
     var RemovePropertyChange    = bugpack.require('RemovePropertyChange');
     var SetPropertyChange       = bugpack.require('SetPropertyChange');
     var IDisposable             = bugpack.require('bugdispose.IDisposable');
+    var AutowiredTag            = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag             = bugpack.require('bugioc.PropertyTag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var AutowiredTag     = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag      = bugpack.require('bugioc.PropertyTag');
 
 
     //-------------------------------------------------------------------------------

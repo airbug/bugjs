@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -9,48 +19,51 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var IEventPropagator    = bugpack.require('IEventPropagator');
-var Interface           = bugpack.require('Interface');
-
-
-//-------------------------------------------------------------------------------
-// Declare Interface
-//-------------------------------------------------------------------------------
-
-/**
- * @interface
- * @extends {IEventDispatcher}
- */
-var IResponseChannel = Interface.extend(IEventPropagator, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Interface Methods
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var IEventPropagator    = bugpack.require('IEventPropagator');
+    var Interface           = bugpack.require('Interface');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Interface
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {Response} response
+     * @interface
+     * @extends {IEventDispatcher}
      */
-    channelResponse: function(response) {},
+    var IResponseChannel = Interface.extend(IEventPropagator, {
 
-    /**
-     *
-     */
-    closeChannel: function() {}
+        _name: "bugmessage.IResponseChannel",
+
+
+        //-------------------------------------------------------------------------------
+        // Interface Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {Response} response
+         */
+        channelResponse: function(response) {},
+
+        /**
+         *
+         */
+        closeChannel: function() {}
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugmessage.IResponseChannel', IResponseChannel);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugmessage.IResponseChannel', IResponseChannel);

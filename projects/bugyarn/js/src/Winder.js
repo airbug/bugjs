@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -9,96 +19,99 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                 = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                   = bugpack.require('Class');
-var Obj                     = bugpack.require('Obj');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {Obj}
- */
-var Winder = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class                   = bugpack.require('Class');
+    var Obj                     = bugpack.require('Obj');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {string} winderName
-     * @param {function(Yarn)} winderFunction
+     * @class
+     * @extends {Obj}
      */
-    _constructor: function(winderName, winderFunction) {
+    var Winder = Class.extend(Obj, {
 
-        this._super();
+        _name: "bugyarn.Winder",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {function(Yarn)}
+         * @constructs
+         * @param {string} winderName
+         * @param {function(Yarn)} winderFunction
          */
-        this.winderFunction     = winderFunction;
+        _constructor: function(winderName, winderFunction) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {function(Yarn)}
+             */
+            this.winderFunction     = winderFunction;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.winderName         = winderName;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {string}
+         * @return {function(Yarn)}
          */
-        this.winderName         = winderName;
-    },
+        getWinderFunction: function() {
+            return this.winderFunction;
+        },
+
+        /**
+         * @return {string}
+         */
+        getWinderName: function() {
+            return this.winderName;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {Yarn} yarn
+         */
+        runWinder: function(yarn) {
+            this.winderFunction.call(yarn.getYarnContext(), yarn);
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {function(Yarn)}
-     */
-    getWinderFunction: function() {
-        return this.winderFunction;
-    },
-
-    /**
-     * @return {string}
-     */
-    getWinderName: function() {
-        return this.winderName;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {Yarn} yarn
-     */
-    runWinder: function(yarn) {
-        this.winderFunction.call(yarn.getYarnContext(), yarn);
-    }
+    bugpack.export('bugyarn.Winder', Winder);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugyarn.Winder', Winder);

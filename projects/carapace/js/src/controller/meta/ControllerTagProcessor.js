@@ -34,13 +34,13 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                           = bugpack.require('Class');
-    var Obj                             = bugpack.require('Obj');
-    var Set                             = bugpack.require('Set');
-    var ArgTag                   = bugpack.require('bugioc.ArgTag');
-    var ModuleTag                = bugpack.require('bugioc.ModuleTag');
-    var BugMeta                         = bugpack.require('bugmeta.BugMeta');
-    var ITagProcessor    = bugpack.require('bugmeta.ITagProcessor');
+    var Class               = bugpack.require('Class');
+    var Obj                 = bugpack.require('Obj');
+    var Set                 = bugpack.require('Set');
+    var ArgTag              = bugpack.require('bugioc.ArgTag');
+    var ModuleTag           = bugpack.require('bugioc.ModuleTag');
+    var BugMeta             = bugpack.require('bugmeta.BugMeta');
+    var ITagProcessor       = bugpack.require('bugmeta.ITagProcessor');
     var ControllerRoute     = bugpack.require('carapace.ControllerRoute');
 
 
@@ -48,9 +48,9 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                             = ArgTag.arg;
-    var bugmeta                         = BugMeta.context();
-    var module                          = ModuleTag.module;
+    var arg                 = ArgTag.arg;
+    var bugmeta             = BugMeta.context();
+    var module              = ModuleTag.module;
 
 
     //-------------------------------------------------------------------------------

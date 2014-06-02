@@ -18,8 +18,8 @@
 //@Require('Map')
 //@Require('Obj')
 //@Require('TypeUtil')
-//@Require('socketio:server.SocketIoManager')
-//@Require('socketio:socket.SocketIoConnection')
+//@Require('socketio.SocketIoManager')
+//@Require('socketio.SocketIoConnection')
 
 
 //-------------------------------------------------------------------------------
@@ -36,8 +36,8 @@ require('bugpack').context("*", function(bugpack) {
     var Map                 = bugpack.require('Map');
     var Obj                 = bugpack.require('Obj');
     var TypeUtil            = bugpack.require('TypeUtil');
-    var SocketIoManager     = bugpack.require('socketio:server.SocketIoManager');
-    var SocketIoConnection  = bugpack.require('socketio:socket.SocketIoConnection');
+    var SocketIoManager     = bugpack.require('socketio.SocketIoManager');
+    var SocketIoConnection  = bugpack.require('socketio.SocketIoConnection');
 
 
     //-------------------------------------------------------------------------------

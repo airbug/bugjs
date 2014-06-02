@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -10,11 +20,11 @@
 //@Require('bugioc.ArgTag')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
-//@Require('bugwork.WorkerProcess')
 //@Require('bugwork.CreateWorkerProcessCommand')
 //@Require('bugwork.DestroyWorkerProcessCommand')
 //@Require('bugwork.StartWorkerCommand')
 //@Require('bugwork.StopWorkerCommand')
+//@Require('bugwork.WorkerProcess')
 
 
 //-------------------------------------------------------------------------------
@@ -29,14 +39,14 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class                           = bugpack.require('Class');
     var Obj                             = bugpack.require('Obj');
-    var ArgTag                   = bugpack.require('bugioc.ArgTag');
-    var ModuleTag                = bugpack.require('bugioc.ModuleTag');
+    var ArgTag                          = bugpack.require('bugioc.ArgTag');
+    var ModuleTag                       = bugpack.require('bugioc.ModuleTag');
     var BugMeta                         = bugpack.require('bugmeta.BugMeta');
-    var WorkerProcess                   = bugpack.require('bugwork.WorkerProcess');
     var CreateWorkerProcessCommand      = bugpack.require('bugwork.CreateWorkerProcessCommand');
     var DestroyWorkerProcessCommand     = bugpack.require('bugwork.DestroyWorkerProcessCommand');
     var StartWorkerCommand              = bugpack.require('bugwork.StartWorkerCommand');
     var StopWorkerCommand               = bugpack.require('bugwork.StopWorkerCommand');
+    var WorkerProcess                   = bugpack.require('bugwork.WorkerProcess');
 
 
     //-------------------------------------------------------------------------------

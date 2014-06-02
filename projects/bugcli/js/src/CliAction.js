@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -11,104 +21,115 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class =     bugpack.require('Class');
-var Obj =       bugpack.require('Obj');
-var TypeUtil =  bugpack.require('TypeUtil');
-var CliFlag =   bugpack.require('bugcli.CliFlag');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var CliAction = Class.extend(CliFlag, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function(cliActionObject) {
+    var Class =     bugpack.require('Class');
+    var Obj =       bugpack.require('Obj');
+    var TypeUtil =  bugpack.require('TypeUtil');
+    var CliFlag =   bugpack.require('bugcli.CliFlag');
 
-        this._super(cliActionObject);
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {CliFlag}
+     */
+    var CliAction = Class.extend(CliFlag, {
+
+        _name: "bugcli.CliAction",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {boolean}
+         * @constructs
+         * @param {Object} cliActionObject
          */
-        this.default = false;
+        _constructor: function(cliActionObject) {
+
+            this._super(cliActionObject);
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {boolean}
+             */
+            this.default = false;
+
+            /**
+             * @private
+             * @type {function(Map.<string, *>, function(Error))}
+             */
+            this.executeMethod = null;
+
+            /**
+             * @private
+             * @type {function(Map.<string, *>, function(Error))}
+             */
+            this.validateMethod = null;
+
+            //TODO BRN: We should replace this with the BugMarshaller
+
+            if (TypeUtil.isObject(cliActionObject)) {
+                if (TypeUtil.isBoolean(cliActionObject.default)) {
+                    this.default = cliActionObject.default;
+                }
+                if (TypeUtil.isFunction(cliActionObject.executeMethod)) {
+                    this.executeMethod = cliActionObject.executeMethod;
+                }
+                if (TypeUtil.isFunction(cliActionObject.validateMethod)) {
+                    this.validateMethod = cliActionObject.validateMethod;
+                }
+            }
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {function(Map.<string, *>, function(Error))}
+         * @return {boolean}
          */
-        this.executeMethod = null;
+        getDefault: function() {
+            return this.default;
+        },
 
         /**
-         * @private
-         * @type {function(Map.<string, *>, function(Error))}
+         * @return {function(Map.<string, *>, function(Error))}
          */
-        this.validateMethod = null;
+        getExecuteMethod: function() {
+            return this.executeMethod;
+        },
 
-        //TODO BRN: We should replace this with the BugMarshaller
-
-        if (TypeUtil.isObject(cliActionObject)) {
-            if (TypeUtil.isBoolean(cliActionObject.default)) {
-                this.default = cliActionObject.default;
-            }
-            if (TypeUtil.isFunction(cliActionObject.executeMethod)) {
-                this.executeMethod = cliActionObject.executeMethod;
-            }
-            if (TypeUtil.isFunction(cliActionObject.validateMethod)) {
-                this.validateMethod = cliActionObject.validateMethod;
-            }
+        /**
+         * @return {function(Map.<string, *>, function(Error))}
+         */
+        getValidateMethod: function() {
+            return this.validateMethod;
         }
-    },
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {boolean}
-     */
-    getDefault: function() {
-        return this.default;
-    },
-
-    /**
-     * @return {function(Map.<string, *>, function(Error))}
-     */
-    getExecuteMethod: function() {
-        return this.executeMethod;
-    },
-
-    /**
-     * @return {function(Map.<string, *>, function(Error))}
-     */
-    getValidateMethod: function() {
-        return this.validateMethod;
-    }
+    bugpack.export('bugcli.CliAction', CliAction);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugcli.CliAction', CliAction);

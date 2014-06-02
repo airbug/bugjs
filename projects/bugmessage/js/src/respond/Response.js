@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -11,120 +21,132 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class       = bugpack.require('Class');
-var Map         = bugpack.require('Map');
-var Obj         = bugpack.require('Obj');
-var TypeUtil    = bugpack.require('TypeUtil');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var Response = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function(type, data) {
+    var Class       = bugpack.require('Class');
+    var Map         = bugpack.require('Map');
+    var Obj         = bugpack.require('Obj');
+    var TypeUtil    = bugpack.require('TypeUtil');
 
-        this._super();
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {Obj}
+     */
+    var Response = Class.extend(Obj, {
+
+        _name: "bugmessage.Response",
+
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Object}
+         * @constructs
+         * @param {string} type
+         * @param {Object} data
          */
-        this.data = data;
+        _constructor: function(type, data) {
+
+            this._super();
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {Object}
+             */
+            this.data = data;
+
+            /**
+             * @private
+             * @type {Map.<string, *>}
+             */
+            this.headerMap = new Map();
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.type = TypeUtil.isString(type) ? type : "";
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Map.<string, *>}
+         * @return {Object}
          */
-        this.headerMap = new Map();
+        getData: function() {
+            return this.data;
+        },
 
         /**
-         * @private
-         * @type {string}
+         * @param {string} name
+         * @return {*}
          */
-        this.type = TypeUtil.isString(type) ? type : "";
-    },
+        getHeader: function(name) {
+            return this.headerMap.get(name);
+        },
+
+        /**
+         * @param {string} name
+         * @param {*} header
+         */
+        setHeader: function(name, header) {
+            this.headerMap.put(name, header);
+        },
+
+        /**
+         * @return {string}
+         */
+        getType: function() {
+            return this.type;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {Object}
+         */
+        toObject: function() {
+            var _this = this;
+            var headerMapObject = {};
+            this.headerMap.getKeyArray().forEach(function(name) {
+                var header = _this.headerMap.get(name);
+                headerMapObject[name] = header;
+            });
+            return {
+                data: this.data,
+                headerMap: headerMapObject,
+                type: this.type
+            };
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Export
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {Object}
-     */
-    getData: function() {
-        return this.data;
-    },
-
-    /**
-     * @param {string} name
-     * @return {*}
-     */
-    getHeader: function(name) {
-        return this.headerMap.get(name);
-    },
-
-    /**
-     * @param {string} name
-     * @param {*} header
-     */
-    setHeader: function(name, header) {
-        this.headerMap.put(name, header);
-    },
-
-    /**
-     * @return {string}
-     */
-    getType: function() {
-        return this.type;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @return {Object}
-     */
-    toObject: function() {
-        var _this = this;
-        var headerMapObject = {};
-        this.headerMap.getKeyArray().forEach(function(name) {
-            var header = _this.headerMap.get(name);
-            headerMapObject[name] = header;
-        });
-        return {
-            data: this.data,
-            headerMap: headerMapObject,
-            type: this.type
-        };
-    }
+    bugpack.export('bugmessage.Response', Response);
 });
-
-
-//-------------------------------------------------------------------------------
-// Export
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugmessage.Response', Response);

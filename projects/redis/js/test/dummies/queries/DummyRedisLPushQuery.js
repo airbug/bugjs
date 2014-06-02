@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -10,91 +20,94 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// Bugpack Modules
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var List                = bugpack.require('List');
-var DummyRedisQuery     = bugpack.require('redis.DummyRedisQuery');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {DummyRedisQuery}
- */
-var DummyRedisLPushQuery = Class.extend(DummyRedisQuery, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class               = bugpack.require('Class');
+    var List                = bugpack.require('List');
+    var DummyRedisQuery     = bugpack.require('redis.DummyRedisQuery');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {DummyRedisClient} dummyRedisClient
-     * @param {string} key
-     * @param {*} value
+     * @class
+     * @extends {DummyRedisQuery}
      */
-    _constructor: function(dummyRedisClient, key, value) {
+    var DummyRedisLPushQuery = Class.extend(DummyRedisQuery, {
 
-        this._super(dummyRedisClient);
+        _name: "redis.DummyRedisLPushQuery",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {string}
+         * @constructs
+         * @param {DummyRedisClient} dummyRedisClient
+         * @param {string} key
+         * @param {*} value
          */
-        this.key        = key;
+        _constructor: function(dummyRedisClient, key, value) {
 
-        /**
-         * @private
-         * @type {*}
-         */
-        this.value      = value;
-    },
+            this._super(dummyRedisClient);
 
 
-    //-------------------------------------------------------------------------------
-    // DummyRedisQuery Methods
-    //-------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
 
-    query: function() {
-        var dummyRedisClient  = this.getDummyRedisClient();
-        if (!dummyRedisClient.isSubscribedState()) {
-            var dataMap = dummyRedisClient.getKeyToEntryMap();
-            var returnedList = dataMap.get(this.key);
-            if (!returnedList) {
-                returnedList = new List();
-                dataMap.put(this.key, returnedList);
+            /**
+             * @private
+             * @type {string}
+             */
+            this.key        = key;
+
+            /**
+             * @private
+             * @type {*}
+             */
+            this.value      = value;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // DummyRedisQuery Methods
+        //-------------------------------------------------------------------------------
+
+        query: function() {
+            var dummyRedisClient  = this.getDummyRedisClient();
+            if (!dummyRedisClient.isSubscribedState()) {
+                var dataMap = dummyRedisClient.getKeyToEntryMap();
+                var returnedList = dataMap.get(this.key);
+                if (!returnedList) {
+                    returnedList = new List();
+                    dataMap.put(this.key, returnedList);
+                }
+                if (!Class.doesExtend(returnedList, List)) {
+                    throw new Error("WRONGTYPE Operation against a key holding the wrong kind of value");
+                }
+                returnedList.add(this.value.toString());
+                return returnedList.getCount();
+            } else {
+                throw new Error("Connection in subscriber mode, only subscriber commands may be used");
             }
-            if (!Class.doesExtend(returnedList, List)) {
-                throw new Error("WRONGTYPE Operation against a key holding the wrong kind of value");
-            }
-            returnedList.add(this.value.toString());
-            return returnedList.getCount();
-        } else {
-            throw new Error("Connection in subscriber mode, only subscriber commands may be used");
         }
-    }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('redis.DummyRedisLPushQuery', DummyRedisLPushQuery);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('redis.DummyRedisLPushQuery', DummyRedisLPushQuery);

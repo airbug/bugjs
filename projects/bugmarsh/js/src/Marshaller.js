@@ -42,30 +42,30 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Bug                             = bugpack.require('Bug');
-    var Class                           = bugpack.require('Class');
-    var Collection                      = bugpack.require('Collection');
-    var Exception                       = bugpack.require('Exception');
-    var List                            = bugpack.require('List');
-    var Map                             = bugpack.require('Map');
-    var MappedThrowable                 = bugpack.require('MappedThrowable');
-    var Obj                             = bugpack.require('Obj');
-    var Pair                            = bugpack.require('Pair');
-    var Set                             = bugpack.require('Set');
-    var TypeUtil                        = bugpack.require('TypeUtil');
-    var ArgTag                   = bugpack.require('bugioc.ArgTag');
-    var IInitializeModule               = bugpack.require('bugioc.IInitializeModule');
-    var ModuleTag                = bugpack.require('bugioc.ModuleTag');
-    var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+    var Bug                 = bugpack.require('Bug');
+    var Class               = bugpack.require('Class');
+    var Collection          = bugpack.require('Collection');
+    var Exception           = bugpack.require('Exception');
+    var List                = bugpack.require('List');
+    var Map                 = bugpack.require('Map');
+    var MappedThrowable     = bugpack.require('MappedThrowable');
+    var Obj                 = bugpack.require('Obj');
+    var Pair                = bugpack.require('Pair');
+    var Set                 = bugpack.require('Set');
+    var TypeUtil            = bugpack.require('TypeUtil');
+    var ArgTag              = bugpack.require('bugioc.ArgTag');
+    var IInitializeModule   = bugpack.require('bugioc.IInitializeModule');
+    var ModuleTag           = bugpack.require('bugioc.ModuleTag');
+    var BugMeta             = bugpack.require('bugmeta.BugMeta');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                             = ArgTag.arg;
-    var bugmeta                         = BugMeta.context();
-    var module                          = ModuleTag.module;
+    var arg                 = ArgTag.arg;
+    var bugmeta             = BugMeta.context();
+    var module              = ModuleTag.module;
 
 
     //-------------------------------------------------------------------------------

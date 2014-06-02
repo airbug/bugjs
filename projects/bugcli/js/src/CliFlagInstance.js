@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -11,116 +21,127 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class =                 bugpack.require('Class');
-var Map =                   bugpack.require('Map');
-var Obj =                   bugpack.require('Obj');
-var CliParameterInstance =  bugpack.require('bugcli.CliParameterInstance');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var CliFlagInstance = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function(cliFlag) {
+    var Class =                 bugpack.require('Class');
+    var Map =                   bugpack.require('Map');
+    var Obj =                   bugpack.require('Obj');
+    var CliParameterInstance =  bugpack.require('bugcli.CliParameterInstance');
 
-        this._super();
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {Obj}
+     */
+    var CliFlagInstance = Class.extend(Obj, {
+
+        _name: "bugcli.CliFlagInstance",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {CliFlag}
+         * @constructs
+         * @param {CliFlag} cliFlag
          */
-        this.cliFlag = cliFlag;
+        _constructor: function(cliFlag) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {CliFlag}
+             */
+            this.cliFlag = cliFlag;
+
+            /**
+             * @private
+             * @type {Map.<string, CliParameterInstance>}
+             */
+            this.cliParameterInstanceMap = new Map();
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Class Methods
+        //-------------------------------------------------------------------------------
+
 
         /**
-         * @private
-         * @type {Map.<string, CliParameterInstance>}
+         * @param {string} parameterName
+         * @param {string} value
          */
-        this.cliParameterInstanceMap = new Map();
-    },
+        addCliParameterInstance: function(parameterName, value) {
+            var cliParameter = this.cliFlag.getCliParameterByName(parameterName);
+            var cliParameterInstance = new CliParameterInstance(cliParameter, value);
+            this.cliParameterInstanceMap.put(parameterName, cliParameterInstance);
+        },
 
+        /**
+         * @param {string} parameterName
+         * @return {boolean}
+         */
+        containsParameter: function(parameterName) {
+            return this.cliParameterInstanceMap.containsKey(parameterName);
+        },
 
-    //-------------------------------------------------------------------------------
-    // Class Methods
-    //-------------------------------------------------------------------------------
+        /**
+         * @return {CliFlag}
+         */
+        getCliFlag: function() {
+            return this.cliFlag;
+        },
 
+        /**
+         * @param {string} parameterName
+         * @return {CliParameterInstance}
+         */
+        getCliParameterInstance: function(parameterName) {
+            return this.cliParameterInstanceMap.get(parameterName);
+        },
 
-    /**
-     * @param {string} parameterName
-     * @param {string} value
-     */
-    addCliParameterInstance: function(parameterName, value) {
-        var cliParameter = this.cliFlag.getCliParameterByName(parameterName);
-        var cliParameterInstance = new CliParameterInstance(cliParameter, value);
-        this.cliParameterInstanceMap.put(parameterName, cliParameterInstance);
-    },
+        /**
+         * @return {string}
+         */
+        getName: function() {
+            return this.cliFlag.getName();
+        },
 
-    /**
-     * @param {string} parameterName
-     * @return {boolean}
-     */
-    containsParameter: function(parameterName) {
-        return this.cliParameterInstanceMap.containsKey(parameterName);
-    },
-
-    /**
-     * @return {CliFlag}
-     */
-    getCliFlag: function() {
-        return this.cliFlag;
-    },
-
-    /**
-     * @param {string} parameterName
-     * @return {CliParameterInstance}
-     */
-    getCliParameterInstance: function(parameterName) {
-        return this.cliParameterInstanceMap.get(parameterName);
-    },
-
-    /**
-     * @return {string}
-     */
-    getName: function() {
-        return this.cliFlag.getName();
-    },
-
-    /**
-     * @param {string} parameterName
-     * @return {*}
-     */
-    getParameter: function(parameterName) {
-        var cliParameterInstance = this.getCliParameterInstance(parameterName);
-        if (cliParameterInstance) {
-            return cliParameterInstance.getValue();
+        /**
+         * @param {string} parameterName
+         * @return {*}
+         */
+        getParameter: function(parameterName) {
+            var cliParameterInstance = this.getCliParameterInstance(parameterName);
+            if (cliParameterInstance) {
+                return cliParameterInstance.getValue();
+            }
+            return null;
         }
-        return null;
-    }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugcli.CliFlagInstance', CliFlagInstance);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugcli.CliFlagInstance', CliFlagInstance);

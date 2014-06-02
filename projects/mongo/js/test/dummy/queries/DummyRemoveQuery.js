@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -9,104 +19,107 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// Bugpack Modules
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var DummyMongoQuery     = bugpack.require('mongo.DummyMongoQuery');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @constructor
- * @extends {DummyMongoQuery}
- */
-var DummyRemoveQuery = Class.extend(DummyMongoQuery, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Bugpack Modules
+    //-------------------------------------------------------------------------------
+
+    var Class               = bugpack.require('Class');
+    var DummyMongoQuery     = bugpack.require('mongo.DummyMongoQuery');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {DummyMongooseModel} dummyMongooseModel
-     * @param {Object} queryParams
+     * @class
+     * @extends {DummyMongoQuery}
      */
-    _constructor: function(dummyMongooseModel, queryParams) {
+    var DummyRemoveQuery = Class.extend(DummyMongoQuery, {
 
-        this._super(dummyMongooseModel);
+        _name: "mongo.DummyRemoveQuery",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {object}
+         * @constructs
+         * @param {DummyMongooseModel} dummyMongooseModel
+         * @param {Object} queryParams
          */
-        this.queryParams     = queryParams;
+        _constructor: function(dummyMongooseModel, queryParams) {
+
+            this._super(dummyMongooseModel);
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {object}
+             */
+            this.queryParams     = queryParams;
+
+            /**
+             * @private
+             * @type {boolean}
+             */
+            this.queryLean      = false;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {boolean}
+         * @param {boolean} queryLean
          */
-        this.queryLean      = false;
-    },
+        lean: function(queryLean) {
+            this.queryLean = queryLean;
+            return this;
+        },
 
-
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {boolean} queryLean
-     */
-    lean: function(queryLean) {
-        this.queryLean = queryLean;
-        return this;
-    },
-
-    query: function() {
-        var dataObject      = this.getDummyMongooseModel().getCollection();
-        var removeCount     = 0;
-        for (var id in dataObject) {
-            if (dataObject.hasOwnProperty(id)) {
-                var entity = dataObject[id];
-                var matches = 0;
-                var expectedMatches = 0;
-                for (var key in this.queryParams) {
-                    if (this.queryParams.hasOwnProperty(key)) {
-                        expectedMatches++;
-                        var expectedValue = this.queryParams[key];
-                        if (entity[key] === expectedValue) {
-                            matches++;
+        query: function() {
+            var dataObject      = this.getDummyMongooseModel().getCollection();
+            var removeCount     = 0;
+            for (var id in dataObject) {
+                if (dataObject.hasOwnProperty(id)) {
+                    var entity = dataObject[id];
+                    var matches = 0;
+                    var expectedMatches = 0;
+                    for (var key in this.queryParams) {
+                        if (this.queryParams.hasOwnProperty(key)) {
+                            expectedMatches++;
+                            var expectedValue = this.queryParams[key];
+                            if (entity[key] === expectedValue) {
+                                matches++;
+                            }
                         }
                     }
-                }
-                if (matches === expectedMatches) {
-                    removeCount++;
-                    delete dataObject[id];
+                    if (matches === expectedMatches) {
+                        removeCount++;
+                        delete dataObject[id];
+                    }
                 }
             }
+            return removeCount;
         }
-        return removeCount;
-    }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('mongo.DummyRemoveQuery', DummyRemoveQuery);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('mongo.DummyRemoveQuery', DummyRemoveQuery);

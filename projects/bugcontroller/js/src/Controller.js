@@ -29,9 +29,9 @@ require('bugpack').context("*", function(bugpack) {
     // Bugpack Modules
     //-------------------------------------------------------------------------------
 
-    var Class               = bugpack.require('Class');
-    var Obj                 = bugpack.require('Obj');
-    var IProcessModule      = bugpack.require('bugioc.IProcessModule');
+    var Class           = bugpack.require('Class');
+    var Obj             = bugpack.require('Obj');
+    var IProcessModule  = bugpack.require('bugioc.IProcessModule');
 
 
     //-------------------------------------------------------------------------------
@@ -41,6 +41,7 @@ require('bugpack').context("*", function(bugpack) {
     /**
      * @class
      * @extends {Obj}
+     * @implements {IProcessModule}
      */
     var Controller = Class.extend(Obj, {
 

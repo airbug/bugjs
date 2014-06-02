@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -9,90 +19,95 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// Bugpack Modules
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var DummyMongoQuery     = bugpack.require('mongo.DummyMongoQuery');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @constructor
- * @extends {DummyMongoQuery}
- */
-var DummyFindByIdAndRemoveQuery = Class.extend(DummyMongoQuery, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class               = bugpack.require('Class');
+    var DummyMongoQuery     = bugpack.require('mongo.DummyMongoQuery');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {DummyMongooseModel} dummyMongooseModel
-     * @param {string} queryId
-     * @param {Object} updateObject
+     * @class
+     * @extends {DummyMongoQuery}
      */
-    _constructor: function(dummyMongooseModel, queryId, updateObject) {
+    var DummyFindByIdAndRemoveQuery = Class.extend(DummyMongoQuery, {
 
-        this._super(dummyMongooseModel);
+        _name: "mongo.DummyFindByIdAndRemoveQuery",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {string}
+         * @constructs
+         * @param {DummyMongooseModel} dummyMongooseModel
+         * @param {string} queryId
+         * @param {Object} updateObject
          */
-        this.queryId        = queryId;
+        _constructor: function(dummyMongooseModel, queryId, updateObject) {
+
+            this._super(dummyMongooseModel);
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.queryId        = queryId;
+
+            /**
+             * @private
+             * @type {boolean}
+             */
+            this.queryLean      = false;
+
+            /**
+             * @private
+             * @type {Object}
+             */
+            this.updateObject   = updateObject;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {boolean}
+         * @param {boolean} queryLean
          */
-        this.queryLean      = false;
+        lean: function(queryLean) {
+            this.queryLean = queryLean;
+            return this;
+        },
 
         /**
-         * @private
-         * @type {Object}
+         *
          */
-        this.updateObject   = updateObject;
-    },
+        query: function() {
+            delete this.getDummyMongooseModel().getCollection()[this.queryId];
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Public Methods
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @param {boolean} queryLean
-     */
-    lean: function(queryLean) {
-        this.queryLean = queryLean;
-        return this;
-    },
-
-
-    query: function() {
-        delete this.getDummyMongooseModel().getCollection()[this.queryId];
-    }
+    bugpack.export('mongo.DummyFindByIdAndRemoveQuery', DummyFindByIdAndRemoveQuery);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('mongo.DummyFindByIdAndRemoveQuery', DummyFindByIdAndRemoveQuery);

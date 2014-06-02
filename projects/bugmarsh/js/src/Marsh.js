@@ -31,11 +31,11 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Bug         = bugpack.require('Bug');
-    var Class       = bugpack.require('Class');
-    var List        = bugpack.require('List');
-    var Map         = bugpack.require('Map');
-    var Obj         = bugpack.require('Obj');
+    var Bug     = bugpack.require('Bug');
+    var Class   = bugpack.require('Class');
+    var List    = bugpack.require('List');
+    var Map     = bugpack.require('Map');
+    var Obj     = bugpack.require('Obj');
 
 
     //-------------------------------------------------------------------------------

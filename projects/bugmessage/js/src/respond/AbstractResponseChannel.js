@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -11,135 +21,145 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var EventPropagator     = bugpack.require('EventPropagator');
-var UuidGenerator       = bugpack.require('UuidGenerator');
-var IResponseChannel    = bugpack.require('bugmessage.IResponseChannel');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var AbstractResponseChannel = Class.extend(EventPropagator, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    var Class               = bugpack.require('Class');
+    var EventPropagator     = bugpack.require('EventPropagator');
+    var UuidGenerator       = bugpack.require('UuidGenerator');
+    var IResponseChannel    = bugpack.require('bugmessage.IResponseChannel');
 
-        this._super();
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {EventPropagator}
+     */
+    var AbstractResponseChannel = Class.extend(EventPropagator, {
+
+        _name: "bugmessage.AbstractResponseChannel",
+
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {boolean}
+         * @constructs
          */
-        this.closed = false;
+        _constructor: function() {
 
-        //TODO BRN: Uuid of channel should be consistent through out the entire channel/receiver chain
+            this._super();
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {boolean}
+             */
+            this.closed = false;
+
+            //TODO BRN: Uuid of channel should be consistent through out the entire channel/receiver chain
+            /**
+             * @private
+             * @type {string}
+             */
+            this.uuid = UuidGenerator.generateUuid();
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
+
         /**
-         * @private
-         * @type {string}
+         * @return {string}
          */
-        this.uuid = UuidGenerator.generateUuid();
-    },
+        getUuid: function() {
+            return this.uuid;
+        },
+
+        /**
+         * @return {boolean}
+         */
+        isClosed: function() {
+            return this.closed;
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
+        /**
+         * @abstract
+         * @param {Response} response
+         */
+        //doChannelResponse: function(response) {},
 
-    /**
-     * @return {string}
-     */
-    getUuid: function() {
-        return this.uuid;
-    },
-
-    /**
-     * @return {boolean}
-     */
-    isClosed: function() {
-        return this.closed;
-    },
+        /**
+         * @abstract
+         */
+        //doCloseChannel: function() {},
 
 
-    /**
-     * @abstract
-     * @param {Response} response
-     */
-    //doChannelResponse: function(response) {},
+        //-------------------------------------------------------------------------------
+        // IMessageChannel Implementation
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @abstract
-     */
-    //doCloseChannel: function() {},
+        /**
+         * @param {Response} response
+         */
+        channelResponse: function(response) {
+            if (!this.isClosed()) {
+                this.doChannelResponse(response);
+            } else {
+                throw new Error("Cannot channel a response after channel is closed");
+            }
+        },
+
+        /**
+         *
+         */
+        closeChannel: function() {
+            if (!this.isClosed()) {
+                this.doCloseChannel();
+            }
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // IMessageChannel Implementation
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // Methods
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @param {Response} response
-     */
-    channelResponse: function(response) {
-        if (!this.isClosed()) {
-            this.doChannelResponse(response);
-        } else {
-            throw new Error("Cannot channel a response after channel is closed");
+        /**
+         * @return {Object}
+         */
+        toObject: function() {
+            return {
+                uuid: this.uuid
+            };
         }
-    },
-
-    /**
-     *
-     */
-    closeChannel: function() {
-        if (!this.isClosed()) {
-            this.doCloseChannel();
-        }
-    },
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Methods
+    // Interfaces
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {Object}
-     */
-    toObject: function() {
-        return {
-            uuid: this.uuid
-        };
-    }
+    Class.implement(AbstractResponseChannel, IResponseChannel);
+
+
+    //-------------------------------------------------------------------------------
+    // Export
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugmessage.AbstractResponseChannel', AbstractResponseChannel);
 });
-
-
-//-------------------------------------------------------------------------------
-// Interfaces
-//-------------------------------------------------------------------------------
-
-Class.implement(AbstractResponseChannel, IResponseChannel);
-
-
-//-------------------------------------------------------------------------------
-// Export
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugmessage.AbstractResponseChannel', AbstractResponseChannel);

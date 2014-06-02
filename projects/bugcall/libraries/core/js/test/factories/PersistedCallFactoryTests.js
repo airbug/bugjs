@@ -38,7 +38,7 @@ require('bugpack').context("*", function(bugpack) {
     var PersistedCall           = bugpack.require('bugcall.PersistedCall');
     var PersistedCallFactory    = bugpack.require('bugcall.PersistedCallFactory');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var TestTag          = bugpack.require('bugunit.TestTag');
+    var TestTag                 = bugpack.require('bugunit.TestTag');
     var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 

@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -12,94 +22,97 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                     = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                       = bugpack.require('Class');
-var Obj                         = bugpack.require('Obj');
-var MarshTag             = bugpack.require('bugmarsh.MarshTag');
-var MarshPropertyTag     = bugpack.require('bugmarsh.MarshPropertyTag');
-var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var bugmeta                     = BugMeta.context();
-var marsh                       = MarshTag.marsh;
-var property                    = MarshPropertyTag.property;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {Obj}
- */
-var Task = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class                       = bugpack.require('Class');
+    var Obj                         = bugpack.require('Obj');
+    var MarshPropertyTag     = bugpack.require('bugmarsh.MarshPropertyTag');
+    var MarshTag             = bugpack.require('bugmarsh.MarshTag');
+    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var bugmeta                     = BugMeta.context();
+    var marsh                       = MarshTag.marsh;
+    var property                    = MarshPropertyTag.property;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {string} taskUuid
+     * @class
+     * @extends {Obj}
      */
-    _constructor: function(taskUuid) {
+    var Task = Class.extend(Obj, {
 
-        this._super();
+        _name: "bugtask.Task",
 
 
         //-------------------------------------------------------------------------------
-        // Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {string}
+         * @constructs
+         * @param {string} taskUuid
          */
-        this.taskUuid           = taskUuid;
-    },
+        _constructor: function(taskUuid) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.taskUuid           = taskUuid;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {string}
+         */
+        getTaskUuid: function() {
+            return this.taskUuid;
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // BugMeta
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {string}
-     */
-    getTaskUuid: function() {
-        return this.taskUuid;
-    }
+    bugmeta.tag(Task).with(
+        marsh("Task")
+            .properties([
+                property("taskUuid")
+            ])
+    );
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugtask.Task', Task);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.tag(Task).with(
-    marsh("Task")
-        .properties([
-            property("taskUuid")
-        ])
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugtask.Task', Task);

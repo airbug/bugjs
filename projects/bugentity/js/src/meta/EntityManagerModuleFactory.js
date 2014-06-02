@@ -28,8 +28,8 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class               = bugpack.require('Class');
-    var ModuleFactory       = bugpack.require('bugioc.ModuleFactory');
+    var Class           = bugpack.require('Class');
+    var ModuleFactory   = bugpack.require('bugioc.ModuleFactory');
 
 
     //-------------------------------------------------------------------------------

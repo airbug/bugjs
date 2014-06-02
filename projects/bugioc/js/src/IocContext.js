@@ -22,8 +22,8 @@
 //@Require('bugflow.BugFlow')
 //@Require('bugioc.IConfiguration')
 //@Require('bugioc.IInitializeModule')
-//@Require('bugioc.IProcessModule')
 //@Require('bugioc.IPreProcessModule')
+//@Require('bugioc.IProcessModule')
 //@Require('bugioc.IocModule')
 //@Require('bugioc.PrototypeScope')
 //@Require('bugioc.SingletonScope')
@@ -39,19 +39,19 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                   = bugpack.require('Class');
-    var DependencyGraph         = bugpack.require('DependencyGraph');
-    var Map                     = bugpack.require('Map');
-    var Obj                     = bugpack.require('Obj');
-    var Set                     = bugpack.require('Set');
-    var BugFlow                 = bugpack.require('bugflow.BugFlow');
-    var IConfiguration          = bugpack.require('bugioc.IConfiguration');
-    var IInitializeModule       = bugpack.require('bugioc.IInitializeModule');
-    var IProcessModule          = bugpack.require('bugioc.IProcessModule');
-    var IPreProcessModule       = bugpack.require('bugioc.IPreProcessModule');
-    var IocModule               = bugpack.require('bugioc.IocModule');
-    var PrototypeScope          = bugpack.require('bugioc.PrototypeScope');
-    var SingletonScope          = bugpack.require('bugioc.SingletonScope');
+    var Class               = bugpack.require('Class');
+    var DependencyGraph     = bugpack.require('DependencyGraph');
+    var Map                 = bugpack.require('Map');
+    var Obj                 = bugpack.require('Obj');
+    var Set                 = bugpack.require('Set');
+    var BugFlow             = bugpack.require('bugflow.BugFlow');
+    var IConfiguration      = bugpack.require('bugioc.IConfiguration');
+    var IInitializeModule   = bugpack.require('bugioc.IInitializeModule');
+    var IPreProcessModule   = bugpack.require('bugioc.IPreProcessModule');
+    var IProcessModule      = bugpack.require('bugioc.IProcessModule');
+    var IocModule           = bugpack.require('bugioc.IocModule');
+    var PrototypeScope      = bugpack.require('bugioc.PrototypeScope');
+    var SingletonScope      = bugpack.require('bugioc.SingletonScope');
 
 
     //-------------------------------------------------------------------------------

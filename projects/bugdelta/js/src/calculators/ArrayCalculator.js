@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -11,64 +21,52 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                         = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                           = bugpack.require('Class');
-var Obj                             = bugpack.require('Obj');
-var Set                             = bugpack.require('Set');
-var TypeUtil                        = bugpack.require('TypeUtil');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var ArrayCalculator = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class                           = bugpack.require('Class');
+    var Obj                             = bugpack.require('Obj');
+    var Set                             = bugpack.require('Set');
+    var TypeUtil                        = bugpack.require('TypeUtil');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     *
+     * @class
+     * @extends {Obj}
      */
-    _constructor: function(deltaBuilder) {
+    var ArrayCalculator = Class.extend(Obj, {
 
-        this._super(deltaBuilder);
-
+        _name: "bugdelta.ArrayCalculator",
 
         //-------------------------------------------------------------------------------
-        // Properties
+        // IDeltaCalculator Implementation
         //-------------------------------------------------------------------------------
-    },
+
+        /**
+         * @param {Delta} delta
+         * @param {string} path
+         * @param {*} currentValue
+         * @param {*} previousValue
+         */
+        calculateDelta: function(delta, path, currentValue, previousValue) {
+
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // DeltaCalculator Implementation
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @param {Delta} delta
-     * @param {string} path
-     * @param {*} currentValue
-     * @param {*} previousValue
-     */
-    calculateDelta: function(delta, path, currentValue, previousValue) {
-
-    }
+    bugpack.export('bugdelta.ArrayCalculator', ArrayCalculator);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugdelta.ArrayCalculator', ArrayCalculator);

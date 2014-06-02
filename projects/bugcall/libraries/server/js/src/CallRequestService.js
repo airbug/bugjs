@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -18,318 +28,320 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                     = require('bugpack').context();
+require('bugpack').context("*", function(bugpack) {
 
+    //-------------------------------------------------------------------------------
+    // Bugpack Modules
+    //-------------------------------------------------------------------------------
 
-//-------------------------------------------------------------------------------
-// Bugpack Modules
-//-------------------------------------------------------------------------------
-
-var Class                       = bugpack.require('Class');
-var Exception                   = bugpack.require('Exception');
-var Obj                         = bugpack.require('Obj');
-var CallEvent                   = bugpack.require('bugcall.CallEvent');
-var IProcessCall                = bugpack.require('bugcall.IProcessCall');
-var BugFlow                     = bugpack.require('bugflow.BugFlow');
-var ArgTag               = bugpack.require('bugioc.ArgTag');
-var IInitializeModule           = bugpack.require('bugioc.IInitializeModule');
-var ModuleTag            = bugpack.require('bugioc.ModuleTag');
-var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var arg                         = ArgTag.arg;
-var bugmeta                     = BugMeta.context();
-var module                      = ModuleTag.module;
-var $if                         = BugFlow.$if;
-var $parallel                   = BugFlow.$parallel;
-var $series                     = BugFlow.$series;
-var $task                       = BugFlow.$task;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {Obj}
- * @implements {IInitializeModule}
- * @implements {IProcessCall}
- */
-var CallRequestService = Class.extend(Obj, {
+    var Class                       = bugpack.require('Class');
+    var Exception                   = bugpack.require('Exception');
+    var Obj                         = bugpack.require('Obj');
+    var CallEvent                   = bugpack.require('bugcall.CallEvent');
+    var IProcessCall                = bugpack.require('bugcall.IProcessCall');
+    var BugFlow                     = bugpack.require('bugflow.BugFlow');
+    var ArgTag               = bugpack.require('bugioc.ArgTag');
+    var IInitializeModule           = bugpack.require('bugioc.IInitializeModule');
+    var ModuleTag            = bugpack.require('bugioc.ModuleTag');
+    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var arg                         = ArgTag.arg;
+    var bugmeta                     = BugMeta.context();
+    var module                      = ModuleTag.module;
+    var $if                         = BugFlow.$if;
+    var $parallel                   = BugFlow.$parallel;
+    var $series                     = BugFlow.$series;
+    var $task                       = BugFlow.$task;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {Logger} logger
-     * @param {BugCallServer} bugCallServer
-     * @param {CallRequestPublisher} callRequestPublisher
-     * @param {CallResponseHandlerFactory} callResponseHandlerFactory
-     * @param {CallRequestFactory} callRequestFactory
+     * @class
+     * @extends {Obj}
+     * @implements {IInitializeModule}
+     * @implements {IProcessCall}
      */
-    _constructor: function(logger, bugCallServer, callRequestPublisher, callResponseHandlerFactory, callRequestFactory) {
+    var CallRequestService = Class.extend(Obj, {
 
-        this._super();
+        _name: "bugcall.CallRequestService",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {BugCallServer}
+         * @constructs
+         * @param {Logger} logger
+         * @param {BugCallServer} bugCallServer
+         * @param {CallRequestPublisher} callRequestPublisher
+         * @param {CallResponseHandlerFactory} callResponseHandlerFactory
+         * @param {CallRequestFactory} callRequestFactory
          */
-        this.bugCallServer                  = bugCallServer;
+        _constructor: function(logger, bugCallServer, callRequestPublisher, callResponseHandlerFactory, callRequestFactory) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {BugCallServer}
+             */
+            this.bugCallServer                  = bugCallServer;
+
+            /**
+             * @private
+             * @type {CallRequestFactory}
+             */
+            this.callRequestFactory             = callRequestFactory;
+
+            /**
+             * @private
+             * @type {CallRequestPublisher}
+             */
+            this.callRequestPublisher           = callRequestPublisher;
+
+            /**
+             * @private
+             * @type {CallResponseHandlerFactory}
+             */
+            this.callResponseHandlerFactory     = callResponseHandlerFactory;
+
+            /**
+             * @private
+             * @type {boolean}
+             */
+            this.initialized                    = false;
+
+            /**
+             * @private
+             * @type {Logger}
+             */
+            this.logger                         = logger;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {CallRequestFactory}
+         * @return {BugCallServer}
          */
-        this.callRequestFactory             = callRequestFactory;
+        getBugCallServer: function() {
+            return this.bugCallServer;
+        },
 
         /**
-         * @private
-         * @type {CallRequestPublisher}
+         * @return {CallRequestFactory}
          */
-        this.callRequestPublisher           = callRequestPublisher;
+        getCallRequestFactory: function() {
+            return this.callRequestFactory;
+        },
 
         /**
-         * @private
-         * @type {CallResponseHandlerFactory}
+         * @return {CallRequestPublisher}
          */
-        this.callResponseHandlerFactory     = callResponseHandlerFactory;
+        getCallRequestPublisher: function() {
+            return this.callRequestPublisher;
+        },
 
         /**
-         * @private
-         * @type {boolean}
+         * @return {CallResponseHandlerFactory}
          */
-        this.initialized                    = false;
+        getCallResponseHandlerFactory: function() {
+            return this.callResponseHandlerFactory;
+        },
 
         /**
-         * @private
-         * @type {Logger}
+         * @return {Logger}
          */
-        this.logger                         = logger;
-    },
+        getLogger: function() {
+            return this.logger;
+        },
+
+        /**
+         * @return {boolean}
+         */
+        isInitialized: function() {
+            return this.initialized;
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // Getters and Setters
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // IProcessCall Implementation
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @return {BugCallServer}
-     */
-    getBugCallServer: function() {
-        return this.bugCallServer;
-    },
-
-    /**
-     * @return {CallRequestFactory}
-     */
-    getCallRequestFactory: function() {
-        return this.callRequestFactory;
-    },
-
-    /**
-     * @return {CallRequestPublisher}
-     */
-    getCallRequestPublisher: function() {
-        return this.callRequestPublisher;
-    },
-
-    /**
-     * @return {CallResponseHandlerFactory}
-     */
-    getCallResponseHandlerFactory: function() {
-        return this.callResponseHandlerFactory;
-    },
-
-    /**
-     * @return {Logger}
-     */
-    getLogger: function() {
-        return this.logger;
-    },
-
-    /**
-     * @return {boolean}
-     */
-    isInitialized: function() {
-        return this.initialized;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // IProcessCall Implementation
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {Call} call
-     * @param {function(Throwable=)} callback
-     */
-    processCall: function(call, callback) {
-        var _this = this;
-        $series([
-            $task(function(flow) {
-                _this.callRequestPublisher.subscribeToCallRequestsForCall(call.getCallUuid(), _this.receiveCallRequestMessage, _this, function(throwable) {
-                    flow.complete(throwable);
-                });
-            })
-        ]).execute(callback);
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // IInitializeModule Implementation
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {function(Throwable=)} callback
-     */
-    deinitializeModule: function(callback) {
-        if (this.isInitialized()) {
-            this.initialized = false;
-            this.bugCallServer.off(CallEvent.CLOSED, this.hearBugCallServerCallClosed, this);
-            this.bugCallServer.deregisterCallProcessor(this);
-        }
-        callback();
-    },
-
-    /**
-     * @param {function(Throwable=)} callback
-     */
-    initializeModule: function(callback) {
-        if (!this.isInitialized()) {
-            this.initialized = true;
-            this.bugCallServer.on(CallEvent.CLOSED, this.hearBugCallServerCallClosed, this);
-            this.bugCallServer.registerCallProcessor(this);
-        }
-        callback();
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Message Subscribers
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @private
-     * @param {Message} message
-     */
-    receiveCallRequestMessage: function(message) {
-        var _this           = this;
-        var messageData     = message.getMessageData();
-        var callUuid        = messageData.callUuid;
-
-        //TODO BRN: We need to ensure the order in which the CallRequests are sent is maintained.
-        // If one CallRequest to the client fails then it needs to be retried and verified before processing the next.
-
-        var call            = this.bugCallServer.getCallForCallUuid(callUuid);
-        if (call && call.isOpen()) {
-            var callRequest         = this.callRequestFactory.buildCallRequest(messageData.callRequest);
-            var callResponseHandler = this.callResponseHandlerFactory.factoryCallResponseHandler(function(throwable, callResponse) {
-                if (!throwable) {
-                    _this.callRequestPublisher.publishCallResponse(message, callResponse, function(throwable, numberReceived) {
-
-                        //TODO BRN: What do we do here if we receive a throwable or the numberReceived is 0 or greater than 1?
-                        // If it's 1 then that's the expected response.
-
-                        if (throwable) {
-                            _this.logger.error(throwable);
-                        } else {
-                            _this.logger.log("Publish callResponse success - numberReceived:", numberReceived);
-                        }
+        /**
+         * @param {Call} call
+         * @param {function(Throwable=)} callback
+         */
+        processCall: function(call, callback) {
+            var _this = this;
+            $series([
+                $task(function(flow) {
+                    _this.callRequestPublisher.subscribeToCallRequestsForCall(call.getCallUuid(), _this.receiveCallRequestMessage, _this, function(throwable) {
+                        flow.complete(throwable);
                     });
-                } else {
-                    _this.callRequestPublisher.publishThrowable(message, throwable, function(throwable, numberReceived) {
-                        //TODO BRN: Check for recoverable exceptions. Request should be retried. Requeue request
-                        if (throwable) {
-                            _this.logger.error(throwable);
-                        }
-                    });
-                }
-            });
-            call.sendRequest(callRequest, callResponseHandler, function(throwable) {
-                if (throwable) {
-                    _this.logger.error(throwable);
-                }
-            });
-        } else {
-            _this.callRequestPublisher.publishThrowable(message, new Exception("CallClosed"), function(throwable, numberReceived) {
-
-                //TODO BRN: What do we do here if we receive a throwable or the numberReceived is 0 or greater than 1?
-                // If it's 1 then that's the expected response.
-
-                if (throwable) {
-                    _this.logger.error(throwable);
-                } else {
-                    _this.logger.log("Publish callResponse success - numberReceived:", numberReceived);
-                }
-            });
-        }
-    },
+                })
+            ]).execute(callback);
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // Event Listeners
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // IInitializeModule Implementation
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @private
-     * @param {CallEvent} event
-     */
-    hearBugCallServerCallClosed: function(event) {
-        var _this       = this;
-        var data        = event.getData();
-        var call        = data.call;
-        this.callRequestPublisher.unsubscribeFromCallRequestsForCall(call.getCallUuid(), this.receiveCallRequestMessage, this, function(throwable) {
-            if (throwable) {
-                _this.logger.error(throwable);
+        /**
+         * @param {function(Throwable=)} callback
+         */
+        deinitializeModule: function(callback) {
+            if (this.isInitialized()) {
+                this.initialized = false;
+                this.bugCallServer.off(CallEvent.CLOSED, this.hearBugCallServerCallClosed, this);
+                this.bugCallServer.deregisterCallProcessor(this);
             }
-        });
-    }
+            callback();
+        },
+
+        /**
+         * @param {function(Throwable=)} callback
+         */
+        initializeModule: function(callback) {
+            if (!this.isInitialized()) {
+                this.initialized = true;
+                this.bugCallServer.on(CallEvent.CLOSED, this.hearBugCallServerCallClosed, this);
+                this.bugCallServer.registerCallProcessor(this);
+            }
+            callback();
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Message Subscribers
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @param {Message} message
+         */
+        receiveCallRequestMessage: function(message) {
+            var _this           = this;
+            var messageData     = message.getMessageData();
+            var callUuid        = messageData.callUuid;
+
+            //TODO BRN: We need to ensure the order in which the CallRequests are sent is maintained.
+            // If one CallRequest to the client fails then it needs to be retried and verified before processing the next.
+
+            var call            = this.bugCallServer.getCallForCallUuid(callUuid);
+            if (call && call.isOpen()) {
+                var callRequest         = this.callRequestFactory.buildCallRequest(messageData.callRequest);
+                var callResponseHandler = this.callResponseHandlerFactory.factoryCallResponseHandler(function(throwable, callResponse) {
+                    if (!throwable) {
+                        _this.callRequestPublisher.publishCallResponse(message, callResponse, function(throwable, numberReceived) {
+
+                            //TODO BRN: What do we do here if we receive a throwable or the numberReceived is 0 or greater than 1?
+                            // If it's 1 then that's the expected response.
+
+                            if (throwable) {
+                                _this.logger.error(throwable);
+                            } else {
+                                _this.logger.log("Publish callResponse success - numberReceived:", numberReceived);
+                            }
+                        });
+                    } else {
+                        _this.callRequestPublisher.publishThrowable(message, throwable, function(throwable, numberReceived) {
+                            //TODO BRN: Check for recoverable exceptions. Request should be retried. Requeue request
+                            if (throwable) {
+                                _this.logger.error(throwable);
+                            }
+                        });
+                    }
+                });
+                call.sendRequest(callRequest, callResponseHandler, function(throwable) {
+                    if (throwable) {
+                        _this.logger.error(throwable);
+                    }
+                });
+            } else {
+                _this.callRequestPublisher.publishThrowable(message, new Exception("CallClosed"), function(throwable, numberReceived) {
+
+                    //TODO BRN: What do we do here if we receive a throwable or the numberReceived is 0 or greater than 1?
+                    // If it's 1 then that's the expected response.
+
+                    if (throwable) {
+                        _this.logger.error(throwable);
+                    } else {
+                        _this.logger.log("Publish callResponse success - numberReceived:", numberReceived);
+                    }
+                });
+            }
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Event Listeners
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @param {CallEvent} event
+         */
+        hearBugCallServerCallClosed: function(event) {
+            var _this       = this;
+            var data        = event.getData();
+            var call        = data.call;
+            this.callRequestPublisher.unsubscribeFromCallRequestsForCall(call.getCallUuid(), this.receiveCallRequestMessage, this, function(throwable) {
+                if (throwable) {
+                    _this.logger.error(throwable);
+                }
+            });
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Implement Interfaces
+    //-------------------------------------------------------------------------------
+
+    Class.implement(CallRequestService, IInitializeModule);
+    Class.implement(CallRequestService, IProcessCall);
+
+
+    //-------------------------------------------------------------------------------
+    // BugMeta
+    //-------------------------------------------------------------------------------
+
+    bugmeta.tag(CallRequestService).with(
+        module("callRequestService")
+            .args([
+                arg().ref("logger"),
+                arg().ref("bugCallServer"),
+                arg().ref("callRequestPublisher"),
+                arg().ref("callResponseHandlerFactory"),
+                arg().ref("callRequestFactory")
+            ])
+    );
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugcall.CallRequestService', CallRequestService);
 });
-
-
-//-------------------------------------------------------------------------------
-// Implement Interfaces
-//-------------------------------------------------------------------------------
-
-Class.implement(CallRequestService, IInitializeModule);
-Class.implement(CallRequestService, IProcessCall);
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.tag(CallRequestService).with(
-    module("callRequestService")
-        .args([
-            arg().ref("logger"),
-            arg().ref("bugCallServer"),
-            arg().ref("callRequestPublisher"),
-            arg().ref("callResponseHandlerFactory"),
-            arg().ref("callRequestFactory")
-        ])
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugcall.CallRequestService', CallRequestService);

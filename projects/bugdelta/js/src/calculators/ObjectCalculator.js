@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -12,105 +22,93 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                         = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                           = bugpack.require('Class');
-var Obj                             = bugpack.require('Obj');
-var TypeUtil                        = bugpack.require('TypeUtil');
-var DeltaCalculator                 = bugpack.require('bugdelta.DeltaCalculator');
-var ObjectChange                    = bugpack.require('bugdelta.ObjectChange');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var ObjectCalculator = Class.extend(DeltaCalculator, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class                           = bugpack.require('Class');
+    var Obj                             = bugpack.require('Obj');
+    var TypeUtil                        = bugpack.require('TypeUtil');
+    var DeltaCalculator                 = bugpack.require('bugdelta.DeltaCalculator');
+    var ObjectChange                    = bugpack.require('bugdelta.ObjectChange');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {DeltaBuilder} deltaBuilder
+     * @class
+     * @extends {DeltaCalculator}
      */
-    _constructor: function(deltaBuilder) {
+    var ObjectCalculator = Class.extend(DeltaCalculator, {
 
-        this._super(deltaBuilder);
+        _name: "bugdelta.ObjectCalculator",
 
 
         //-------------------------------------------------------------------------------
-        // Properties
+        // DeltaCalculator Methods
         //-------------------------------------------------------------------------------
-    },
 
-
-    //-------------------------------------------------------------------------------
-    // DeltaCalculator Implementation
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {Delta} delta
-     * @param {string} currentPath
-     * @param {*} currentValue
-     * @param {*} previousValue
-     */
-    calculateDelta: function(delta, currentPath, currentValue, previousValue) {
-        var _this = this;
-        if (!currentValue || !TypeUtil.isObject(currentValue)) {
-            throw new Error("ObjectCalculator expects currentValue to be an Object");
-        }
-        if (!previousValue || !TypeUtil.isObject(previousValue)) {
-            throw new Error("ObjectCalculator expects previousValue to be an Object");
-        }
-
-        Obj.forIn(previousValue, function(propertyName, previousPropertyValue) {
-            if (!Obj.hasProperty(currentValue, propertyName)) {
-                delta.addDeltaChange(new ObjectChange(ObjectChange.ChangeTypes.PROPERTY_REMOVED, currentPath,
-                    propertyName, undefined, previousPropertyValue));
+        /**
+         * @param {Delta} delta
+         * @param {string} currentPath
+         * @param {*} currentValue
+         * @param {*} previousValue
+         */
+        calculateDelta: function(delta, currentPath, currentValue, previousValue) {
+            var _this = this;
+            if (!currentValue || !TypeUtil.isObject(currentValue)) {
+                throw new Error("ObjectCalculator expects currentValue to be an Object");
             }
-        });
-        Obj.forIn(currentValue, function(propertyName, currentPropertyValue) {
-            if (!Obj.hasProperty(previousValue, propertyName)) {
-                delta.addDeltaChange(new ObjectChange(ObjectChange.ChangeTypes.PROPERTY_SET, currentPath,
-                    propertyName, currentPropertyValue, undefined));
-            } else {
-                var previousPropertyValue = previousValue[propertyName];
-                if (TypeUtil.toType(previousPropertyValue) !== TypeUtil.toType(currentPropertyValue)) {
+            if (!previousValue || !TypeUtil.isObject(previousValue)) {
+                throw new Error("ObjectCalculator expects previousValue to be an Object");
+            }
+
+            Obj.forIn(previousValue, function(propertyName, previousPropertyValue) {
+                if (!Obj.hasProperty(currentValue, propertyName)) {
+                    delta.addDeltaChange(new ObjectChange(ObjectChange.ChangeTypes.PROPERTY_REMOVED, currentPath,
+                        propertyName, undefined, previousPropertyValue));
+                }
+            });
+            Obj.forIn(currentValue, function(propertyName, currentPropertyValue) {
+                if (!Obj.hasProperty(previousValue, propertyName)) {
                     delta.addDeltaChange(new ObjectChange(ObjectChange.ChangeTypes.PROPERTY_SET, currentPath,
-                        propertyName, currentPropertyValue, previousPropertyValue));
-                } else if (TypeUtil.isObject(currentPropertyValue) && TypeUtil.isFunction(currentPropertyValue.getClass) && !Class.doesExtend(previousPropertyValue, currentPropertyValue.getClass().getConstructor())) {
-                    delta.addDeltaChange(new ObjectChange(ObjectChange.ChangeTypes.PROPERTY_SET, currentPath,
-                        propertyName, currentPropertyValue, previousPropertyValue));
+                        propertyName, currentPropertyValue, undefined));
                 } else {
-                    var deltaCalculator = _this.getDeltaBuilder().getCalculatorResolver().resolveCalculator(currentPropertyValue);
-                    if (deltaCalculator) {
-                        var propertyPath = (currentPath ? currentPath + ".": "") + propertyName;
-                        deltaCalculator.calculateDelta(delta, propertyPath, currentPropertyValue, previousPropertyValue);
+                    var previousPropertyValue = previousValue[propertyName];
+                    if (TypeUtil.toType(previousPropertyValue) !== TypeUtil.toType(currentPropertyValue)) {
+                        delta.addDeltaChange(new ObjectChange(ObjectChange.ChangeTypes.PROPERTY_SET, currentPath,
+                            propertyName, currentPropertyValue, previousPropertyValue));
+                    } else if (TypeUtil.isObject(currentPropertyValue) && TypeUtil.isFunction(currentPropertyValue.getClass) && !Class.doesExtend(previousPropertyValue, currentPropertyValue.getClass().getConstructor())) {
+                        delta.addDeltaChange(new ObjectChange(ObjectChange.ChangeTypes.PROPERTY_SET, currentPath,
+                            propertyName, currentPropertyValue, previousPropertyValue));
                     } else {
-                        if (!Obj.equals(currentPropertyValue, previousPropertyValue)) {
-                            delta.addDeltaChange(new ObjectChange(ObjectChange.ChangeTypes.PROPERTY_SET, currentPath,
-                                propertyName, currentPropertyValue, previousPropertyValue));
+                        var deltaCalculator = _this.getDeltaBuilder().getCalculatorResolver().resolveCalculator(currentPropertyValue);
+                        if (deltaCalculator) {
+                            var propertyPath = (currentPath ? currentPath + ".": "") + propertyName;
+                            deltaCalculator.calculateDelta(delta, propertyPath, currentPropertyValue, previousPropertyValue);
+                        } else {
+                            if (!Obj.equals(currentPropertyValue, previousPropertyValue)) {
+                                delta.addDeltaChange(new ObjectChange(ObjectChange.ChangeTypes.PROPERTY_SET, currentPath,
+                                    propertyName, currentPropertyValue, previousPropertyValue));
+                            }
                         }
                     }
                 }
-            }
-        });
-    }
+            });
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugdelta.ObjectCalculator', ObjectCalculator);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugdelta.ObjectCalculator', ObjectCalculator);

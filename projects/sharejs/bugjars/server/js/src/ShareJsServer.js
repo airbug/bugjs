@@ -1,83 +1,106 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('sharejs:server.ShareJsServer')
+//@Export('sharejs.ShareJsServer')
 
 //@Require('Class')
 //@Require('Obj')
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack Modules
-//-------------------------------------------------------------------------------
-
-var Class           = bugpack.require('Class');
-var Obj             = bugpack.require('Obj');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var ShareJsServer = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack Modules
     //-------------------------------------------------------------------------------
 
-    _constructor: function(config, expressApp, share) {
-
-        this._super();
-
-
-        //-------------------------------------------------------------------------------
-        // Properties
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {ShareJsServerConfig}
-         */
-        this.config         = config;
-
-        /**
-         * @private
-         * @type {ExpressApp}
-         */
-        this.expressApp     = expressApp;
-
-        /**
-         * @private
-         * @type {}
-         */
-        this.shareServer    = share.server;
-    },
+    var Class           = bugpack.require('Class');
+    var Obj             = bugpack.require('Obj');
 
 
     //-------------------------------------------------------------------------------
-    // Public Methods
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {function()} callback
+     * @class
+     * @extends {Obj}
      */
-    configure: function(callback) {
-        this.shareServer.attach(this.expressApp.getApp(), this.config.toObject());
-        callback();
-    }
+    var ShareJsServer = Class.extend(Obj, {
+
+        _name: "sharejs.ShareJsServer",
+
+
+        //-------------------------------------------------------------------------------
+        // Constructor
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @constructs
+         * @param {ShareJsServerConfig} config
+         * @param {ExpressApp} expressApp
+         * @param {*} share
+         */
+        _constructor: function(config, expressApp, share) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {ShareJsServerConfig}
+             */
+            this.config         = config;
+
+            /**
+             * @private
+             * @type {ExpressApp}
+             */
+            this.expressApp     = expressApp;
+
+            /**
+             * @private
+             * @type {}
+             */
+            this.shareServer    = share.server;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {function()} callback
+         */
+        configure: function(callback) {
+            this.shareServer.attach(this.expressApp.getApp(), this.config.toObject());
+            callback();
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('sharejs.ShareJsServer', ShareJsServer);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('sharejs:server.ShareJsServer', ShareJsServer);

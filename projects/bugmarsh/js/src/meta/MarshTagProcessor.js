@@ -31,11 +31,11 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                   = bugpack.require('Class');
-    var Obj                     = bugpack.require('Obj');
-    var Marsh                   = bugpack.require('bugmarsh.Marsh');
-    var MarshProperty           = bugpack.require('bugmarsh.MarshProperty');
-    var ITagProcessor    = bugpack.require('bugmeta.ITagProcessor');
+    var Class           = bugpack.require('Class');
+    var Obj             = bugpack.require('Obj');
+    var Marsh           = bugpack.require('bugmarsh.Marsh');
+    var MarshProperty   = bugpack.require('bugmarsh.MarshProperty');
+    var ITagProcessor   = bugpack.require('bugmeta.ITagProcessor');
 
 
     //-------------------------------------------------------------------------------

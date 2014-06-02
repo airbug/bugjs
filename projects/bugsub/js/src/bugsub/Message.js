@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -12,130 +22,133 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                     = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                       = bugpack.require('Class');
-var Obj                         = bugpack.require('Obj');
-var MarshTag             = bugpack.require('bugmarsh.MarshTag');
-var MarshPropertyTag     = bugpack.require('bugmarsh.MarshPropertyTag');
-var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-
-
-//-------------------------------------------------------------------------------
-// Simplify References
-//-------------------------------------------------------------------------------
-
-var bugmeta                     = BugMeta.context();
-var marsh                       = MarshTag.marsh;
-var property                    = MarshPropertyTag.property;
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {Obj}
- */
-var Message = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class                       = bugpack.require('Class');
+    var Obj                         = bugpack.require('Obj');
+    var MarshPropertyTag     = bugpack.require('bugmarsh.MarshPropertyTag');
+    var MarshTag             = bugpack.require('bugmarsh.MarshTag');
+    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+
+
+    //-------------------------------------------------------------------------------
+    // Simplify References
+    //-------------------------------------------------------------------------------
+
+    var bugmeta                     = BugMeta.context();
+    var marsh                       = MarshTag.marsh;
+    var property                    = MarshPropertyTag.property;
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {string} messageType
-     * @param {*} messageData
+     * @class
+     * @extends {Obj}
      */
-    _constructor: function(messageType, messageData) {
+    var Message = Class.extend(Obj, {
 
-        this._super();
+        _name: "bugsub.Message",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {*}
+         * @constructs
+         * @param {string} messageType
+         * @param {*} messageData
          */
-        this.messageData    = messageData || null;
+        _constructor: function(messageType, messageData) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {*}
+             */
+            this.messageData    = messageData || null;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.messageType    = messageType || null;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.messageUuid    = null;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {string}
+         * @return {*}
          */
-        this.messageType    = messageType || null;
+        getMessageData: function() {
+            return this.messageData;
+        },
 
         /**
-         * @private
-         * @type {string}
+         * @return {string}
          */
-        this.messageUuid    = null;
-    },
+        getMessageType: function() {
+            return this.messageType;
+        },
+
+        /**
+         * @return {string}
+         */
+        getMessageUuid: function() {
+            return this.messageUuid;
+        },
+
+        /**
+         * @param {string} messageUuid
+         */
+        setMessageUuid: function(messageUuid) {
+            this.messageUuid = messageUuid;
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // BugMeta
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {*}
-     */
-    getMessageData: function() {
-        return this.messageData;
-    },
+    bugmeta.tag(Message).with(
+        marsh("Message")
+            .properties([
+                property("messageData"),
+                property("messageType"),
+                property("messageUuid")
+            ])
+    );
 
-    /**
-     * @return {string}
-     */
-    getMessageType: function() {
-        return this.messageType;
-    },
 
-    /**
-     * @return {string}
-     */
-    getMessageUuid: function() {
-        return this.messageUuid;
-    },
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
 
-    /**
-     * @param {string} messageUuid
-     */
-    setMessageUuid: function(messageUuid) {
-        this.messageUuid = messageUuid;
-    }
+    bugpack.export('bugsub.Message', Message);
 });
-
-
-//-------------------------------------------------------------------------------
-// BugMeta
-//-------------------------------------------------------------------------------
-
-bugmeta.tag(Message).with(
-    marsh("Message")
-        .properties([
-            property("messageData"),
-            property("messageType"),
-            property("messageUuid")
-        ])
-);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugsub.Message', Message);

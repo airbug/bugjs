@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -13,106 +23,94 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                         = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                           = bugpack.require('Class');
-var Map                             = bugpack.require('Map');
-var Obj                             = bugpack.require('Obj');
-var TypeUtil                        = bugpack.require('TypeUtil');
-var DeltaCalculator                 = bugpack.require('bugdelta.DeltaCalculator');
-var MapChange                       = bugpack.require('bugdelta.MapChange');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var MapCalculator = Class.extend(DeltaCalculator, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class                           = bugpack.require('Class');
+    var Map                             = bugpack.require('Map');
+    var Obj                             = bugpack.require('Obj');
+    var TypeUtil                        = bugpack.require('TypeUtil');
+    var DeltaCalculator                 = bugpack.require('bugdelta.DeltaCalculator');
+    var MapChange                       = bugpack.require('bugdelta.MapChange');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {DeltaBuilder} deltaBuilder
+     * @class
+     * @extends {DeltaCalculator}
      */
-    _constructor: function(deltaBuilder) {
+    var MapCalculator = Class.extend(DeltaCalculator, {
 
-        this._super(deltaBuilder);
+        _name: "bugdelta.MapCalculator",
 
 
         //-------------------------------------------------------------------------------
-        // Properties
+        // DeltaCalculator Methods
         //-------------------------------------------------------------------------------
-    },
 
-
-    //-------------------------------------------------------------------------------
-    // DeltaCalculator Implementation
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {Delta} delta
-     * @param {string} currentPath
-     * @param {*} currentValue
-     * @param {*} previousValue
-     */
-    calculateDelta: function(delta, currentPath, currentValue, previousValue) {
-        var _this = this;
-        if (!currentValue || !Class.doesExtend(currentValue, Map)) {
-            throw new Error("MapCalculator expects currentValue to be an Map");
-        }
-        if (!previousValue || !Class.doesExtend(previousValue, Map)) {
-            throw new Error("MapCalculator expects previousValue to be an Map");
-        }
-
-        previousValue.forEach(function(value, key) {
-            if (!currentValue.containsKey(key)) {
-                delta.addDeltaChange(new MapChange(MapChange.ChangeTypes.REMOVED_FROM_MAP, currentPath,
-                    key, value));
+        /**
+         * @param {Delta} delta
+         * @param {string} currentPath
+         * @param {*} currentValue
+         * @param {*} previousValue
+         */
+        calculateDelta: function(delta, currentPath, currentValue, previousValue) {
+            var _this = this;
+            if (!currentValue || !Class.doesExtend(currentValue, Map)) {
+                throw new Error("MapCalculator expects currentValue to be an Map");
             }
-        });
-        currentValue.forEach(function(currentMapValue, key) {
-            if (!previousValue.containsKey(key)) {
-                delta.addDeltaChange(new MapChange(MapChange.ChangeTypes.PUT_TO_MAP, currentPath,
-                    key, currentMapValue));
-            } else {
-                var previousMapValue = previousValue.get(key);
-                if (TypeUtil.toType(previousMapValue) !== TypeUtil.toType(currentMapValue)) {
-                    delta.addDeltaChange(new MapChange(MapChange.ChangeTypes.PUT_TO_MAP, currentPath,
-                        key, currentMapValue));
-                } else if (TypeUtil.isObject(currentMapValue) && TypeUtil.isFunction(currentMapValue.getClass) && !Class.doesExtend(previousMapValue, currentMapValue.getClass().getConstructor())) {
+            if (!previousValue || !Class.doesExtend(previousValue, Map)) {
+                throw new Error("MapCalculator expects previousValue to be an Map");
+            }
+
+            previousValue.forEach(function(value, key) {
+                if (!currentValue.containsKey(key)) {
+                    delta.addDeltaChange(new MapChange(MapChange.ChangeTypes.REMOVED_FROM_MAP, currentPath,
+                        key, value));
+                }
+            });
+            currentValue.forEach(function(currentMapValue, key) {
+                if (!previousValue.containsKey(key)) {
                     delta.addDeltaChange(new MapChange(MapChange.ChangeTypes.PUT_TO_MAP, currentPath,
                         key, currentMapValue));
                 } else {
-                    var deltaCalculator = _this.getDeltaBuilder().getCalculatorResolver().resolveCalculator(currentMapValue);
-                    if (deltaCalculator) {
-                        var propertyPath = (currentPath ? currentPath + "." : "") + key;
-                        deltaCalculator.calculateDelta(delta, propertyPath, currentMapValue, previousMapValue);
+                    var previousMapValue = previousValue.get(key);
+                    if (TypeUtil.toType(previousMapValue) !== TypeUtil.toType(currentMapValue)) {
+                        delta.addDeltaChange(new MapChange(MapChange.ChangeTypes.PUT_TO_MAP, currentPath,
+                            key, currentMapValue));
+                    } else if (TypeUtil.isObject(currentMapValue) && TypeUtil.isFunction(currentMapValue.getClass) && !Class.doesExtend(previousMapValue, currentMapValue.getClass().getConstructor())) {
+                        delta.addDeltaChange(new MapChange(MapChange.ChangeTypes.PUT_TO_MAP, currentPath,
+                            key, currentMapValue));
                     } else {
-                        if (!Obj.equals(currentMapValue, previousMapValue)) {
-                            delta.addDeltaChange(new MapChange(MapChange.ChangeTypes.PUT_TO_MAP, currentPath,
-                                key, currentMapValue));
+                        var deltaCalculator = _this.getDeltaBuilder().getCalculatorResolver().resolveCalculator(currentMapValue);
+                        if (deltaCalculator) {
+                            var propertyPath = (currentPath ? currentPath + "." : "") + key;
+                            deltaCalculator.calculateDelta(delta, propertyPath, currentMapValue, previousMapValue);
+                        } else {
+                            if (!Obj.equals(currentMapValue, previousMapValue)) {
+                                delta.addDeltaChange(new MapChange(MapChange.ChangeTypes.PUT_TO_MAP, currentPath,
+                                    key, currentMapValue));
+                            }
                         }
                     }
                 }
-            }
-        });
-    }
+            });
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('bugdelta.MapCalculator', MapCalculator);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugdelta.MapCalculator', MapCalculator);

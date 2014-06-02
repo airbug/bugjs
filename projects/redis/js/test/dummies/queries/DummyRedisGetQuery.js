@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -11,88 +21,91 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// Bugpack Modules
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var Set                 = bugpack.require('Set');
-var TypeUtil            = bugpack.require('TypeUtil');
-var DummyRedisQuery     = bugpack.require('redis.DummyRedisQuery');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {DummyRedisQuery}
- */
-var DummyRedisGetQuery = Class.extend(DummyRedisQuery, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Bugpack Modules
+    //-------------------------------------------------------------------------------
+
+    var Class               = bugpack.require('Class');
+    var Set                 = bugpack.require('Set');
+    var TypeUtil            = bugpack.require('TypeUtil');
+    var DummyRedisQuery     = bugpack.require('redis.DummyRedisQuery');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {DummyRedisClient} dummyRedisClient
-     * @param {string} key
+     * @class
+     * @extends {DummyRedisQuery}
      */
-    _constructor: function(dummyRedisClient, key) {
+    var DummyRedisGetQuery = Class.extend(DummyRedisQuery, {
 
-        this._super(dummyRedisClient);
+        _name: "redis.DummyRedisGetQuery",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {string}
+         * @constructs
+         * @param {DummyRedisClient} dummyRedisClient
+         * @param {string} key
          */
-        this.key        = key;
-    },
+        _constructor: function(dummyRedisClient, key) {
+
+            this._super(dummyRedisClient);
 
 
-    //-------------------------------------------------------------------------------
-    // DummyRedisQuery Methods
-    //-------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
 
-    /**
-     * @return {number}
-     */
-    query: function() {
-        var dummyRedisClient  = this.getDummyRedisClient();
-        if (!dummyRedisClient.isSubscribedState()) {
-            var dataMap = dummyRedisClient.getKeyToEntryMap();
-            if (dataMap.containsKey(this.key)) {
-                var value       = dataMap.get(this.key);
-                if (TypeUtil.isString(value)) {
-                    return value;
+            /**
+             * @private
+             * @type {string}
+             */
+            this.key        = key;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // DummyRedisQuery Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {number}
+         */
+        query: function() {
+            var dummyRedisClient  = this.getDummyRedisClient();
+            if (!dummyRedisClient.isSubscribedState()) {
+                var dataMap = dummyRedisClient.getKeyToEntryMap();
+                if (dataMap.containsKey(this.key)) {
+                    var value       = dataMap.get(this.key);
+                    if (TypeUtil.isString(value)) {
+                        return value;
+                    } else {
+                        throw new Error("WRONGTYPE Operation against a key holding the wrong kind of value");
+                    }
                 } else {
-                    throw new Error("WRONGTYPE Operation against a key holding the wrong kind of value");
+                    return null;
                 }
             } else {
-                return null;
+                throw new Error("Connection in subscriber mode, only subscriber commands may be used");
             }
-        } else {
-            throw new Error("Connection in subscriber mode, only subscriber commands may be used");
         }
-    }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('redis.DummyRedisGetQuery', DummyRedisGetQuery);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('redis.DummyRedisGetQuery', DummyRedisGetQuery);

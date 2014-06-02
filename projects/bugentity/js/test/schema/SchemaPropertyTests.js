@@ -30,19 +30,19 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var SchemaProperty          = bugpack.require('bugentity.SchemaProperty');
-    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var TestTag          = bugpack.require('bugunit.TestTag');
-    var BugYarn                 = bugpack.require('bugyarn.BugYarn');
+    var SchemaProperty  = bugpack.require('bugentity.SchemaProperty');
+    var BugMeta         = bugpack.require('bugmeta.BugMeta');
+    var TestTag         = bugpack.require('bugunit.TestTag');
+    var BugYarn         = bugpack.require('bugyarn.BugYarn');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta                 = BugMeta.context();
-    var bugyarn                 = BugYarn.context();
-    var test                    = TestTag.test;
+    var bugmeta         = BugMeta.context();
+    var bugyarn         = BugYarn.context();
+    var test            = TestTag.test;
 
 
     //-------------------------------------------------------------------------------
@@ -102,6 +102,12 @@ require('bugpack').context("*", function(bugpack) {
                 "Assert SchemaProperty.unique was set correctly");
         }
     };
+
+
+    //-------------------------------------------------------------------------------
+    // BugMeta
+    //-------------------------------------------------------------------------------
+
     bugmeta.tag(schemaPropertyInstantiationTest).with(
         test().name("SchemaProperty - instantiation Test")
     );

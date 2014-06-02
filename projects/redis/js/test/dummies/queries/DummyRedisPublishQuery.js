@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -10,81 +20,84 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack             = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// Bugpack Modules
-//-------------------------------------------------------------------------------
-
-var Class               = bugpack.require('Class');
-var Set                 = bugpack.require('Set');
-var DummyRedisQuery     = bugpack.require('redis.DummyRedisQuery');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @class
- * @extends {DummyRedisQuery}
- */
-var DummyRedisPublishQuery = Class.extend(DummyRedisQuery, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Bugpack Modules
+    //-------------------------------------------------------------------------------
+
+    var Class               = bugpack.require('Class');
+    var Set                 = bugpack.require('Set');
+    var DummyRedisQuery     = bugpack.require('redis.DummyRedisQuery');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {DummyRedisClient} dummyRedisClient
-     * @param {string} channel
-     * @param {*} message
+     * @class
+     * @extends {DummyRedisQuery}
      */
-    _constructor: function(dummyRedisClient, channel, message) {
+    var DummyRedisPublishQuery = Class.extend(DummyRedisQuery, {
 
-        this._super(dummyRedisClient);
+        _name: "redis.DummyRedisPublishQuery",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {string}
+         * @constructs
+         * @param {DummyRedisClient} dummyRedisClient
+         * @param {string} channel
+         * @param {*} message
          */
-        this.channel        = channel;
+        _constructor: function(dummyRedisClient, channel, message) {
 
-        /**
-         * @private
-         * @type {*}
-         */
-        this.message        = message;
-    },
+            this._super(dummyRedisClient);
 
 
-    //-------------------------------------------------------------------------------
-    // DummyRedisQuery Methods
-    //-------------------------------------------------------------------------------
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
 
-    query: function() {
-        var dummyRedisClient  = this.getDummyRedisClient();
-        if (!dummyRedisClient.isSubscribedState()) {
-            return dummyRedisClient.publishToChannel(this.channel, this.message);
-        } else {
-            throw new Error("Connection in subscriber mode, only subscriber commands may be used");
+            /**
+             * @private
+             * @type {string}
+             */
+            this.channel        = channel;
+
+            /**
+             * @private
+             * @type {*}
+             */
+            this.message        = message;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // DummyRedisQuery Methods
+        //-------------------------------------------------------------------------------
+
+        query: function() {
+            var dummyRedisClient  = this.getDummyRedisClient();
+            if (!dummyRedisClient.isSubscribedState()) {
+                return dummyRedisClient.publishToChannel(this.channel, this.message);
+            } else {
+                throw new Error("Connection in subscriber mode, only subscriber commands may be used");
+            }
         }
-    }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('redis.DummyRedisPublishQuery', DummyRedisPublishQuery);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('redis.DummyRedisPublishQuery', DummyRedisPublishQuery);

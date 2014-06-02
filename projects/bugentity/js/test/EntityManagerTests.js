@@ -34,23 +34,23 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Entity                      = bugpack.require('bugentity.Entity');
-    var EntityManager               = bugpack.require('bugentity.EntityManager');
-    var EntitySchema                = bugpack.require('bugentity.EntitySchema');
-    var SchemaManager               = bugpack.require('bugentity.SchemaManager');
-    var SchemaProperty              = bugpack.require('bugentity.SchemaProperty');
-    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-    var TestTag              = bugpack.require('bugunit.TestTag');
-    var BugYarn                     = bugpack.require('bugyarn.BugYarn');
+    var Entity          = bugpack.require('bugentity.Entity');
+    var EntityManager   = bugpack.require('bugentity.EntityManager');
+    var EntitySchema    = bugpack.require('bugentity.EntitySchema');
+    var SchemaManager   = bugpack.require('bugentity.SchemaManager');
+    var SchemaProperty  = bugpack.require('bugentity.SchemaProperty');
+    var BugMeta         = bugpack.require('bugmeta.BugMeta');
+    var TestTag         = bugpack.require('bugunit.TestTag');
+    var BugYarn         = bugpack.require('bugyarn.BugYarn');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta                     = BugMeta.context();
-    var bugyarn                     = BugYarn.context();
-    var test                        = TestTag.test;
+    var bugmeta         = BugMeta.context();
+    var bugyarn         = BugYarn.context();
+    var test            = TestTag.test;
 
 
     //-------------------------------------------------------------------------------

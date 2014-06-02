@@ -35,10 +35,10 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class               = bugpack.require('Class');
     var Obj                 = bugpack.require('Obj');
-    var ArgTag                   = bugpack.require('bugioc.ArgTag');
-    var IInitializeModule               = bugpack.require('bugioc.IInitializeModule');
-    var ModuleTag                = bugpack.require('bugioc.ModuleTag');
-    var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+    var ArgTag              = bugpack.require('bugioc.ArgTag');
+    var IInitializeModule   = bugpack.require('bugioc.IInitializeModule');
+    var ModuleTag           = bugpack.require('bugioc.ModuleTag');
+    var BugMeta             = bugpack.require('bugmeta.BugMeta');
     var ControllerTag       = bugpack.require('carapace.ControllerTag');
 
 
@@ -46,9 +46,9 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                             = ArgTag.arg;
-    var bugmeta                         = BugMeta.context();
-    var module                          = ModuleTag.module;
+    var arg                 = ArgTag.arg;
+    var bugmeta             = BugMeta.context();
+    var module              = ModuleTag.module;
 
 
     //-------------------------------------------------------------------------------

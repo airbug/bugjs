@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -9,9 +19,9 @@
 //@Require('TypeUtil')
 //@Require('UuidGenerator')
 //@Require('mongo.DummyCreateQuery')
-//@Require('mongo.DummyFindByIdQuery')
 //@Require('mongo.DummyFindByIdAndRemoveQuery')
 //@Require('mongo.DummyFindByIdAndUpdateQuery')
+//@Require('mongo.DummyFindByIdQuery')
 //@Require('mongo.DummyFindOneAndUpdateQuery')
 //@Require('mongo.DummyFindOneQuery')
 //@Require('mongo.DummyFindQuery')
@@ -20,256 +30,259 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                         = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// Bugpack Modules
-//-------------------------------------------------------------------------------
-
-var Class                           = bugpack.require('Class');
-var Obj                             = bugpack.require('Obj');
-var TypeUtil                        = bugpack.require('TypeUtil');
-var UuidGenerator                   = bugpack.require('UuidGenerator');
-var DummyCreateQuery                = bugpack.require('mongo.DummyCreateQuery');
-var DummyFindByIdQuery              = bugpack.require('mongo.DummyFindByIdQuery');
-var DummyFindByIdAndRemoveQuery     = bugpack.require('mongo.DummyFindByIdAndRemoveQuery');
-var DummyFindByIdAndUpdateQuery     = bugpack.require('mongo.DummyFindByIdAndUpdateQuery');
-var DummyFindOneAndUpdateQuery      = bugpack.require('mongo.DummyFindOneAndUpdateQuery');
-var DummyFindOneQuery               = bugpack.require('mongo.DummyFindOneQuery');
-var DummyFindQuery                  = bugpack.require('mongo.DummyFindQuery');
-var DummyRemoveQuery                = bugpack.require('mongo.DummyRemoveQuery');
-var DummyWhereQuery                 = bugpack.require('mongo.DummyWhereQuery');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-/**
- * @constructor
- * @extends {Obj}
- */
-var DummyMongooseModel = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // Bugpack Modules
+    //-------------------------------------------------------------------------------
+
+    var Class                           = bugpack.require('Class');
+    var Obj                             = bugpack.require('Obj');
+    var TypeUtil                        = bugpack.require('TypeUtil');
+    var UuidGenerator                   = bugpack.require('UuidGenerator');
+    var DummyCreateQuery                = bugpack.require('mongo.DummyCreateQuery');
+    var DummyFindByIdAndRemoveQuery     = bugpack.require('mongo.DummyFindByIdAndRemoveQuery');
+    var DummyFindByIdAndUpdateQuery     = bugpack.require('mongo.DummyFindByIdAndUpdateQuery');
+    var DummyFindByIdQuery              = bugpack.require('mongo.DummyFindByIdQuery');
+    var DummyFindOneAndUpdateQuery      = bugpack.require('mongo.DummyFindOneAndUpdateQuery');
+    var DummyFindOneQuery               = bugpack.require('mongo.DummyFindOneQuery');
+    var DummyFindQuery                  = bugpack.require('mongo.DummyFindQuery');
+    var DummyRemoveQuery                = bugpack.require('mongo.DummyRemoveQuery');
+    var DummyWhereQuery                 = bugpack.require('mongo.DummyWhereQuery');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @constructs
-     * @param {DummyMongooseSchema} mongooseSchema
-     * @param {string} modelName
+     * @class
+     * @extends {Obj}
      */
-    _constructor: function(mongooseSchema, modelName) {
+    var DummyMongooseModel = Class.extend(Obj, {
 
-        this._super();
+        _name: "mongo.DummyMongooseModel",
 
 
         //-------------------------------------------------------------------------------
-        // Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {DummyMongoose}
+         * @constructs
+         * @param {DummyMongooseSchema} mongooseSchema
+         * @param {string} modelName
          */
-        this.dummyMongoose  = null;
+        _constructor: function(mongooseSchema, modelName) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {DummyMongoose}
+             */
+            this.dummyMongoose  = null;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.modelName      = modelName;
+
+            /**
+             * @type {DummyMongooseSchema}
+             */
+            this.schema         = mongooseSchema
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {string}
+         * @return {Object}
          */
-        this.modelName      = modelName;
+        getCollection: function() {
+            return this.dummyMongoose.getCollection(this.modelName.toLowerCase());
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Mongoose Methods
+        //-------------------------------------------------------------------------------
+
+        $where: function() {
+            throw new Error("DummyMongoose Not Implemented");
+        },
+        aggregate: function() {
+            throw new Error("DummyMongoose Not Implemented");
+        },
+        count: function() {
+            throw new Error("DummyMongoose Not Implemented");
+        },
 
         /**
-         * @type {DummyMongooseSchema}
+         * @param {Object} createObject
+         * @param {function(Error, Object)} callback
          */
-        this.schema         = mongooseSchema
-    },
+        create: function(createObject, callback) {
+            var query = new DummyCreateQuery(this, createObject);
+            if (callback) {
+                query.exec(callback);
+            } else {
+                return query;
+            }
+        },
+
+        distinct: function() {
+            throw new Error("DummyMongoose Not Implemented");
+        },
+        ensureIndexes: function(callback) {
+            callback();
+        },
+
+        /**
+         * @param {Object} queryParams
+         * @param {function(Error, Object)} callback
+         * @returns {DummyFindQuery}
+         */
+        find: function(queryParams, callback) {
+            var query = new DummyFindQuery(this, queryParams);
+            if (callback) {
+                query.exec(callback);
+            } else {
+                return query;
+            }
+        },
+
+        /**
+         * @param {string} id
+         * @param {function(Error, Object)} callback
+         * @returns {DummyFindByIdQuery}
+         */
+        findById: function(id, callback) {
+            var query = new DummyFindByIdQuery(this, id);
+            if (callback) {
+                query.exec(callback);
+            } else {
+                return query;
+            }
+        },
+
+        /**
+         *
+         * @param {string} id
+         * @param {function(Error)} callback
+         * @returns {DummyFindByIdAndRemoveQuery}
+         */
+        findByIdAndRemove: function(id, callback) {
+            var query = new DummyFindByIdAndRemoveQuery(this, id);
+            if (callback) {
+                query.exec(callback);
+            } else {
+                return query;
+            }
+        },
+
+        /**
+         * @param {string} id
+         * @param {Object} updateObject
+         * @param {function(Error, Object)} callback
+         * @return {DummyFindByIdAndUpdateQuery}
+         */
+        findByIdAndUpdate: function(id, updateObject, callback) {
+            var query = new DummyFindByIdAndUpdateQuery(this, id, updateObject);
+            if (callback) {
+                query.exec(callback);
+            } else {
+                return query;
+            }
+        },
+
+        /**
+         * @param {Object} queryParams
+         * @param {function(Error, Object)} callback
+         * @returns {DummyFindOneQuery}
+         */
+        findOne: function(queryParams, callback) {
+            var query = new DummyFindOneQuery(this, queryParams);
+            if (callback) {
+                query.exec(callback);
+            } else {
+                return query;
+            }
+
+        },
+
+        findOneAndRemove: function() {
+            throw new Error("DummyMongoose Not Implemented");
+        },
+
+        /**
+         * @param {Object} queryParams
+         * @param {Object} updateObject
+         * @param {(Object | function(Error, Object=))} queryOptions
+         * @param {function(Error, Object=)=} callback
+         * @return {DummyFindOneAndUpdateQuery}
+         */
+        findOneAndUpdate: function(queryParams, updateObject, queryOptions, callback) {
+            if (TypeUtil.isFunction(queryOptions)) {
+                callback = queryOptions;
+                queryOptions = {};
+            }
+            var query = new DummyFindOneAndUpdateQuery(this, queryParams, updateObject, queryOptions);
+            if (callback) {
+                return query.exec(callback);
+            } else {
+                return query;
+            }
+        },
+        mapReduce: function() {
+            throw new Error("DummyMongoose Not Implemented");
+        },
+        populate: function() {
+            throw new Error("DummyMongoose Not Implemented");
+        },
+
+        /**
+         * @param {Object} queryParams
+         * @param {function(Error, Object)} callback
+         * @returns {DummyRemoveQuery}
+         */
+        remove: function(queryParams, callback) {
+            var query = new DummyRemoveQuery(this, queryParams);
+            if (callback) {
+                query.exec(callback);
+            } else {
+                return query;
+            }
+        },
+        update: function() {
+            throw new Error("DummyMongoose Not Implemented");
+        },
+        where: function(queryParams, callback) {
+            var query = new DummyWhereQuery(this, queryParams);
+            if (callback) {
+                query.exec(callback);
+            } else {
+                return query;
+            }
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Public Methods
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {Object}
-     */
-    getCollection: function() {
-        return this.dummyMongoose.getCollection(this.modelName.toLowerCase());
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Mongoose Methods
-    //-------------------------------------------------------------------------------
-
-    $where: function() {
-        throw new Error("DummyMongoose Not Implemented");
-    },
-    aggregate: function() {
-        throw new Error("DummyMongoose Not Implemented");
-    },
-    count: function() {
-        throw new Error("DummyMongoose Not Implemented");
-    },
-
-    /**
-     * @param {Object} createObject
-     * @param {function(Error, Object)} callback
-     */
-    create: function(createObject, callback) {
-        var query = new DummyCreateQuery(this, createObject);
-        if (callback) {
-            query.exec(callback);
-        } else {
-            return query;
-        }
-    },
-
-    distinct: function() {
-        throw new Error("DummyMongoose Not Implemented");
-    },
-    ensureIndexes: function(callback) {
-        callback();
-    },
-
-    /**
-     * @param {Object} queryParams
-     * @param {function(Error, Object)} callback
-     * @returns {DummyFindQuery}
-     */
-    find: function(queryParams, callback) {
-        var query = new DummyFindQuery(this, queryParams);
-        if (callback) {
-            query.exec(callback);
-        } else {
-            return query;
-        }
-    },
-
-    /**
-     * @param {string} id
-     * @param {function(Error, Object)} callback
-     * @returns {DummyFindByIdQuery}
-     */
-    findById: function(id, callback) {
-        var query = new DummyFindByIdQuery(this, id);
-        if (callback) {
-            query.exec(callback);
-        } else {
-            return query;
-        }
-    },
-
-    /**
-     *
-     * @param {string} id
-     * @param {function(Error)} callback
-     * @returns {DummyFindByIdAndRemoveQuery}
-     */
-    findByIdAndRemove: function(id, callback) {
-        var query = new DummyFindByIdAndRemoveQuery(this, id);
-        if (callback) {
-            query.exec(callback);
-        } else {
-            return query;
-        }
-    },
-
-    /**
-     * @param {string} id
-     * @param {Object} updateObject
-     * @param {function(Error, Object)} callback
-     * @return {DummyFindByIdAndUpdateQuery}
-     */
-    findByIdAndUpdate: function(id, updateObject, callback) {
-        var query = new DummyFindByIdAndUpdateQuery(this, id, updateObject);
-        if (callback) {
-            query.exec(callback);
-        } else {
-            return query;
-        }
-    },
-
-    /**
-     * @param {Object} queryParams
-     * @param {function(Error, Object)} callback
-     * @returns {DummyFindOneQuery}
-     */
-    findOne: function(queryParams, callback) {
-        var query = new DummyFindOneQuery(this, queryParams);
-        if (callback) {
-            query.exec(callback);
-        } else {
-            return query;
-        }
-
-    },
-
-    findOneAndRemove: function() {
-        throw new Error("DummyMongoose Not Implemented");
-    },
-
-    /**
-     * @param {Object} queryParams
-     * @param {Object} updateObject
-     * @param {(Object | function(Error, Object=))} queryOptions
-     * @param {function(Error, Object=)=} callback
-     * @return {DummyFindOneAndUpdateQuery}
-     */
-    findOneAndUpdate: function(queryParams, updateObject, queryOptions, callback) {
-        if (TypeUtil.isFunction(queryOptions)) {
-            callback = queryOptions;
-            queryOptions = {};
-        }
-        var query = new DummyFindOneAndUpdateQuery(this, queryParams, updateObject, queryOptions);
-        if (callback) {
-            return query.exec(callback);
-        } else {
-            return query;
-        }
-    },
-    mapReduce: function() {
-        throw new Error("DummyMongoose Not Implemented");
-    },
-    populate: function() {
-        throw new Error("DummyMongoose Not Implemented");
-    },
-
-    /**
-     * @param {Object} queryParams
-     * @param {function(Error, Object)} callback
-     * @returns {DummyRemoveQuery}
-     */
-    remove: function(queryParams, callback) {
-        var query = new DummyRemoveQuery(this, queryParams);
-        if (callback) {
-            query.exec(callback);
-        } else {
-            return query;
-        }
-    },
-    update: function() {
-        throw new Error("DummyMongoose Not Implemented");
-    },
-    where: function(queryParams, callback) {
-        var query = new DummyWhereQuery(this, queryParams);
-        if (callback) {
-            query.exec(callback);
-        } else {
-            return query;
-        }
-    }
+    bugpack.export('mongo.DummyMongooseModel', DummyMongooseModel);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('mongo.DummyMongooseModel', DummyMongooseModel);

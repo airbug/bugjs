@@ -32,19 +32,19 @@ require('bugpack').context("*", function(bugpack) {
     // Bugpack Modules
     //-------------------------------------------------------------------------------
 
-    var Class                       = bugpack.require('Class');
-    var Obj                         = bugpack.require('Obj');
-    var CallResponseHandler         = bugpack.require('bugcall.CallResponseHandler');
-    var ModuleTag            = bugpack.require('bugioc.ModuleTag');
-    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+    var Class                   = bugpack.require('Class');
+    var Obj                     = bugpack.require('Obj');
+    var CallResponseHandler     = bugpack.require('bugcall.CallResponseHandler');
+    var ModuleTag               = bugpack.require('bugioc.ModuleTag');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta                     = BugMeta.context();
-    var module                      = ModuleTag.module;
+    var bugmeta                 = BugMeta.context();
+    var module                  = ModuleTag.module;
 
 
     //-------------------------------------------------------------------------------

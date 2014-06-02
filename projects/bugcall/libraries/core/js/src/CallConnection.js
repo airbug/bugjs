@@ -19,7 +19,7 @@
 //@Require('EventDispatcher')
 //@Require('bugcall.CallRequest')
 //@Require('bugcall.CallResponse')
-//@Require('socketio:socket.SocketIoConnection')
+//@Require('socketio.SocketIoConnection')
 
 
 //-------------------------------------------------------------------------------
@@ -32,12 +32,12 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                   = bugpack.require('Class');
-    var Event                   = bugpack.require('Event');
-    var EventDispatcher         = bugpack.require('EventDispatcher');
-    var CallRequest             = bugpack.require('bugcall.CallRequest');
-    var CallResponse            = bugpack.require('bugcall.CallResponse');
-    var SocketIoConnection      = bugpack.require('socketio:socket.SocketIoConnection');
+    var Class               = bugpack.require('Class');
+    var Event               = bugpack.require('Event');
+    var EventDispatcher     = bugpack.require('EventDispatcher');
+    var CallRequest         = bugpack.require('bugcall.CallRequest');
+    var CallResponse        = bugpack.require('bugcall.CallResponse');
+    var SocketIoConnection  = bugpack.require('socketio.SocketIoConnection');
 
 
     //-------------------------------------------------------------------------------

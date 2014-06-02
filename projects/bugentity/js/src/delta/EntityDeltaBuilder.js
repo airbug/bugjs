@@ -33,20 +33,20 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                           = bugpack.require('Class');
-    var DeltaBuilder                    = bugpack.require('bugdelta.DeltaBuilder');
-    var Entity                          = bugpack.require('bugentity.Entity');
-    var EntityCalculator                = bugpack.require('bugentity.EntityCalculator');
-    var ModuleTag                = bugpack.require('bugioc.ModuleTag');
-    var BugMeta                         = bugpack.require('bugmeta.BugMeta');
+    var Class               = bugpack.require('Class');
+    var DeltaBuilder        = bugpack.require('bugdelta.DeltaBuilder');
+    var Entity              = bugpack.require('bugentity.Entity');
+    var EntityCalculator    = bugpack.require('bugentity.EntityCalculator');
+    var ModuleTag           = bugpack.require('bugioc.ModuleTag');
+    var BugMeta             = bugpack.require('bugmeta.BugMeta');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta                     = BugMeta.context();
-    var module                      = ModuleTag.module;
+    var bugmeta             = BugMeta.context();
+    var module              = ModuleTag.module;
 
 
     //-------------------------------------------------------------------------------

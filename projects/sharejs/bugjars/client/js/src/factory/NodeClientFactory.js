@@ -1,81 +1,103 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('sharejs:client.NodeClientFactory')
+//@Export('sharejs.NodeClientFactory')
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('sharejs:client.IClientFactory')
-//@Require('sharejs:client.ShareJsClient')
+//@Require('sharejs.IClientFactory')
+//@Require('sharejs.ShareJsClient')
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack         = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack Modules
-//-------------------------------------------------------------------------------
-
-var Class           = bugpack.require('Class');
-var Obj             = bugpack.require('Obj');
-var IClientFactory  = bugpack.require('sharejs:client.IClientFactory');
-var ShareJsClient   = bugpack.require('sharejs:client.ShareJsClient');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var NodeClientFactory = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack Modules
     //-------------------------------------------------------------------------------
 
-    _constructor: function(share) {
-
-        this._super();
-
-
-        //-------------------------------------------------------------------------------
-        // Properties
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         * @type {share}
-         */
-        this.share = share;
-    },
+    var Class           = bugpack.require('Class');
+    var Obj             = bugpack.require('Obj');
+    var IClientFactory  = bugpack.require('sharejs.IClientFactory');
+    var ShareJsClient   = bugpack.require('sharejs.ShareJsClient');
 
 
     //-------------------------------------------------------------------------------
-    // Public Methods
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @return {ShareJsClient}
+     * @class
+     * @extends {Obj}
+     * @implements {IClientFactory}
      */
-    createClient: function() {
-        return new ShareJsClient(this.share.client);
-    }
+    var NodeClientFactory = Class.extend(Obj, {
+
+        _name: "sharejs.NodeClientFactory",
+
+
+        //-------------------------------------------------------------------------------
+        // Constructor
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @constructs
+         * @param {*} share
+         */
+        _constructor: function(share) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {*}
+             */
+            this.share = share;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @return {ShareJsClient}
+         */
+        createClient: function() {
+            return new ShareJsClient(this.share.client);
+        }
+    });
+
+
+    //-------------------------------------------------------------------------------
+    // Interfaces
+    //-------------------------------------------------------------------------------
+
+    Class.implement(NodeClientFactory, IClientFactory);
+
+
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
+
+    bugpack.export('sharejs.NodeClientFactory', NodeClientFactory);
 });
-
-
-//-------------------------------------------------------------------------------
-// Interfaces
-//-------------------------------------------------------------------------------
-
-Class.implement(NodeClientFactory, IClientFactory);
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('sharejs:client.NodeClientFactory', NodeClientFactory);

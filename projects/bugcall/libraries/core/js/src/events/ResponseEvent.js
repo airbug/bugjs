@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -9,43 +19,49 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
+require('bugpack').context("*", function(bugpack) {
+
+    //-------------------------------------------------------------------------------
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class   = bugpack.require('Class');
+    var Event   = bugpack.require('Event');
 
 
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
 
-var Class   = bugpack.require('Class');
-var Event   = bugpack.require('Event');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var ResponseEvent = Class.extend(Event, {});
+    /**
+     * @class
+     * @extends {Event}
+     */
+    var ResponseEvent = Class.extend(Event, {
+        _name: "bugcall.ResponseEvent"
+    });
 
 
-//-------------------------------------------------------------------------------
-// Static Variables
-//-------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------
+    // Static Variables
+    //-------------------------------------------------------------------------------
 
-/**
- * @static
- * @enum {string}
- */
-ResponseEvent.Types = {
-    QUEUED: "ResponseEvent:Types:Queued",
-    SENT:   "ResponseEvent:Types:Sent"
-};
+    /**
+     * @static
+     * @enum {string}
+     */
+    ResponseEvent.Types = {
+        QUEUED: "ResponseEvent:Types:Queued",
+        SENT:   "ResponseEvent:Types:Sent"
+    };
 
 
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------
+    // Exports
+    //-------------------------------------------------------------------------------
 
-bugpack.export('bugcall.ResponseEvent', ResponseEvent);
+    bugpack.export('bugcall.ResponseEvent', ResponseEvent);
+});

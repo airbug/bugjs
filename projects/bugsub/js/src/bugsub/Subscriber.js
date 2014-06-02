@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -9,101 +19,114 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack                     = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                       = bugpack.require('Class');
-var Obj                         = bugpack.require('Obj');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var Subscriber = Class.extend(Obj, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function(subscriberFunction, subscriberContext, once) {
+    var Class                       = bugpack.require('Class');
+    var Obj                         = bugpack.require('Obj');
 
-        this._super();
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {Obj}
+     */
+    var Subscriber = Class.extend(Obj, {
+
+        _name: "bugsub.Subscriber",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {boolean}
+         * @constructs
+         * @param {function(Message)} subscriberFunction
+         * @param {Object} subscriberContext
+         * @param {boolean} once
          */
-        this.once                   = once;
+        _constructor: function(subscriberFunction, subscriberContext, once) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {boolean}
+             */
+            this.once                   = once;
+
+            /**
+             * @private
+             * @type {Object}
+             */
+            this.subscriberContext      = subscriberContext;
+
+            /**
+             * @private
+             * @type {function(Message)}
+             */
+            this.subscriberFunction     = subscriberFunction;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Object}
+         * @return {boolean}
          */
-        this.subscriberContext      = subscriberContext;
+        getOnce: function() {
+            return this.once;
+        },
 
         /**
-         * @private
-         * @type {function(Message)}
+         * @return {Object}
          */
-        this.subscriberFunction     = subscriberFunction;
-    },
+        getSubscriberContext: function() {
+            return this.subscriberContext;
+        },
+
+        /**
+         * @return {function(Message)}
+         */
+        getSubscriberFunction: function() {
+            return this.subscriberFunction;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {Message} message
+         * @param {string} channel
+         */
+        receiveMessage: function(message, channel) {
+            this.subscriberFunction.call(this.subscriberContext, message, channel);
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {boolean}
-     */
-    getOnce: function() {
-        return this.once;
-    },
-
-    /**
-     * @return {Object}
-     */
-    getSubscriberContext: function() {
-        return this.subscriberContext;
-    },
-
-    /**
-     * @return {function(Message)}
-     */
-    getSubscriberFunction: function() {
-        return this.subscriberFunction;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {Message} message
-     * @param {string} channel
-     */
-    receiveMessage: function(message, channel) {
-        this.subscriberFunction.call(this.subscriberContext, message, channel);
-    }
+    bugpack.export('bugsub.Subscriber', Subscriber);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugsub.Subscriber', Subscriber);

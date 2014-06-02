@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -11,118 +21,128 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                   = bugpack.require('Class');
-var List                    = bugpack.require('List');
-var AbstractMessageChannel  = bugpack.require('bugmessage.AbstractMessageChannel');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var BroadcasterMessageChannel = Class.extend(AbstractMessageChannel, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function() {
+    var Class                   = bugpack.require('Class');
+    var List                    = bugpack.require('List');
+    var AbstractMessageChannel  = bugpack.require('bugmessage.AbstractMessageChannel');
 
-        this._super();
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {AbstractMessageChannel}
+     */
+    var BroadcasterMessageChannel = Class.extend(AbstractMessageChannel, {
+
+        _name: "bugmessage.BroadcasterMessageChannel",
+
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Object}
+         * @constructs
          */
-        this.messageReceiverList = new List();
-    },
+        _constructor: function() {
+
+            this._super();
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {Object}
+             */
+            this.messageReceiverList = new List();
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // AbstractMessageChannel Implementation
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // AbstractMessageChannel Implementation
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @param {Message} message
-     * @param {MessageResponder} messageResponder
-     */
-    doChannelMessage: function(message, messageResponder) {
-        var messageReceiverListClone = this.messageReceiverList.clone();
-        messageReceiverListClone.forEach(function(messageReceiver) {
-            messageReceiver.receiveMessage(message, messageResponder);
-        });
-    },
+        /**
+         * @param {Message} message
+         * @param {MessageResponder} messageResponder
+         */
+        doChannelMessage: function(message, messageResponder) {
+            var messageReceiverListClone = this.messageReceiverList.clone();
+            messageReceiverListClone.forEach(function(messageReceiver) {
+                messageReceiver.receiveMessage(message, messageResponder);
+            });
+        },
 
 
-    //-------------------------------------------------------------------------------
-    // Methods
-    //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // Methods
+        //-------------------------------------------------------------------------------
 
-    /**
-     * @param {MessageReceiver} messageReceiver
-     * @return {boolean}
-     */
-    addMessageReceiver: function(messageReceiver) {
-        if (!this.messageReceiverList.contains(messageReceiver)) {
-            this.messageReceiverList.add(messageReceiver);
-            messageReceiver.addEventPropagator(this);
-            return true;
+        /**
+         * @param {MessageReceiver} messageReceiver
+         * @return {boolean}
+         */
+        addMessageReceiver: function(messageReceiver) {
+            if (!this.messageReceiverList.contains(messageReceiver)) {
+                this.messageReceiverList.add(messageReceiver);
+                messageReceiver.addEventPropagator(this);
+                return true;
+            }
+            return false;
+        },
+
+        /**
+         * @return {number}
+         */
+        getMessageReceiverCount: function() {
+            return this.messageReceiverList.getCount();
+        },
+
+        /**
+         * @param {MessageReceiver} messageReceiver
+         * @return {boolean}
+         */
+        hasMessageReceiver: function(messageReceiver) {
+            return this.messageReceiverList.contains(messageReceiver);
+        },
+
+        /**
+         * @return {boolean}
+         */
+        isMessageReceiverListEmpty: function() {
+            return this.messageReceiverList.isEmpty();
+        },
+
+        /**
+         * @param {MessageReceiver} messageReceiver
+         * @return {boolean}
+         */
+        removeMessageReceiver: function(messageReceiver) {
+            var result = this.messageReceiverList.remove(messageReceiver);
+            if (result) {
+                messageReceiver.removeEventPropagator(this);
+            }
+            return result;
         }
-        return false;
-    },
+    });
 
-    /**
-     * @return {number}
-     */
-    getMessageReceiverCount: function() {
-        return this.messageReceiverList.getCount();
-    },
 
-    /**
-     * @param {MessageReceiver} messageReceiver
-     * @return {boolean}
-     */
-    hasMessageReceiver: function(messageReceiver) {
-        return this.messageReceiverList.contains(messageReceiver);
-    },
+    //-------------------------------------------------------------------------------
+    // Export
+    //-------------------------------------------------------------------------------
 
-    /**
-     * @return {boolean}
-     */
-    isMessageReceiverListEmpty: function() {
-        return this.messageReceiverList.isEmpty();
-    },
-
-    /**
-     * @param {MessageReceiver} messageReceiver
-     * @return {boolean}
-     */
-    removeMessageReceiver: function(messageReceiver) {
-        var result = this.messageReceiverList.remove(messageReceiver);
-        if (result) {
-            messageReceiver.removeEventPropagator(this);
-        }
-        return result;
-    }
+    bugpack.export('bugmessage.BroadcasterMessageChannel', BroadcasterMessageChannel);
 });
-
-
-//-------------------------------------------------------------------------------
-// Export
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugmessage.BroadcasterMessageChannel', BroadcasterMessageChannel);

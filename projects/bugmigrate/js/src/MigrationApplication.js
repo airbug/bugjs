@@ -39,18 +39,18 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                               = bugpack.require('Class');
-    var Obj                                 = bugpack.require('Obj');
-    var EntityManagerTagProcessor    = bugpack.require('bugentity.EntityManagerTagProcessor');
-    var EntityManagerTagScan         = bugpack.require('bugentity.EntityManagerTagScan');
-    var AutowiredTagProcessor        = bugpack.require('bugioc.AutowiredTagProcessor');
-    var AutowiredTagScan                       = bugpack.require('bugioc.AutowiredTagScan');
-    var ConfigurationTagProcessor    = bugpack.require('bugioc.ConfigurationTagProcessor');
-    var ConfigurationTagScan                   = bugpack.require('bugioc.ConfigurationTagScan');
-    var IocContext                          = bugpack.require('bugioc.IocContext');
-    var ModuleTagProcessor           = bugpack.require('bugioc.ModuleTagProcessor');
-    var ModuleTagScan                          = bugpack.require('bugioc.ModuleTagScan');
-    var BugMeta                             = bugpack.require('bugmeta.BugMeta');
+    var Class                       = bugpack.require('Class');
+    var Obj                         = bugpack.require('Obj');
+    var EntityManagerTagProcessor   = bugpack.require('bugentity.EntityManagerTagProcessor');
+    var EntityManagerTagScan        = bugpack.require('bugentity.EntityManagerTagScan');
+    var AutowiredTagProcessor       = bugpack.require('bugioc.AutowiredTagProcessor');
+    var AutowiredTagScan            = bugpack.require('bugioc.AutowiredTagScan');
+    var ConfigurationTagProcessor   = bugpack.require('bugioc.ConfigurationTagProcessor');
+    var ConfigurationTagScan        = bugpack.require('bugioc.ConfigurationTagScan');
+    var IocContext                  = bugpack.require('bugioc.IocContext');
+    var ModuleTagProcessor          = bugpack.require('bugioc.ModuleTagProcessor');
+    var ModuleTagScan               = bugpack.require('bugioc.ModuleTagScan');
+    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
 
     //-------------------------------------------------------------------------------

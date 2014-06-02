@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -11,114 +21,122 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class           = bugpack.require('Class');
-var EventDispatcher = bugpack.require('EventDispatcher');
-var List            = bugpack.require('List');
-var Set             = bugpack.require('Set');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var OperationBatch = Class.extend(EventDispatcher, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
+    //-------------------------------------------------------------------------------
+
+    var Class           = bugpack.require('Class');
+    var EventDispatcher = bugpack.require('EventDispatcher');
+    var List            = bugpack.require('List');
+    var Set             = bugpack.require('Set');
+
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
     //-------------------------------------------------------------------------------
 
     /**
-     * @param {string} type
-     * @param {Array.<string>} locks
+     * @class
+     * @extends {EventDispatcher}
      */
-    _constructor: function(type, locks) {
+    var OperationBatch = Class.extend(EventDispatcher, {
 
-        this._super();
+        _name: "bugatomic.OperationBatch",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Array.<string>}
+         * @constructs
+         * @param {string} type
+         * @param {Array.<string>} locks
          */
-        this.lockSet        = new Set(locks);
+        _constructor: function(type, locks) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {Array.<string>}
+             */
+            this.lockSet        = new Set(locks);
+
+            /**
+             * @private
+             * @type {List.<Operation>}
+             */
+            this.operationList  = new List();
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.type           = type;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {List.<Operation>}
+         * @return {Set.<string>}
          */
-        this.operationList  = new List();
+        getLockSet: function() {
+            return this.lockSet;
+        },
 
         /**
-         * @private
-         * @type {string}
+         * @return {List.<Operation>}
          */
-        this.type           = type;
-    },
+        getOperationList: function() {
+            return this.operationList;
+        },
+
+        /**
+         * @return {string}
+         */
+        getType: function() {
+            return this.type;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {Operation} operation
+         * @return {boolean}
+         */
+        canBatchOperation: function(operation) {
+            return (this.lockSet.containsEqual(operation.getLockSet()) && this.type === operation.getType());
+        },
+
+        /**
+         * @param {Operation} operation
+         */
+        addOperation: function(operation) {
+            this.operationList.add(operation);
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Exports
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {Set.<string>}
-     */
-    getLockSet: function() {
-        return this.lockSet;
-    },
-
-    /**
-     * @return {List.<Operation>}
-     */
-    getOperationList: function() {
-        return this.operationList;
-    },
-
-    /**
-     * @return {string}
-     */
-    getType: function() {
-        return this.type;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // Public Methods
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {Operation} operation
-     * @return {boolean}
-     */
-    canBatchOperation: function(operation) {
-        return (this.lockSet.containsEqual(operation.getLockSet()) && this.type === operation.getType());
-    },
-
-    /**
-     * @param {Operation} operation
-     */
-    addOperation: function(operation) {
-        this.operationList.add(operation);
-    }
+    bugpack.export('bugatomic.OperationBatch', OperationBatch);
 });
-
-
-//-------------------------------------------------------------------------------
-// Exports
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugatomic.OperationBatch', OperationBatch);

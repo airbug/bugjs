@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -9,88 +19,100 @@
 
 
 //-------------------------------------------------------------------------------
-// Common Modules
+// Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context();
-
-
-//-------------------------------------------------------------------------------
-// BugPack
-//-------------------------------------------------------------------------------
-
-var Class                   = bugpack.require('Class');
-var AbstractMessageReceiver = bugpack.require('bugmessage.AbstractMessageReceiver');
-
-
-//-------------------------------------------------------------------------------
-// Declare Class
-//-------------------------------------------------------------------------------
-
-var CallbackMessageReceiver = Class.extend(AbstractMessageReceiver, {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
-    // Constructor
+    // BugPack
     //-------------------------------------------------------------------------------
 
-    _constructor: function(receiverCallback, receiverContext) {
+    var Class                   = bugpack.require('Class');
+    var AbstractMessageReceiver = bugpack.require('bugmessage.AbstractMessageReceiver');
 
-        this._super();
+
+    //-------------------------------------------------------------------------------
+    // Declare Class
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @class
+     * @extends {AbstractMessageReceiver}
+     */
+    var CallbackMessageReceiver = Class.extend(AbstractMessageReceiver, {
+
+        _name: "bugmessage.CallbackMessageReceiver",
 
 
         //-------------------------------------------------------------------------------
-        // Private Properties
+        // Constructor
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {function(Message, MessageResponder)}
+         * @constructs
+         * @param {function(Message, MessageResponder)} receiverCallback
+         * @param {Object} receiverContext
          */
-        this.receiverCallback = receiverCallback;
+        _constructor: function(receiverCallback, receiverContext) {
+
+            this._super();
+
+
+            //-------------------------------------------------------------------------------
+            // Private Properties
+            //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {function(Message, MessageResponder)}
+             */
+            this.receiverCallback = receiverCallback;
+
+            /**
+             * @private
+             * @type {Object}
+             */
+            this.receiverContext = receiverContext;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Getters and Setters
+        //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @type {Object}
+         * @return {function(Message, MessageResponder)}
          */
-        this.receiverContext = receiverContext;
-    },
+        getReceiverCallback: function() {
+            return this.receiverCallback;
+        },
+
+        /**
+         * @return {Object}
+         */
+        getReceiverContext: function() {
+            return this.receiverContext;
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // AbstractMessageReceiver Implementation
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {Message} message
+         * @param {MessageResponder} messageResponder
+         */
+        doReceiveMessage: function(message, messageResponder) {
+            this.receiverCallback.call(this.receiverContext, message, messageResponder);
+        }
+    });
 
 
     //-------------------------------------------------------------------------------
-    // Getters and Setters
+    // Export
     //-------------------------------------------------------------------------------
 
-    /**
-     * @return {function(Message, MessageResponder)}
-     */
-    getReceiverCallback: function() {
-        return this.receiverCallback;
-    },
-
-    /**
-     * @return {Object}
-     */
-    getReceiverContext: function() {
-        return this.receiverContext;
-    },
-
-
-    //-------------------------------------------------------------------------------
-    // AbstractMessageReceiver Implementation
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @param {Message} message
-     * @param {MessageResponder} messageResponder
-     */
-    doReceiveMessage: function(message, messageResponder) {
-        this.receiverCallback.call(this.receiverContext, message, messageResponder);
-    }
+    bugpack.export('bugmessage.CallbackMessageReceiver', CallbackMessageReceiver);
 });
-
-
-//-------------------------------------------------------------------------------
-// Export
-//-------------------------------------------------------------------------------
-
-bugpack.export('bugmessage.CallbackMessageReceiver', CallbackMessageReceiver);
