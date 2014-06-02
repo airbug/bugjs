@@ -1,9 +1,11 @@
+
 //-------------------------------------------------------------------------------
 // Common Modules
 //-------------------------------------------------------------------------------
 
 var bugcore             = require('bugcore');
 var bugflow             = require('bugflow');
+var bugfs               = require('bugfs');
 var buildbug            = require('buildbug');
 
 
@@ -25,8 +27,20 @@ var lintbug             = enableModule("lintbug");
 
 
 //-------------------------------------------------------------------------------
-// Script
+// Lint Tasks
 //-------------------------------------------------------------------------------
+
+lintbug.lintTask("ensureNewLineEnding", function(lintFile, callback) {
+    var fileContents    = lintFile.getFileContents();
+    var lines           = fileContents.split("\n");
+    var lastLine        = lines.pop();
+    lines.push(lastLine);
+    if (lastLine !== "") {
+        lines.push("");
+    }
+    lintFile.setFileContents(lines.join("\n"));
+    callback();
+});
 
 lintbug.lintTask("ensureUpperCaseRequireAnnotations", function(lintFile, callback) {
 
@@ -58,130 +72,208 @@ lintbug.lintTask("fixExportAndRemovePackageAnnotations", function(lintFile, call
     callback();
 });
 
-lintbug.lintTask("fixExportAndRemovePackageAnnotations", function(lintFile, callback) {
-    var fileContents = lintFile.getFileContents();
-    var packageAnnotationRegex = /\/\/(\s*)@Package\('([\w|\.]*)'\)(\s*)\n/;
+lintbug.lintTask("indentEqualSignsForPreClassVars", function(lintFile, callback) {
+    var indentSpacing   = 4;
+    var fileContents    = lintFile.getFileContents();
+    var lines           = fileContents.split("\n");
+    var startIndex      = bugcore.ArrayUtil.indexOf(lines, /^\s*\/\/ Context\s*$/);
+    var endIndex        = bugcore.ArrayUtil.indexOf(lines, /^\s*\/\/ (Declare Class|Declare Interface|Declare Tests|BugYarn)\s*$/);
+    var varRegex        = /^(\s*)var (\w+)\s*=(.*)$/;
+    var varObjects      = [];
+    var longestIndent   = 0;
+    if (startIndex > -1 && endIndex > -1) {
+        for (var i = startIndex; i < endIndex; i++) {
+            var line        = lines[i];
+            var results     = line.match(varRegex);
+            if (results) {
+                var indent  = results[1];
+                var varName = results[2];
+                varObjects.push({
+                    index: i,
+                    indent: indent,
+                    name: varName,
+                    afterEqualsContent: results[3]
+                });
 
-    var packageName = undefined;
-    fileContents = fileContents.replace(packageAnnotationRegex, function(match, p1, p2, p3, offset, string) {
-        if (!packageName) {
-            packageName = p2;
-        } else {
-            throw new Error("More than one @Package annotation in file '" + lintFile.getFilePath().getAbsolutePath() + "'");
+                //NOTE BRN: Add 2 at the end so that we are at least two spaces away from the variable name
+                var indentLength = Math.ceil((indent.length + ("var ").length + varName.length + 2) / indentSpacing);
+                if (indentLength > longestIndent) {
+                    longestIndent = indentLength;
+                }
+            }
         }
-
-        return "";
-    });
-
-    if (packageName) {
-        var exportAnnotationRegex = /(\s*)\/\/(\s*)@Export\((['"])(\w*)(['"])\)(\s*)\n/g;
-        fileContents = fileContents.replace(exportAnnotationRegex, function(match, p1, p2, p3, p4, p5, p6, offset, string) {
-            return p1 + "//" + p2 + "@Export(" + p3 + packageName + "." + p4 + p5 + ")" + p6 + "\n";
+        varObjects.forEach(function(varObject) {
+            var numberCharsBeforeEquals = longestIndent * indentSpacing;
+            var preEqualsText = bugcore.StringUtil.rpad(varObject.indent + "var " + varObject.name, " ", numberCharsBeforeEquals);
+            lines[varObject.index] = preEqualsText + "=" + varObject.afterEqualsContent;
         });
     }
+    lintFile.setFileContents(lines.join("\n"));
+    callback();
+});
 
+lintbug.lintTask("orderBugpackRequires", function(lintFile, callback) {
+    var fileContents    = lintFile.getFileContents();
+    fileContents = sortBugpackRequires(fileContents);
     lintFile.setFileContents(fileContents);
     callback();
 });
 
-lintbug.lintTask("orderAnnotationsInFile", function(lintFile, callback) {
-    var _this = this;
-    var fileContents = "";
-    $series([
-        $task(function(flow) {
-            var lines = fileContents.split("\n");
-            _this.sortRequireAnnotationLines(lines);
-            flow.complete();
-        })
-    ]).execute(callback);
+lintbug.lintTask("orderRequireAnnotations", function(lintFile, callback) {
+    var fileContents    = lintFile.getFileContents();
+    fileContents = sortRequireAnnotations(fileContents);
+    lintFile.setFileContents(fileContents);
+    callback();
 });
 
-lintbug.lintTask("orderBugPackRequiresInFile", function(jsFilePath, callback) {
-    //var Class                   = bugpack.require('Class');
-});
-
-lintbug.lintTask("sortRequireAnnotationLines", function(lines) {
-    var _this = this;
-    var requireAnnotationStartIndex = -1;
-    var requireAnnotationStopIndex = -1;
-    var requireAnnotationRegex = new RegExp("\\s*//\\s*@Require\\('(\\w|\\.)*'\\)");
-    var requireLines = [];
-
-    //find start
-    for (var i = 0, size = lines.length; i < size; i++) {
-        var line = lines[i];
-        if (line.match(requireAnnotationRegex)) {
-            requireAnnotationStartIndex = i;
-            break;
-        }
+lintbug.lintTask("updateCopyright", function(lintFile, callback) {
+    var fileContents    = lintFile.getFileContents();
+    var copyright       = getCopyright();
+    var copyrightRegex  = /^(\s*)\/\*(([^.]|[.])+?)Copyright \(c\)(([^.]|[.])+?)\*\/(\s*)/;
+    if (copyrightRegex.test(fileContents)) {
+        fileContents = fileContents.replace(copyrightRegex, copyright + "\n\n");
+    } else {
+        fileContents = copyright + "\n\n" + fileContents;
     }
-
-    if (requireAnnotationStartIndex > -1) {
-        requireAnnotationStopIndex = requireAnnotationStartIndex;
-        for (var i2 = requireAnnotationStartIndex, size2 = lines.length; i2 < size2; i2++) {
-            var line = lines[i];
-            var results = line.match(requireAnnotationRegex);
-            requireLines.push({
-                line: line,
-                requireName: results[1]
-            });
-            if (results) {
-                requireAnnotationStopIndex = i2;
-            }
-        }
-    }
-
-    //var results = line.match(/\s*\/\/\s*@([a-zA-Z][0-9a-zA-Z]*)(?:\((.+)?\))?\s*/);
-    /*if (results) {
-     var annotation = {
-     name: results[1]
-     };
-     var argumentsString = results[2];
-     if (argumentsString !== undefined) {
-     annotation.arguments = _this.parseArguments(argumentsString);
-     }
-     annotations.push(annotation);
-     }*/
-
-
-    //var requireLines = lines.splice(requireAnnotationStartIndex, requireAnnotationStopIndex - requireAnnotationStartIndex);
-    requireLines.sort(function(a, b) {
-
-    });
+    lintFile.setFileContents(fileContents);
+    callback();
 });
+
+
+//-------------------------------------------------------------------------------
+// Helper Methods
+//-------------------------------------------------------------------------------
 
 /**
  * @private
- * @param {string} argumentsString
- * @return {Array.<(string|number)>}
+ * @param {string} fileContents
+ * @returns {Array.<{index: number, line: string}>}
  */
-var parseArguments = function(argumentsString) {
-    var args = [];
-    var parts = argumentsString.split(',');
-    parts.forEach(function(part) {
-        var results = part.match(/\s*('|")(.*?)\1\s*/);
-        if (results) {
-            args.push(results[2]);
-        } else {
-            var num = parseFloat(part);
-            if (isNaN(num)) {
-                throw new Error("Could not parse parameter '" + part + "'");
-            }
-            args.push(num);
-        }
+var generateLines = function(fileContents) {
+    return bugcore.StringUtil.split(fileContents, "\n", function(line, index) {
+        return {
+            index: index,
+            line: line
+        };
     });
-    return args;
+};
+
+var copyright = null;
+/**
+ * @private
+ * @return {string}
+ */
+var getCopyright = function() {
+    if (copyright === null) {
+        var copyrightText   = bugcore.StringUtil.trim(bugfs.readFileSync(__dirname + "/COPYRIGHT", 'utf8'));
+        var copyrightLines  = copyrightText.split("\n");
+        copyright = "/*\n";
+        copyrightLines.forEach(function(copyrightLine) {
+            copyrightLine = bugcore.StringUtil.trim(copyrightLine);
+            if (copyrightLine !== "") {
+                copyright += " * " + copyrightLine + "\n";
+            } else {
+                copyright += " *\n";
+            }
+        });
+        copyright += " */\n";
+    }
+    return copyright;
 };
 
 /**
  * @private
- * @param {string} text
+ * @param {Array.<{index: number, line: string}>} lines
  * @return {string}
  */
-var parseString = function(text) {
-    var results = text.match(/\s*('|")(.*?)\1\s*/);
-    if (results) {
-        return results[2];
-    }
-    return null;
+var mergeLines = function(lines) {
+    var result = "";
+    var first = true;
+    lines.forEach(function(line) {
+        if (first) {
+            result += line.line;
+            first = false;
+        } else {
+            result += "\n" + line.line;
+        }
+    });
+    return result;
+};
+
+/**
+ * @private
+ * @param {string} fileContents
+ * @return {string}
+ */
+var sortRequireAnnotations = function(fileContents) {
+    var lines   = generateLines(fileContents);
+    lines.sort(function(a, b) {
+        var resultsA = a.line.match(/^\s*\/\/\s*@Require\(('|")((?:\w|\.)*)\1\)\s*$/);
+        var resultsB = b.line.match(/^\s*\/\/\s*@Require\(('|")((?:\w|\.)*)\1\)\s*$/);
+
+        if (resultsA && resultsB) {
+            var partsA = resultsA[2].split(".");
+            var partsB = resultsB[2].split(".");
+            var classNameA = partsA.pop();
+            var classNameB = partsB.pop();
+            var packageNameA = partsA.join(".");
+            var packageNameB = partsB.join(".");
+            if (packageNameA < packageNameB) {
+                return -1;
+            }
+            if (packageNameA > packageNameB) {
+                return 1;
+            }
+            if (classNameA < classNameB) {
+                return -1;
+            }
+            if (classNameA > classNameB) {
+                return 1;
+            }
+        }
+        if (a.index < b.index) {
+            return -1;
+        }
+        return 1;
+    });
+    return mergeLines(lines);
+};
+
+/**
+ * @private
+ * @param {string} fileContents
+ * @return {string}
+ */
+var sortBugpackRequires = function(fileContents) {
+    var lines   = generateLines(fileContents);
+    lines.sort(function(a, b) {
+        var resultsA = a.line.match(/^\s*var \w+\s+=\s+bugpack\.require\(('|")((?:\w|\.)*)\1\);\s*$/);
+        var resultsB = b.line.match(/^\s*var \w+\s+=\s+bugpack\.require\(('|")((?:\w|\.)*)\1\);\s*$/);
+
+        if (resultsA && resultsB) {
+            var partsA = resultsA[2].split(".");
+            var partsB = resultsB[2].split(".");
+            var classNameA = partsA.pop();
+            var classNameB = partsB.pop();
+            var packageNameA = partsA.join(".");
+            var packageNameB = partsB.join(".");
+            if (packageNameA < packageNameB) {
+                return -1;
+            }
+            if (packageNameA > packageNameB) {
+                return 1;
+            }
+            if (classNameA < classNameB) {
+                return -1;
+            }
+            if (classNameA > classNameB) {
+                return 1;
+            }
+        }
+        if (a.index < b.index) {
+            return -1;
+        }
+        return 1;
+    });
+    return mergeLines(lines);
 };

@@ -31,7 +31,7 @@ var lintbug             = enableModule("lintbug");
 //-------------------------------------------------------------------------------
 
 buildProperties({
-    bugjs: {
+    lint: {
         targetPaths: [
             "."
         ],
@@ -57,10 +57,14 @@ buildTarget('local').buildFlow(
     series([
         targetTask('lint', {
             properties: {
-                targetPaths: buildProject.getProperty("bugjs.targetPaths"),
-                ignores: buildProject.getProperty("bugjs.ignorePatterns"),
+                targetPaths: buildProject.getProperty("lint.targetPaths"),
+                ignores: buildProject.getProperty("lint.ignorePatterns"),
                 lintTasks: [
-
+                    "ensureNewLineEnding",
+                    "indentEqualSignsForPreClassVars",
+                    "orderBugpackRequires",
+                    "orderRequireAnnotations",
+                    "updateCopyright"
                 ]
             }
         })
@@ -75,7 +79,8 @@ buildTarget('local').buildFlow(
 buildScript({
     dependencies: [
         "bugcore",
-        "bugflow"
+        "bugflow",
+        "bugfs"
     ],
     script: "./lintbug.js"
 });
