@@ -30,9 +30,9 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
 
-    var Class                           = bugpack.require('Class');
-    var EventDispatcher                 = bugpack.require('EventDispatcher');
-    var CallEvent                       = bugpack.require('bugcall.CallEvent');
+    var Class               = bugpack.require('Class');
+    var EventDispatcher     = bugpack.require('EventDispatcher');
+    var CallEvent           = bugpack.require('bugcall.CallEvent');
 
 
     //-------------------------------------------------------------------------------

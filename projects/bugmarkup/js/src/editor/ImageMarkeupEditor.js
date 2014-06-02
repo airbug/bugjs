@@ -30,10 +30,10 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class           = bugpack.require('Class');
-    var Obj             = bugpack.require('Obj');
-    var Fabric          = bugpack.require('fabric.Fabric');
-    var JQuery          = bugpack.require('jquery.JQuery');
+    var Class   = bugpack.require('Class');
+    var Obj     = bugpack.require('Obj');
+    var Fabric  = bugpack.require('fabric.Fabric');
+    var JQuery  = bugpack.require('jquery.JQuery');
 
 
     //-------------------------------------------------------------------------------

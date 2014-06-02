@@ -31,21 +31,21 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Bug         = bugpack.require('Bug');
-    var Class       = bugpack.require('Class');
-    var Obj         = bugpack.require('Obj');
-    var Set         = bugpack.require('Set');
-    var BugFlow     = bugpack.require('bugflow.BugFlow');
+    var Bug                 = bugpack.require('Bug');
+    var Class               = bugpack.require('Class');
+    var Obj                 = bugpack.require('Obj');
+    var Set                 = bugpack.require('Set');
+    var BugFlow             = bugpack.require('bugflow.BugFlow');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var $iterableParallel           = BugFlow.$iterableParallel;
-    var $series                     = BugFlow.$series;
-    var $task                       = BugFlow.$task;
-    var $whileParallel              = BugFlow.$whileParallel;
+    var $iterableParallel   = BugFlow.$iterableParallel;
+    var $series             = BugFlow.$series;
+    var $task               = BugFlow.$task;
+    var $whileParallel      = BugFlow.$whileParallel;
 
 
     //-------------------------------------------------------------------------------

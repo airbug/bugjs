@@ -39,19 +39,19 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                           = bugpack.require('Class');
-    var IDocument                       = bugpack.require('IDocument');
-    var Map                             = bugpack.require('Map');
-    var Obj                             = bugpack.require('Obj');
-    var Set                             = bugpack.require('Set');
-    var TypeUtil                        = bugpack.require('TypeUtil');
-    var ArrayCalculator                 = bugpack.require('bugdelta.ArrayCalculator');
-    var CalculatorResolver              = bugpack.require('bugdelta.CalculatorResolver');
-    var Delta                           = bugpack.require('bugdelta.Delta');
-    var DocumentCalculator              = bugpack.require('bugdelta.DocumentCalculator');
-    var MapCalculator                   = bugpack.require('bugdelta.MapCalculator');
-    var ObjectCalculator                = bugpack.require('bugdelta.ObjectCalculator');
-    var SetCalculator                   = bugpack.require('bugdelta.SetCalculator');
+    var Class               = bugpack.require('Class');
+    var IDocument           = bugpack.require('IDocument');
+    var Map                 = bugpack.require('Map');
+    var Obj                 = bugpack.require('Obj');
+    var Set                 = bugpack.require('Set');
+    var TypeUtil            = bugpack.require('TypeUtil');
+    var ArrayCalculator     = bugpack.require('bugdelta.ArrayCalculator');
+    var CalculatorResolver  = bugpack.require('bugdelta.CalculatorResolver');
+    var Delta               = bugpack.require('bugdelta.Delta');
+    var DocumentCalculator  = bugpack.require('bugdelta.DocumentCalculator');
+    var MapCalculator       = bugpack.require('bugdelta.MapCalculator');
+    var ObjectCalculator    = bugpack.require('bugdelta.ObjectCalculator');
+    var SetCalculator       = bugpack.require('bugdelta.SetCalculator');
 
 
     //-------------------------------------------------------------------------------

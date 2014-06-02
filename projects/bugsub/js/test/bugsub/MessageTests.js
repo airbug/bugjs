@@ -32,21 +32,21 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                   = bugpack.require('Class');
-    var TypeUtil                = bugpack.require('TypeUtil');
-    var BugDouble               = bugpack.require('bugdouble.BugDouble');
-    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var Message                 = bugpack.require('bugsub.Message');
-    var TestTag          = bugpack.require('bugunit.TestTag');
+    var Class           = bugpack.require('Class');
+    var TypeUtil        = bugpack.require('TypeUtil');
+    var BugDouble       = bugpack.require('bugdouble.BugDouble');
+    var BugMeta         = bugpack.require('bugmeta.BugMeta');
+    var Message         = bugpack.require('bugsub.Message');
+    var TestTag         = bugpack.require('bugunit.TestTag');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta                 = BugMeta.context();
-    var spyOnFunction           = BugDouble.spyOnFunction;
-    var test                    = TestTag.test;
+    var bugmeta         = BugMeta.context();
+    var spyOnFunction   = BugDouble.spyOnFunction;
+    var test            = TestTag.test;
 
 
     //-------------------------------------------------------------------------------

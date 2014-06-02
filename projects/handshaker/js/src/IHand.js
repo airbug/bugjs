@@ -27,7 +27,7 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack Modules
     //-------------------------------------------------------------------------------
 
-    var Interface           = bugpack.require('Interface');
+    var Interface   = bugpack.require('Interface');
 
 
     //-------------------------------------------------------------------------------

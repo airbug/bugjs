@@ -30,10 +30,10 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                       = bugpack.require('Class');
-    var Exception                   = bugpack.require('Exception');
-    var Obj                         = bugpack.require('Obj');
-    var RedisEvent                  = bugpack.require('redis.RedisEvent');
+    var Class       = bugpack.require('Class');
+    var Exception   = bugpack.require('Exception');
+    var Obj         = bugpack.require('Obj');
+    var RedisEvent  = bugpack.require('redis.RedisEvent');
 
 
     //-------------------------------------------------------------------------------

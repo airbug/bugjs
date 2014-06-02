@@ -64,11 +64,11 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var $forEachParallel        = BugFlow.$forEachParallel;
-    var $iterableParallel       = BugFlow.$iterableParallel;
-    var $parallel               = BugFlow.$parallel;
-    var $series                 = BugFlow.$series;
-    var $task                   = BugFlow.$task;
+    var $forEachParallel    = BugFlow.$forEachParallel;
+    var $iterableParallel   = BugFlow.$iterableParallel;
+    var $parallel           = BugFlow.$parallel;
+    var $series             = BugFlow.$series;
+    var $task               = BugFlow.$task;
 
 
     //-------------------------------------------------------------------------------

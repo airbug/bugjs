@@ -29,16 +29,16 @@ require('bugpack').context("*", function(bugpack) {
     // Bugpack Modules
     //-------------------------------------------------------------------------------
 
-    var Class               = bugpack.require('Class');
-    var Obj                 = bugpack.require('Obj');
-    var BugTrace            = bugpack.require('bugtrace.BugTrace');
+    var Class       = bugpack.require('Class');
+    var Obj         = bugpack.require('Obj');
+    var BugTrace    = bugpack.require('bugtrace.BugTrace');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var $trace          = BugTrace.$trace;
+    var $trace      = BugTrace.$trace;
 
 
     //-------------------------------------------------------------------------------

@@ -28,8 +28,8 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class =         bugpack.require('Class');
-    var CliFlag =       bugpack.require('bugcli.CliFlag');
+    var Class       = bugpack.require('Class');
+    var CliFlag     = bugpack.require('bugcli.CliFlag');
 
 
     //-------------------------------------------------------------------------------

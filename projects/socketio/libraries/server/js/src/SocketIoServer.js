@@ -30,16 +30,16 @@ require('bugpack').context("*", function(bugpack) {
     // Common Modules
     //-------------------------------------------------------------------------------
 
-    var io              = require('socket.io');
+    var io                  = require('socket.io');
 
 
     //-------------------------------------------------------------------------------
     // BugPack Modules
     //-------------------------------------------------------------------------------
 
-    var Class           = bugpack.require('Class');
-    var EventDispatcher = bugpack.require('EventDispatcher');
-    var Proxy           = bugpack.require('Proxy');
+    var Class               = bugpack.require('Class');
+    var EventDispatcher     = bugpack.require('EventDispatcher');
+    var Proxy               = bugpack.require('Proxy');
 
 
     //-------------------------------------------------------------------------------

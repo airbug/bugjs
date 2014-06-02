@@ -33,28 +33,28 @@ require('bugpack').context("*", function(bugpack) {
     // Common Modules
     //-------------------------------------------------------------------------------
 
-    var express = require('express');
+    var express                 = require('express');
 
 
     //-------------------------------------------------------------------------------
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class =                     bugpack.require('Class');
-    var Obj =                       bugpack.require('Obj');
-    var BugFlow =                   bugpack.require('bugflow.BugFlow');
-    var BugFs =                     bugpack.require('bugfs.BugFs');
-    var ClientPackageRegistry =     bugpack.require('clientjs.ClientPackageRegistry');
+    var Class                   = bugpack.require('Class');
+    var Obj                     = bugpack.require('Obj');
+    var BugFlow                 = bugpack.require('bugflow.BugFlow');
+    var BugFs                   = bugpack.require('bugfs.BugFs');
+    var ClientPackageRegistry   = bugpack.require('clientjs.ClientPackageRegistry');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var $forEachParallel =  BugFlow.$forEachParallel;
-    var $parallel =         BugFlow.$parallel;
-    var $series =           BugFlow.$series;
-    var $task =             BugFlow.$task;
+    var $forEachParallel        = BugFlow.$forEachParallel;
+    var $parallel               = BugFlow.$parallel;
+    var $series                 = BugFlow.$series;
+    var $task                   = BugFlow.$task;
 
 
     //-------------------------------------------------------------------------------

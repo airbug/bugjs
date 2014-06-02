@@ -30,10 +30,10 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class =     bugpack.require('Class');
-    var Obj =       bugpack.require('Obj');
-    var TypeUtil =  bugpack.require('TypeUtil');
-    var AwsObject = bugpack.require('aws.AwsObject');
+    var Class       = bugpack.require('Class');
+    var Obj         = bugpack.require('Obj');
+    var TypeUtil    = bugpack.require('TypeUtil');
+    var AwsObject   = bugpack.require('aws.AwsObject');
 
 
     //-------------------------------------------------------------------------------

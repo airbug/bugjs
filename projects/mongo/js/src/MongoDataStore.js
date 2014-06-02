@@ -38,17 +38,17 @@ require('bugpack').context("*", function(bugpack) {
     // Bugpack Modules
     //-------------------------------------------------------------------------------
 
-    var Bug                     = bugpack.require('Bug');
-    var Class                   = bugpack.require('Class');
-    var Map                     = bugpack.require('Map');
-    var Obj                     = bugpack.require('Obj');
-    var TypeUtil                = bugpack.require('TypeUtil');
-    var EntityDataStore         = bugpack.require('bugentity.EntityDataStore');
-    var ArgTag           = bugpack.require('bugioc.ArgTag');
-    var IProcessModule          = bugpack.require('bugioc.IProcessModule');
-    var ModuleTag        = bugpack.require('bugioc.ModuleTag');
-    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var MongoManager            = bugpack.require('mongo.MongoManager');
+    var Bug                 = bugpack.require('Bug');
+    var Class               = bugpack.require('Class');
+    var Map                 = bugpack.require('Map');
+    var Obj                 = bugpack.require('Obj');
+    var TypeUtil            = bugpack.require('TypeUtil');
+    var EntityDataStore     = bugpack.require('bugentity.EntityDataStore');
+    var ArgTag              = bugpack.require('bugioc.ArgTag');
+    var IProcessModule      = bugpack.require('bugioc.IProcessModule');
+    var ModuleTag           = bugpack.require('bugioc.ModuleTag');
+    var BugMeta             = bugpack.require('bugmeta.BugMeta');
+    var MongoManager        = bugpack.require('mongo.MongoManager');
 
 
     //-------------------------------------------------------------------------------

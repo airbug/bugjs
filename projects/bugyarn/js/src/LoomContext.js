@@ -33,13 +33,13 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Bug                     = bugpack.require('Bug');
-    var Class                   = bugpack.require('Class');
-    var Map                     = bugpack.require('Map');
-    var Obj                     = bugpack.require('Obj');
-    var Weaver                  = bugpack.require('bugyarn.Weaver');
-    var Winder                  = bugpack.require('bugyarn.Winder');
-    var Yarn                    = bugpack.require('bugyarn.Yarn');
+    var Bug     = bugpack.require('Bug');
+    var Class   = bugpack.require('Class');
+    var Map     = bugpack.require('Map');
+    var Obj     = bugpack.require('Obj');
+    var Weaver  = bugpack.require('bugyarn.Weaver');
+    var Winder  = bugpack.require('bugyarn.Winder');
+    var Yarn    = bugpack.require('bugyarn.Yarn');
 
 
     //-------------------------------------------------------------------------------

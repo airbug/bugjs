@@ -28,15 +28,15 @@ require('bugpack').context("*", function(bugpack) {
     // Common Modules
     //-------------------------------------------------------------------------------
 
-    var riakJs = require('riak-js');
+    var riakJs      = require('riak-js');
 
 
     //-------------------------------------------------------------------------------
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Map =       bugpack.require('Map');
-    var TypeUtil =  bugpack.require('TypeUtil');
+    var Map         = bugpack.require('Map');
+    var TypeUtil    = bugpack.require('TypeUtil');
 
 
     //-------------------------------------------------------------------------------

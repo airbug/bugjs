@@ -32,12 +32,12 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var ArgumentBug             = bugpack.require('ArgumentBug');
-    var Bug                     = bugpack.require('Bug');
-    var Class                   = bugpack.require('Class');
-    var Obj                     = bugpack.require('Obj');
-    var Set                     = bugpack.require('Set');
-    var TypeUtil                = bugpack.require('TypeUtil');
+    var ArgumentBug     = bugpack.require('ArgumentBug');
+    var Bug             = bugpack.require('Bug');
+    var Class           = bugpack.require('Class');
+    var Obj             = bugpack.require('Obj');
+    var Set             = bugpack.require('Set');
+    var TypeUtil        = bugpack.require('TypeUtil');
 
 
     //-------------------------------------------------------------------------------

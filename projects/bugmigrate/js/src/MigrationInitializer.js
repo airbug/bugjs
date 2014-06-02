@@ -54,9 +54,9 @@ require('bugpack').context("*", function(bugpack) {
     var bugmeta             = BugMeta.context();
     var module              = ModuleTag.module;
     var property            = PropertyTag.property;
-    var $iterableSeries                             = BugFlow.$iterableSeries;
-    var $series                                     = BugFlow.$series;
-    var $task                                       = BugFlow.$task;
+    var $iterableSeries     = BugFlow.$iterableSeries;
+    var $series             = BugFlow.$series;
+    var $task               = BugFlow.$task;
 
 
     //-------------------------------------------------------------------------------

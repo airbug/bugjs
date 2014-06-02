@@ -29,9 +29,9 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack Modules
     //-------------------------------------------------------------------------------
 
-    var Class               = bugpack.require('Class');
-    var Obj                 = bugpack.require('Obj');
-    var IHand               = bugpack.require('handshaker.IHand');
+    var Class   = bugpack.require('Class');
+    var Obj     = bugpack.require('Obj');
+    var IHand   = bugpack.require('handshaker.IHand');
 
 
     //-------------------------------------------------------------------------------

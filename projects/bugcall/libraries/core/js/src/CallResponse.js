@@ -33,22 +33,22 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                       = bugpack.require('Class');
-    var IObjectable                 = bugpack.require('IObjectable');
-    var Obj                         = bugpack.require('Obj');
-    var UuidGenerator               = bugpack.require('UuidGenerator');
-    var MarshPropertyTag     = bugpack.require('bugmarsh.MarshPropertyTag');
-    var MarshTag             = bugpack.require('bugmarsh.MarshTag');
-    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+    var Class               = bugpack.require('Class');
+    var IObjectable         = bugpack.require('IObjectable');
+    var Obj                 = bugpack.require('Obj');
+    var UuidGenerator       = bugpack.require('UuidGenerator');
+    var MarshPropertyTag    = bugpack.require('bugmarsh.MarshPropertyTag');
+    var MarshTag            = bugpack.require('bugmarsh.MarshTag');
+    var BugMeta             = bugpack.require('bugmeta.BugMeta');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta                     = BugMeta.context();
-    var marsh                       = MarshTag.marsh;
-    var property                    = MarshPropertyTag.property;
+    var bugmeta             = BugMeta.context();
+    var marsh               = MarshTag.marsh;
+    var property            = MarshPropertyTag.property;
 
 
     //-------------------------------------------------------------------------------

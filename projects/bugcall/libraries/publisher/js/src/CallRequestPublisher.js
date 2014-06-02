@@ -38,31 +38,31 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var ArgUtil                 = bugpack.require('ArgUtil');
-    var Class                   = bugpack.require('Class');
-    var Exception               = bugpack.require('Exception');
-    var Obj                     = bugpack.require('Obj');
-    var Set                     = bugpack.require('Set');
-    var CallDefines             = bugpack.require('bugcall.CallDefines');
-    var BugFlow                 = bugpack.require('bugflow.BugFlow');
-    var ArgTag           = bugpack.require('bugioc.ArgTag');
-    var ModuleTag        = bugpack.require('bugioc.ModuleTag');
-    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var BugTrace                = bugpack.require('bugtrace.BugTrace');
+    var ArgUtil             = bugpack.require('ArgUtil');
+    var Class               = bugpack.require('Class');
+    var Exception           = bugpack.require('Exception');
+    var Obj                 = bugpack.require('Obj');
+    var Set                 = bugpack.require('Set');
+    var CallDefines         = bugpack.require('bugcall.CallDefines');
+    var BugFlow             = bugpack.require('bugflow.BugFlow');
+    var ArgTag              = bugpack.require('bugioc.ArgTag');
+    var ModuleTag           = bugpack.require('bugioc.ModuleTag');
+    var BugMeta             = bugpack.require('bugmeta.BugMeta');
+    var BugTrace            = bugpack.require('bugtrace.BugTrace');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                     = ArgTag.arg;
-    var bugmeta                 = BugMeta.context();
-    var module                  = ModuleTag.module;
-    var $iterableParallel       = BugFlow.$iterableParallel;
-    var $parallel               = BugFlow.$parallel;
-    var $series                 = BugFlow.$series;
-    var $task                   = BugFlow.$task;
-    var $traceWithError         = BugTrace.$traceWithError;
+    var arg                 = ArgTag.arg;
+    var bugmeta             = BugMeta.context();
+    var module              = ModuleTag.module;
+    var $iterableParallel   = BugFlow.$iterableParallel;
+    var $parallel           = BugFlow.$parallel;
+    var $series             = BugFlow.$series;
+    var $task               = BugFlow.$task;
+    var $traceWithError     = BugTrace.$traceWithError;
 
 
     //-------------------------------------------------------------------------------

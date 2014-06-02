@@ -38,26 +38,26 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack Modules
     //-------------------------------------------------------------------------------
 
-    var ArgUtil     = bugpack.require('ArgUtil');
-    var Class       = bugpack.require('Class');
-    var Collection  = bugpack.require('Collection');
-    var List        = bugpack.require('List');
-    var Obj         = bugpack.require('Obj');
-    var Set         = bugpack.require('Set');
-    var TypeUtil    = bugpack.require('TypeUtil');
-    var BugFlow     = bugpack.require('bugflow.BugFlow');
-    var ModuleTag   = bugpack.require('bugioc.ModuleTag');
-    var BugMeta     = bugpack.require('bugmeta.BugMeta');
-    var IHand       = bugpack.require('handshaker.IHand');
+    var ArgUtil             = bugpack.require('ArgUtil');
+    var Class               = bugpack.require('Class');
+    var Collection          = bugpack.require('Collection');
+    var List                = bugpack.require('List');
+    var Obj                 = bugpack.require('Obj');
+    var Set                 = bugpack.require('Set');
+    var TypeUtil            = bugpack.require('TypeUtil');
+    var BugFlow             = bugpack.require('bugflow.BugFlow');
+    var ModuleTag           = bugpack.require('bugioc.ModuleTag');
+    var BugMeta             = bugpack.require('bugmeta.BugMeta');
+    var IHand               = bugpack.require('handshaker.IHand');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta     = BugMeta.context();
-    var module      = ModuleTag.module;
-    var $iterableSeries    = BugFlow.$iterableSeries;
+    var bugmeta             = BugMeta.context();
+    var module              = ModuleTag.module;
+    var $iterableSeries     = BugFlow.$iterableSeries;
 
 
     //-------------------------------------------------------------------------------

@@ -29,9 +29,9 @@ require('bugpack').context("*", function(bugpack) {
     // Bugpack Modules
     //-------------------------------------------------------------------------------
 
-    var Class                   = bugpack.require('Class');
-    var Obj                     = bugpack.require('Obj');
-    var DummyMongoQuery         = bugpack.require('mongo.DummyMongoQuery');
+    var Class               = bugpack.require('Class');
+    var Obj                 = bugpack.require('Obj');
+    var DummyMongoQuery     = bugpack.require('mongo.DummyMongoQuery');
 
 
     //-------------------------------------------------------------------------------

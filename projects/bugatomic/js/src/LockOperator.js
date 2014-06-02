@@ -33,13 +33,13 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class               = bugpack.require('Class');
-    var Lock                = bugpack.require('Lock');
-    var LockStriped         = bugpack.require('LockStriped');
-    var Map                 = bugpack.require('Map');
-    var Obj                 = bugpack.require('Obj');
-    var ILockOperator       = bugpack.require('bugatomic.ILockOperator');
-    var BugFlow             = bugpack.require('bugflow.BugFlow');
+    var Class           = bugpack.require('Class');
+    var Lock            = bugpack.require('Lock');
+    var LockStriped     = bugpack.require('LockStriped');
+    var Map             = bugpack.require('Map');
+    var Obj             = bugpack.require('Obj');
+    var ILockOperator   = bugpack.require('bugatomic.ILockOperator');
+    var BugFlow         = bugpack.require('bugflow.BugFlow');
 
 
     //-------------------------------------------------------------------------------

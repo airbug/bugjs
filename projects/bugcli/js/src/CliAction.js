@@ -30,10 +30,10 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class =     bugpack.require('Class');
-    var Obj =       bugpack.require('Obj');
-    var TypeUtil =  bugpack.require('TypeUtil');
-    var CliFlag =   bugpack.require('bugcli.CliFlag');
+    var Class       = bugpack.require('Class');
+    var Obj         = bugpack.require('Obj');
+    var TypeUtil    = bugpack.require('TypeUtil');
+    var CliFlag     = bugpack.require('bugcli.CliFlag');
 
 
     //-------------------------------------------------------------------------------

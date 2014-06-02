@@ -29,9 +29,9 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                   = bugpack.require('Class');
-    var List                    = bugpack.require('List');
-    var AbstractMessageReceiver = bugpack.require('bugmessage.AbstractMessageReceiver');
+    var Class                       = bugpack.require('Class');
+    var List                        = bugpack.require('List');
+    var AbstractMessageReceiver     = bugpack.require('bugmessage.AbstractMessageReceiver');
 
 
     //-------------------------------------------------------------------------------

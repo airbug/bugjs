@@ -33,13 +33,13 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class =         bugpack.require('Class');
-    var List =          bugpack.require('List');
-    var Map =           bugpack.require('Map');
-    var Obj =           bugpack.require('Obj');
-    var Set =           bugpack.require('Set');
-    var TypeUtil =      bugpack.require('TypeUtil');
-    var CliParameter =  bugpack.require('bugcli.CliParameter');
+    var Class           = bugpack.require('Class');
+    var List            = bugpack.require('List');
+    var Map             = bugpack.require('Map');
+    var Obj             = bugpack.require('Obj');
+    var Set             = bugpack.require('Set');
+    var TypeUtil        = bugpack.require('TypeUtil');
+    var CliParameter    = bugpack.require('bugcli.CliParameter');
 
 
     //-------------------------------------------------------------------------------

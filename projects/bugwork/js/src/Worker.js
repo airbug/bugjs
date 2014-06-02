@@ -40,8 +40,8 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var $series                         = BugFlow.$series;
-    var $task                           = BugFlow.$task;
+    var $series     = BugFlow.$series;
+    var $task       = BugFlow.$task;
 
 
     //-------------------------------------------------------------------------------

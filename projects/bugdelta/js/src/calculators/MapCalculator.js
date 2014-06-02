@@ -32,12 +32,12 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                           = bugpack.require('Class');
-    var Map                             = bugpack.require('Map');
-    var Obj                             = bugpack.require('Obj');
-    var TypeUtil                        = bugpack.require('TypeUtil');
-    var DeltaCalculator                 = bugpack.require('bugdelta.DeltaCalculator');
-    var MapChange                       = bugpack.require('bugdelta.MapChange');
+    var Class               = bugpack.require('Class');
+    var Map                 = bugpack.require('Map');
+    var Obj                 = bugpack.require('Obj');
+    var TypeUtil            = bugpack.require('TypeUtil');
+    var DeltaCalculator     = bugpack.require('bugdelta.DeltaCalculator');
+    var MapChange           = bugpack.require('bugdelta.MapChange');
 
 
     //-------------------------------------------------------------------------------

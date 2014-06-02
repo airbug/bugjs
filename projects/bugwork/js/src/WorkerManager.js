@@ -60,9 +60,9 @@ require('bugpack').context("*", function(bugpack) {
     var arg                 = ArgTag.arg;
     var bugmeta             = BugMeta.context();
     var module              = ModuleTag.module;
-    var $iterableParallel               = BugFlow.$iterableParallel;
-    var $series                         = BugFlow.$series;
-    var $task                           = BugFlow.$task;
+    var $iterableParallel   = BugFlow.$iterableParallel;
+    var $series             = BugFlow.$series;
+    var $task               = BugFlow.$task;
 
 
     //-------------------------------------------------------------------------------

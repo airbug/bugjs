@@ -29,17 +29,17 @@ require('bugpack').context("*", function(bugpack) {
     // Common Modules
     //-------------------------------------------------------------------------------
 
-    var tar = require('tar');
-    var zlib = require('zlib');
+    var tar         = require('tar');
+    var zlib        = require('zlib');
 
 
     //-------------------------------------------------------------------------------
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class = bugpack.require('Class');
-    var Obj = bugpack.require('Obj');
-    var Tarball = bugpack.require('bugfs.Tarball');
+    var Class       = bugpack.require('Class');
+    var Obj         = bugpack.require('Obj');
+    var Tarball     = bugpack.require('bugfs.Tarball');
 
 
     //-------------------------------------------------------------------------------

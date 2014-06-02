@@ -30,10 +30,10 @@ require('bugpack').context("*", function(bugpack) {
     // Bugpack Modules
     //-------------------------------------------------------------------------------
 
-    var Class           = bugpack.require('Class');
-    var Map             = bugpack.require('Map');
-    var Obj             = bugpack.require('Obj');
-    var Set             = bugpack.require('Set');
+    var Class   = bugpack.require('Class');
+    var Map     = bugpack.require('Map');
+    var Obj     = bugpack.require('Obj');
+    var Set     = bugpack.require('Set');
 
 
     //-------------------------------------------------------------------------------

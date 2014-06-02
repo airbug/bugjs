@@ -25,32 +25,32 @@
 // Context
 //-------------------------------------------------------------------------------
 
-var bugpack = require('bugpack').context("*", function(bugpack) {
+require('bugpack').context("*", function(bugpack) {
 
     //-------------------------------------------------------------------------------
     // Common Modules
     //-------------------------------------------------------------------------------
 
-    var AWS = require('aws-sdk');
+    var AWS                 = require('aws-sdk');
 
 
     //-------------------------------------------------------------------------------
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class =             bugpack.require('Class');
-    var Obj =               bugpack.require('Obj');
-    var TypeUtil =          bugpack.require('TypeUtil');
-    var EC2SecurityGroup =  bugpack.require('aws.EC2SecurityGroup');
-    var BugFlow =           bugpack.require('bugflow.BugFlow');
+    var Class               = bugpack.require('Class');
+    var Obj                 = bugpack.require('Obj');
+    var TypeUtil            = bugpack.require('TypeUtil');
+    var EC2SecurityGroup    = bugpack.require('aws.EC2SecurityGroup');
+    var BugFlow             = bugpack.require('bugflow.BugFlow');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var $series = BugFlow.$series;
-    var $task = BugFlow.$task;
+    var $series             = BugFlow.$series;
+    var $task               = BugFlow.$task;
 
 
     //-------------------------------------------------------------------------------

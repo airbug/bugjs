@@ -36,35 +36,35 @@ require('bugpack').context("*", function(bugpack) {
     // Common Modules
     //-------------------------------------------------------------------------------
 
-    var AWS         = require('aws-sdk');
-    var zlib        = require('zlib');
+    var AWS                 = require('aws-sdk');
+    var zlib                = require('zlib');
 
 
     //-------------------------------------------------------------------------------
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Bug         = bugpack.require('Bug');
-    var Class       = bugpack.require('Class');
-    var Map         = bugpack.require('Map');
-    var Obj         = bugpack.require('Obj');
-    var Set         = bugpack.require('Set');
-    var TypeUtil    = bugpack.require('TypeUtil');
-    var AwsConfig   = bugpack.require('aws.AwsConfig');
-    var S3Object    = bugpack.require('aws.S3Object');
-    var BugFlow     = bugpack.require('bugflow.BugFlow');
-    var BugFs       = bugpack.require('bugfs.BugFs');
+    var Bug                 = bugpack.require('Bug');
+    var Class               = bugpack.require('Class');
+    var Map                 = bugpack.require('Map');
+    var Obj                 = bugpack.require('Obj');
+    var Set                 = bugpack.require('Set');
+    var TypeUtil            = bugpack.require('TypeUtil');
+    var AwsConfig           = bugpack.require('aws.AwsConfig');
+    var S3Object            = bugpack.require('aws.S3Object');
+    var BugFlow             = bugpack.require('bugflow.BugFlow');
+    var BugFs               = bugpack.require('bugfs.BugFs');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var $forEachParallel        = BugFlow.$forEachParallel;
-    var $if                     = BugFlow.$if;
-    var $iterableParallel       = BugFlow.$iterableParallel;
-    var $series                 = BugFlow.$series;
-    var $task                   = BugFlow.$task;
+    var $forEachParallel    = BugFlow.$forEachParallel;
+    var $if                 = BugFlow.$if;
+    var $iterableParallel   = BugFlow.$iterableParallel;
+    var $series             = BugFlow.$series;
+    var $task               = BugFlow.$task;
 
 
     //-------------------------------------------------------------------------------

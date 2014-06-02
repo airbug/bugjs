@@ -29,7 +29,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class   = bugpack.require('Class');
-    var Obj     =   bugpack.require('Obj');
+    var Obj     = bugpack.require('Obj');
 
 
     //-------------------------------------------------------------------------------

@@ -28,8 +28,8 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                   = bugpack.require('Class');
-    var AbstractResponseChannel = bugpack.require('bugmessage.AbstractResponseChannel');
+    var Class                       = bugpack.require('Class');
+    var AbstractResponseChannel     = bugpack.require('bugmessage.AbstractResponseChannel');
 
 
     //-------------------------------------------------------------------------------

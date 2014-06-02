@@ -29,17 +29,17 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class =     bugpack.require('Class');
-    var Obj =       bugpack.require('Obj');
-    var BugFlow =   bugpack.require('bugflow.BugFlow');
+    var Class       = bugpack.require('Class');
+    var Obj         = bugpack.require('Obj');
+    var BugFlow     = bugpack.require('bugflow.BugFlow');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var $series =   BugFlow.$series;
-    var $task =     BugFlow.$task;
+    var $series     = BugFlow.$series;
+    var $task       = BugFlow.$task;
 
 
     //-------------------------------------------------------------------------------

@@ -28,8 +28,8 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class               = bugpack.require('Class');
-    var Event               = bugpack.require('Event');
+    var Class   = bugpack.require('Class');
+    var Event   = bugpack.require('Event');
 
 
     //-------------------------------------------------------------------------------

@@ -35,26 +35,26 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var BugCallServer           = bugpack.require('bugcall.BugCallServer');
-    var Call                    = bugpack.require('bugcall.Call');
-    var CallConnection          = bugpack.require('bugcall.CallConnection');
-    var CallEvent               = bugpack.require('bugcall.CallEvent');
-    var BugDouble               = bugpack.require('bugdouble.BugDouble');
-    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var TestTag          = bugpack.require('bugunit.TestTag');
-    var BugYarn                 = bugpack.require('bugyarn.BugYarn');
-    var Logger                  = bugpack.require('loggerbug.Logger');
+    var BugCallServer   = bugpack.require('bugcall.BugCallServer');
+    var Call            = bugpack.require('bugcall.Call');
+    var CallConnection  = bugpack.require('bugcall.CallConnection');
+    var CallEvent       = bugpack.require('bugcall.CallEvent');
+    var BugDouble       = bugpack.require('bugdouble.BugDouble');
+    var BugMeta         = bugpack.require('bugmeta.BugMeta');
+    var TestTag         = bugpack.require('bugunit.TestTag');
+    var BugYarn         = bugpack.require('bugyarn.BugYarn');
+    var Logger          = bugpack.require('loggerbug.Logger');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta                 = BugMeta.context();
-    var bugyarn                 = BugYarn.context();
-    var spyOnObject             = BugDouble.spyOnObject;
-    var stubObject              = BugDouble.stubObject;
-    var test                    = TestTag.test;
+    var bugmeta         = BugMeta.context();
+    var bugyarn         = BugYarn.context();
+    var spyOnObject     = BugDouble.spyOnObject;
+    var stubObject      = BugDouble.stubObject;
+    var test            = TestTag.test;
 
 
     //-------------------------------------------------------------------------------

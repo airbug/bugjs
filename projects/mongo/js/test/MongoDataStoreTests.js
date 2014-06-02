@@ -49,8 +49,8 @@ require('bugpack').context("*", function(bugpack) {
     var bugmeta         = BugMeta.context();
     var bugyarn         = BugYarn.context();
     var test            = TestTag.test;
-    var $series                 = BugFlow.$series;
-    var $task                   = BugFlow.$task;
+    var $series         = BugFlow.$series;
+    var $task           = BugFlow.$task;
 
 
     //-------------------------------------------------------------------------------

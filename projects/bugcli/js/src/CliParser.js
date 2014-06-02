@@ -32,12 +32,12 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class =             bugpack.require('Class');
-    var Obj =               bugpack.require('Obj');
-    var CliAction =         bugpack.require('bugcli.CliAction');
-    var CliActionInstance = bugpack.require('bugcli.CliActionInstance');
-    var CliOption =         bugpack.require('bugcli.CliOption');
-    var CliOptionInstance = bugpack.require('bugcli.CliOptionInstance');
+    var Class               = bugpack.require('Class');
+    var Obj                 = bugpack.require('Obj');
+    var CliAction           = bugpack.require('bugcli.CliAction');
+    var CliActionInstance   = bugpack.require('bugcli.CliActionInstance');
+    var CliOption           = bugpack.require('bugcli.CliOption');
+    var CliOptionInstance   = bugpack.require('bugcli.CliOptionInstance');
 
 
     //-------------------------------------------------------------------------------

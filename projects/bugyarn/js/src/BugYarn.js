@@ -29,9 +29,9 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                   = bugpack.require('Class');
-    var Obj                     = bugpack.require('Obj');
-    var LoomContext             = bugpack.require('bugyarn.LoomContext');
+    var Class           = bugpack.require('Class');
+    var Obj             = bugpack.require('Obj');
+    var LoomContext     = bugpack.require('bugyarn.LoomContext');
 
 
     //-------------------------------------------------------------------------------

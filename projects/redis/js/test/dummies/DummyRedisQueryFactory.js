@@ -42,22 +42,22 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                           = bugpack.require('Class');
-    var Obj                             = bugpack.require('Obj');
-    var DummyRedisExistsQuery           = bugpack.require('redis.DummyRedisExistsQuery');
-    var DummyRedisGetQuery              = bugpack.require('redis.DummyRedisGetQuery');
-    var DummyRedisHDelQuery             = bugpack.require('redis.DummyRedisHDelQuery');
-    var DummyRedisHGetQuery             = bugpack.require('redis.DummyRedisHGetQuery');
-    var DummyRedisHSetQuery             = bugpack.require('redis.DummyRedisHSetQuery');
-    var DummyRedisLPushQuery            = bugpack.require('redis.DummyRedisLPushQuery');
-    var DummyRedisMultiQuery            = bugpack.require('redis.DummyRedisMultiQuery');
-    var DummyRedisPublishQuery          = bugpack.require('redis.DummyRedisPublishQuery');
-    var DummyRedisSAddQuery             = bugpack.require('redis.DummyRedisSAddQuery');
-    var DummyRedisSMembersQuery         = bugpack.require('redis.DummyRedisSMembersQuery');
-    var DummyRedisSRemQuery             = bugpack.require('redis.DummyRedisSRemQuery');
-    var DummyRedisSetQuery              = bugpack.require('redis.DummyRedisSetQuery');
-    var DummyRedisSubscribeQuery        = bugpack.require('redis.DummyRedisSubscribeQuery');
-    var DummyRedisUnsubscribeQuery      = bugpack.require('redis.DummyRedisUnsubscribeQuery');
+    var Class                       = bugpack.require('Class');
+    var Obj                         = bugpack.require('Obj');
+    var DummyRedisExistsQuery       = bugpack.require('redis.DummyRedisExistsQuery');
+    var DummyRedisGetQuery          = bugpack.require('redis.DummyRedisGetQuery');
+    var DummyRedisHDelQuery         = bugpack.require('redis.DummyRedisHDelQuery');
+    var DummyRedisHGetQuery         = bugpack.require('redis.DummyRedisHGetQuery');
+    var DummyRedisHSetQuery         = bugpack.require('redis.DummyRedisHSetQuery');
+    var DummyRedisLPushQuery        = bugpack.require('redis.DummyRedisLPushQuery');
+    var DummyRedisMultiQuery        = bugpack.require('redis.DummyRedisMultiQuery');
+    var DummyRedisPublishQuery      = bugpack.require('redis.DummyRedisPublishQuery');
+    var DummyRedisSAddQuery         = bugpack.require('redis.DummyRedisSAddQuery');
+    var DummyRedisSMembersQuery     = bugpack.require('redis.DummyRedisSMembersQuery');
+    var DummyRedisSRemQuery         = bugpack.require('redis.DummyRedisSRemQuery');
+    var DummyRedisSetQuery          = bugpack.require('redis.DummyRedisSetQuery');
+    var DummyRedisSubscribeQuery    = bugpack.require('redis.DummyRedisSubscribeQuery');
+    var DummyRedisUnsubscribeQuery  = bugpack.require('redis.DummyRedisUnsubscribeQuery');
 
 
     //-------------------------------------------------------------------------------

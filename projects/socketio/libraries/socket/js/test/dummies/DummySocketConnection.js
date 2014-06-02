@@ -33,13 +33,13 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var ArgUtil                 = bugpack.require('ArgUtil');
-    var Class                   = bugpack.require('Class');
-    var EventReceiver           = bugpack.require('EventReceiver');
-    var Map                     = bugpack.require('Map');
-    var NodeJsEvent             = bugpack.require('NodeJsEvent');
-    var TypeUtil                = bugpack.require('TypeUtil');
-    var SocketIoConnection      = bugpack.require('socketio.SocketIoConnection');
+    var ArgUtil             = bugpack.require('ArgUtil');
+    var Class               = bugpack.require('Class');
+    var EventReceiver       = bugpack.require('EventReceiver');
+    var Map                 = bugpack.require('Map');
+    var NodeJsEvent         = bugpack.require('NodeJsEvent');
+    var TypeUtil            = bugpack.require('TypeUtil');
+    var SocketIoConnection  = bugpack.require('socketio.SocketIoConnection');
 
 
     //-------------------------------------------------------------------------------

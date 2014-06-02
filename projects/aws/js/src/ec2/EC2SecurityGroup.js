@@ -30,10 +30,10 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class =             bugpack.require('Class');
-    var Set =              bugpack.require('Set');
-    var AwsObject =         bugpack.require('aws.AwsObject');
-    var EC2IpPermission =   bugpack.require('aws.EC2IpPermission');
+    var Class               = bugpack.require('Class');
+    var Set                 = bugpack.require('Set');
+    var AwsObject           = bugpack.require('aws.AwsObject');
+    var EC2IpPermission     = bugpack.require('aws.EC2IpPermission');
 
 
     //-------------------------------------------------------------------------------

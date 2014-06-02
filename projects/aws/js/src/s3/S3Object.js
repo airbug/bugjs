@@ -28,8 +28,8 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class =     bugpack.require('Class');
-    var AwsObject = bugpack.require('aws.AwsObject');
+    var Class       = bugpack.require('Class');
+    var AwsObject   = bugpack.require('aws.AwsObject');
 
 
     //-------------------------------------------------------------------------------

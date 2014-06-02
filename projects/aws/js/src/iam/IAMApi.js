@@ -29,16 +29,16 @@ require('bugpack').context("*", function(bugpack) {
     // Common Modules
     //-------------------------------------------------------------------------------
 
-    var AWS = require('aws-sdk');
+    var AWS         = require('aws-sdk');
 
 
     //-------------------------------------------------------------------------------
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class =     bugpack.require('Class');
-    var Obj =       bugpack.require('Obj');
-    var IAMUser =   bugpack.require('aws.IAMUser');
+    var Class       = bugpack.require('Class');
+    var Obj         = bugpack.require('Obj');
+    var IAMUser     = bugpack.require('aws.IAMUser');
 
 
     //-------------------------------------------------------------------------------

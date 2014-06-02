@@ -53,9 +53,9 @@ require('bugpack').context("*", function(bugpack) {
 
     var bugmeta     = BugMeta.context();
     var module      = ModuleTag.module;
-    var $if                     = BugFlow.$if;
-    var $series                 = BugFlow.$series;
-    var $task                   = BugFlow.$task;
+    var $if         = BugFlow.$if;
+    var $series     = BugFlow.$series;
+    var $task       = BugFlow.$task;
 
 
     //-------------------------------------------------------------------------------

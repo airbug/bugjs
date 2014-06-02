@@ -30,10 +30,10 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                           = bugpack.require('Class');
-    var Set                             = bugpack.require('Set');
-    var DeltaCalculator                 = bugpack.require('bugdelta.DeltaCalculator');
-    var SetChange                       = bugpack.require('bugdelta.SetChange');
+    var Class               = bugpack.require('Class');
+    var Set                 = bugpack.require('Set');
+    var DeltaCalculator     = bugpack.require('bugdelta.DeltaCalculator');
+    var SetChange           = bugpack.require('bugdelta.SetChange');
 
 
     //-------------------------------------------------------------------------------

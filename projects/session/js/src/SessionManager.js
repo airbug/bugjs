@@ -29,9 +29,9 @@ require('bugpack').context("*", function(bugpack) {
     // Common Modules
     //-------------------------------------------------------------------------------
 
-    var Class   = bugpack.require('Class');
-    var Obj     = bugpack.require('Obj');
-    var Session = bugpack.require('session.Session');
+    var Class       = bugpack.require('Class');
+    var Obj         = bugpack.require('Obj');
+    var Session     = bugpack.require('session.Session');
 
 
     //-------------------------------------------------------------------------------

@@ -33,24 +33,24 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                   = bugpack.require('Class');
-    var CallManager             = bugpack.require('bugcall.CallManager');
-    var BugDouble               = bugpack.require('bugdouble.BugDouble');
-    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var TestTag          = bugpack.require('bugunit.TestTag');
-    var BugYarn                 = bugpack.require('bugyarn.BugYarn');
-    var Logger                  = bugpack.require('loggerbug.Logger');
+    var Class           = bugpack.require('Class');
+    var CallManager     = bugpack.require('bugcall.CallManager');
+    var BugDouble       = bugpack.require('bugdouble.BugDouble');
+    var BugMeta         = bugpack.require('bugmeta.BugMeta');
+    var TestTag         = bugpack.require('bugunit.TestTag');
+    var BugYarn         = bugpack.require('bugyarn.BugYarn');
+    var Logger          = bugpack.require('loggerbug.Logger');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta                 = BugMeta.context();
-    var bugyarn                 = BugYarn.context();
-    var spyOnObject             = BugDouble.spyOnObject;
-    var stubObject              = BugDouble.stubObject;
-    var test                    = TestTag.test;
+    var bugmeta         = BugMeta.context();
+    var bugyarn         = BugYarn.context();
+    var spyOnObject     = BugDouble.spyOnObject;
+    var stubObject      = BugDouble.stubObject;
+    var test            = TestTag.test;
 
 
     //-------------------------------------------------------------------------------

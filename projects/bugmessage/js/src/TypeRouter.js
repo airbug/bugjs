@@ -32,10 +32,10 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class               = bugpack.require('Class');
-    var IMessageChannel  = bugpack.require('IMessageChannel');
+    var IMessageChannel     = bugpack.require('IMessageChannel');
     var Map                 = bugpack.require('Map');
     var MessageBroadcaster  = bugpack.require('MessageBroadcaster');
-    var MessageChannel   = bugpack.require('MessageChannel');
+    var MessageChannel      = bugpack.require('MessageChannel');
 
 
     //-------------------------------------------------------------------------------

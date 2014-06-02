@@ -40,30 +40,30 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                   = bugpack.require('Class');
-    var List                    = bugpack.require('List');
-    var Map                     = bugpack.require('Map');
-    var Obj                     = bugpack.require('Obj');
-    var UuidGenerator           = bugpack.require('UuidGenerator');
-    var BugFlow                 = bugpack.require('bugflow.BugFlow');
-    var ArgTag           = bugpack.require('bugioc.ArgTag');
-    var IInitializeModule       = bugpack.require('bugioc.IInitializeModule');
-    var ModuleTag        = bugpack.require('bugioc.ModuleTag');
-    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var Message                 = bugpack.require('bugsub.Message');
-    var Subscriber              = bugpack.require('bugsub.Subscriber');
-    var RedisPubSub             = bugpack.require('redis.RedisPubSub');
+    var Class               = bugpack.require('Class');
+    var List                = bugpack.require('List');
+    var Map                 = bugpack.require('Map');
+    var Obj                 = bugpack.require('Obj');
+    var UuidGenerator       = bugpack.require('UuidGenerator');
+    var BugFlow             = bugpack.require('bugflow.BugFlow');
+    var ArgTag              = bugpack.require('bugioc.ArgTag');
+    var IInitializeModule   = bugpack.require('bugioc.IInitializeModule');
+    var ModuleTag           = bugpack.require('bugioc.ModuleTag');
+    var BugMeta             = bugpack.require('bugmeta.BugMeta');
+    var Message             = bugpack.require('bugsub.Message');
+    var Subscriber          = bugpack.require('bugsub.Subscriber');
+    var RedisPubSub         = bugpack.require('redis.RedisPubSub');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                     = ArgTag.arg;
-    var bugmeta                 = BugMeta.context();
-    var module                  = ModuleTag.module;
-    var $series                 = BugFlow.$series;
-    var $task                   = BugFlow.$task;
+    var arg                 = ArgTag.arg;
+    var bugmeta             = BugMeta.context();
+    var module              = ModuleTag.module;
+    var $series             = BugFlow.$series;
+    var $task               = BugFlow.$task;
 
 
     //-------------------------------------------------------------------------------

@@ -34,7 +34,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class                   = bugpack.require('Class');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var TestTag          = bugpack.require('bugunit.TestTag');
+    var TestTag                 = bugpack.require('bugunit.TestTag');
     var BugYarn                 = bugpack.require('bugyarn.BugYarn');
     var DummySocketConnection   = bugpack.require('socketio.DummySocketConnection');
     var SocketIoConnection      = bugpack.require('socketio.SocketIoConnection');

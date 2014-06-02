@@ -55,7 +55,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var bugmeta                 = BugMeta.context();
     var module                  = ModuleTag.module;
-    var $iterableSeries        = BugFlow.$iterableSeries;
+    var $iterableSeries         = BugFlow.$iterableSeries;
 
 
     //-------------------------------------------------------------------------------

@@ -37,27 +37,27 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                               = bugpack.require('Class');
-    var Application                         = bugpack.require('bugapp.Application');
-    var BugDouble                           = bugpack.require('bugdouble.BugDouble');
-    var ConfigurationTagProcessor    = bugpack.require('bugioc.ConfigurationTagProcessor');
-    var ConfigurationTagScan                   = bugpack.require('bugioc.ConfigurationTagScan');
-    var IocContext                          = bugpack.require('bugioc.IocContext');
-    var ModuleTagProcessor           = bugpack.require('bugioc.ModuleTagProcessor');
-    var ModuleTagScan                          = bugpack.require('bugioc.ModuleTagScan');
-    var BugMeta                             = bugpack.require('bugmeta.BugMeta');
-    var TestTag                      = bugpack.require('bugunit.TestTag');
-    var BugYarn                             = bugpack.require('bugyarn.BugYarn');
+    var Class                       = bugpack.require('Class');
+    var Application                 = bugpack.require('bugapp.Application');
+    var BugDouble                   = bugpack.require('bugdouble.BugDouble');
+    var ConfigurationTagProcessor   = bugpack.require('bugioc.ConfigurationTagProcessor');
+    var ConfigurationTagScan        = bugpack.require('bugioc.ConfigurationTagScan');
+    var IocContext                  = bugpack.require('bugioc.IocContext');
+    var ModuleTagProcessor          = bugpack.require('bugioc.ModuleTagProcessor');
+    var ModuleTagScan               = bugpack.require('bugioc.ModuleTagScan');
+    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+    var TestTag                     = bugpack.require('bugunit.TestTag');
+    var BugYarn                     = bugpack.require('bugyarn.BugYarn');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta                             = BugMeta.context();
-    var bugyarn                             = BugYarn.context();
-    var stubObject                          = BugDouble.stubObject;
-    var test                                = TestTag.test;
+    var bugmeta                     = BugMeta.context();
+    var bugyarn                     = BugYarn.context();
+    var stubObject                  = BugDouble.stubObject;
+    var test                        = TestTag.test;
 
 
     //-------------------------------------------------------------------------------
