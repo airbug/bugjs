@@ -53,8 +53,8 @@ require('bugpack').context("*", function(bugpack) {
     var autowired           = AutowiredTag.autowired;
     var bugmeta             = BugMeta.context();
     var property            = PropertyTag.property;
-    
-    
+
+
     //-------------------------------------------------------------------------------
     // Declare Class
     //-------------------------------------------------------------------------------
@@ -188,8 +188,8 @@ require('bugpack').context("*", function(bugpack) {
         dispose: function() {
             this.destroy();
         },
-        
-        
+
+
         //-------------------------------------------------------------------------------
         // Public Methods
         //-------------------------------------------------------------------------------
@@ -358,7 +358,7 @@ require('bugpack').context("*", function(bugpack) {
             this.containerChildList.add(containerChild);
             containerChild.containerParent = this;
             this.garbageDisposal.addReference(this, containerChild);
-            
+
             this.viewTop.prependViewChildTo(containerChild.getViewTop(), domQuery);
 
             if (this.isActivated()) {
@@ -613,8 +613,8 @@ require('bugpack').context("*", function(bugpack) {
             property("garbageDisposal").ref("garbageDisposal")
         ])
     );
-    
-    
+
+
     //-------------------------------------------------------------------------------
     // Exports
     //-------------------------------------------------------------------------------
