@@ -71,6 +71,7 @@ buildTarget('local').buildFlow(
                 targetPaths: buildProject.getProperty("lint.targetPaths"),
                 ignores: buildProject.getProperty("lint.ignorePatterns"),
                 lintTasks: [
+                    "cleanupExtraSpacingAtEndOfLines",
                     "ensureNewLineEnding",
                     "indentEqualSignsForPreClassVars",
                     "orderBugpackRequires",
