@@ -67,8 +67,6 @@ require('bugpack').context("*", function(bugpack) {
         test: function(test) {
             test.assertEqual(this.entityManagerTag.getModuleName(), "moduleName",
                 "Assert moduleName was successfully set");
-            test.assertEqual(this.entityManagerTag.getTagType(), "EntityManager",
-                "Assert annotationType was successfully set");
         }
     };
 

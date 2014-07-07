@@ -18,7 +18,7 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('Set')
-//@Require('bugioc.IProcessModule')
+//@Require('bugioc.IConfiguringModule')
 //@Require('bugioc.ModuleTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
@@ -46,7 +46,7 @@ require('bugpack').context("*", function(bugpack) {
     var Class                   = bugpack.require('Class');
     var Obj                     = bugpack.require('Obj');
     var Set                     = bugpack.require('Set');
-    var IProcessModule          = bugpack.require('bugioc.IProcessModule');
+    var IConfiguringModule          = bugpack.require('bugioc.IConfiguringModule');
     var ModuleTag               = bugpack.require('bugioc.ModuleTag');
     var PropertyTag             = bugpack.require('bugioc.PropertyTag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
@@ -70,7 +70,7 @@ require('bugpack').context("*", function(bugpack) {
     /**
      * @class
      * @extends {Obj}
-     * @implements {IProcessModule}
+     * @implements {IConfiguringModule}
      */
     var MigrationManager = Class.extend(Obj, {
 
@@ -114,13 +114,13 @@ require('bugpack').context("*", function(bugpack) {
 
 
         //-------------------------------------------------------------------------------
-        // IProcessModule Implementation
+        // IConfiguringModule Implementation
         //-------------------------------------------------------------------------------
 
         /**
          *
          */
-        processModule: function() {
+        configureModule: function() {
             var scan = new MigrationTagScan(bugmeta, new MigrationTagProcessor(this));
             scan.scanAll();
         },
@@ -143,7 +143,7 @@ require('bugpack').context("*", function(bugpack) {
     // Interfaces
     //-------------------------------------------------------------------------------
 
-    Class.implement(MigrationManager, IProcessModule);
+    Class.implement(MigrationManager, IConfiguringModule);
 
 
     //-------------------------------------------------------------------------------

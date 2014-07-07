@@ -53,7 +53,7 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @protected
          */
-        preProcessApplication: function() {
+        preConfigureApplication: function() {
             this.getModuleTagScan().scanBugpacks([
                 "bugmarsh.MarshRegistry",
                 "bugmarsh.Marshaller",

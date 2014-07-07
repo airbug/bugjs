@@ -46,7 +46,7 @@ require('bugpack').context("*", function(bugpack) {
     var RiakDb = {
 
         //-------------------------------------------------------------------------------
-        // Static Variables
+        // Static Properties
         //-------------------------------------------------------------------------------
 
         // TODO BRN: This cache will go stale if there is an update to a test made by another machine. We will want to

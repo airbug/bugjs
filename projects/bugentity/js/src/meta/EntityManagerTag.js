@@ -55,7 +55,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         _constructor: function(moduleName) {
 
-            this._super(moduleName, EntityManagerTag.TYPE);
+            this._super(moduleName);
 
 
             //-------------------------------------------------------------------------------
@@ -95,17 +95,6 @@ require('bugpack').context("*", function(bugpack) {
             return this;
         }
     });
-
-
-    //-------------------------------------------------------------------------------
-    // Static Properties
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @static
-     * @const {string}
-     */
-    EntityManagerTag.TYPE = "EntityManager";
 
 
     //-------------------------------------------------------------------------------

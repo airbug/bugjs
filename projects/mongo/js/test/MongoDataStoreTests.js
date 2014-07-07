@@ -112,7 +112,7 @@ require('bugpack').context("*", function(bugpack) {
         }
     };
 
-    var mongoDataStoreProcessSchemaTest = {
+    var mongoDataStoreConfigureSchemaTest = {
 
         //-------------------------------------------------------------------------------
         // Setup Test
@@ -137,8 +137,8 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         test: function(test) {
-            this.mongoDataStore.processed = true;
-            this.mongoDataStore.processSchema(this.testEntitySchema);
+            this.mongoDataStore.configured = true;
+            this.mongoDataStore.configureSchema(this.testEntitySchema);
             var mongooseModel   = this.mongoDataStore.getMongooseModelForName(this.testEntityName);
             var mongooseSchema  = mongooseModel.schema;
             var expectedSchemaObject = {
@@ -150,7 +150,7 @@ require('bugpack').context("*", function(bugpack) {
                 }
             };
             test.assertEqual(JSON.stringify(mongooseSchema.schemaObject), JSON.stringify(expectedSchemaObject),
-                "Assert processSchema is returning expected result");
+                "Assert configureSchema is returning expected result");
         }
     };
 
@@ -163,7 +163,7 @@ require('bugpack').context("*", function(bugpack) {
         test().name("MongoDataStore - instantiation test")
     );
 
-    bugmeta.tag(mongoDataStoreProcessSchemaTest).with(
-        test().name("MongoDataStore - #processSchema test")
+    bugmeta.tag(mongoDataStoreConfigureSchemaTest).with(
+        test().name("MongoDataStore - #configureSchema test")
     );
 });

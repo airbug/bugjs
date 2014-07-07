@@ -17,11 +17,7 @@
 //@Require('Class')
 //@Require('Event')
 //@Require('EventDispatcher')
-//@Require('bugioc.ConfigurationTagProcessor')
-//@Require('bugioc.ConfigurationTagScan')
-//@Require('bugioc.IocContext')
-//@Require('bugioc.ModuleTagProcessor')
-//@Require('bugioc.ModuleTagScan')
+//@Require('bugioc.BugIoc')
 //@Require('bugmeta.BugMeta')
 
 
@@ -38,11 +34,7 @@ require('bugpack').context("*", function(bugpack) {
     var Class                       = bugpack.require('Class');
     var Event                       = bugpack.require('Event');
     var EventDispatcher             = bugpack.require('EventDispatcher');
-    var ConfigurationTagProcessor   = bugpack.require('bugioc.ConfigurationTagProcessor');
-    var ConfigurationTagScan        = bugpack.require('bugioc.ConfigurationTagScan');
-    var IocContext                  = bugpack.require('bugioc.IocContext');
-    var ModuleTagProcessor          = bugpack.require('bugioc.ModuleTagProcessor');
-    var ModuleTagScan               = bugpack.require('bugioc.ModuleTagScan');
+    var BugIoc                      = bugpack.require('bugioc.BugIoc');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
 
@@ -79,38 +71,25 @@ require('bugpack').context("*", function(bugpack) {
              * @private
              * @type {IocContext}
              */
-            this.iocContext         = new IocContext();
-
-            /**
-             * @private
-             * @type {ConfigurationTagScan}
-             */
-            this.configurationTagScan  = new ConfigurationTagScan(BugMeta.context(), new ConfigurationTagProcessor(this.iocContext));
+            this.iocContext             = BugIoc.context();
 
             /**
              * @private
              * @type {ModuleTagScan}
              */
-            this.moduleTagScan         = new ModuleTagScan(BugMeta.context(), new ModuleTagProcessor(this.iocContext));
+            this.moduleTagScan          = BugIoc.moduleScan(BugMeta.context());
 
             /**
              * @private
              * @type {string}
              */
-            this.state              = Application.States.STOPPED;
+            this.state                  = Application.States.STOPPED;
         },
 
 
         //-------------------------------------------------------------------------------
         // Getters and Setters
         //-------------------------------------------------------------------------------
-
-        /**
-         * @return {ConfigurationTagScan}
-         */
-        getConfigurationTagScan: function() {
-            return this.configurationTagScan;
-        },
 
         /**
          * @return {IocContext}
@@ -199,7 +178,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         initializeApplication: function() {
             var _this = this;
-            this.iocContext.initialize(function(throwable) {
+            this.iocContext.start(function(throwable) {
                 if (!throwable) {
                     _this.state = Application.States.STARTED;
                     _this.dispatchStarted();
@@ -212,15 +191,15 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @protected
          */
-        preProcessApplication: function() {
+        preConfigureApplication: function() {
 
         },
 
         /**
          * @protected
          */
-        processApplication: function() {
-            this.iocContext.process();
+        configureApplication: function() {
+            this.iocContext.generate();
         },
 
 
@@ -257,8 +236,8 @@ require('bugpack').context("*", function(bugpack) {
          */
         startApplication: function() {
             this.state  = Application.States.STARTING;
-            this.preProcessApplication();
-            this.processApplication();
+            this.preConfigureApplication();
+            this.configureApplication();
             this.initializeApplication();
         },
 
@@ -268,7 +247,7 @@ require('bugpack').context("*", function(bugpack) {
         stopApplication: function() {
             var _this   = this;
             this.state  = Application.States.STOPPING;
-            this.iocContext.deinitialize(function(throwable) {
+            this.iocContext.stop(function(throwable) {
                 if (!throwable) {
                     _this.state = Application.States.STOPPED;
                     _this.dispatchStopped();

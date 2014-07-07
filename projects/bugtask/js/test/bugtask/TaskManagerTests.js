@@ -77,7 +77,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var setupTaskManager = function(yarn, setupObject, callback) {
-        setupObject.marshRegistry.processModule();
+        setupObject.marshRegistry.configureModule();
         $series([
             $task(function(flow) {
                 setupObject.blockingRedisClient.connect(function(throwable) {

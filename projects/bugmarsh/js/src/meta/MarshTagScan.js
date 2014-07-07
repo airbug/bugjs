@@ -16,7 +16,7 @@
 
 //@Require('Class')
 //@Require('bugmarsh.MarshTag')
-//@Require('bugmeta.TagScan')
+//@Require('bugmeta.TagClassTagScan')
 
 
 //-------------------------------------------------------------------------------
@@ -29,9 +29,9 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class       = bugpack.require('Class');
-    var MarshTag    = bugpack.require('bugmarsh.MarshTag');
-    var TagScan     = bugpack.require('bugmeta.TagScan');
+    var Class               = bugpack.require('Class');
+    var MarshTag            = bugpack.require('bugmarsh.MarshTag');
+    var TagClassTagScan     = bugpack.require('bugmeta.TagClassTagScan');
 
 
     //-------------------------------------------------------------------------------
@@ -40,9 +40,9 @@ require('bugpack').context("*", function(bugpack) {
 
     /**
      * @class
-     * @extends {TagScan}
+     * @extends {TagClassTagScan}
      */
-    var MarshTagScan = Class.extend(TagScan, {
+    var MarshTagScan = Class.extend(TagClassTagScan, {
 
         _name: "bugmarsh.MarshTagScan",
 

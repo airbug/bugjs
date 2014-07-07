@@ -16,7 +16,7 @@
 
 //@Require('Class')
 //@Require('bugentity.EntityManagerTag')
-//@Require('bugmeta.TagScan')
+//@Require('bugmeta.TagClassTagScan')
 
 
 //-------------------------------------------------------------------------------
@@ -31,7 +31,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class               = bugpack.require('Class');
     var EntityManagerTag    = bugpack.require('bugentity.EntityManagerTag');
-    var TagScan             = bugpack.require('bugmeta.TagScan');
+    var TagClassTagScan     = bugpack.require('bugmeta.TagClassTagScan');
 
 
     //-------------------------------------------------------------------------------
@@ -40,9 +40,9 @@ require('bugpack').context("*", function(bugpack) {
 
     /**
      * @class
-     * @extends {TagScan}
+     * @extends {TagClassTagScan}
      */
-    var EntityManagerTagScan = Class.extend(TagScan, {
+    var EntityManagerTagScan = Class.extend(TagClassTagScan, {
 
         _name: "bugentity.EntityManagerTagScan",
 
@@ -57,7 +57,7 @@ require('bugpack').context("*", function(bugpack) {
          * @param {EntityManagerTagProcessor} processor
          */
         _constructor: function(metaContext, processor) {
-            this._super(metaContext, processor, EntityManagerTag.TYPE);
+            this._super(metaContext, processor, EntityManagerTag.getClass());
         }
     });
 

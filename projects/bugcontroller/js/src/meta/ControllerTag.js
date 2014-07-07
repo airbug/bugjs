@@ -41,33 +41,8 @@ require('bugpack').context("*", function(bugpack) {
      * @extends {ModuleTag}
      */
     var ControllerTag = Class.extend(ModuleTag, {
-
-        _name: "bugcontroller.ControllerTag",
-
-
-        //-------------------------------------------------------------------------------
-        // Constructor
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @constructs
-         * @param {string} moduleName
-         */
-        _constructor: function(moduleName) {
-            this._super(moduleName, ControllerTag.TYPE);
-        }
+        _name: "bugcontroller.ControllerTag"
     });
-
-
-    //-------------------------------------------------------------------------------
-    // Static Properties
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @static
-     * @const {string}
-     */
-    ControllerTag.TYPE = "BugController";
 
 
     //-------------------------------------------------------------------------------

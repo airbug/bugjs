@@ -15,7 +15,7 @@
 //@Export('bugservice.ServiceTagScan')
 
 //@Require('Class')
-//@Require('bugmeta.TagScan')
+//@Require('bugmeta.TagClassTagScan')
 //@Require('bugservice.ServiceTag')
 
 
@@ -29,9 +29,9 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class       = bugpack.require('Class');
-    var TagScan     = bugpack.require('bugmeta.TagScan');
-    var ServiceTag  = bugpack.require('bugservice.ServiceTag');
+    var Class               = bugpack.require('Class');
+    var TagClassTagScan     = bugpack.require('bugmeta.TagClassTagScan');
+    var ServiceTag          = bugpack.require('bugservice.ServiceTag');
 
 
     //-------------------------------------------------------------------------------
@@ -40,9 +40,9 @@ require('bugpack').context("*", function(bugpack) {
 
     /**
      * @class
-     * @extends {TagScan}
+     * @extends {TagClassTagScan}
      */
-    var ServiceTagScan = Class.extend(TagScan, {
+    var ServiceTagScan = Class.extend(TagClassTagScan, {
 
         _name: "bugservice.ServiceTagScan",
 
@@ -57,7 +57,7 @@ require('bugpack').context("*", function(bugpack) {
          * @param {ServiceTagProcessor} processor
          */
         _constructor: function(metaContext, processor) {
-            this._super(metaContext, processor, ServiceTag.TYPE);
+            this._super(metaContext, processor, ServiceTag.getClass());
         }
     });
 

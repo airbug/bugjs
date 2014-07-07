@@ -54,7 +54,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         _constructor: function() {
 
-            this._super(AutowiredTag.TYPE);
+            this._super();
 
 
             //-------------------------------------------------------------------------------
@@ -94,17 +94,6 @@ require('bugpack').context("*", function(bugpack) {
             return this;
         }
     });
-
-
-    //-------------------------------------------------------------------------------
-    // Static Properties
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @static
-     * @const {string}
-     */
-    AutowiredTag.TYPE = "Autowired";
 
 
     //-------------------------------------------------------------------------------

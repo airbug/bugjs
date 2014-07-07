@@ -63,7 +63,6 @@ require('bugpack').context("*", function(bugpack) {
         WORKER_THROWABLE: "WorkerDefines:WorkerThrowable"
     };
 
-
     /**
      * @static
      * @enum {string}

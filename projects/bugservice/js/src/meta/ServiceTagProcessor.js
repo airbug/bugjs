@@ -96,9 +96,10 @@ require('bugpack').context("*", function(bugpack) {
          * @param {*} service
          * @param {string} methodName
          * @param {List.<string>} paramList
+         * @return {ServiceRoute}
          */
         factoryServiceRoute: function(service, methodName, paramList) {
-            new ServiceRoute(service, methodName, paramList);
+            return new ServiceRoute(service, methodName, paramList);
         },
 
         /**
@@ -119,6 +120,13 @@ require('bugpack').context("*", function(bugpack) {
             });
         }
     });
+
+
+    //-------------------------------------------------------------------------------
+    // Implement Interfaces
+    //-------------------------------------------------------------------------------
+
+    Class.implement(ServiceTagProcessor, ITagProcessor);
 
 
     //-------------------------------------------------------------------------------

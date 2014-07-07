@@ -21,7 +21,7 @@
 //@Require('Obj')
 //@Require('bugentity.EntityTagProcessor')
 //@Require('bugentity.EntityTagScan')
-//@Require('bugioc.IProcessModule')
+//@Require('bugioc.IConfiguringModule')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 
@@ -42,7 +42,7 @@ require('bugpack').context("*", function(bugpack) {
     var Obj                 = bugpack.require('Obj');
     var EntityTagProcessor  = bugpack.require('bugentity.EntityTagProcessor');
     var EntityTagScan       = bugpack.require('bugentity.EntityTagScan');
-    var IProcessModule      = bugpack.require('bugioc.IProcessModule');
+    var IConfiguringModule      = bugpack.require('bugioc.IConfiguringModule');
     var ModuleTag           = bugpack.require('bugioc.ModuleTag');
     var BugMeta             = bugpack.require('bugmeta.BugMeta');
 
@@ -62,7 +62,7 @@ require('bugpack').context("*", function(bugpack) {
     /**
      * @class
      * @extends {Obj}
-     * @implements {IProcessModule}
+     * @implements {IConfiguringModule}
      */
     var SchemaManager = Class.extend(Obj, {
 
@@ -101,20 +101,20 @@ require('bugpack').context("*", function(bugpack) {
              * @private
              * @type {boolean}
              */
-            this.processed          = false;
+            this.configured         = false;
         },
 
 
         //-------------------------------------------------------------------------------
-        // IProcessModule Implementation
+        // IConfiguringModule Implementation
         //-------------------------------------------------------------------------------
 
         /**
          *
          */
-        processModule: function() {
-            if (!this.processed) {
-                this.processed = true;
+        configureModule: function() {
+            if (!this.configured) {
+                this.configured = true;
                 var entityTagScan = new EntityTagScan(bugmeta, new EntityTagProcessor(this));
                 entityTagScan.scanAll();
             } else {
@@ -131,7 +131,7 @@ require('bugpack').context("*", function(bugpack) {
          * @return {ICollection.<EntitySchema>}
          */
         getSchemaCollection: function() {
-            this.assertProcessed();
+            this.assertConfigured();
             return this.nameToSchemaMap.getValueCollection();
         },
 
@@ -140,7 +140,7 @@ require('bugpack').context("*", function(bugpack) {
          * @return {EntitySchema}
          */
         getSchemaByClass: function(_class) {
-            this.assertProcessed();
+            this.assertConfigured();
             return this.classToSchemaMap.get(_class);
         },
 
@@ -149,7 +149,7 @@ require('bugpack').context("*", function(bugpack) {
          * @return {EntitySchema}
          */
         getSchemaByName: function(name) {
-            this.assertProcessed();
+            this.assertConfigured();
             return this.nameToSchemaMap.get(name);
         },
 
@@ -158,7 +158,7 @@ require('bugpack').context("*", function(bugpack) {
          * @return {boolean}
          */
         hasSchemaForClass: function(_class) {
-            this.assertProcessed();
+            this.assertConfigured();
             return this.classToSchemaMap.containsKey(_class);
         },
 
@@ -167,7 +167,7 @@ require('bugpack').context("*", function(bugpack) {
          * @return {boolean}
          */
         hasSchemaForName: function(name) {
-            this.assertProcessed();
+            this.assertConfigured();
             return this.nameToSchemaMap.containsKey(name);
         },
 
@@ -193,8 +193,8 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @private
          */
-        assertProcessed: function() {
-            if (!this.processed) {
+        assertConfigured: function() {
+            if (!this.configured) {
                 throw new Bug("AssertFailed", {}, "Module 'SchemaManager' has not been processed");
             }
         }
@@ -205,7 +205,7 @@ require('bugpack').context("*", function(bugpack) {
     // Interfaces
     //-------------------------------------------------------------------------------
 
-    Class.implement(SchemaManager, IProcessModule);
+    Class.implement(SchemaManager, IConfiguringModule);
 
 
     //-------------------------------------------------------------------------------

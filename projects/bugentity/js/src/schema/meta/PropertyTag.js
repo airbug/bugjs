@@ -55,7 +55,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         _constructor: function(propertyName) {
 
-            this._super("Property");
+            this._super();
 
 
             //-------------------------------------------------------------------------------

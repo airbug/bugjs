@@ -20,6 +20,7 @@
 //@Require('Event')
 //@Require('EventDispatcher')
 //@Require('Exception')
+//@Require('StateMachine')
 //@Require('bugflow.BugFlow')
 //@Require('bugwork.WorkerDefines')
 //@Require('bugwork.WorkerProcess')
@@ -41,6 +42,7 @@ require('bugpack').context("*", function(bugpack) {
     var Event               = bugpack.require('Event');
     var EventDispatcher     = bugpack.require('EventDispatcher');
     var Exception           = bugpack.require('Exception');
+    var StateMachine        = bugpack.require('StateMachine');
     var BugFlow             = bugpack.require('bugflow.BugFlow');
     var WorkerDefines       = bugpack.require('bugwork.WorkerDefines');
     var WorkerProcess       = bugpack.require('bugwork.WorkerProcess');
@@ -138,9 +140,23 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
-             * @type {WorkerDefines.State}
+             * @type {StateMachine}
              */
-            this.workerState            = WorkerDefines.State.NOT_READY;
+            this.workerStateMachine     = new StateMachine({
+                initialState: WorkerDefines.State.NOT_READY,
+                states: [
+                    WorkerDefines.State.NOT_READY,
+                    WorkerDefines.State.READY,
+                    WorkerDefines.State.RUNNING
+                ]
+            });
+
+
+            //-------------------------------------------------------------------------------
+            // Setup
+            //-------------------------------------------------------------------------------
+
+            this.workerStateMachine.setParentPropagator(this);
         },
 
 
@@ -170,10 +186,10 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @return {WorkerDefines.State}
+         * @return {(WorkerDefines.State|string)}
          */
         getWorkerState: function() {
-            return this.workerState;
+            return this.workerStateMachine.getCurrentState();
         },
 
 
@@ -206,14 +222,14 @@ require('bugpack').context("*", function(bugpack) {
          * @return {boolean}
          */
         isReady: function() {
-            return this.workerState === WorkerDefines.State.READY;
+            return this.getWorkerState() === WorkerDefines.State.READY;
         },
 
         /**
          * @return {boolean}
          */
         isRunning: function() {
-            return this.workerState === WorkerDefines.State.RUNNING;
+            return this.getWorkerState() === WorkerDefines.State.RUNNING;
         },
 
 
@@ -303,6 +319,7 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
+         * @protected
          * @param {WorkerProcess} workerProcess
          */
         updateWorkerProcess: function(workerProcess) {
@@ -318,9 +335,8 @@ require('bugpack').context("*", function(bugpack) {
          * @param {WorkerDefines.State} workerState
          */
         updateWorkerState: function(workerState) {
-            this.workerState = workerState;
             this.desiredWorkerState = workerState;
-            this.dispatchStateChanged();
+            this.workerStateMachine.changeState(workerState);
         },
 
 
@@ -366,7 +382,7 @@ require('bugpack').context("*", function(bugpack) {
                         _this.dispatchThrowable(throwable);
                     }
                 });
-            } else if (this.workerState === WorkerDefines.State.RUNNING) {
+            } else if (this.isRunning()) {
                 this.alertRestartWorker();
                 this.restartWorker(function(throwable) {
                     if (throwable) {
@@ -391,7 +407,7 @@ require('bugpack').context("*", function(bugpack) {
         cleanupWorkerProcess: function() {
             this.removeProcessListeners();
             this.workerProcess = null;
-            this.workerState = WorkerDefines.State.NOT_READY;
+            this.updateWorkerState(WorkerDefines.State.NOT_READY);
         },
 
         /**
@@ -403,20 +419,11 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @private
-         */
-        dispatchStateChanged: function() {
-            this.dispatchEvent(new Event(WorkerContext.EventTypes.STATE_CHANGED, {
-                workerState: this.workerState
-            }));
-        },
-
-        /**
-         * @private
          * @param {Throwable} throwable
          */
         dispatchThrowable: function(throwable) {
-            this.dispatchEvent(new Event(WorkerContext.EventTypes.STATE_CHANGED, {
-                throwable: this.throwable
+            this.dispatchEvent(new Event(WorkerContext.EventTypes.THROWABLE, {
+                throwable: throwable
             }));
         },
 
@@ -463,7 +470,6 @@ require('bugpack').context("*", function(bugpack) {
      */
     WorkerContext.EventTypes = {
         ALERT_RESTARTED: "WorkerContext:AlertRestarted",
-        STATE_CHANGED: "WorkerContext:StateChanged",
         THROWABLE: "WorkerContext:Throwable"
     };
 

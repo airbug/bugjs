@@ -17,8 +17,6 @@
 //@Require('Class')
 //@Require('bugapp.Application')
 //@Require('bugdouble.BugDouble')
-//@Require('bugioc.ConfigurationTagProcessor')
-//@Require('bugioc.ConfigurationTagScan')
 //@Require('bugioc.IocContext')
 //@Require('bugioc.ModuleTagProcessor')
 //@Require('bugioc.ModuleTagScan')
@@ -40,8 +38,6 @@ require('bugpack').context("*", function(bugpack) {
     var Class                       = bugpack.require('Class');
     var Application                 = bugpack.require('bugapp.Application');
     var BugDouble                   = bugpack.require('bugdouble.BugDouble');
-    var ConfigurationTagProcessor   = bugpack.require('bugioc.ConfigurationTagProcessor');
-    var ConfigurationTagScan        = bugpack.require('bugioc.ConfigurationTagScan');
     var IocContext                  = bugpack.require('bugioc.IocContext');
     var ModuleTagProcessor          = bugpack.require('bugioc.ModuleTagProcessor');
     var ModuleTagScan               = bugpack.require('bugioc.ModuleTagScan');
@@ -94,8 +90,6 @@ require('bugpack').context("*", function(bugpack) {
                 "Assert instance of Application");
             test.assertEqual(this.testApplication.getState(), Application.States.STOPPED,
                 "Assert .state defaults to Application.States.STOPPED");
-            test.assertTrue(Class.doesExtend(this.testApplication.getConfigurationTagScan(), ConfigurationTagScan),
-                "Assert .configurationTagScan is an instance of ConfigurationTagScan");
             test.assertTrue(Class.doesExtend(this.testApplication.getIocContext(), IocContext),
                 "Assert .iocContext is an instance of IocContext");
             test.assertTrue(Class.doesExtend(this.testApplication.getModuleTagScan(), ModuleTagScan),

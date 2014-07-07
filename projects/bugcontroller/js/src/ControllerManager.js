@@ -20,9 +20,12 @@
 //@Require('Obj')
 //@Require('Set')
 //@Require('bugcontroller.Controller')
+//@Require('bugcontroller.ControllerTag')
 //@Require('bugflow.BugFlow')
 //@Require('bugioc.ArgTag')
+//@Require('bugioc.IInitializingModule')
 //@Require('bugioc.ModuleTag')
+//@Require('bugioc.ModuleProcessorTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -41,8 +44,11 @@ require('bugpack').context("*", function(bugpack) {
     var Obj                 = bugpack.require('Obj');
     var Set                 = bugpack.require('Set');
     var Controller          = bugpack.require('bugcontroller.Controller');
+    var ControllerTag       = bugpack.require('bugcontroller.ControllerTag');
     var BugFlow             = bugpack.require('bugflow.BugFlow');
     var ArgTag              = bugpack.require('bugioc.ArgTag');
+    var IInitializingModule = bugpack.require('bugioc.IInitializingModule');
+    var ModuleProcessorTag  = bugpack.require('bugioc.ModuleProcessorTag');
     var ModuleTag           = bugpack.require('bugioc.ModuleTag');
     var BugMeta             = bugpack.require('bugmeta.BugMeta');
 
@@ -54,6 +60,7 @@ require('bugpack').context("*", function(bugpack) {
     var arg                 = ArgTag.arg;
     var bugmeta             = BugMeta.context();
     var module              = ModuleTag.module;
+    var moduleProcessor     = ModuleProcessorTag.moduleProcessor;
     var $iterableParallel   = BugFlow.$iterableParallel;
 
 
@@ -76,8 +83,9 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @constructs
+         * @param {MetaContext} metaContext
          */
-        _constructor: function() {
+        _constructor: function(metaContext) {
 
             this._super();
 
@@ -85,6 +93,12 @@ require('bugpack').context("*", function(bugpack) {
             //-------------------------------------------------------------------------------
             // Private Properties
             //-------------------------------------------------------------------------------
+
+            /**
+             * @private
+             * @type {MetaContext}
+             */
+            this.metaContext            = metaContext;
 
             /**
              * @private
@@ -99,6 +113,13 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
+         * @return {MetaContext}
+         */
+        getMetaContext: function() {
+            return this.metaContext;
+        },
+
+        /**
          * @return {Set.<Controller>}
          */
         getRegisteredControllerSet: function() {
@@ -107,18 +128,34 @@ require('bugpack').context("*", function(bugpack) {
 
 
         //-------------------------------------------------------------------------------
-        // Public Methods
+        // IInitializingModule Implementation
         //-------------------------------------------------------------------------------
 
         /**
          * @param {function(Throwable=)} callback
          */
-        initialize: function(callback) {
+        initializeModule: function(callback) {
             $iterableParallel(this.registeredControlerSet, function(flow, controller) {
                 controller.configure(function(throwable) {
                     flow.complete(throwable);
                 });
             }).execute(callback);
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Public Methods
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @param {*} module
+         */
+        processModuleForController: function(module) {
+            var moduleClass = module.getClass();
+            var tags        = this.metaContext.getTagsByReference(moduleClass);
+            if (tags.contains(ControllerTag)) {
+                this.registerController(module);
+            }
         },
 
         /**
@@ -135,11 +172,22 @@ require('bugpack').context("*", function(bugpack) {
 
 
     //-------------------------------------------------------------------------------
+    // Implement Interfaces
+    //-------------------------------------------------------------------------------
+
+    Class.implement(ControllerManager, IInitializingModule);
+
+
+    //-------------------------------------------------------------------------------
     // BugMeta
     //-------------------------------------------------------------------------------
 
     bugmeta.tag(ControllerManager).with(
         module("controllerManager")
+            .args([
+                arg().ref("metaContext")
+            ]),
+        moduleProcessor().method("")
     );
 
 

@@ -16,7 +16,6 @@
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('bugioc.IProcessModule')
 
 
 //-------------------------------------------------------------------------------
@@ -31,7 +30,6 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class           = bugpack.require('Class');
     var Obj             = bugpack.require('Obj');
-    var IProcessModule  = bugpack.require('bugioc.IProcessModule');
 
 
     //-------------------------------------------------------------------------------
@@ -41,7 +39,6 @@ require('bugpack').context("*", function(bugpack) {
     /**
      * @class
      * @extends {Obj}
-     * @implements {IProcessModule}
      */
     var Controller = Class.extend(Obj, {
 
@@ -54,9 +51,8 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @constructs
-         * @param {ControllerManager} controllerManager
          */
-        _constructor: function(controllerManager) {
+        _constructor: function() {
 
             this._super();
 
@@ -70,12 +66,6 @@ require('bugpack').context("*", function(bugpack) {
              * @type {boolean}
              */
             this.configured                 = false;
-
-            /**
-             * @private
-             * @type {ControllerManager}
-             */
-            this.controllerManager          = controllerManager;
         },
 
 
@@ -88,25 +78,6 @@ require('bugpack').context("*", function(bugpack) {
          */
         isConfigured: function() {
             return this.configured;
-        },
-
-        /**
-         * @return {ControllerManager}
-         */
-        getControllerManager: function() {
-            return this.controllerManager;
-        },
-
-
-        //-------------------------------------------------------------------------------
-        // IProcessModule Implementation
-        //-------------------------------------------------------------------------------
-
-        /**
-         *
-         */
-        processModule: function() {
-            this.controllerManager.registerController(this);
         },
 
 
@@ -155,13 +126,6 @@ require('bugpack').context("*", function(bugpack) {
             callback();
         }
     });
-
-
-    //-------------------------------------------------------------------------------
-    // Implement Interfaces
-    //-------------------------------------------------------------------------------
-
-    Class.implement(Controller, IProcessModule);
 
 
     //-------------------------------------------------------------------------------

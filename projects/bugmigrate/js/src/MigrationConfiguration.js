@@ -19,7 +19,6 @@
 //@Require('Obj')
 //@Require('bugioc.ArgTag')
 //@Require('bugioc.ConfigurationTag')
-//@Require('bugioc.IConfiguration')
 //@Require('bugioc.ModuleTag')
 //@Require('bugioc.PropertyTag')
 //@Require('bugmeta.BugMeta')
@@ -46,7 +45,6 @@ require('bugpack').context("*", function(bugpack) {
     var Obj                 = bugpack.require('Obj');
     var ArgTag              = bugpack.require('bugioc.ArgTag');
     var ConfigurationTag    = bugpack.require('bugioc.ConfigurationTag');
-    var IConfiguration      = bugpack.require('bugioc.IConfiguration');
     var ModuleTag           = bugpack.require('bugioc.ModuleTag');
     var PropertyTag         = bugpack.require('bugioc.PropertyTag');
     var BugMeta             = bugpack.require('bugmeta.BugMeta');

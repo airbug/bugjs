@@ -27,7 +27,7 @@
 //@Require('bugcall.CallResponder')
 //@Require('bugcall.CallServer')
 //@Require('bugioc.ArgTag')
-//@Require('bugioc.IInitializeModule')
+//@Require('bugioc.IInitializingModule')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 
@@ -54,7 +54,7 @@ require('bugpack').context("*", function(bugpack) {
     var CallResponder       = bugpack.require('bugcall.CallResponder');
     var CallServer          = bugpack.require('bugcall.CallServer');
     var ArgTag              = bugpack.require('bugioc.ArgTag');
-    var IInitializeModule   = bugpack.require('bugioc.IInitializeModule');
+    var IInitializingModule   = bugpack.require('bugioc.IInitializingModule');
     var ModuleTag           = bugpack.require('bugioc.ModuleTag');
     var BugMeta             = bugpack.require('bugmeta.BugMeta');
 
@@ -208,7 +208,7 @@ require('bugpack').context("*", function(bugpack) {
 
 
         //-------------------------------------------------------------------------------
-        // IInitializeModule Implementation
+        // IInitializingModule Implementation
         //-------------------------------------------------------------------------------
 
         /**
@@ -407,7 +407,7 @@ require('bugpack').context("*", function(bugpack) {
     // Implement Interfaces
     //-------------------------------------------------------------------------------
 
-    Class.implement(BugCallServer, IInitializeModule);
+    Class.implement(BugCallServer, IInitializingModule);
 
 
     //-------------------------------------------------------------------------------

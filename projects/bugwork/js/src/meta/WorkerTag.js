@@ -55,7 +55,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         _constructor: function(workerName) {
 
-            this._super("Worker");
+            this._super();
 
 
             //-------------------------------------------------------------------------------
@@ -81,17 +81,6 @@ require('bugpack').context("*", function(bugpack) {
             return this.workerName;
         }
     });
-
-
-    //-------------------------------------------------------------------------------
-    // Static Properties
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @static
-     * @const {string}
-     */
-    WorkerTag.TYPE = "Worker";
 
 
     //-------------------------------------------------------------------------------

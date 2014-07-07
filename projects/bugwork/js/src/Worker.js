@@ -92,7 +92,7 @@ require('bugpack').context("*", function(bugpack) {
             var _this = this;
             $series([
                 $task(function(flow) {
-                    _this.process(function(throwable) {
+                    _this.configure(function(throwable) {
                         flow.complete(throwable);
                     });
                 }),
@@ -127,6 +127,14 @@ require('bugpack').context("*", function(bugpack) {
          * @protected
          * @param {function(Throwable=)} callback
          */
+        configure: function(callback) {
+            callback();
+        },
+
+        /**
+         * @protected
+         * @param {function(Throwable=)} callback
+         */
         deinitialize: function(callback) {
             callback();
         },
@@ -136,14 +144,6 @@ require('bugpack').context("*", function(bugpack) {
          * @param {function(Throwable=)} callback
          */
         initialize: function(callback) {
-            callback();
-        },
-
-        /**
-         * @protected
-         * @param {function(Throwable=)} callback
-         */
-        process: function(callback) {
             callback();
         }
     });

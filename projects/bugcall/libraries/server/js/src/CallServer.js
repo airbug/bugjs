@@ -22,7 +22,7 @@
 //@Require('bugcall.CallConnection')
 //@Require('bugcall.CallServerConnection')
 //@Require('bugioc.ArgTag')
-//@Require('bugioc.IInitializeModule')
+//@Require('bugioc.IInitializingModule')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 //@Require('socketio.SocketIoManager')
@@ -45,7 +45,7 @@ require('bugpack').context("*", function(bugpack) {
     var CallConnection          = bugpack.require('bugcall.CallConnection');
     var CallServerConnection    = bugpack.require('bugcall.CallServerConnection');
     var ArgTag                  = bugpack.require('bugioc.ArgTag');
-    var IInitializeModule       = bugpack.require('bugioc.IInitializeModule');
+    var IInitializingModule       = bugpack.require('bugioc.IInitializingModule');
     var ModuleTag               = bugpack.require('bugioc.ModuleTag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
     var SocketIoManager         = bugpack.require('socketio.SocketIoManager');
@@ -148,7 +148,7 @@ require('bugpack').context("*", function(bugpack) {
 
 
         //-------------------------------------------------------------------------------
-        // IInitializeModule Implementation
+        // IInitializingModule Implementation
         //-------------------------------------------------------------------------------
 
         /**
@@ -249,7 +249,7 @@ require('bugpack').context("*", function(bugpack) {
 
 
     //-------------------------------------------------------------------------------
-    // Static Variables
+    // Static Properties
     //-------------------------------------------------------------------------------
 
     /**
@@ -265,7 +265,7 @@ require('bugpack').context("*", function(bugpack) {
     // Implement Interfaces
     //-------------------------------------------------------------------------------
 
-    Class.implement(CallServer, IInitializeModule);
+    Class.implement(CallServer, IInitializingModule);
 
 
     //-------------------------------------------------------------------------------

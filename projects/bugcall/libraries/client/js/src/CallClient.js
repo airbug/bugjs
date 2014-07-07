@@ -22,7 +22,7 @@
 //@Require('bugcall.CallConnection')
 //@Require('bugcall.CallDefines')
 //@Require('bugioc.ArgTag')
-//@Require('bugioc.IInitializeModule')
+//@Require('bugioc.IInitializingModule')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 //@Require('socketio.SocketIoClient')
@@ -45,7 +45,7 @@ require('bugpack').context("*", function(bugpack) {
     var CallConnection          = bugpack.require('bugcall.CallConnection');
     var CallDefines             = bugpack.require('bugcall.CallDefines');
     var ArgTag                  = bugpack.require('bugioc.ArgTag');
-    var IInitializeModule       = bugpack.require('bugioc.IInitializeModule');
+    var IInitializingModule       = bugpack.require('bugioc.IInitializingModule');
     var ModuleTag               = bugpack.require('bugioc.ModuleTag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
     var SocketIoClient          = bugpack.require('socketio.SocketIoClient');
@@ -206,7 +206,7 @@ require('bugpack').context("*", function(bugpack) {
 
 
         //-------------------------------------------------------------------------------
-        // IInitializeModule Implementation
+        // IInitializingModule Implementation
         //-------------------------------------------------------------------------------
 
         /**
@@ -435,7 +435,7 @@ require('bugpack').context("*", function(bugpack) {
     // Implement Interfaces
     //-------------------------------------------------------------------------------
 
-    Class.implement(CallClient, IInitializeModule);
+    Class.implement(CallClient, IInitializingModule);
 
 
     //-------------------------------------------------------------------------------

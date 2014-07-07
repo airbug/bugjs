@@ -17,7 +17,7 @@
 //@Require('Class')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugmeta.BugMeta')
-//@Require('bugmeta.TagScan')
+//@Require('bugmeta.TagClassTagScan')
 
 
 //-------------------------------------------------------------------------------
@@ -30,10 +30,10 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class           = bugpack.require('Class');
-    var AutowiredTag    = bugpack.require('bugioc.AutowiredTag');
-    var BugMeta         = bugpack.require('bugmeta.BugMeta');
-    var TagScan         = bugpack.require('bugmeta.TagScan');
+    var Class               = bugpack.require('Class');
+    var AutowiredTag        = bugpack.require('bugioc.AutowiredTag');
+    var BugMeta             = bugpack.require('bugmeta.BugMeta');
+    var TagClassTagScan     = bugpack.require('bugmeta.TagClassTagScan');
 
 
     //-------------------------------------------------------------------------------
@@ -42,9 +42,9 @@ require('bugpack').context("*", function(bugpack) {
 
     /**
      * @class
-     * @extends {TagScan}
+     * @extends {TagClassTagScan}
      */
-    var AutowiredTagScan = Class.extend(TagScan, /** @lends {AutowiredTagScan.prototype} */{
+    var AutowiredTagScan = Class.extend(TagClassTagScan, /** @lends {AutowiredTagScan.prototype} */{
 
         _name: "bugioc.AutowiredTagScan",
 
@@ -60,7 +60,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         _constructor: function(metaContext, processor) {
 
-            this._super(metaContext, processor, AutowiredTag.TYPE);
+            this._super(metaContext, processor, AutowiredTag.getClass());
 
 
             //-------------------------------------------------------------------------------
@@ -87,7 +87,7 @@ require('bugpack').context("*", function(bugpack) {
             if (!this.scanning) {
                 this.scanning = true;
                 var bugmeta                 = BugMeta.context();
-                bugmeta.registerTagProcessor("Autowired", function(annotation) {
+                bugmeta.registerTagProcessor(AutowiredTag.getClass(), function(annotation) {
                     _this.getTagProcessor().process(annotation);
                 });
             }

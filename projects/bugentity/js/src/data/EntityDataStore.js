@@ -107,7 +107,7 @@ require('bugpack').context("*", function(bugpack) {
         /**
          *
          */
-        processSchemas: function() {
+        configureSchemas: function() {
             var _this = this;
             var embeddedSchemaSet   = new Set();
             var primarySchemaSet    = new Set();
@@ -123,10 +123,10 @@ require('bugpack').context("*", function(bugpack) {
                 }
             });
             embeddedSchemaSet.forEach(function(entitySchema) {
-                _this.processSchema(entitySchema);
+                _this.configureSchema(entitySchema);
             });
             primarySchemaSet.forEach(function(entitySchema) {
-                _this.processSchema(entitySchema);
+                _this.configureSchema(entitySchema);
             })
         },
 
@@ -139,8 +139,8 @@ require('bugpack').context("*", function(bugpack) {
          * @abstract
          * @param {EntitySchema} entitySchema
          */
-        processSchema: function(entitySchema) {
-            throw new Bug("AbstractMethodNotImplemented", {}, "Abstract method 'processSchema' has not been implemented");
+        configureSchema: function(entitySchema) {
+            throw new Bug("AbstractMethodNotImplemented", {}, "Abstract method 'configureSchema' has not been implemented");
         }
     });
 

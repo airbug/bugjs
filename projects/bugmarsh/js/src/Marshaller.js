@@ -27,7 +27,7 @@
 //@Require('Set')
 //@Require('TypeUtil')
 //@Require('bugioc.ArgTag')
-//@Require('bugioc.IInitializeModule')
+//@Require('bugioc.IInitializingModule')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 
@@ -54,7 +54,7 @@ require('bugpack').context("*", function(bugpack) {
     var Set                 = bugpack.require('Set');
     var TypeUtil            = bugpack.require('TypeUtil');
     var ArgTag              = bugpack.require('bugioc.ArgTag');
-    var IInitializeModule   = bugpack.require('bugioc.IInitializeModule');
+    var IInitializingModule   = bugpack.require('bugioc.IInitializingModule');
     var ModuleTag           = bugpack.require('bugioc.ModuleTag');
     var BugMeta             = bugpack.require('bugmeta.BugMeta');
 
@@ -75,7 +75,7 @@ require('bugpack').context("*", function(bugpack) {
     /**
      * @class
      * @extends {Obj}
-     * @implements {IInitializeModule}
+     * @implements {IInitializingModule}
      */
     var Marshaller = Class.extend(Obj, {
 

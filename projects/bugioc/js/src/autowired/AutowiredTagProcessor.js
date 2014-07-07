@@ -102,17 +102,17 @@ require('bugpack').context("*", function(bugpack) {
          * @param {AutowiredTag} autowiredTag
          */
         processAutowiredTag: function(autowiredTag) {
-            var _this                   = this;
+            var _this   = this;
             if (!this.processedAutowiredTagSet.contains(autowiredTag)) {
                 var autowiredConstructor    = autowiredTag.getTagReference();
-                var propertyTagArray = autowiredTag.getAutowiredProperties();
+                var propertyTagArray        = autowiredTag.getAutowiredProperties();
                 var currentConstructor      = autowiredConstructor.prototype._constructor;
                 autowiredConstructor.prototype._constructor = function() {
                     var instance = this;
                     currentConstructor.apply(this, arguments);
                     propertyTagArray.forEach(function(propertyTag) {
                         if (propertyTag.getPropertyRef()) {
-                            instance[propertyTag.getPropertyName()] = _this.iocContext.getModuleByName(propertyTag.getPropertyRef());
+                            instance[propertyTag.getPropertyName()] = _this.iocContext.generateModuleByName(propertyTag.getPropertyRef()).getInstance();
                         } else {
                             instance[propertyTag.getPropertyName()] = propertyTag.getPropertyValue();
                         }

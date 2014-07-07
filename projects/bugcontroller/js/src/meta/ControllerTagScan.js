@@ -16,7 +16,7 @@
 
 //@Require('Class')
 //@Require('bugcontroller.ControllerTag')
-//@Require('bugmeta.TagScan')
+//@Require('bugmeta.TagClassTagScan')
 
 
 //-------------------------------------------------------------------------------
@@ -29,9 +29,9 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class           = bugpack.require('Class');
-    var ControllerTag   = bugpack.require('bugcontroller.ControllerTag');
-    var TagScan         = bugpack.require('bugmeta.TagScan');
+    var Class               = bugpack.require('Class');
+    var ControllerTag       = bugpack.require('bugcontroller.ControllerTag');
+    var TagClassTagScan     = bugpack.require('bugmeta.TagClassTagScan');
 
 
     //-------------------------------------------------------------------------------
@@ -40,9 +40,9 @@ require('bugpack').context("*", function(bugpack) {
 
     /**
      * @class
-     * @extends {TagScan}
+     * @extends {TagClassTagScan}
      */
-    var ControllerTagScan = Class.extend(TagScan, {
+    var ControllerTagScan = Class.extend(TagClassTagScan, {
 
         _name: "bugcontroller.ControllerTagScan",
 
@@ -57,7 +57,7 @@ require('bugpack').context("*", function(bugpack) {
          * @param {ControllerTagProcessor} processor
          */
         _constructor: function(metaContext, processor) {
-            this._super(metaContext, processor, ControllerTag.TYPE);
+            this._super(metaContext, processor, ControllerTag.getClass());
         }
     });
 

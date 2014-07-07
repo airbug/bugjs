@@ -55,7 +55,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         _constructor: function(entityName) {
 
-            this._super(EntityTag.TYPE);
+            this._super();
 
 
             //-------------------------------------------------------------------------------
@@ -174,17 +174,6 @@ require('bugpack').context("*", function(bugpack) {
             return this;
         }
     });
-
-
-    //-------------------------------------------------------------------------------
-    // Static Properties
-    //-------------------------------------------------------------------------------
-
-    /**
-     * @static
-     * @const {string}
-     */
-    EntityTag.TYPE   = "Entity";
 
 
     //-------------------------------------------------------------------------------

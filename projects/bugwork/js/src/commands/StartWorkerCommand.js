@@ -162,9 +162,6 @@ require('bugpack').context("*", function(bugpack) {
          * @param {*} message
          */
         processMessage: function(message) {
-
-            console.log("StartWorkerCommand#processMessage - message:", message);
-
             if (message.messageType === WorkerDefines.MessageTypes.WORKER_STARTED) {
                 this.getWorkerContext().updateWorkerState(WorkerDefines.State.RUNNING);
                 this.complete();

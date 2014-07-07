@@ -19,7 +19,7 @@
 //@Require('Class')
 //@Require('Map')
 //@Require('Obj')
-//@Require('bugioc.IProcessModule')
+//@Require('bugioc.IConfiguringModule')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmarsh.MarshTagProcessor')
 //@Require('bugmarsh.MarshTagScan')
@@ -40,7 +40,7 @@ require('bugpack').context("*", function(bugpack) {
     var Class               = bugpack.require('Class');
     var Map                 = bugpack.require('Map');
     var Obj                 = bugpack.require('Obj');
-    var IProcessModule      = bugpack.require('bugioc.IProcessModule');
+    var IConfiguringModule      = bugpack.require('bugioc.IConfiguringModule');
     var ModuleTag           = bugpack.require('bugioc.ModuleTag');
     var MarshTagProcessor   = bugpack.require('bugmarsh.MarshTagProcessor');
     var MarshTagScan        = bugpack.require('bugmarsh.MarshTagScan');
@@ -62,7 +62,7 @@ require('bugpack').context("*", function(bugpack) {
     /**
      * @class
      * @extends {Obj}
-     * @implements {IProcessModule}
+     * @implements {IConfiguringModule}
      */
     var MarshRegistry = Class.extend(Obj, {
 
@@ -101,24 +101,24 @@ require('bugpack').context("*", function(bugpack) {
              * @private
              * @type {boolean}
              */
-            this.processed          = false;
+            this.configured         = false;
         },
 
 
         //-------------------------------------------------------------------------------
-        // IProcessModule Implementation
+        // IConfiguringModule Implementation
         //-------------------------------------------------------------------------------
 
         /**
          *
          */
-        processModule: function() {
-            if (!this.processed) {
-                this.processed = true;
+        configureModule: function() {
+            if (!this.configured) {
+                this.configured = true;
                 var scan = new MarshTagScan(bugmeta, new MarshTagProcessor(this));
                 scan.scanAll();
             } else {
-                throw new Bug("IllegalState", {}, "Already processed module MarshRegistry");
+                throw new Bug("IllegalState", {}, "Already configured module MarshRegistry");
             }
         },
 
@@ -132,7 +132,7 @@ require('bugpack').context("*", function(bugpack) {
          * @return {Marsh}
          */
         getMarshByClass: function(_class) {
-            this.assertProcessed();
+            this.assertConfigured();
             return this.classToMarshMap.get(_class);
         },
 
@@ -141,7 +141,7 @@ require('bugpack').context("*", function(bugpack) {
          * @return {Marsh}
          */
         getMarshByName: function(name) {
-            this.assertProcessed();
+            this.assertConfigured();
             return this.nameToMarshMap.get(name);
         },
 
@@ -150,7 +150,7 @@ require('bugpack').context("*", function(bugpack) {
          * @return {boolean}
          */
         hasMarshForClass: function(_class) {
-            this.assertProcessed();
+            this.assertConfigured();
             return this.classToMarshMap.containsKey(_class);
         },
 
@@ -159,7 +159,7 @@ require('bugpack').context("*", function(bugpack) {
          * @return {boolean}
          */
         hasMarshForName: function(name) {
-            this.assertProcessed();
+            this.assertConfigured();
             return this.nameToMarshMap.containsKey(name);
         },
 
@@ -167,7 +167,7 @@ require('bugpack').context("*", function(bugpack) {
          * @param {Marsh} marsh
          */
         registerMarsh: function(marsh) {
-            this.assertProcessed();
+            this.assertConfigured();
             if (this.hasMarshForClass(marsh.getMarshClass())) {
                 throw new Error("Marsh already registered for class - class:", marsh.getMarshClass());
             }
@@ -186,9 +186,9 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @private
          */
-        assertProcessed: function() {
-            if (!this.processed) {
-                throw new Bug("AssertFailed", {}, "Module 'MarshRegistry' has not been processed");
+        assertConfigured: function() {
+            if (!this.configured) {
+                throw new Bug("AssertFailed", {}, "Module 'MarshRegistry' has not been configured");
             }
         }
     });
@@ -198,7 +198,7 @@ require('bugpack').context("*", function(bugpack) {
     // Implement Interfaces
     //-------------------------------------------------------------------------------
 
-    Class.implement(MarshRegistry, IProcessModule);
+    Class.implement(MarshRegistry, IConfiguringModule);
 
 
     //-------------------------------------------------------------------------------

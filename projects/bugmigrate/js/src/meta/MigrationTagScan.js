@@ -15,7 +15,7 @@
 //@Export('bugmigrate.MigrationTagScan')
 
 //@Require('Class')
-//@Require('bugmeta.TagScan')
+//@Require('bugmeta.TagClassTagScan')
 //@Require('bugmigrate.MigrationTag')
 
 
@@ -29,9 +29,9 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class           = bugpack.require('Class');
-    var TagScan         = bugpack.require('bugmeta.TagScan');
-    var MigrationTag    = bugpack.require('bugmigrate.MigrationTag');
+    var Class               = bugpack.require('Class');
+    var TagClassTagScan     = bugpack.require('bugmeta.TagClassTagScan');
+    var MigrationTag        = bugpack.require('bugmigrate.MigrationTag');
 
 
     //-------------------------------------------------------------------------------
@@ -40,9 +40,9 @@ require('bugpack').context("*", function(bugpack) {
 
     /**
      * @class
-     * @extends {TagScan}
+     * @extends {TagClassTagScan}
      */
-    var MigrationTagScan = Class.extend(TagScan, {
+    var MigrationTagScan = Class.extend(TagClassTagScan, {
 
         _name: "bugmigrate.MigrationTagScan",
 

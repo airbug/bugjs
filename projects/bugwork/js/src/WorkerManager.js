@@ -23,7 +23,7 @@
 //@Require('TypeUtil')
 //@Require('bugflow.BugFlow')
 //@Require('bugioc.ArgTag')
-//@Require('bugioc.IInitializeModule')
+//@Require('bugioc.IInitializingModule')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 //@Require('bugwork.WorkerMaster')
@@ -47,7 +47,7 @@ require('bugpack').context("*", function(bugpack) {
     var TypeUtil            = bugpack.require('TypeUtil');
     var BugFlow             = bugpack.require('bugflow.BugFlow');
     var ArgTag              = bugpack.require('bugioc.ArgTag');
-    var IInitializeModule   = bugpack.require('bugioc.IInitializeModule');
+    var IInitializingModule   = bugpack.require('bugioc.IInitializingModule');
     var ModuleTag           = bugpack.require('bugioc.ModuleTag');
     var BugMeta             = bugpack.require('bugmeta.BugMeta');
     var WorkerMaster        = bugpack.require('bugwork.WorkerMaster');
@@ -72,7 +72,7 @@ require('bugpack').context("*", function(bugpack) {
     /**
      * @class
      * @extends {Obj}
-     * @implements {IInitializeModule}
+     * @implements {IInitializingModule}
      */
     var WorkerManager = Class.extend(Obj, {
 
@@ -130,7 +130,7 @@ require('bugpack').context("*", function(bugpack) {
 
 
         //-------------------------------------------------------------------------------
-        // IInitializeModule Implementation
+        // IInitializingModule Implementation
         //-------------------------------------------------------------------------------
 
         /**
@@ -226,7 +226,7 @@ require('bugpack').context("*", function(bugpack) {
     // Implement Interfaces
     //-------------------------------------------------------------------------------
 
-    Class.implement(WorkerManager, IInitializeModule);
+    Class.implement(WorkerManager, IInitializingModule);
 
 
     //-------------------------------------------------------------------------------

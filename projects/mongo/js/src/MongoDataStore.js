@@ -22,7 +22,7 @@
 //@Require('TypeUtil')
 //@Require('bugentity.EntityDataStore')
 //@Require('bugioc.ArgTag')
-//@Require('bugioc.IProcessModule')
+//@Require('bugioc.IConfiguringModule')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 //@Require('mongo.MongoManager')
@@ -45,7 +45,7 @@ require('bugpack').context("*", function(bugpack) {
     var TypeUtil            = bugpack.require('TypeUtil');
     var EntityDataStore     = bugpack.require('bugentity.EntityDataStore');
     var ArgTag              = bugpack.require('bugioc.ArgTag');
-    var IProcessModule      = bugpack.require('bugioc.IProcessModule');
+    var IConfiguringModule      = bugpack.require('bugioc.IConfiguringModule');
     var ModuleTag           = bugpack.require('bugioc.ModuleTag');
     var BugMeta             = bugpack.require('bugmeta.BugMeta');
     var MongoManager        = bugpack.require('mongo.MongoManager');
@@ -67,7 +67,7 @@ require('bugpack').context("*", function(bugpack) {
     /**
      * @class
      * @extends {EntityDataStore}
-     * @implements {IProcessModule}
+     * @implements {IConfiguringModule}
      */
     var MongoDataStore = Class.extend(EntityDataStore, {
 
@@ -115,7 +115,7 @@ require('bugpack').context("*", function(bugpack) {
              * @private
              * @type {boolean}
              */
-            this.processed              = false;
+            this.configured             = false;
         },
 
 
@@ -139,16 +139,16 @@ require('bugpack').context("*", function(bugpack) {
 
 
         //-------------------------------------------------------------------------------
-        // IProcessModule Implementation
+        // IConfiguringModule Implementation
         //-------------------------------------------------------------------------------
 
         /**
          *
          */
-        processModule: function() {
-            if (!this.processed) {
-                this.processed = true;
-                this.processSchemas();
+        configureModule: function() {
+            if (!this.configured) {
+                this.configured = true;
+                this.configureSchemas();
             } else {
                 throw new Bug("IllegalState", {}, "Already processed module SchemaManager");
             }
@@ -162,7 +162,7 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @param {EntitySchema} entitySchema
          */
-        processSchema: function(entitySchema) {
+        configureSchema: function(entitySchema) {
             if (entitySchema.getEntityStored()) {
                 var mongooseSchema = this.buildMongooseSchemaFromEntitySchema(entitySchema);
                 this.buildMongooseModel(entitySchema, mongooseSchema);
@@ -186,7 +186,7 @@ require('bugpack').context("*", function(bugpack) {
          * @return {MongoManager}
          */
         generateManager: function(modelName) {
-            this.assertProcessed();
+            this.assertConfigured();
             var manager = this.managerMap.get(modelName);
             if (!manager) {
                 var model   = this.mongoose.model(modelName);
@@ -201,7 +201,7 @@ require('bugpack').context("*", function(bugpack) {
          * @return {*}
          */
         getMongooseModelForName: function(name) {
-            this.assertProcessed();
+            this.assertConfigured();
             return this.mongoose.model(name);
         },
 
@@ -210,7 +210,7 @@ require('bugpack').context("*", function(bugpack) {
          * @return {*}
          */
         getMongooseSchemaForName: function(name) {
-            this.assertProcessed();
+            this.assertConfigured();
             var model = this.getMongooseModelForName(name);
             if (model) {
                 return model.schema;
@@ -227,9 +227,9 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @private
          */
-        assertProcessed: function() {
-            if (!this.processed) {
-                throw new Bug("AssertFailed", {}, "Module 'MongoDataStore' has not been processed");
+        assertConfigured: function() {
+            if (!this.configured) {
+                throw new Bug("AssertFailed", {}, "Module 'MongoDataStore' has not been configured");
             }
         },
 
@@ -430,7 +430,7 @@ require('bugpack').context("*", function(bugpack) {
     // Interfaces
     //-------------------------------------------------------------------------------
 
-    Class.implement(MongoDataStore, IProcessModule);
+    Class.implement(MongoDataStore, IConfiguringModule);
 
 
     //-------------------------------------------------------------------------------

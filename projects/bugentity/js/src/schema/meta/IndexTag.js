@@ -55,7 +55,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         _constructor: function(propertyObject) {
 
-            this._super("Index");
+            this._super();
 
 
             //-------------------------------------------------------------------------------

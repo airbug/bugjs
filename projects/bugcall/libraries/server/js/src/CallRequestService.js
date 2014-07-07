@@ -22,7 +22,7 @@
 //@Require('bugcall.IProcessCall')
 //@Require('bugflow.BugFlow')
 //@Require('bugioc.ArgTag')
-//@Require('bugioc.IInitializeModule')
+//@Require('bugioc.IInitializingModule')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 
@@ -44,7 +44,7 @@ require('bugpack').context("*", function(bugpack) {
     var IProcessCall        = bugpack.require('bugcall.IProcessCall');
     var BugFlow             = bugpack.require('bugflow.BugFlow');
     var ArgTag              = bugpack.require('bugioc.ArgTag');
-    var IInitializeModule   = bugpack.require('bugioc.IInitializeModule');
+    var IInitializingModule   = bugpack.require('bugioc.IInitializingModule');
     var ModuleTag           = bugpack.require('bugioc.ModuleTag');
     var BugMeta             = bugpack.require('bugmeta.BugMeta');
 
@@ -69,7 +69,7 @@ require('bugpack').context("*", function(bugpack) {
     /**
      * @class
      * @extends {Obj}
-     * @implements {IInitializeModule}
+     * @implements {IInitializingModule}
      * @implements {IProcessCall}
      */
     var CallRequestService = Class.extend(Obj, {
@@ -204,7 +204,7 @@ require('bugpack').context("*", function(bugpack) {
 
 
         //-------------------------------------------------------------------------------
-        // IInitializeModule Implementation
+        // IInitializingModule Implementation
         //-------------------------------------------------------------------------------
 
         /**
@@ -319,7 +319,7 @@ require('bugpack').context("*", function(bugpack) {
     // Implement Interfaces
     //-------------------------------------------------------------------------------
 
-    Class.implement(CallRequestService, IInitializeModule);
+    Class.implement(CallRequestService, IInitializingModule);
     Class.implement(CallRequestService, IProcessCall);
 
 

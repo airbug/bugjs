@@ -60,7 +60,7 @@ require('bugpack').context("*", function(bugpack) {
     /**
      * @class
      * @extends {Obj}
-     * @implements {IInitializeModule}
+     * @implements {IInitializingModule}
      */
     var CallManager = Class.extend(Obj, {
 

@@ -19,13 +19,7 @@
 //@Require('Obj')
 //@Require('bugentity.EntityManagerTagProcessor')
 //@Require('bugentity.EntityManagerTagScan')
-//@Require('bugioc.AutowiredTagProcessor')
-//@Require('bugioc.AutowiredTagScan')
-//@Require('bugioc.ConfigurationTagProcessor')
-//@Require('bugioc.ConfigurationTagScan')
-//@Require('bugioc.IocContext')
-//@Require('bugioc.ModuleTagProcessor')
-//@Require('bugioc.ModuleTagScan')
+//@Require('bugioc.BugIoc')
 //@Require('bugmeta.BugMeta')
 
 
@@ -43,13 +37,7 @@ require('bugpack').context("*", function(bugpack) {
     var Obj                         = bugpack.require('Obj');
     var EntityManagerTagProcessor   = bugpack.require('bugentity.EntityManagerTagProcessor');
     var EntityManagerTagScan        = bugpack.require('bugentity.EntityManagerTagScan');
-    var AutowiredTagProcessor       = bugpack.require('bugioc.AutowiredTagProcessor');
-    var AutowiredTagScan            = bugpack.require('bugioc.AutowiredTagScan');
-    var ConfigurationTagProcessor   = bugpack.require('bugioc.ConfigurationTagProcessor');
-    var ConfigurationTagScan        = bugpack.require('bugioc.ConfigurationTagScan');
-    var IocContext                  = bugpack.require('bugioc.IocContext');
-    var ModuleTagProcessor          = bugpack.require('bugioc.ModuleTagProcessor');
-    var ModuleTagScan               = bugpack.require('bugioc.ModuleTagScan');
+    var BugIoc                      = bugpack.require('bugioc.BugIoc');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
 
@@ -84,21 +72,9 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
-             * @type {IocContext}
-             */
-            this.iocContext                     = new IocContext();
-
-            /**
-             * @private
              * @type {AutowiredTagScan}
              */
-            this.autowiredScan                  = new AutowiredTagScan(BugMeta.context(), new AutowiredTagProcessor(this.iocContext));
-
-            /**
-             * @private
-             * @type {ConfigurationTagScan}
-             */
-            this.configurationTagScan              = new ConfigurationTagScan(BugMeta.context(), new ConfigurationTagProcessor(this.iocContext));
+            this.autowiredScan           = BugIoc.autowiredScan(BugMeta.context());
 
             /**
              * @private
@@ -108,9 +84,15 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
+             * @type {IocContext}
+             */
+            this.iocContext             = BugIoc.context();
+
+            /**
+             * @private
              * @type {ModuleTagScan}
              */
-            this.moduleTagScan                     = new ModuleTagScan(BugMeta.context(), new ModuleTagProcessor(this.iocContext));
+            this.moduleTagScan          = BugIoc.moduleScan(BugMeta.context());
         },
 
 
@@ -122,31 +104,33 @@ require('bugpack').context("*", function(bugpack) {
          * @param {function(Throwable=)} callback
          */
         start: function(callback) {
-            this.autowiredScan.scanAll();
-            this.autowiredScan.scanContinuous();
-            this.configurationTagScan.scanBugpacks([
-                "bugmigrate.MigrationConfiguration"
-            ]);
-            this.entityManagerTagScan.scanAll();
-            this.moduleTagScan.scanBugpacks([
-                "bugentity.EntityDeltaBuilder",
-                "bugentity.EntityManagerStore",
-                "bugentity.SchemaManager",
-                "bugmigrate.MigrationInitializer",
-                "bugmigrate.MigrationManager",
-                "configbug.Configbug",
-                "loggerbug.Logger",
-                "mongo.MongoDataStore"
-            ]);
-            this.iocContext.process();
-            this.iocContext.initialize(callback);
+            try {
+                this.autowiredScan.scanAll();
+                this.autowiredScan.scanContinuous();
+                this.entityManagerTagScan.scanAll();
+                this.moduleTagScan.scanBugpacks([
+                    "bugentity.EntityDeltaBuilder",
+                    "bugentity.EntityManagerStore",
+                    "bugentity.SchemaManager",
+                    "bugmigrate.MigrationConfiguration",
+                    "bugmigrate.MigrationInitializer",
+                    "bugmigrate.MigrationManager",
+                    "configbug.Configbug",
+                    "loggerbug.Logger",
+                    "mongo.MongoDataStore"
+                ]);
+                this.iocContext.generate();
+            } catch(throwable) {
+                return callback(throwable);
+            }
+            this.iocContext.start(callback);
         },
 
         /**
          * @param {function(Throwable=)} callback
          */
         stop: function(callback) {
-            this.iocContext.deinitialize(callback);
+            this.iocContext.stop(callback);
         }
     });
 

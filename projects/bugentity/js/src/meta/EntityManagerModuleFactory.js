@@ -15,6 +15,7 @@
 //@Export('bugentity.EntityManagerModuleFactory')
 
 //@Require('Class')
+//@Require('bugioc.Module')
 //@Require('bugioc.ModuleFactory')
 
 
@@ -29,6 +30,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class           = bugpack.require('Class');
+    var Module          = bugpack.require('bugioc.Module');
     var ModuleFactory   = bugpack.require('bugioc.ModuleFactory');
 
 
@@ -84,13 +86,13 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @return {*}
+         * @return {Module}
          */
         factoryModule: function() {
             var moduleArgs      = this.buildModuleArgs();
             var entityManager   = this.entityManagerClass.newInstance(moduleArgs);
             entityManager.setEntityType(this.entityType);
-            return entityManager;
+            return new Module(this.getIocModule(), entityManager);
         }
     });
 

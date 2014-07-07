@@ -28,7 +28,7 @@
 //@Require('bugdelta.SetChange')
 //@Require('bugentity.Entity')
 //@Require('bugflow.BugFlow')
-//@Require('bugioc.IInitializeModule')
+//@Require('bugioc.IInitializingModule')
 //@Require('mongo.MongoUpdateChanges')
 
 
@@ -56,7 +56,7 @@ require('bugpack').context("*", function(bugpack) {
     var SetChange           = bugpack.require('bugdelta.SetChange');
     var Entity              = bugpack.require('bugentity.Entity');
     var BugFlow             = bugpack.require('bugflow.BugFlow');
-    var IInitializeModule   = bugpack.require('bugioc.IInitializeModule');
+    var IInitializingModule   = bugpack.require('bugioc.IInitializingModule');
     var MongoUpdateChanges  = bugpack.require('mongo.MongoUpdateChanges');
 
 
@@ -431,7 +431,7 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         //-------------------------------------------------------------------------------
-        // IInitializeModule Implementation
+        // IInitializingModule Implementation
         //-------------------------------------------------------------------------------
 
         /**
@@ -900,7 +900,7 @@ require('bugpack').context("*", function(bugpack) {
     // Interfaces
     //-------------------------------------------------------------------------------
 
-    Class.implement(EntityManager, IInitializeModule);
+    Class.implement(EntityManager, IInitializingModule);
 
 
     //-------------------------------------------------------------------------------

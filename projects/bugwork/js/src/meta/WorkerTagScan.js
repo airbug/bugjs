@@ -15,8 +15,7 @@
 //@Export('bugwork.WorkerTagScan')
 
 //@Require('Class')
-//@Require('Obj')
-//@Require('bugmeta.TagScan')
+//@Require('bugmeta.TagClassTagScan')
 //@Require('bugwork.WorkerTag')
 
 
@@ -30,10 +29,9 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class       = bugpack.require('Class');
-    var Obj         = bugpack.require('Obj');
-    var TagScan     = bugpack.require('bugmeta.TagScan');
-    var WorkerTag   = bugpack.require('bugwork.WorkerTag');
+    var Class               = bugpack.require('Class');
+    var TagClassTagScan     = bugpack.require('bugmeta.TagClassTagScan');
+    var WorkerTag           = bugpack.require('bugwork.WorkerTag');
 
 
     //-------------------------------------------------------------------------------
@@ -42,9 +40,9 @@ require('bugpack').context("*", function(bugpack) {
 
     /**
      * @class
-     * @extends {TagScan}
+     * @extends {TagClassTagScan}
      */
-    var WorkerTagScan = Class.extend(TagScan, {
+    var WorkerTagScan = Class.extend(TagClassTagScan, {
 
         _name: "bugwork.WorkerTagScan",
 
@@ -59,7 +57,7 @@ require('bugpack').context("*", function(bugpack) {
          * @param {TagProcessor} processor
          */
         _constructor: function(metaContext, processor) {
-            this._super(metaContext, processor, WorkerTag.TYPE);
+            this._super(metaContext, processor, WorkerTag.getClass());
         }
     });
 
