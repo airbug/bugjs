@@ -22,7 +22,7 @@
 //@Require('TypeUtil')
 //@Require('aws.AwsConfig')
 //@Require('aws.S3Object')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 //@Require('bugfs.BugFs')
 
 
@@ -52,7 +52,7 @@ require('bugpack').context("*", function(bugpack) {
     var TypeUtil            = bugpack.require('TypeUtil');
     var AwsConfig           = bugpack.require('aws.AwsConfig');
     var S3Object            = bugpack.require('aws.S3Object');
-    var BugFlow             = bugpack.require('bugflow.BugFlow');
+    var Flows             = bugpack.require('Flows');
     var BugFs               = bugpack.require('bugfs.BugFs');
 
 
@@ -60,11 +60,11 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var $forEachParallel    = BugFlow.$forEachParallel;
-    var $if                 = BugFlow.$if;
-    var $iterableParallel   = BugFlow.$iterableParallel;
-    var $series             = BugFlow.$series;
-    var $task               = BugFlow.$task;
+    var $forEachParallel    = Flows.$forEachParallel;
+    var $if                 = Flows.$if;
+    var $iterableParallel   = Flows.$iterableParallel;
+    var $series             = Flows.$series;
+    var $task               = Flows.$task;
 
 
     //-------------------------------------------------------------------------------
@@ -162,7 +162,7 @@ require('bugpack').context("*", function(bugpack) {
                 GrantWrite: options.grantWrite,
                 GrantWriteACP: options.grantWriteACP
             };
-            this.s3.client.createBucket(params, callback)
+            this.s3.createBucket(params, callback)
         },
 
         /**
@@ -228,7 +228,7 @@ require('bugpack').context("*", function(bugpack) {
             var params = {
                 Bucket: s3Bucket.getName()
             };
-            this.s3.client.headBucket(params, callback);
+            this.s3.headBucket(params, callback);
         },
 
         /**
@@ -513,7 +513,7 @@ require('bugpack').context("*", function(bugpack) {
             if (s3Object.getWebsiteRedirectLocation()) {
                 params.WebsiteRedirectLocation = s3Object.getWebsiteRedirectLocation();
             }
-            this.s3.client.putObject(params, callback);
+            this.s3.putObject(params, callback);
         },
 
 

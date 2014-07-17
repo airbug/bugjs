@@ -20,7 +20,7 @@
 //@Require('Map')
 //@Require('Obj')
 //@Require('bugatomic.ILockOperator')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 
 
 //-------------------------------------------------------------------------------
@@ -39,14 +39,14 @@ require('bugpack').context("*", function(bugpack) {
     var Map             = bugpack.require('Map');
     var Obj             = bugpack.require('Obj');
     var ILockOperator   = bugpack.require('bugatomic.ILockOperator');
-    var BugFlow         = bugpack.require('bugflow.BugFlow');
+    var Flows         = bugpack.require('Flows');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var $task           = BugFlow.$task;
+    var $task           = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

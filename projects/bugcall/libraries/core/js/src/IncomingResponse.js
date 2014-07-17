@@ -15,7 +15,7 @@
 //@Export('bugcall.IncomingResponse')
 
 //@Require('Class')
-//@Require('IObjectable}
+//@Require('IObjectable')
 //@Require('Obj')
 
 

@@ -16,7 +16,7 @@
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('bugtrace.BugTrace')
+//@Require('Tracer')
 
 
 //-------------------------------------------------------------------------------
@@ -31,14 +31,14 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class       = bugpack.require('Class');
     var Obj         = bugpack.require('Obj');
-    var BugTrace    = bugpack.require('bugtrace.BugTrace');
+    var Tracer    = bugpack.require('Tracer');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var $trace      = BugTrace.$trace;
+    var $trace      = Tracer.$trace;
 
 
     //-------------------------------------------------------------------------------

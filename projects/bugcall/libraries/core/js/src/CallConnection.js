@@ -106,7 +106,13 @@ require('bugpack').context("*", function(bugpack) {
              * @type {SocketIoConnection}
              */
             this.socketConnection   = socketConnection;
+        },
 
+        /**
+         * @private
+         */
+        _initializer: function() {
+            this._super();
             this.initialize();
         },
 

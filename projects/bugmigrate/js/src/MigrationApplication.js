@@ -17,8 +17,6 @@
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('bugentity.EntityManagerTagProcessor')
-//@Require('bugentity.EntityManagerTagScan')
 //@Require('bugioc.BugIoc')
 //@Require('bugmeta.BugMeta')
 
@@ -35,8 +33,6 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class                       = bugpack.require('Class');
     var Obj                         = bugpack.require('Obj');
-    var EntityManagerTagProcessor   = bugpack.require('bugentity.EntityManagerTagProcessor');
-    var EntityManagerTagScan        = bugpack.require('bugentity.EntityManagerTagScan');
     var BugIoc                      = bugpack.require('bugioc.BugIoc');
     var BugMeta                     = bugpack.require('bugmeta.BugMeta');
 
@@ -74,13 +70,7 @@ require('bugpack').context("*", function(bugpack) {
              * @private
              * @type {AutowiredTagScan}
              */
-            this.autowiredScan           = BugIoc.autowiredScan(BugMeta.context());
-
-            /**
-             * @private
-             * @type {EntityManagerTagScan}
-             */
-            this.entityManagerTagScan    = new EntityManagerTagScan(BugMeta.context(), new EntityManagerTagProcessor(this.iocContext));
+            this.autowiredScan          = BugIoc.autowiredScan(BugMeta.context());
 
             /**
              * @private
@@ -107,7 +97,6 @@ require('bugpack').context("*", function(bugpack) {
             try {
                 this.autowiredScan.scanAll();
                 this.autowiredScan.scanContinuous();
-                this.entityManagerTagScan.scanAll();
                 this.moduleTagScan.scanBugpacks([
                     "bugentity.EntityDeltaBuilder",
                     "bugentity.EntityManagerStore",

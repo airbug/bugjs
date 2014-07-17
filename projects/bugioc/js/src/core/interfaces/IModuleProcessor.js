@@ -47,9 +47,16 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @param {*} module
+         * @param {Module} module
+         * @param {function(Throwable=)} callback
          */
-        processModule: function(module) {}
+        deprocessModule: function(module, callback) {},
+
+        /**
+         * @param {Module} module
+         * @param {function(Throwable=)} callback
+         */
+        processModule: function(module, callback) {}
     });
 
 

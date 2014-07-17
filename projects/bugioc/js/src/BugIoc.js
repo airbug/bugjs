@@ -17,6 +17,7 @@
 //@Require('Proxy')
 //@Require('bugioc.AutowiredTagProcessor')
 //@Require('bugioc.AutowiredTagScan')
+//@Require('bugioc.ContextCommandFactory')
 //@Require('bugioc.IocContext')
 //@Require('bugioc.ModuleTagProcessor')
 //@Require('bugioc.ModuleTagScan')
@@ -38,6 +39,7 @@ require('bugpack').context("*", function(bugpack) {
     var Proxy               = bugpack.require('Proxy');
     var AutowiredTagProcessor   = bugpack.require('bugioc.AutowiredTagProcessor');
     var AutowiredTagScan        = bugpack.require('bugioc.AutowiredTagScan');
+    var ContextCommandFactory   = bugpack.require('bugioc.ContextCommandFactory');
     var IocContext          = bugpack.require('bugioc.IocContext');
     var ModuleTagProcessor  = bugpack.require('bugioc.ModuleTagProcessor');
     var ModuleTagScan       = bugpack.require('bugioc.ModuleTagScan');
@@ -90,13 +92,13 @@ require('bugpack').context("*", function(bugpack) {
              * @private
              * @type {Map.<MetaContext, AutowiredTagScan>}
              */
-            this.autowiredTagScanMap   = new Map();
+            this.autowiredTagScanMap    = new Map();
 
             /**
              * @private
              * @type {IocContext}
              */
-            this.iocContext            = null;
+            this.iocContext             = null;
 
             /**
              * @private
@@ -128,7 +130,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         context: function() {
             if (!this.iocContext) {
-                this.iocContext = new IocContext();
+                this.iocContext = new IocContext(new ContextCommandFactory());
             }
             return this.iocContext;
         },

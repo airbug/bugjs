@@ -205,7 +205,7 @@ require('bugpack').context("*", function(bugpack) {
          * @param {Event} event
          */
         hearProcessClosed: function(event) {
-            this.complete(new Exception("Worker closed before ready event"));
+            this.complete(new Exception("IllegalState", {}, "Worker closed before ready event"));
         },
 
         /**

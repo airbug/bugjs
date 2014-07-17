@@ -17,7 +17,6 @@
 //@Require('Class')
 //@Require('Event')
 //@Require('EventDispatcher')
-//@Require('bugflow.BugFlow')
 //@Require('socketio.SocketIoConnection')
 
 
@@ -41,16 +40,7 @@ require('bugpack').context("*", function(bugpack) {
     var Class               = bugpack.require('Class');
     var Event               = bugpack.require('Event');
     var EventDispatcher     = bugpack.require('EventDispatcher');
-    var BugFlow             = bugpack.require('bugflow.BugFlow');
     var SocketIoConnection  = bugpack.require('socketio.SocketIoConnection');
-
-
-    //-------------------------------------------------------------------------------
-    // Simplify References
-    //-------------------------------------------------------------------------------
-
-    var $series             = BugFlow.$series;
-    var $task               = BugFlow.$task;
 
 
     //-------------------------------------------------------------------------------
@@ -101,8 +91,33 @@ require('bugpack').context("*", function(bugpack) {
              * @type {SocketIoServer}
              */
             this.socketIoServer     = socketIoServer;
+        },
 
-            this.initialize();
+
+        //-------------------------------------------------------------------------------
+        // Initializer
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @param {SocketIoServer} socketIoServer
+         * @param {string} namespace
+         */
+        _initializer: function(socketIoServer, namespace) {
+            this._super();
+            this.ioManager = this.socketIoServer.of(this.namespace);
+            console.log("Inside SocketIoManager#initialize");
+            var _this = this;
+            this.ioManager.on("connection", function(socket) {
+                console.log("Inside SocketIoManager ioManager.on 'connection' callback");
+                var socketConnection = new SocketIoConnection(socket, true);
+
+                console.log("socketConnection:", !!socketConnection);
+
+                _this.dispatchEvent(new Event(SocketIoManager.EventTypes.CONNECTION, {
+                    socketConnection: socketConnection
+                }));
+            });
         },
 
 
@@ -122,30 +137,6 @@ require('bugpack').context("*", function(bugpack) {
          */
         getSocketIoServer: function() {
             return this.socketIoServer;
-        },
-
-
-        //-------------------------------------------------------------------------------
-        // Private Methods
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         */
-        initialize: function() {
-            this.ioManager = this.socketIoServer.of(this.namespace);
-            console.log("Inside SocketIoManager#initialize");
-            var _this = this;
-            this.ioManager.on("connection", function(socket) {
-                console.log("Inside SocketIoManager ioManager.on 'connection' callback");
-                var socketConnection = new SocketIoConnection(socket, true);
-
-                console.log("socketConnection:", !!socketConnection);
-
-                _this.dispatchEvent(new Event(SocketIoManager.EventTypes.CONNECTION, {
-                    socketConnection: socketConnection
-                }));
-            });
         }
     });
 

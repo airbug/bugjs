@@ -18,7 +18,7 @@
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 //@Require('bugfs.BugFs')
 //@Require('clientjs.ClientPackageRegistry')
 
@@ -42,7 +42,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class                   = bugpack.require('Class');
     var Obj                     = bugpack.require('Obj');
-    var BugFlow                 = bugpack.require('bugflow.BugFlow');
+    var Flows                 = bugpack.require('Flows');
     var BugFs                   = bugpack.require('bugfs.BugFs');
     var ClientPackageRegistry   = bugpack.require('clientjs.ClientPackageRegistry');
 
@@ -51,10 +51,9 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var $forEachParallel        = BugFlow.$forEachParallel;
-    var $parallel               = BugFlow.$parallel;
-    var $series                 = BugFlow.$series;
-    var $task                   = BugFlow.$task;
+    var $parallel               = Flows.$parallel;
+    var $series                 = Flows.$series;
+    var $task                   = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

@@ -19,7 +19,7 @@
 //@Require('List')
 //@Require('Obj')
 //@Require('bugcall.IncomingRequest')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 //@Require('bugrequest.IBuildRequestContext')
@@ -41,7 +41,7 @@ require('bugpack').context("*", function(bugpack) {
     var List                    = bugpack.require('List');
     var Obj                     = bugpack.require('Obj');
     var IncomingRequest         = bugpack.require('bugcall.IncomingRequest');
-    var BugFlow                 = bugpack.require('bugflow.BugFlow');
+    var Flows                 = bugpack.require('Flows');
     var ModuleTag               = bugpack.require('bugioc.ModuleTag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
     var IBuildRequestContext    = bugpack.require('bugrequest.IBuildRequestContext');
@@ -55,7 +55,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var bugmeta                 = BugMeta.context();
     var module                  = ModuleTag.module;
-    var $iterableSeries         = BugFlow.$iterableSeries;
+    var $iterableSeries         = Flows.$iterableSeries;
 
 
     //-------------------------------------------------------------------------------

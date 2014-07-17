@@ -88,8 +88,23 @@ require('bugpack').context("*", function(bugpack) {
              * @type {CalculatorResolver}
              */
             this.calculatorResolver = new CalculatorResolver();
+        },
 
-            this.initialize();
+
+        //-------------------------------------------------------------------------------
+        // Initializer
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         */
+        _initializer: function() {
+            this._super();
+            this.calculatorResolver.registerCalculatorForDataType("array", new ArrayCalculator(this));
+            this.calculatorResolver.registerCalculatorForDataType("object", new ObjectCalculator(this));
+            this.calculatorResolver.registerCalculatorForInterface(IDocument.getInterface(), new DocumentCalculator(this));
+            this.calculatorResolver.registerCalculatorForClass(Map.getClass(), new MapCalculator(this));
+            this.calculatorResolver.registerCalculatorForClass(Set.getClass(), new SetCalculator(this));
         },
 
 
@@ -119,22 +134,6 @@ require('bugpack').context("*", function(bugpack) {
             var deltaCalculator = this.calculatorResolver.resolveCalculator(current);
             deltaCalculator.calculateDelta(delta, "", current, previous);
             return delta;
-        },
-
-
-        //-------------------------------------------------------------------------------
-        // Private Methods
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @private
-         */
-        initialize: function() {
-            this.calculatorResolver.registerCalculatorForDataType("array", new ArrayCalculator(this));
-            this.calculatorResolver.registerCalculatorForDataType("object", new ObjectCalculator(this));
-            this.calculatorResolver.registerCalculatorForInterface(IDocument.getInterface(), new DocumentCalculator(this));
-            this.calculatorResolver.registerCalculatorForClass(Map.getClass(), new MapCalculator(this));
-            this.calculatorResolver.registerCalculatorForClass(Set.getClass(), new SetCalculator(this));
         }
     });
 

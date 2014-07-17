@@ -15,7 +15,7 @@
 //@TestFile
 
 //@Require('Class')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 //@Require('bugmeta.BugMeta')
 //@Require('bugtask.TaskManager')
 //@Require('bugunit.TestTag')
@@ -33,7 +33,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class           = bugpack.require('Class');
-    var BugFlow         = bugpack.require('bugflow.BugFlow');
+    var Flows         = bugpack.require('Flows');
     var BugMeta         = bugpack.require('bugmeta.BugMeta');
     var TaskManager     = bugpack.require('bugtask.TaskManager');
     var TestTag         = bugpack.require('bugunit.TestTag');
@@ -47,8 +47,8 @@ require('bugpack').context("*", function(bugpack) {
     var bugmeta         = BugMeta.context();
     var bugyarn         = BugYarn.context();
     var test            = TestTag.test;
-    var $series         = BugFlow.$series;
-    var $task           = BugFlow.$task;
+    var $series         = Flows.$series;
+    var $task           = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

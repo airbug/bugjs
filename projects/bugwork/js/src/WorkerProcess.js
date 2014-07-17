@@ -20,7 +20,6 @@
 //@Require('EventDispatcher')
 //@Require('Exception')
 //@Require('TypeUtil')
-//@Require('bugflow.BugFlow')
 //@Require('bugfs.BugFs')
 //@Require('bugwork.WorkerDefines')
 
@@ -48,17 +47,8 @@ require('bugpack').context("*", function(bugpack) {
     var EventDispatcher     = bugpack.require('EventDispatcher');
     var Exception           = bugpack.require('Exception');
     var TypeUtil            = bugpack.require('TypeUtil');
-    var BugFlow             = bugpack.require('bugflow.BugFlow');
     var BugFs               = bugpack.require('bugfs.BugFs');
     var WorkerDefines       = bugpack.require('bugwork.WorkerDefines');
-
-
-    //-------------------------------------------------------------------------------
-    // Simplify References
-    //-------------------------------------------------------------------------------
-
-    var $series             = BugFlow.$series;
-    var $task               = BugFlow.$task;
 
 
     //-------------------------------------------------------------------------------

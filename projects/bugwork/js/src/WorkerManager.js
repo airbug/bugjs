@@ -21,7 +21,7 @@
 //@Require('Obj')
 //@Require('Set')
 //@Require('TypeUtil')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 //@Require('bugioc.ArgTag')
 //@Require('bugioc.IInitializingModule')
 //@Require('bugioc.ModuleTag')
@@ -45,7 +45,7 @@ require('bugpack').context("*", function(bugpack) {
     var Obj                 = bugpack.require('Obj');
     var Set                 = bugpack.require('Set');
     var TypeUtil            = bugpack.require('TypeUtil');
-    var BugFlow             = bugpack.require('bugflow.BugFlow');
+    var Flows             = bugpack.require('Flows');
     var ArgTag              = bugpack.require('bugioc.ArgTag');
     var IInitializingModule   = bugpack.require('bugioc.IInitializingModule');
     var ModuleTag           = bugpack.require('bugioc.ModuleTag');
@@ -60,9 +60,8 @@ require('bugpack').context("*", function(bugpack) {
     var arg                 = ArgTag.arg;
     var bugmeta             = BugMeta.context();
     var module              = ModuleTag.module;
-    var $iterableParallel   = BugFlow.$iterableParallel;
-    var $series             = BugFlow.$series;
-    var $task               = BugFlow.$task;
+    var $iterableParallel   = Flows.$iterableParallel;
+    var $task               = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

@@ -107,7 +107,19 @@ require('bugpack').context("*", function(bugpack) {
              * @type {boolean}
              */
             this.initialized        = false;
+        },
 
+
+        //-------------------------------------------------------------------------------
+        // Initializer
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @param {Object} dataObject
+         */
+        _initializer: function(dataObject) {
+            this._super();
             var _this = this;
             Obj.forIn(dataObject, function(propertyName, propertyValue) {
                 _this.setProperty(propertyName, propertyValue);

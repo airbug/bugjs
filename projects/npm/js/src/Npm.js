@@ -19,7 +19,7 @@
 //@Require('Exception')
 //@Require('Obj')
 //@Require('StringUtil')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 //@Require('bugfs.BugFs')
 
 
@@ -49,7 +49,7 @@ require('bugpack').context("*", function(bugpack) {
     var Exception       = bugpack.require('Exception');
     var Obj             = bugpack.require('Obj');
     var StringUtil      = bugpack.require('StringUtil');
-    var BugFlow         = bugpack.require('bugflow.BugFlow');
+    var Flows         = bugpack.require('Flows');
     var BugFs           = bugpack.require('bugfs.BugFs');
 
 
@@ -57,9 +57,8 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var $if             = BugFlow.$if;
-    var $series         = BugFlow.$series;
-    var $task           = BugFlow.$task;
+    var $if             = Flows.$if;
+    var $task           = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

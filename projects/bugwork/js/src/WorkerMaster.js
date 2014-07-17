@@ -18,7 +18,7 @@
 //@Require('Class')
 //@Require('Obj')
 //@Require('Set')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 
 
 //-------------------------------------------------------------------------------
@@ -35,17 +35,16 @@ require('bugpack').context("*", function(bugpack) {
     var Class               = bugpack.require('Class');
     var Obj                 = bugpack.require('Obj');
     var Set                 = bugpack.require('Set');
-    var BugFlow             = bugpack.require('bugflow.BugFlow');
+    var Flows             = bugpack.require('Flows');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var $iterableParallel   = BugFlow.$iterableParallel;
-    var $series             = BugFlow.$series;
-    var $task               = BugFlow.$task;
-    var $whileParallel      = BugFlow.$whileParallel;
+    var $iterableParallel   = Flows.$iterableParallel;
+    var $task               = Flows.$task;
+    var $whileParallel      = Flows.$whileParallel;
 
 
     //-------------------------------------------------------------------------------

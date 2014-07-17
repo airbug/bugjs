@@ -15,21 +15,16 @@
 //@Export('bugioc.IocContext')
 
 //@Require('Class')
+//@Require('Collections')
 //@Require('CommandProcessor')
 //@Require('DependencyGraph')
 //@Require('Event')
 //@Require('EventDispatcher')
 //@Require('Exception')
-//@Require('Func')
-//@Require('List')
-//@Require('Map')
-//@Require('Queue')
-//@Require('Set')
 //@Require('StateMachine')
-//@Require('bugflow.BugFlow')
-//@Require('bugioc.ContextCommandFactory')
+//@Require('ValidationMachine')
+//@Require('Flows')
 //@Require('bugioc.IModuleProcessor')
-//@Require('bugioc.IocDefines')
 //@Require('bugioc.IocModule')
 //@Require('bugioc.MethodModuleProcessor')
 //@Require('bugioc.ModuleProcessorTag')
@@ -49,21 +44,16 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                   = bugpack.require('Class');
+    var Collections             = bugpack.require('Collections');
     var CommandProcessor        = bugpack.require('CommandProcessor');
     var DependencyGraph         = bugpack.require('DependencyGraph');
     var Event                   = bugpack.require('Event');
     var EventDispatcher         = bugpack.require('EventDispatcher');
     var Exception               = bugpack.require('Exception');
-    var Func                    = bugpack.require('Func');
-    var List                    = bugpack.require('List');
-    var Map                     = bugpack.require('Map');
-    var Queue                   = bugpack.require('Queue');
-    var Set                     = bugpack.require('Set');
     var StateMachine            = bugpack.require('StateMachine');
-    var BugFlow                 = bugpack.require('bugflow.BugFlow');
-    var ContextCommandFactory   = bugpack.require('bugioc.ContextCommandFactory');
+    var ValidationMachine       = bugpack.require('ValidationMachine');
+    var Flows                 = bugpack.require('Flows');
     var IModuleProcessor        = bugpack.require('bugioc.IModuleProcessor');
-    var IocDefines              = bugpack.require('bugioc.IocDefines');
     var IocModule               = bugpack.require('bugioc.IocModule');
     var MethodModuleProcessor   = bugpack.require('bugioc.MethodModuleProcessor');
     var ModuleProcessorTag      = bugpack.require('bugioc.ModuleProcessorTag');
@@ -76,9 +66,9 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var $iterableSeries         = BugFlow.$iterableSeries;
-    var $series                 = BugFlow.$series;
-    var $task                   = BugFlow.$task;
+    var $iterableSeries         = Flows.$iterableSeries;
+    var $series                 = Flows.$series;
+    var $task                   = Flows.$task;
     var bugmeta                 = BugMeta.context();
 
 
@@ -101,8 +91,9 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @constructs
+         * @param {ContextCommandFactory} contextCommandFactory
          */
-        _constructor: function() {
+        _constructor: function(contextCommandFactory) {
 
             this._super();
 
@@ -121,18 +112,18 @@ require('bugpack').context("*", function(bugpack) {
              * @private
              * @type {ContextCommandFactory}
              */
-            this.contextCommandFactory                  = new ContextCommandFactory();
+            this.contextCommandFactory                  = contextCommandFactory;
 
             /**
              * @private
              * @type {StateMachine}
              */
             this.contextStateMachine                    = new StateMachine({
-                initialState: IocDefines.ContextState.NOT_READY,
+                initialState: IocContext.ContextState.NOT_READY,
                 states: [
-                    IocDefines.ContextState.NOT_READY,
-                    IocDefines.ContextState.READY,
-                    IocDefines.ContextState.RUNNING
+                    IocContext.ContextState.NOT_READY,
+                    IocContext.ContextState.READY,
+                    IocContext.ContextState.RUNNING
                 ]
             });
 
@@ -152,62 +143,71 @@ require('bugpack').context("*", function(bugpack) {
              * @private
              * @type {Set.<Module>}
              */
-            this.generatedModuleSet                     = new Set();
+            this.generatedModuleSet                     = Collections.set();
 
             /**
              * @private
              * @type {List.<Module>}
              */
-            this.initializedModuleList                  = new List();
-
-            /**
-             * @private
-             * @type {Queue.<Module>}
-             */
-            this.initializingModuleQueue                = new Queue();
+            this.initializedModuleList                  = Collections.list();
 
             /**
              * @private
              * @type {Map.<IocModule, ModuleScope>}
              */
-            this.iocModuleToModuleScopeMap              = new Map();
+            this.iocModuleToModuleScopeMap              = Collections.map();
 
             /**
              * @private
              * @type {Map.<string, IocModule>}
              */
-            this.moduleNameToIocModuleMap               = new Map();
+            this.moduleNameToIocModuleMap               = Collections.map();
 
             /**
              * @private
-             * @type {Queue.<Module>}
+             * @type {ValidationMachine}
              */
-            this.processingModuleQueue                  = new Queue();
+            this.moduleValidationMachine                = new ValidationMachine();
+
+            /**
+             * @private
+             * @type {List.<Module>}
+             */
+            this.processingModuleList                   = Collections.list();
 
             /**
              * @private
              * @type {Set.<IocModule>}
              */
-            this.registeredIocModuleSet                 = new Set();
+            this.registeredIocModuleSet                 = Collections.set();
 
             /**
              * @private
              * @type {Set.<IModuleProcessor>}
              */
-            this.registeredModuleProcessorSet           = new Set();
+            this.registeredModuleProcessorSet           = Collections.set();
 
             /**
              * @private
              * @type {boolean}
              */
             this.starting                               = false;
+        },
 
 
-            //-------------------------------------------------------------------------------
-            // Setup
-            //-------------------------------------------------------------------------------
+        //-------------------------------------------------------------------------------
+        // Initializer
+        //-------------------------------------------------------------------------------
 
+        /**
+         * @private
+         * @param {ContextCommandFactory} contextCommandFactory
+         */
+        _initializer: function(contextCommandFactory) {
+            this._super();
             this.contextStateMachine.setParentPropagator(this);
+            this.moduleValidationMachine.addValidator(IocContext.ValidationTypes.MODULES_STARTED, this.validateModulesStarted, this);
+            this.moduleValidationMachine.addValidator(IocContext.ValidationTypes.MODULES_STOPPED, this.validateModulesStopped, this);
         },
 
 
@@ -216,7 +216,7 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @return {IocDefines.ContextState|string}
+         * @return {IocContext.ContextState|string}
          */
         getContextState: function() {
             return this.contextStateMachine.getCurrentState();
@@ -252,14 +252,14 @@ require('bugpack').context("*", function(bugpack) {
          * @return {boolean}
          */
         isReady: function() {
-            return this.getContextState() === IocDefines.ContextState.READY;
+            return this.getContextState() === IocContext.ContextState.READY;
         },
 
         /**
          * @return {boolean}
          */
         isRunning: function() {
-            return this.getContextState() === IocDefines.ContextState.RUNNING;
+            return this.getContextState() === IocContext.ContextState.RUNNING;
         },
 
         /**
@@ -289,7 +289,7 @@ require('bugpack').context("*", function(bugpack) {
             if (!this.generated) {
                 this.generated = true;
                 this.generateModules();
-                this.contextStateMachine.changeState(IocDefines.ContextState.READY);
+                this.contextStateMachine.changeState(IocContext.ContextState.READY);
             }
         },
 
@@ -356,93 +356,30 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @protected
-         * @param {function(Throwable=)} callback
          */
-        deinitializeModules: function(callback) {
-            var _this = this;
-            $iterableSeries(this.initializedModuleSet.clone(), function(flow, module) {
-                module.deinitializeModule(function(throwable) {
-                    _this.initializedModuleSet.remove(module);
-                    flow.complete(throwable);
-                });
-            }).execute(callback);
-        },
-
-        /**
-         * @protected
-         * @param {function(Throwable=)} callback
-         */
-        deprocessModules: function(callback) {
-
-        },
-
-        /**
-         * @protected
-         * @param {function(Throwable=)} callback
-         */
-        initializeModules: function(callback) {
-            var _this = this;
-            /** @type {List.<string>} */
-            var moduleNamesInDependentOrder = this.dependencyGraph.getValuesInDependentOrder();
-            moduleNamesInDependentOrder.forEach(function(moduleName) {
-                var iocModule = this.findIocModuleByName(moduleName);
-                _this.configureIocModule(iocModule);
-            });
-            $iterableSeries(this.initializingModuleSet.clone(), function(flow, module) {
-                module.initializeModule(function(throwable) {
-                    _this.initializingModuleSet.remove(module);
-                    _this.initializedModuleSet.add(module);
-                    flow.complete(throwable);
-                });
-            }).execute(callback);
-        },
-
-        /**
-         * @protected
-         * @param {function(Throwable=)} callback
-         */
-        processModules: function(callback) {
-            //TODO BRN: Get all module processors
-        },
-
         startContext: function() {
             var _this = this;
-            $series([
-                $task(function(flow) {
-                    _this.processModules(function(throwable) {
-                        flow.complete(throwable);
-                    });
-                }),
-                $task(function(flow) {
-                    _this.initializeModules(function(throwable) {
-                        flow.complete(throwable);
-                    });
-                })
-            ]).execute(callback);
-        },
-
-        stopContext: function() {
-            var _this = this;
-            $series([
-                $task(function(flow) {
-                    _this.deinitializeModules(function(throwable) {
-                        flow.complete(throwable);
-                    });
-                }),
-                $task(function(flow) {
-                    _this.deprocessModules(function(throwable) {
-                        flow.complete(throwable);
-                    });
-                })
-            ]).execute(callback);
+            this.invalidateModulesStarted(function(throwable) {
+                if (!throwable) {
+                    _this.contextStateMachine.changeState(IocContext.ContextState.RUNNING);
+                } else {
+                    _this.dispatchThrowable(throwable);
+                }
+            });
         },
 
         /**
          * @protected
-         * @param {(IocDefines.ContextState|string)} contextState
          */
-        updateContextState: function(contextState) {
-            this.contextStateMachine.changeState(contextState);
+        stopContext: function() {
+            var _this = this;
+            this.invalidateModulesStopped(function(throwable) {
+                if (!throwable) {
+                    _this.contextStateMachine.changeState(IocContext.ContextState.READY);
+                } else {
+                    _this.dispatchThrowable(throwable);
+                }
+            });
         },
 
 
@@ -457,9 +394,17 @@ require('bugpack').context("*", function(bugpack) {
          * @return {IModuleProcessor}
          */
         buildModuleProcessor: function(moduleProcessorTag, context) {
-            var processingMethodName    = moduleProcessorTag.getMethodName();
-            var processingMethod        = context[processingMethodName];
-            var moduleProcessor         = this.factoryModuleProcessor(processingMethod, context);
+            var processMethodName       = moduleProcessorTag.getProcessMethodName();
+            var processMethod           = null;
+            if (processMethodName) {
+                processMethod = context[processMethodName];
+            }
+            var deprocessMethodName     = moduleProcessorTag.getDeprocessMethodName();
+            var deprocessMethod         = null;
+            if (deprocessMethodName) {
+                deprocessMethod = context[deprocessMethodName];
+            }
+            var moduleProcessor         = this.factoryModuleProcessor(processMethod, deprocessMethod, context);
             this.registerModuleProcessor(moduleProcessor);
             return moduleProcessor;
         },
@@ -490,20 +435,90 @@ require('bugpack').context("*", function(bugpack) {
         configureModule: function(module) {
             if (!module.isConfigured()) {
                 module.configure();
-                this.processingModuleQueue.enqueue(module);
+                this.processingModuleList.add(module);
                 this.checkIfModuleIsModuleProcessor(module);
-                this.invalidateModules();
+                this.invalidateModulesStarted();
             }
         },
 
         /**
+         * @private
+         * @param {Module} module
+         * @param {function(Throwable=)} callback
+         */
+        deinitializeModule: function(module, callback) {
+            var _this = this;
+            module.deinitialize(function(throwable) {
+                if (!throwable) {
+                    _this.initializedModuleList.remove(module);
+                }
+                callback(throwable);
+            });
+        },
+
+        /**
+         * @private
+         * @param {List.<Module>} moduleList
+         * @param {function(Throwable=)} callback
+         */
+        deinitializeModules: function(moduleList, callback) {
+            $iterableSeries(moduleList, function(flow, module) {
+                module.deinitializeModule(function(throwable) {
+                    flow.complete(throwable);
+                });
+            }).execute(callback);
+        },
+
+        /**
+         * @private
+         * @param {Module} module
+         * @param {function(Throwable=)} callback
+         */
+        deprocessModule: function(module, callback) {
+            var _this = this;
+            $iterableSeries(this.registeredModuleProcessorSet, function(flow, moduleProcessor) {
+                moduleProcessor.deprocessModule(module, function(throwable) {
+                    if (!throwable) {
+                        _this.initializedModuleList.remove(module);
+                    }
+                    flow.complete(throwable);
+                });
+            }).execute(callback);
+        },
+
+        /**
+         * @private
+         * @param {List.<Module>} moduleList
+         * @param {function(Throwable=)} callback
+         */
+        deprocessModules: function(moduleList, callback) {
+            var _this = this;
+            $iterableSeries(moduleList, function(flow, module) {
+                _this.deprocessModule(module, function(throwable) {
+                    flow.complete(throwable);
+                });
+            }).execute(callback);
+        },
+
+        /**
+         * @private
+         * @param {Throwable} throwable
+         */
+        dispatchThrowable: function(throwable) {
+            this.dispatchEvent(new Event(IocContext.EventTypes.THROWABLE, {
+                throwable: throwable
+            }))
+        },
+
+        /**
          * @protected
-         * @param {function(*)} method
+         * @param {?function(Module)} processMethod
+         * @param {?function(Module)} deprocessMethod
          * @param {Object} context
          * @returns {MethodModuleProcessor}
          */
-        factoryModuleProcessor: function(method, context) {
-            return new MethodModuleProcessor(method, context);
+        factoryModuleProcessor: function(processMethod, deprocessMethod, context) {
+            return new MethodModuleProcessor(processMethod, deprocessMethod, context);
         },
 
         /**
@@ -577,17 +592,70 @@ require('bugpack').context("*", function(bugpack) {
          * @param {function(Throwable=)} callback
          */
         initializeModule: function(module, callback) {
-
+            var _this = this;
+            module.initialize(function(throwable) {
+                if (!throwable) {
+                    _this.initializedModuleList.add(module);
+                }
+                callback(throwable);
+            });
         },
 
-        invalidateModules: function() {
-            Func.deferCall(function() {}, {}, [])
+        /**
+         * @private
+         * @param {List.<Module>} moduleList
+         * @param {function(Throwable=)} callback
+         */
+        initializeModules: function(moduleList, callback) {
+            var _this = this;
+            $iterableSeries(moduleList, function(flow, module) {
+                _this.initializeModule(module, function(throwable) {
+                    flow.complete(throwable);
+                });
+            }).execute(callback);
         },
 
+        /**
+         * @private
+         * @param {function(Throwable=)=} callback
+         */
+        invalidateModulesStarted: function(callback) {
+            this.moduleValidationMachine.invalidate(IocContext.ValidationTypes.MODULES_STARTED, callback);
+        },
+
+        /**
+         * @private
+         * @param {function(Throwable=)=} callback
+         */
+        invalidateModulesStopped: function(callback) {
+            this.moduleValidationMachine.invalidate(IocContext.ValidationTypes.MODULES_STOPPED, callback);
+        },
+
+        /**
+         * @private
+         * @param {Module} module
+         * @param {function(Throwable=)} callback
+         */
         processModule: function(module, callback) {
-            if (Class.doesImplement(module, IInitializeModule)) {
-                this.initializingModuleSet.add(module);
-            }
+            $iterableSeries(this.registeredModuleProcessorSet, function(flow, moduleProcessor) {
+                moduleProcessor.processModule(module, function(throwable) {
+                    flow.complete(throwable);
+                });
+            }).execute(callback);
+        },
+
+        /**
+         * @private
+         * @param {List.<Module>} moduleList
+         * @param {function(Throwable=)} callback
+         */
+        processModules: function(moduleList, callback) {
+            var _this = this;
+            $iterableSeries(moduleList, function(flow, module) {
+                _this.processModule(module, function(throwable) {
+                    flow.complete(throwable);
+                });
+            }).execute(callback);
         },
 
         /**
@@ -610,8 +678,112 @@ require('bugpack').context("*", function(bugpack) {
                     _this.dependencyGraph.addDependency(moduleName, iocProperty.getRef());
                 }
             });
+        },
+
+        /**
+         * @private
+         * @param {function(Throwable=)} callback
+         */
+        startModules: function(callback) {
+            var _this = this;
+            var moduleList = this.processingModuleList.clone();
+            this.processingModuleList.clear();
+            $series([
+                $task(function(flow) {
+                    _this.processModules(moduleList, function(throwable) {
+                        flow.complete(throwable);
+                    });
+                }),
+                $task(function(flow) {
+                    _this.initializeModules(moduleList, function(throwable) {
+                        flow.complete(throwable);
+                    });
+                })
+            ]).execute(callback);
+        },
+
+        /**
+         * @private
+         * @param {function(Throwable=)} callback
+         */
+        stopModules: function(callback) {
+            var _this = this;
+            var moduleList = this.initializedModuleList.clone();
+            $series([
+                $task(function(flow) {
+                    _this.deinitializeModules(moduleList, function(throwable) {
+                        flow.complete(throwable);
+                    });
+                }),
+                $task(function(flow) {
+                    _this.deprocessModules(moduleList, function(throwable) {
+                        flow.complete(throwable);
+                    });
+                })
+            ]).execute(callback);
+        },
+
+        /**
+         * @private
+         * @param {(IocContext.ContextState|string)} contextState
+         */
+        updateContextState: function(contextState) {
+            this.contextStateMachine.changeState(contextState);
+        },
+
+
+        //-------------------------------------------------------------------------------
+        // Validators
+        //-------------------------------------------------------------------------------
+
+        /**
+         * @private
+         * @param {function(Throwable=)} callback
+         */
+        validateModulesStarted: function(callback) {
+            this.startModules(callback);
+        },
+
+        /**
+         * @private
+         * @param {function(Throwable=)} callback
+         */
+        validateModulesStopped: function(callback) {
+            this.stopModules(callback);
         }
     });
+
+
+    //-------------------------------------------------------------------------------
+    // Static Properties
+    //-------------------------------------------------------------------------------
+
+    /**
+     * @static
+     * @enum {string}
+     */
+    IocContext.ContextState = {
+        NOT_READY: "IocContext:State:NotReady",
+        READY: "IocContext:State:Ready",
+        RUNNING: "IocContext:State:Running"
+    };
+
+    /**
+     * @static
+     * @enum {string}
+     */
+    IocContext.EventTypes = {
+        THROWABLE: "IocContext:EventTypes:Throwable"
+    };
+
+    /**
+     * @static
+     * @enum {string}
+     */
+    IocContext.ValidationTypes = {
+        MODULES_STARTED: "IocContext:ValidationTypes:ModulesStarted",
+        MODULES_STOPPED: "IocContext:ValidationTypes:ModulesStopped"
+    };
 
 
     //-------------------------------------------------------------------------------

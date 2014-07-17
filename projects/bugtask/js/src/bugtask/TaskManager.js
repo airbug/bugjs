@@ -19,10 +19,10 @@
 //@Require('Class')
 //@Require('Exception')
 //@Require('Obj')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 //@Require('bugtask.Task')
 //@Require('bugtask.TaskDefines')
-//@Require('bugtrace.BugTrace')
+//@Require('Tracer')
 
 
 //-------------------------------------------------------------------------------
@@ -40,19 +40,19 @@ require('bugpack').context("*", function(bugpack) {
     var Class               = bugpack.require('Class');
     var Exception           = bugpack.require('Exception');
     var Obj                 = bugpack.require('Obj');
-    var BugFlow             = bugpack.require('bugflow.BugFlow');
+    var Flows             = bugpack.require('Flows');
     var Task                = bugpack.require('bugtask.Task');
     var TaskDefines         = bugpack.require('bugtask.TaskDefines');
-    var BugTrace            = bugpack.require('bugtrace.BugTrace');
+    var Tracer            = bugpack.require('Tracer');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var $series             = BugFlow.$series;
-    var $task               = BugFlow.$task;
-    var $traceWithError     = BugTrace.$traceWithError;
+    var $series             = Flows.$series;
+    var $task               = Flows.$task;
+    var $traceWithError     = Tracer.$traceWithError;
 
 
     //-------------------------------------------------------------------------------

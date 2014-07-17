@@ -19,7 +19,7 @@
 //@Require('aws.AwsConfig')
 //@Require('aws.S3Api')
 //@Require('aws.S3Bucket')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 //@Require('bugfs.BugFs')
 //@Require('bugfs.Path')
 
@@ -46,7 +46,7 @@ require('bugpack').context("*", function(bugpack) {
     var AwsConfig           = bugpack.require('aws.AwsConfig');
     var S3Api               = bugpack.require('aws.S3Api');
     var S3Bucket            = bugpack.require('aws.S3Bucket');
-    var BugFlow             = bugpack.require('bugflow.BugFlow');
+    var Flows             = bugpack.require('Flows');
     var BugFs               = bugpack.require('bugfs.BugFs');
     var Path                = bugpack.require('bugfs.Path');
 
@@ -55,10 +55,10 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var $forEachParallel    = BugFlow.$forEachParallel;
-    var $if                 = BugFlow.$if;
-    var $series             = BugFlow.$series;
-    var $task               = BugFlow.$task;
+    var $forEachParallel    = Flows.$forEachParallel;
+    var $if                 = Flows.$if;
+    var $series             = Flows.$series;
+    var $task               = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

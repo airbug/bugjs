@@ -21,11 +21,11 @@
 //@Require('Obj')
 //@Require('Set')
 //@Require('bugcall.CallDefines')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 //@Require('bugioc.ArgTag')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
-//@Require('bugtrace.BugTrace')
+//@Require('Tracer')
 
 
 //-------------------------------------------------------------------------------
@@ -44,11 +44,11 @@ require('bugpack').context("*", function(bugpack) {
     var Obj                 = bugpack.require('Obj');
     var Set                 = bugpack.require('Set');
     var CallDefines         = bugpack.require('bugcall.CallDefines');
-    var BugFlow             = bugpack.require('bugflow.BugFlow');
+    var Flows             = bugpack.require('Flows');
     var ArgTag              = bugpack.require('bugioc.ArgTag');
     var ModuleTag           = bugpack.require('bugioc.ModuleTag');
     var BugMeta             = bugpack.require('bugmeta.BugMeta');
-    var BugTrace            = bugpack.require('bugtrace.BugTrace');
+    var Tracer            = bugpack.require('Tracer');
 
 
     //-------------------------------------------------------------------------------
@@ -58,11 +58,11 @@ require('bugpack').context("*", function(bugpack) {
     var arg                 = ArgTag.arg;
     var bugmeta             = BugMeta.context();
     var module              = ModuleTag.module;
-    var $iterableParallel   = BugFlow.$iterableParallel;
-    var $parallel           = BugFlow.$parallel;
-    var $series             = BugFlow.$series;
-    var $task               = BugFlow.$task;
-    var $traceWithError     = BugTrace.$traceWithError;
+    var $iterableParallel   = Flows.$iterableParallel;
+    var $parallel           = Flows.$parallel;
+    var $series             = Flows.$series;
+    var $task               = Flows.$task;
+    var $traceWithError     = Tracer.$traceWithError;
 
 
     //-------------------------------------------------------------------------------

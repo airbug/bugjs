@@ -109,7 +109,7 @@ require('bugpack').context("*", function(bugpack) {
             });
             this.testIocContext                 = new IocContext();
             this.testConfigurationIocModule     = new IocModule("testConfigurationModuleName", IocModule.Scope.SINGLETON);
-            this.testClassModuleFactory         = new ClassModuleFactory(this.testIocContext, this.testConfigurationIocModule, this.TestConfigurationClass);
+            this.testClassModuleFactory         = new ClassModuleFactory(this.testIocContext, this.testConfigurationIocModule, this.TestConfigurationClass.getClass());
             this.testConfigurationIocModule.setModuleFactory(this.testClassModuleFactory);
             this.testIocModule                  = new IocModule("testModuleName", IocModule.Scope.SINGLETON);
             this.testIocContext.registerIocModule(this.testConfigurationIocModule);

@@ -126,8 +126,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         isConfigured: function() {
             return (this.moduleState === Module.State.CONFIGURED
-                || this.moduleState === Module.State.INITIALIZED
-                || this.moduleState === Module.State.PROCESSED);
+                || this.moduleState === Module.State.INITIALIZED);
         },
 
         /**
@@ -135,14 +134,6 @@ require('bugpack').context("*", function(bugpack) {
          */
         isInitialized: function() {
             return this.moduleState === Module.State.INITIALIZED;
-        },
-
-        /**
-         * @return {boolean}
-         */
-        isProcessed: function() {
-            return (this.moduleState === Module.State.INITIALIZED
-                || this.moduleState === Module.State.PROCESSED);
         },
 
 
@@ -163,21 +154,34 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @param {function(Throwable=)} callback
          */
-        initialize: function(callback) {
-            if (!this.isInitialized()) {
-                this.moduleState = Module.State.INITIALIZED;
-                this.initializeModule(callback);
+        deinitialize: function(callback) {
+            var _this = this;
+            if (this.isInitialized()) {
+                this.deinitializeModule(function(throwable) {
+                    if (!throwable) {
+                        _this.moduleState = Module.State.CONFIGURED;
+                    }
+                    callback(throwable);
+                });
             } else {
-                callback(new Exception("IllegalState", {}, "Module is already initialized"));
+                callback(new Exception("IllegalState", {}, "Module must be in initialized state before called deinitialize"));
             }
         },
 
         /**
-         *
+         * @param {function(Throwable=)} callback
          */
-        process: function() {
-            if (!this.isProcessed()) {
-                this.moduleState = Module.State.PROCESSED;
+        initialize: function(callback) {
+            var _this = this;
+            if (!this.isInitialized()) {
+                this.initializeModule(function(throwable) {
+                    if (!throwable) {
+                        _this.moduleState = Module.State.INITIALIZED;
+                    }
+                    callback(throwable);
+                });
+            } else {
+                callback(new Exception("IllegalState", {}, "Module is already initialized"));
             }
         },
 
@@ -199,6 +203,17 @@ require('bugpack').context("*", function(bugpack) {
             }
         },
 
+        /**
+         * @private
+         * @param {function(Throwable=)} callback
+         */
+        deinitializeModule: function(callback) {
+            if (Class.doesImplement(this.instance, IInitializingModule)) {
+                this.instance.deinitializeModule(callback);
+            } else {
+                callback();
+            }
+        },
 
         /**
          * @private
@@ -240,8 +255,7 @@ require('bugpack').context("*", function(bugpack) {
     Module.State = {
         CONFIGURED: "Module:State:Configured",
         GENERATED: "Module:State:Generated",
-        INITIALIZED: "Module:State:Initialized",
-        PROCESSED: "Module:State:Processed"
+        INITIALIZED: "Module:State:Initialized"
     };
 
 

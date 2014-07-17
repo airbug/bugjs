@@ -21,7 +21,7 @@
 //@Require('bugioc.ArgTag')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
-//@Require('bugtrace.BugTrace')
+//@Require('Tracer')
 
 
 //-------------------------------------------------------------------------------
@@ -40,7 +40,7 @@ require('bugpack').context("*", function(bugpack) {
     var ArgTag              = bugpack.require('bugioc.ArgTag');
     var ModuleTag           = bugpack.require('bugioc.ModuleTag');
     var BugMeta             = bugpack.require('bugmeta.BugMeta');
-    var BugTrace            = bugpack.require('bugtrace.BugTrace');
+    var Tracer            = bugpack.require('Tracer');
 
 
     //-------------------------------------------------------------------------------
@@ -50,7 +50,7 @@ require('bugpack').context("*", function(bugpack) {
     var arg                 = ArgTag.arg;
     var bugmeta             = BugMeta.context();
     var module              = ModuleTag.module;
-    var $traceWithError     = BugTrace.$traceWithError;
+    var $traceWithError     = Tracer.$traceWithError;
 
 
     //-------------------------------------------------------------------------------

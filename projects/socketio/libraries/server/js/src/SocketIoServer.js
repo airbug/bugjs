@@ -17,7 +17,6 @@
 //@Require('Class')
 //@Require('EventDispatcher')
 //@Require('Proxy')
-//@Require('bugflow.BugFlow')
 
 
 //-------------------------------------------------------------------------------
@@ -40,11 +39,6 @@ require('bugpack').context("*", function(bugpack) {
     var Class               = bugpack.require('Class');
     var EventDispatcher     = bugpack.require('EventDispatcher');
     var Proxy               = bugpack.require('Proxy');
-
-
-    //-------------------------------------------------------------------------------
-    // Simplify References
-    //-------------------------------------------------------------------------------
 
 
     //-------------------------------------------------------------------------------

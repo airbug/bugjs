@@ -65,7 +65,13 @@ require('bugpack').context("*", function(bugpack) {
              * @private
              * @type {string}
              */
-            this.methodName
+            this.deprocessMethodName    = null;
+
+            /**
+             * @private
+             * @type {string}
+             */
+            this.processMethodName      = null;
         },
 
 
@@ -76,8 +82,15 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @return {string}
          */
-        getMethodName: function() {
-            return this.methodName;
+        getDeprocessMethodName: function() {
+            return this.deprocessMethodName;
+        },
+
+        /**
+         * @return {string}
+         */
+        getProcessMethodName: function() {
+            return this.processMethodName;
         },
 
 
@@ -86,11 +99,20 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @param {string} methodName
+         * @param {string} deprocessMethodName
          * @return {ModuleProcessorTag}
          */
-        method: function(methodName) {
-            this.methodName = methodName;
+        deprocessMethod: function(deprocessMethodName) {
+            this.deprocessMethodName = deprocessMethodName;
+            return this;
+        },
+
+        /**
+         * @param {string} processMethodName
+         * @return {ModuleProcessorTag}
+         */
+        processMethod: function(processMethodName) {
+            this.processMethodName = processMethodName;
             return this;
         }
     });

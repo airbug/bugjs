@@ -18,7 +18,7 @@
 //@Require('Obj')
 //@Require('TypeUtil')
 //@Require('aws.EC2SecurityGroup')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 
 
 //-------------------------------------------------------------------------------
@@ -42,15 +42,15 @@ require('bugpack').context("*", function(bugpack) {
     var Obj                 = bugpack.require('Obj');
     var TypeUtil            = bugpack.require('TypeUtil');
     var EC2SecurityGroup    = bugpack.require('aws.EC2SecurityGroup');
-    var BugFlow             = bugpack.require('bugflow.BugFlow');
+    var Flows             = bugpack.require('Flows');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var $series             = BugFlow.$series;
-    var $task               = BugFlow.$task;
+    var $series             = Flows.$series;
+    var $task               = Flows.$task;
 
 
     //-------------------------------------------------------------------------------
@@ -112,7 +112,7 @@ require('bugpack').context("*", function(bugpack) {
 
 
         //-------------------------------------------------------------------------------
-        // Public Class Methods
+        // Public Methods
         //-------------------------------------------------------------------------------
 
         /**
@@ -324,7 +324,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         _authorizeSecurityGroupIngress: function(params, callback) {
             this.initialize();
-            this.ec2.client.authorizeSecurityGroupIngress(params, callback);
+            this.ec2.authorizeSecurityGroupIngress(params, callback);
         },
 
         /**
@@ -338,7 +338,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         _createSecurityGroup: function(params, callback) {
             this.initialize();
-            this.ec2.client.createSecurityGroup(params, callback);
+            this.ec2.createSecurityGroup(params, callback);
         },
 
         /**
@@ -352,7 +352,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         _describeSecurityGroups: function(params, callback) {
             this.initialize();
-            this.ec2.client.describeSecurityGroups(params, callback);
+            this.ec2.describeSecurityGroups(params, callback);
         }
     });
 

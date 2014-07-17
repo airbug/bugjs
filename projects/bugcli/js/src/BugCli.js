@@ -22,7 +22,7 @@
 //@Require('bugcli.CliOption')
 //@Require('bugcli.CliParser')
 //@Require('bugcli.CliRunner')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 
 
 //-------------------------------------------------------------------------------
@@ -50,15 +50,15 @@ require('bugpack').context("*", function(bugpack) {
     var CliOption   = bugpack.require('bugcli.CliOption');
     var CliParser   = bugpack.require('bugcli.CliParser');
     var CliRunner   = bugpack.require('bugcli.CliRunner');
-    var BugFlow     = bugpack.require('bugflow.BugFlow');
+    var Flows     = bugpack.require('Flows');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var $series     = BugFlow.$series;
-    var $task       = BugFlow.$task;
+    var $series     = Flows.$series;
+    var $task       = Flows.$task;
 
 
     //-------------------------------------------------------------------------------
@@ -130,7 +130,7 @@ require('bugpack').context("*", function(bugpack) {
 
 
         //-------------------------------------------------------------------------------
-        // Public Class Methods
+        // Public Methods
         //-------------------------------------------------------------------------------
 
         /**

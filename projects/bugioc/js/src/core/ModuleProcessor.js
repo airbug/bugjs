@@ -81,10 +81,19 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @param {*} module
+         * @param {Module} module
+         * @param {function(Throwable=)} callback
          */
-        processModule: function(module) {
-            this.doProcessModule(module);
+        deprocessModule: function(module, callback) {
+            this.doDeprocessModule(module, callback);
+        },
+
+        /**
+         * @param {Module} module
+         * @param {function(Throwable=)} callback
+         */
+        processModule: function(module, callback) {
+            this.doProcessModule(module, callback);
         },
 
 
@@ -94,10 +103,20 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @abstract
-         * @param {*} module
+         * @param {Module} module
+         * @param {function(Throwable=)} callback
          */
-        doProcessModule: function(module) {
-            throw new Bug("AbstractMethodNotImplemented", {}, "Must implement the doTask method");
+        doDeprocessModule: function(module, callback) {
+            throw new Bug("AbstractMethodNotImplemented", {}, "Must implement the doDeprocessModule method");
+        },
+
+        /**
+         * @abstract
+         * @param {Module} module
+         * @param {function(Throwable=)} callback
+         */
+        doProcessModule: function(module, callback) {
+            throw new Bug("AbstractMethodNotImplemented", {}, "Must implement the doProcessModule method");
         }
     });
 

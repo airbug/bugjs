@@ -27,8 +27,7 @@
 //@Require('bugdelta.ObjectChange')
 //@Require('bugdelta.SetChange')
 //@Require('bugentity.Entity')
-//@Require('bugflow.BugFlow')
-//@Require('bugioc.IInitializingModule')
+//@Require('Flows')
 //@Require('mongo.MongoUpdateChanges')
 
 
@@ -55,8 +54,7 @@ require('bugpack').context("*", function(bugpack) {
     var ObjectChange        = bugpack.require('bugdelta.ObjectChange');
     var SetChange           = bugpack.require('bugdelta.SetChange');
     var Entity              = bugpack.require('bugentity.Entity');
-    var BugFlow             = bugpack.require('bugflow.BugFlow');
-    var IInitializingModule   = bugpack.require('bugioc.IInitializingModule');
+    var Flows             = bugpack.require('Flows');
     var MongoUpdateChanges  = bugpack.require('mongo.MongoUpdateChanges');
 
 
@@ -64,11 +62,10 @@ require('bugpack').context("*", function(bugpack) {
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var $forEachParallel    = BugFlow.$forEachParallel;
-    var $iterableParallel   = BugFlow.$iterableParallel;
-    var $parallel           = BugFlow.$parallel;
-    var $series             = BugFlow.$series;
-    var $task               = BugFlow.$task;
+    var $forEachParallel    = Flows.$forEachParallel;
+    var $iterableParallel   = Flows.$iterableParallel;
+    var $series             = Flows.$series;
+    var $task               = Flows.$task;
 
 
     //-------------------------------------------------------------------------------
@@ -92,10 +89,9 @@ require('bugpack').context("*", function(bugpack) {
          * @constructs
          * @param {EntityManagerStore} entityManagerStore
          * @param {SchemaManager} schemaManager
-         * @param {EntityDataStore} entityDataStore
          * @param {EntityDeltaBuilder} entityDeltaBuilder
          */
-        _constructor: function(entityManagerStore, schemaManager, entityDataStore, entityDeltaBuilder) {
+        _constructor: function(entityManagerStore, schemaManager, entityDeltaBuilder) {
 
             this._super();
 
@@ -109,12 +105,6 @@ require('bugpack').context("*", function(bugpack) {
              * @type {MongoManager}
              */
             this.dataStore              = null;
-
-            /**
-             * @private
-             * @type {EntityDataStore}
-             */
-            this.entityDataStore        = entityDataStore;
 
             /**
              * @private
@@ -154,10 +144,10 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @return {EntityDataStore}
+         * @param {MongoManager} dataStore
          */
-        getEntityDataStore: function() {
-            return this.entityDataStore;
+        setDataStore: function(dataStore) {
+            this.dataStore = dataStore;
         },
 
         /**
@@ -287,7 +277,6 @@ require('bugpack').context("*", function(bugpack) {
          * @param {Entity} entity
          */
         generate: function(entity) {
-            var _this = this;
             entity.setEntityType(this.entityType);
             this.validate(entity);
         },
@@ -428,28 +417,6 @@ require('bugpack').context("*", function(bugpack) {
             } else {
                 throw new Bug("IllegalState", {}, "Cannot find EntitySchema for Entity of type '" + entity.getEntityType() +"'");
             }
-        },
-
-        //-------------------------------------------------------------------------------
-        // IInitializingModule Implementation
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @param {function(Throwable=)} callback
-         */
-        deinitializeModule: function(callback) {
-            this.entityManagerStore.deregisterEntityManager(this);
-            this.dataStore = null;
-            callback();
-        },
-
-        /**
-         * @param {function(Throwable=)} callback
-         */
-        initializeModule: function(callback) {
-            this.dataStore = this.entityDataStore.generateManager(this.entityType);
-            this.entityManagerStore.registerEntityManager(this);
-            callback();
         },
 
 
@@ -894,13 +861,6 @@ require('bugpack').context("*", function(bugpack) {
             }).execute(callback);
         }
     });
-
-
-    //-------------------------------------------------------------------------------
-    // Interfaces
-    //-------------------------------------------------------------------------------
-
-    Class.implement(EntityManager, IInitializingModule);
 
 
     //-------------------------------------------------------------------------------

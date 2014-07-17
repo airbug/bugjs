@@ -51,10 +51,11 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @constructs
-         * @param {function(*)} method
+         * @param {?function(Module)} processMethod
+         * @param {?function(Module)} deprocessMethod
          * @param {Object=} context
          */
-        _constructor: function(method, context) {
+        _constructor: function(processMethod, deprocessMethod, context) {
 
             this._super();
 
@@ -67,13 +68,19 @@ require('bugpack').context("*", function(bugpack) {
              * @private
              * @type {Object}
              */
-            this.context    = context;
+            this.context            = context;
 
             /**
              * @private
-             * @type {function(*)}
+             * @type {function(Module)}
              */
-            this.method     = method;
+            this.deprocessMethod    = deprocessMethod;
+
+            /**
+             * @private
+             * @type {function(Module)}
+             */
+            this.processMethod      = processMethod;
         },
 
 
@@ -89,10 +96,17 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @return {function(*)}
+         * @return {function(Module)}
          */
-        getMethod: function() {
-            return this.method;
+        getDeprocessMethod: function() {
+            return this.deprocessMethod;
+        },
+
+        /**
+         * @return {function(Module)}
+         */
+        getProcessMethod: function() {
+            return this.processMethod;
         },
 
 
@@ -101,10 +115,27 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @param {*} module
+         * @param {Module} module
+         * @param {function(Throwable=)} callback
          */
-        doProcessModule: function(module) {
-           this.method.call(this.context, module);
+        doDeprocessModule: function(module, callback) {
+            if (this.deprocessMethod) {
+                this.deprocessMethod.call(this.context, module.getInstance(), callback);
+            } else {
+                callback();
+            }
+        },
+
+        /**
+         * @param {Module} module
+         * @param {function(Throwable=)} callback
+         */
+        doProcessModule: function(module, callback) {
+            if (this.processMethod) {
+                this.processMethod.call(this.context, module.getInstance(), callback);
+            } else {
+                callback();
+            }
         }
     });
 

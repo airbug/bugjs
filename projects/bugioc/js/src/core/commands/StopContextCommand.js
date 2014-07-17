@@ -17,9 +17,9 @@
 //@Require('Bug')
 //@Require('Class')
 //@Require('Exception')
-//@Require('bugwork.WorkerCommand')
-//@Require('bugwork.WorkerDefines')
-//@Require('bugwork.WorkerProcess')
+//@Require('StateEvent')
+//@Require('bugioc.ContextCommand')
+//@Require('bugioc.IocContext')
 
 
 //-------------------------------------------------------------------------------
@@ -35,9 +35,9 @@ require('bugpack').context("*", function(bugpack) {
     var Bug             = bugpack.require('Bug');
     var Class           = bugpack.require('Class');
     var Exception       = bugpack.require('Exception');
-    var WorkerCommand   = bugpack.require('bugwork.WorkerCommand');
-    var WorkerDefines   = bugpack.require('bugwork.WorkerDefines');
-    var WorkerProcess   = bugpack.require('bugwork.WorkerProcess');
+    var StateEvent      = bugpack.require('StateEvent');
+    var ContextCommand  = bugpack.require('bugioc.ContextCommand');
+    var IocContext      = bugpack.require('bugioc.IocContext');
 
 
     //-------------------------------------------------------------------------------
@@ -46,11 +46,11 @@ require('bugpack').context("*", function(bugpack) {
 
     /**
      * @class
-     * @extends {WorkerCommand}
+     * @extends {ContextCommand}
      */
-    var StartWorkerCommand = Class.extend(WorkerCommand, {
+    var StopContextCommand = Class.extend(ContextCommand, {
 
-        _name: "bugwork.StartWorkerCommand",
+        _name: "bugioc.StopContextCommand",
 
 
         //-------------------------------------------------------------------------------
@@ -59,12 +59,11 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @constructs
-         * @param {WorkerContext} workerContext
-         * @param {Marshaller} marshaller
+         * @param {IocContext} iocContext
          */
-        _constructor: function(workerContext, marshaller) {
+        _constructor: function(iocContext) {
 
-            this._super(workerContext);
+            this._super(iocContext);
 
 
             //-------------------------------------------------------------------------------
@@ -82,12 +81,6 @@ require('bugpack').context("*", function(bugpack) {
              * @type {boolean}
              */
             this.completed      = false;
-
-            /**
-             * @private
-             * @type {Marshaller}
-             */
-            this.marshaller     = marshaller;
         },
 
 
@@ -112,14 +105,18 @@ require('bugpack').context("*", function(bugpack) {
          * @param {function(Throwable=)} callback
          */
         executeCommand: function(callback) {
-            this.callback       = callback;
-            var workerContext   = this.getWorkerContext();
-            if (workerContext.isReady()) {
-                this.startWorker();
-            } else if (workerContext.isRunning()) {
-                this.complete();
+            this.callback = callback;
+            var iocContext = this.getIocContext();
+            if (iocContext.isGenerated()) {
+                if (iocContext.isRunning()) {
+                    this.stopContext();
+                } else if (iocContext.isReady()) {
+                    this.complete();
+                } else {
+                    this.complete(new Exception("IllegalState", {}, "IocContext is not ready and cannot have stop called on it"));
+                }
             } else {
-                this.complete(new Exception("IllegalState", {}, "Worker is not ready and cannot have start called on it"));
+                this.complete(new Exception("IllegalState", {}, "IocContext has not been generated. Must call generate() before calling stop()"));
             }
         },
 
@@ -130,12 +127,10 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @private
-         * @param {WorkerProcess} workerProcess
          */
-        addProcessListeners: function(workerProcess) {
-            workerProcess.addEventListener(WorkerProcess.EventTypes.CLOSED, this.hearProcessClosed, this);
-            workerProcess.addEventListener(WorkerProcess.EventTypes.MESSAGE, this.hearProcessMessage, this);
-            workerProcess.addEventListener(WorkerProcess.EventTypes.THROWABLE, this.hearProcessThrowable, this);
+        addContextListeners: function() {
+            this.getIocContext().addEventListener(StateEvent.EventTypes.STATE_CHANGED, this.hearContextStateChanged, this);
+            this.getIocContext().addEventListener(IocContext.EventTypes.THROWABLE, this.hearContextThrowable, this);
         },
 
         /**
@@ -145,57 +140,32 @@ require('bugpack').context("*", function(bugpack) {
         complete: function(throwable) {
             if (!this.completed) {
                 this.completed = true;
-                this.removeProcessListeners(this.getWorkerContext().getWorkerProcess());
-                this.workerContext = null;
+                this.removeContextListeners();
+                this.iocContext = null;
                 if (!throwable) {
                     this.callback();
                 } else {
                     this.callback(throwable);
                 }
             } else {
-                throw new Bug("IllegalState", {}, "Starter already complete");
+                throw new Bug("IllegalState", {}, "StopContextCommand already complete");
             }
         },
 
         /**
          * @private
-         * @param {*} message
          */
-        processMessage: function(message) {
-
-            console.log("StartWorkerCommand#processMessage - message:", message);
-
-            if (message.messageType === WorkerDefines.MessageTypes.WORKER_STARTED) {
-                this.getWorkerContext().updateWorkerState(WorkerDefines.State.RUNNING);
-                this.complete();
-            }
-        },
-
-        /**
-         * @private
-         * @param {WorkerProcess} workerProcess
-         */
-        removeProcessListeners: function(workerProcess) {
-            workerProcess.removeEventListener(WorkerProcess.EventTypes.CLOSED, this.hearProcessClosed, this);
-            workerProcess.removeEventListener(WorkerProcess.EventTypes.MESSAGE, this.hearProcessMessage, this);
-            workerProcess.removeEventListener(WorkerProcess.EventTypes.THROWABLE, this.hearProcessThrowable, this);
+        removeContextListeners: function() {
+            this.getIocContext().removeEventListener(StateEvent.EventTypes.STATE_CHANGED, this.hearContextStateChanged, this);
+            this.getIocContext().removeEventListener(IocContext.EventTypes.THROWABLE, this.hearContextThrowable, this);
         },
 
         /**
          * @private
          */
-        startWorker: function() {
-            var workerContext   = this.getWorkerContext();
-            var workerName      = workerContext.getWorkerName();
-            var logMessage      = "Starting worker '" + workerName + "'";
-            if (workerContext.isDebug()) {
-                logMessage += " in debug mode running on port " + workerContext.getDebugPort();
-            }
-            console.log(logMessage);
-            this.addProcessListeners(workerContext.getWorkerProcess());
-            workerContext.getWorkerProcess().sendMessage(WorkerDefines.MessageTypes.START_WORKER, {
-                workerName: workerName
-            });
+        stopContext: function() {
+            this.addContextListeners();
+            this.getIocContext().stopContext();
         },
 
 
@@ -205,26 +175,21 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @private
-         * @param {Event} event
+         * @param {StateEvent} event
          */
-        hearProcessClosed: function(event) {
-            this.complete(new Exception("Worker closed before ready event"));
+        hearContextStateChanged: function(event) {
+            if (event.getCurrentState() === IocContext.ContextState.READY) {
+                this.complete();
+            } else {
+                this.complete(new Exception("IllegalState", {}, "Unexpected state change for start command"));
+            }
         },
 
         /**
          * @private
          * @param {Event} event
          */
-        hearProcessMessage: function(event) {
-            var message = event.getData().message;
-            this.processMessage(message);
-        },
-
-        /**
-         * @private
-         * @param {Event} event
-         */
-        hearProcessThrowable: function(event) {
+        hearContextThrowable: function(event) {
             this.complete(event.getData().throwable);
         }
     });
@@ -234,5 +199,5 @@ require('bugpack').context("*", function(bugpack) {
     // Exports
     //-------------------------------------------------------------------------------
 
-    bugpack.export('bugwork.StartWorkerCommand', StartWorkerCommand);
+    bugpack.export('bugioc.StopContextCommand', StopContextCommand);
 });

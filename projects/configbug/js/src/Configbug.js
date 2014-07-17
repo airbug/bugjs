@@ -20,7 +20,7 @@
 //@Require('Map')
 //@Require('Obj')
 //@Require('TypeUtil')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 //@Require('bugfs.BugFs')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
@@ -41,7 +41,7 @@ require('bugpack').context("*", function(bugpack) {
     var Map         = bugpack.require('Map');
     var Obj         = bugpack.require('Obj');
     var TypeUtil    = bugpack.require('TypeUtil');
-    var BugFlow     = bugpack.require('bugflow.BugFlow');
+    var Flows     = bugpack.require('Flows');
     var BugFs       = bugpack.require('bugfs.BugFs');
     var ModuleTag   = bugpack.require('bugioc.ModuleTag');
     var BugMeta     = bugpack.require('bugmeta.BugMeta');
@@ -53,9 +53,9 @@ require('bugpack').context("*", function(bugpack) {
 
     var bugmeta     = BugMeta.context();
     var module      = ModuleTag.module;
-    var $if         = BugFlow.$if;
-    var $series     = BugFlow.$series;
-    var $task       = BugFlow.$task;
+    var $if         = Flows.$if;
+    var $series     = Flows.$series;
+    var $task       = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

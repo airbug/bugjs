@@ -20,7 +20,7 @@
 //@Require('Exception')
 //@Require('Obj')
 //@Require('TypeUtil')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 //@Require('bugioc.ArgTag')
 //@Require('bugioc.IInitializingModule')
 //@Require('bugioc.ModuleTag')
@@ -43,7 +43,7 @@ require('bugpack').context("*", function(bugpack) {
     var Exception           = bugpack.require('Exception');
     var Obj                 = bugpack.require('Obj');
     var TypeUtil            = bugpack.require('TypeUtil');
-    var BugFlow             = bugpack.require('bugflow.BugFlow');
+    var Flows             = bugpack.require('Flows');
     var ArgTag              = bugpack.require('bugioc.ArgTag');
     var IInitializingModule   = bugpack.require('bugioc.IInitializingModule');
     var ModuleTag           = bugpack.require('bugioc.ModuleTag');
@@ -58,8 +58,7 @@ require('bugpack').context("*", function(bugpack) {
     var arg                 = ArgTag.arg;
     var bugmeta             = BugMeta.context();
     var module              = ModuleTag.module;
-    var $series             = BugFlow.$series;
-    var $task               = BugFlow.$task;
+    var $task               = Flows.$task;
 
 
     //-------------------------------------------------------------------------------
@@ -197,10 +196,6 @@ require('bugpack').context("*", function(bugpack) {
          * @param {string} workerName
          */
         generateWorker: function(workerName) {
-
-            //TEST
-            console.log("WorkerRunner#generateWorker - workerName:", workerName);
-
             var workerRegistryEntry = this.workerRegistry.getRegistryEntryForName(workerName);
             if (workerRegistryEntry) {
                 var workerClass         = workerRegistryEntry.getWorkerClass();
@@ -216,12 +211,6 @@ require('bugpack').context("*", function(bugpack) {
          * @param {*} message
          */
         handleProcessMessage: function(message) {
-
-            //TEST
-            console.log("WorkerRunner#handleProcessMessage - message:", message);
-            console.log("TypeUtil.isObject(message):", TypeUtil.isObject(message));
-            console.log("message.messageType:", message.messageType);
-
             if (TypeUtil.isObject(message)) {
                 if (message.messageData) {
                     message.messageData = this.marshaller.unmarshalData(message.messageData);
@@ -303,10 +292,6 @@ require('bugpack').context("*", function(bugpack) {
          * @param {function(Throwable=)} callback
          */
         startWorker: function(callback) {
-
-            //TEST
-            console.log("WorkerRunner#startWorker - this.isStopped():", this.isStopped());
-
             var _this = this;
             if (this.isStopped()) {
                 this.state = WorkerRunner.States.STARTING;

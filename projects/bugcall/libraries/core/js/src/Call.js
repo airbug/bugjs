@@ -30,7 +30,7 @@
 //@Require('bugcall.OutgoingRequest')
 //@Require('bugcall.OutgoingResponse')
 //@Require('bugcall.RequestFailedException')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 
 
 //-------------------------------------------------------------------------------
@@ -59,14 +59,14 @@ require('bugpack').context("*", function(bugpack) {
     var OutgoingRequest         = bugpack.require('bugcall.OutgoingRequest');
     var OutgoingResponse        = bugpack.require('bugcall.OutgoingResponse');
     var RequestFailedException  = bugpack.require('bugcall.RequestFailedException');
-    var BugFlow                 = bugpack.require('bugflow.BugFlow');
+    var Flows                 = bugpack.require('Flows');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var $task                   = BugFlow.$task;
+    var $task                   = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

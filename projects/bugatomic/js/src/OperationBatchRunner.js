@@ -18,7 +18,7 @@
 //@Require('EventDispatcher')
 //@Require('Set')
 //@Require('bugatomic.Operation')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 
 
 //-------------------------------------------------------------------------------
@@ -35,14 +35,14 @@ require('bugpack').context("*", function(bugpack) {
     var EventDispatcher     = bugpack.require('EventDispatcher');
     var Set                 = bugpack.require('Set');
     var Operation           = bugpack.require('bugatomic.Operation');
-    var BugFlow             = bugpack.require('bugflow.BugFlow');
+    var Flows             = bugpack.require('Flows');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var $iterableParallel   = BugFlow.$iterableParallel;
+    var $iterableParallel   = Flows.$iterableParallel;
 
 
     //-------------------------------------------------------------------------------

@@ -74,7 +74,7 @@ require('bugpack').context("*", function(bugpack) {
             this.TestClass              = Class.extend(Obj, {});
             this.testIocContext         = new IocContext();
             this.testIocModule          = new IocModule("testModuleName", IocModule.Scope.SINGLETON);
-            this.testClassModuleFactory = new ClassModuleFactory(this.testIocContext, this.testIocModule, this.TestClass);
+            this.testClassModuleFactory = new ClassModuleFactory(this.testIocContext, this.testIocModule, this.TestClass.getClass());
         },
 
         //-------------------------------------------------------------------------------
@@ -101,7 +101,7 @@ require('bugpack').context("*", function(bugpack) {
             this.TestClass              = Class.extend(Obj, {});
             this.testIocContext         = new IocContext();
             this.testIocModule          = new IocModule("testModuleName", IocModule.Scope.SINGLETON);
-            this.testClassModuleFactory = new ClassModuleFactory(this.testIocContext, this.testIocModule, this.TestClass);
+            this.testClassModuleFactory = new ClassModuleFactory(this.testIocContext, this.testIocModule, this.TestClass.getClass());
         },
 
         //-------------------------------------------------------------------------------

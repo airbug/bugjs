@@ -16,7 +16,7 @@
 
 //@Require('Class')
 //@Require('List')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 //@Require('redis.DummyRedisQuery')
 
 
@@ -32,15 +32,15 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class               = bugpack.require('Class');
     var List                = bugpack.require('List');
-    var BugFlow             = bugpack.require('bugflow.BugFlow');
+    var Flows             = bugpack.require('Flows');
     var DummyRedisQuery     = bugpack.require('redis.DummyRedisQuery');
 
 
     //-------------------------------------------------------------------------------
-    // BugFlow
+    // Simplify References
     //-------------------------------------------------------------------------------
 
-    var $iterableSeries     = BugFlow.$iterableSeries;
+    var $iterableSeries     = Flows.$iterableSeries;
 
 
     //-------------------------------------------------------------------------------

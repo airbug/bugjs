@@ -21,7 +21,6 @@
 //@Require('EventDispatcher')
 //@Require('Exception')
 //@Require('StateMachine')
-//@Require('bugflow.BugFlow')
 //@Require('bugwork.WorkerDefines')
 //@Require('bugwork.WorkerProcess')
 
@@ -43,17 +42,8 @@ require('bugpack').context("*", function(bugpack) {
     var EventDispatcher     = bugpack.require('EventDispatcher');
     var Exception           = bugpack.require('Exception');
     var StateMachine        = bugpack.require('StateMachine');
-    var BugFlow             = bugpack.require('bugflow.BugFlow');
     var WorkerDefines       = bugpack.require('bugwork.WorkerDefines');
     var WorkerProcess       = bugpack.require('bugwork.WorkerProcess');
-
-
-    //-------------------------------------------------------------------------------
-    // Simplify References
-    //-------------------------------------------------------------------------------
-
-    var $series             = BugFlow.$series;
-    var $task               = BugFlow.$task;
 
 
     //-------------------------------------------------------------------------------

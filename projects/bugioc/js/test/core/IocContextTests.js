@@ -15,6 +15,8 @@
 //@TestFile
 
 //@Require('Class')
+//@Require('Obj')
+//@Require('bugioc.ClassModuleFactory')
 //@Require('bugioc.IocContext')
 //@Require('bugioc.IocModule')
 //@Require('bugmeta.BugMeta')
@@ -33,6 +35,8 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class       = bugpack.require('Class');
+    var Obj         = bugpack.require('Obj');
+    var ClassModuleFactory  = bugpack.require('bugioc.ClassModuleFactory');
     var IocContext  = bugpack.require('bugioc.IocContext');
     var IocModule   = bugpack.require('bugioc.IocModule');
     var BugMeta     = bugpack.require('bugmeta.BugMeta');
@@ -54,8 +58,11 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     bugyarn.registerWinder("setupTestIocContext", function(yarn) {
+        yarn.spin([
+            "setupTestContextCommandFactory"
+        ]);
         yarn.wind({
-            iocContext: new IocContext()
+            iocContext: new IocContext(this.contextCommandFactory)
         });
     });
 
@@ -71,7 +78,11 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         setup: function(test) {
-            this.testIocContext   = new IocContext();
+            var yarn = bugyarn.yarn(this);
+            yarn.spin([
+                "setupTestContextCommandFactory"
+            ]);
+            this.testIocContext   = new IocContext(this.contextCommandFactory);
         },
 
         //-------------------------------------------------------------------------------
@@ -97,7 +108,11 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         setup: function(test) {
-            this.iocContext = new IocContext();
+            var yarn = bugyarn.yarn(this);
+            yarn.spin([
+                "setupTestContextCommandFactory"
+            ]);
+            this.iocContext = new IocContext(this.contextCommandFactory);
             test.completeSetup();
         },
 
@@ -108,7 +123,7 @@ require('bugpack').context("*", function(bugpack) {
         test: function(test) {
             this.iocContext.start(function() {
                 test.assertTrue(true,
-                    "Assert iocContext.initialize() callback was successfully called when there's no configs");
+                    "Assert iocContext.start() callback was successfully called when there's no configs");
                 test.completeTest();
             })
         }
@@ -124,10 +139,17 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         setup: function(test) {
-            this.iocContext             = new IocContext();
+            var yarn = bugyarn.yarn(this);
+            yarn.spin([
+                "setupTestContextCommandFactory"
+            ]);
+            this.TestClass              = Class.extend(Obj, {});
+            this.iocContext             = new IocContext(this.contextCommandFactory);
             this.testModuleName         = "testModuleName";
             this.testModuleScope        = IocModule.Scope.PROTOTYPE;
             this.testIocModule          = new IocModule(this.testModuleName, this.testModuleScope);
+            this.testClassModuleFactory = new ClassModuleFactory(this.testIocContext, this.testIocModule, this.TestClass.getClass());
+            this.testIocModule.setModuleFactory(this.testClassModuleFactory);
             this.iocContext.registerIocModule(this.testIocModule);
         },
 

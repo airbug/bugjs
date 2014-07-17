@@ -19,7 +19,7 @@
 //@Require('Event')
 //@Require('EventDispatcher')
 //@Require('Exception')
-//@Require('bugflow.BugFlow')
+//@Require('Flows')
 
 
 //-------------------------------------------------------------------------------
@@ -37,17 +37,15 @@ require('bugpack').context("*", function(bugpack) {
     var Event               = bugpack.require('Event');
     var EventDispatcher     = bugpack.require('EventDispatcher');
     var Exception           = bugpack.require('Exception');
-    var BugFlow             = bugpack.require('bugflow.BugFlow');
+    var Flows             = bugpack.require('Flows');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var $iterableParallel   = BugFlow.$iterableParallel;
-    var $parallel           = BugFlow.$parallel;
-    var $series             = BugFlow.$series;
-    var $task               = BugFlow.$task;
+    var $series             = Flows.$series;
+    var $task               = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

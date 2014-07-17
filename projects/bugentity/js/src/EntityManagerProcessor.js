@@ -12,18 +12,15 @@
 // Annotations
 //-------------------------------------------------------------------------------
 
-//@Export('bugcontroller.ControllerManager')
+//@Export('bugentity.EntityManagerProcessor')
 //@Autoload
 
 //@Require('ArgumentBug')
 //@Require('Class')
 //@Require('Obj')
-//@Require('Set')
-//@Require('bugcontroller.Controller')
-//@Require('bugcontroller.ControllerTag')
-//@Require('Flows')
+//@Require('bugentity.EntityManager')
+//@Require('bugentity.EntityManagerTag')
 //@Require('bugioc.ArgTag')
-//@Require('bugioc.IInitializingModule')
 //@Require('bugioc.ModuleTag')
 //@Require('bugioc.ModuleProcessorTag')
 //@Require('bugmeta.BugMeta')
@@ -42,12 +39,9 @@ require('bugpack').context("*", function(bugpack) {
     var ArgumentBug         = bugpack.require('ArgumentBug');
     var Class               = bugpack.require('Class');
     var Obj                 = bugpack.require('Obj');
-    var Set                 = bugpack.require('Set');
-    var Controller          = bugpack.require('bugcontroller.Controller');
-    var ControllerTag       = bugpack.require('bugcontroller.ControllerTag');
-    var Flows             = bugpack.require('Flows');
+    var EntityManager          = bugpack.require('bugentity.EntityManager');
+    var EntityManagerTag       = bugpack.require('bugentity.EntityManagerTag');
     var ArgTag              = bugpack.require('bugioc.ArgTag');
-    var IInitializingModule = bugpack.require('bugioc.IInitializingModule');
     var ModuleProcessorTag  = bugpack.require('bugioc.ModuleProcessorTag');
     var ModuleTag           = bugpack.require('bugioc.ModuleTag');
     var BugMeta             = bugpack.require('bugmeta.BugMeta');
@@ -61,7 +55,6 @@ require('bugpack').context("*", function(bugpack) {
     var bugmeta             = BugMeta.context();
     var module              = ModuleTag.module;
     var moduleProcessor     = ModuleProcessorTag.moduleProcessor;
-    var $iterableParallel   = Flows.$iterableParallel;
 
 
     //-------------------------------------------------------------------------------
@@ -72,9 +65,9 @@ require('bugpack').context("*", function(bugpack) {
      * @class
      * @extends {Obj}
      */
-    var ControllerManager = Class.extend(Obj, {
+    var EntityManagerProcessor = Class.extend(Obj, {
 
-        _name: "bugcontroller.ControllerManager",
+        _name: "bugentity.EntityManagerProcessor",
 
 
         //-------------------------------------------------------------------------------
@@ -84,8 +77,10 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @constructs
          * @param {MetaContext} metaContext
+         * @param {entityManagerStore} entityManagerStore
+         * @param {MongoDataStore} entityDataStore
          */
-        _constructor: function(metaContext) {
+        _constructor: function(metaContext, entityManagerStore, entityDataStore) {
 
             this._super();
 
@@ -96,15 +91,22 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
+             * @type {MongoDataStore}
+             */
+            this.entityDataStore        = entityDataStore;
+
+            /**
+             * @private
+             * @type {EntityManagerStore}
+             */
+            this.entityManagerStore     = entityManagerStore;
+
+            /**
+             * @private
              * @type {MetaContext}
              */
             this.metaContext            = metaContext;
 
-            /**
-             * @private
-             * @type {Set.<Controller>}
-             */
-            this.registeredControlerSet = new Set();
         },
 
 
@@ -113,33 +115,24 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
+         * @return {MongoDataStore}
+         */
+        getEntityDataStore: function() {
+            return this.entityDataStore;
+        },
+
+        /**
+         * @return {EntityManagerStore}
+         */
+        getEntityManagerStore: function() {
+            return this.entityManagerStore;
+        },
+
+        /**
          * @return {MetaContext}
          */
         getMetaContext: function() {
             return this.metaContext;
-        },
-
-        /**
-         * @return {Set.<Controller>}
-         */
-        getRegisteredControllerSet: function() {
-            return this.registeredControlerSet;
-        },
-
-
-        //-------------------------------------------------------------------------------
-        // IInitializingModule Implementation
-        //-------------------------------------------------------------------------------
-
-        /**
-         * @param {function(Throwable=)} callback
-         */
-        initializeModule: function(callback) {
-            $iterableParallel(this.registeredControlerSet, function(flow, controller) {
-                controller.configure(function(throwable) {
-                    flow.complete(throwable);
-                });
-            }).execute(callback);
         },
 
 
@@ -151,29 +144,30 @@ require('bugpack').context("*", function(bugpack) {
          * @param {*} instance
          * @param {function(Throwable=)} callback
          */
-        deprocessController: function(instance, callback) {
+        deprocessEntityManager: function(instance, callback) {
             var _this           = this;
             var instanceClass   = instance.getClass();
             var tags            = this.metaContext.getTagsByReference(instanceClass);
             tags.forEach(function(tag) {
-                if (Class.doesExtend(tag, ControllerTag)) {
-                    _this.deregisterController(instance);
+                if (Class.doesExtend(tag, EntityManagerTag)) {
+                    _this.deregisterEntityManager(instance);
                 }
             });
             callback();
         },
 
+
         /**
          * @param {*} instance
          * @param {function(Throwable=)} callback
          */
-        processController: function(instance, callback) {
+        processEntityManager: function(instance, callback) {
             var _this           = this;
             var instanceClass   = instance.getClass();
             var tags            = this.metaContext.getTagsByReference(instanceClass);
             tags.forEach(function(tag) {
-                if (Class.doesExtend(tag, ControllerTag)) {
-                    _this.registerController(instance);
+                if (Class.doesExtend(tag, EntityManagerTag)) {
+                    _this.registerEntityManager((/** @type {EntityManagerTag} */(tag)).getEntityType(), instance);
                 }
             });
             callback();
@@ -186,45 +180,45 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @private
-         * @param {Controller} controller
+         * @param {EntityManager} entityManager
          */
-        deregisterController: function(controller) {
-            this.registeredControlerSet.remove(controller);
+        deregisterEntityManager: function(entityManager) {
+            this.entityManagerStore.deregisterEntityManager(entityManager);
+            entityManager.setDataStore(null);
+
         },
 
         /**
          * @private
-         * @param {Controller} controller
+         * @param {string} entityType
+         * @param {EntityManager} entityManager
          */
-        registerController: function(controller) {
-            if (Class.doesExtend(controller, Controller)) {
-                this.registeredControlerSet.add(controller);
+        registerEntityManager: function(entityType, entityManager) {
+            if (Class.doesExtend(entityManager, EntityManager)) {
+                entityManager.setEntityType(entityType);
+                entityManager.setDataStore(this.entityDataStore.generateManager(entityType));
+                this.entityManagerStore.registerEntityManager(entityManager);
             } else {
-                throw new ArgumentBug(ArgumentBug.ILLEGAL, "controller", controller, "parameter must extend Controller");
+                throw new ArgumentBug(ArgumentBug.ILLEGAL, "entityManager", entityManager, "parameter must extend EntityManager");
             }
         }
     });
 
 
     //-------------------------------------------------------------------------------
-    // Implement Interfaces
-    //-------------------------------------------------------------------------------
-
-    Class.implement(ControllerManager, IInitializingModule);
-
-
-    //-------------------------------------------------------------------------------
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.tag(ControllerManager).with(
-        module("controllerManager")
+    bugmeta.tag(EntityManagerProcessor).with(
+        module("entityManagerProcessor")
             .args([
-                arg().ref("metaContext")
+                arg().ref("metaContext"),
+                arg().ref("entityManagerStore"),
+                arg().ref("mongoDataStore")
             ]),
         moduleProcessor()
-            .processMethod("processController")
-            .deprocessMethod("deprocessController")
+            .processMethod("processEntityManager")
+            .deprocessMethod("deprocessEntityManager")
     );
 
 
@@ -232,5 +226,5 @@ require('bugpack').context("*", function(bugpack) {
     // Exports
     //-------------------------------------------------------------------------------
 
-    bugpack.export('bugcontroller.ControllerManager', ControllerManager);
+    bugpack.export('bugentity.EntityManagerProcessor', EntityManagerProcessor);
 });

@@ -101,7 +101,7 @@ require('bugpack').context("*", function(bugpack) {
 
 
         //-------------------------------------------------------------------------------
-        // Public Class Methods
+        // Public Methods
         //-------------------------------------------------------------------------------
 
         /**
@@ -191,7 +191,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         _getUser: function(params, callback) {
             this.initialize();
-            this.iam.client.getUser(params, callback);
+            this.iam.getUser(params, callback);
         },
 
         /**
@@ -205,7 +205,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         _listUsers: function(params, callback) {
             this.initialize();
-            this.iam.client.listUsers(params, callback);
+            this.iam.listUsers(params, callback);
         }
     });
 
