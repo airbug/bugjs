@@ -57,7 +57,7 @@ require('bugpack').context("*", function(bugpack) {
          * @param {MarshTagProcessor} processor
          */
         _constructor: function(metaContext, processor) {
-            this._super(metaContext, processor, MarshTag.TYPE);
+            this._super(metaContext, processor, MarshTag.getClass());
         }
     });
 

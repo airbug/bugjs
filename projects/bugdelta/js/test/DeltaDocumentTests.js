@@ -92,7 +92,6 @@ require('bugpack').context("*", function(bugpack) {
             this.deltaDocument = new DeltaDocument({test: "value"});
             this.deltaDocument.commitDelta();
             this.deltaBuilder = new DeltaBuilder();
-            this.deltaBuilder.initialize();
         },
 
 
@@ -119,7 +118,6 @@ require('bugpack').context("*", function(bugpack) {
             this.deltaDocument = new DeltaDocument({});
             this.deltaDocument.commitDelta();
             this.deltaBuilder = new DeltaBuilder();
-            this.deltaBuilder.initialize();
         },
 
 
@@ -147,7 +145,6 @@ require('bugpack').context("*", function(bugpack) {
             this.deltaDocument = new DeltaDocument(new Set());
             this.deltaDocument.commitDelta();
             this.deltaBuilder = new DeltaBuilder();
-            this.deltaBuilder.initialize();
         },
 
 

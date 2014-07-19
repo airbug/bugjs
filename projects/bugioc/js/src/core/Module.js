@@ -136,6 +136,15 @@ require('bugpack').context("*", function(bugpack) {
             return this.moduleState === Module.State.INITIALIZED;
         },
 
+        /**
+         * @return {boolean}
+         */
+        isPreConfigured: function() {
+            return (this.moduleState === Module.State.PRE_CONFIGURED
+                || this.moduleState === Module.State.CONFIGURED
+                || this.moduleState === Module.State.INITIALIZED);
+        },
+
 
         //-------------------------------------------------------------------------------
         // Public Methods
@@ -185,6 +194,16 @@ require('bugpack').context("*", function(bugpack) {
             }
         },
 
+        /**
+         *
+         */
+        preConfigure: function() {
+            if (!this.isPreConfigured()) {
+                this.moduleState = Module.State.PRE_CONFIGURED;
+                this.preConfigureModule();
+            }
+        },
+
 
         //-------------------------------------------------------------------------------
         // Private Methods
@@ -194,10 +213,6 @@ require('bugpack').context("*", function(bugpack) {
          * @private
          */
         configureModule: function() {
-            if (Class.doesImplement(this.instance, IPreConfiguringModule)) {
-                this.instance.preConfigureModule();
-            }
-            this.wireModuleProperties();
             if (Class.doesImplement(this.instance, IConfiguringModule)) {
                 this.instance.configureModule();
             }
@@ -230,16 +245,10 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @private
          */
-        wireModuleProperties: function() {
-            var _this           = this;
-            var iocPropertySet  = this.iocModule.getIocPropertySet();
-            iocPropertySet.forEach(function(iocProperty) {
-                if (iocProperty.getRef()) {
-                    module[iocProperty.getName()] = _this.generateModuleByName(iocProperty.getRef()).getInstance();
-                } else {
-                    module[iocProperty.getName()] = iocProperty.getValue();
-                }
-            });
+        preConfigureModule: function() {
+            if (Class.doesImplement(this.instance, IPreConfiguringModule)) {
+                this.instance.preConfigureModule();
+            }
         }
     });
 
@@ -255,7 +264,8 @@ require('bugpack').context("*", function(bugpack) {
     Module.State = {
         CONFIGURED: "Module:State:Configured",
         GENERATED: "Module:State:Generated",
-        INITIALIZED: "Module:State:Initialized"
+        INITIALIZED: "Module:State:Initialized",
+        PRE_CONFIGURED: "Module:State:PreConfigured"
     };
 
 

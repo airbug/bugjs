@@ -33,7 +33,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class           = bugpack.require('Class');
-    var Flows         = bugpack.require('Flows');
+    var Flows           = bugpack.require('Flows');
     var BugMeta         = bugpack.require('bugmeta.BugMeta');
     var TaskManager     = bugpack.require('bugtask.TaskManager');
     var TestTag         = bugpack.require('bugunit.TestTag');

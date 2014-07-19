@@ -16,11 +16,11 @@
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('bugioc.ClassModuleFactory')
-//@Require('bugioc.IocContext')
-//@Require('bugioc.IocModule')
-//@Require('bugioc.Module')
+//@Require('bugmarsh.MarshTag')
+//@Require('bugmarsh.MarshTagScan')
 //@Require('bugmeta.BugMeta')
+//@Require('bugmeta.MetaContext')
+//@Require('bugmeta.Tag')
 //@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
 
@@ -35,87 +35,103 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class               = bugpack.require('Class');
-    var Obj                 = bugpack.require('Obj');
-    var ClassModuleFactory  = bugpack.require('bugioc.ClassModuleFactory');
-    var IocContext          = bugpack.require('bugioc.IocContext');
-    var IocModule           = bugpack.require('bugioc.IocModule');
-    var Module              = bugpack.require('bugioc.Module');
-    var BugMeta             = bugpack.require('bugmeta.BugMeta');
-    var TestTag             = bugpack.require('bugunit.TestTag');
-    var BugYarn             = bugpack.require('bugyarn.BugYarn');
+    var Class           = bugpack.require('Class');
+    var Obj             = bugpack.require('Obj');
+    var MarshTag        = bugpack.require('bugmarsh.MarshTag');
+    var MarshTagScan    = bugpack.require('bugmarsh.MarshTagScan');
+    var BugMeta         = bugpack.require('bugmeta.BugMeta');
+    var MetaContext     = bugpack.require('bugmeta.MetaContext');
+    var Tag             = bugpack.require('bugmeta.Tag');
+    var TestTag         = bugpack.require('bugunit.TestTag');
+    var BugYarn         = bugpack.require('bugyarn.BugYarn');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta     = BugMeta.context();
-    var bugyarn     = BugYarn.context();
-    var test        = TestTag.test;
+    var bugmeta         = BugMeta.context();
+    var bugyarn         = BugYarn.context();
+    var marsh           = MarshTag.marsh;
+    var test            = TestTag.test;
 
 
     //-------------------------------------------------------------------------------
     // BugYarn
     //-------------------------------------------------------------------------------
 
+    bugyarn.registerWinder("setupTestMarshTagScan", function(yarn) {
+        yarn.spin([
+            "setupTestMetaContext",
+            "setupTestMarshTagProcessor"
+        ]);
+        yarn.wind({
+            marshTagScan: new MarshTagScan(this.metaContext, this.marshTagProcessor)
+        });
+    });
+
 
     //-------------------------------------------------------------------------------
     // Declare Tests
     //-------------------------------------------------------------------------------
 
-    var classModuleFactoryInstantiationTest = {
+    var marshTagScanInstantiationTest = {
 
         //-------------------------------------------------------------------------------
         // Setup Test
         //-------------------------------------------------------------------------------
 
         setup: function(test) {
-            this.TestClass              = Class.extend(Obj, {});
-            this.testIocContext         = new IocContext();
-            this.testIocModule          = new IocModule("testModuleName", IocModule.Scope.SINGLETON);
-            this.testClassModuleFactory = new ClassModuleFactory(this.testIocContext, this.testIocModule, this.TestClass.getClass());
+            var yarn = bugyarn.yarn(this);
+            yarn.spin([
+                "setupTestMetaContext",
+                "setupTestMarshTagProcessor"
+            ]);
+            this.testMarshTagScan   = new MarshTagScan(this.metaContext, this.marshTagProcessor);
         },
+
 
         //-------------------------------------------------------------------------------
         // Run Test
         //-------------------------------------------------------------------------------
 
         test: function(test) {
-            test.assertEqual(this.testClassModuleFactory.getIocContext(), this.testIocContext,
-                "Assert .iocContext was set correctly");
-            test.assertEqual(this.testClassModuleFactory.getIocModule(), this.testIocModule,
-                "Assert .iocModule was set correctly");
-            test.assertEqual(this.testClassModuleFactory.getModuleClass(), this.TestClass.getClass(),
-                "Assert.moduleClass was set correctly");
+            test.assertTrue(Class.doesExtend(this.testMarshTagScan, MarshTagScan),
+                "Assert testMarshTagScan is an instance of MarshTagScan");
+            test.assertEqual(this.testMarshTagScan.getMetaContext(), this.metaContext,
+                "Assert .metaContext was set correctly");
+            test.assertEqual(this.testMarshTagScan.getTagProcessor(), this.marshTagProcessor,
+                "Assert .tagProcessor was set correctly");
         }
     };
 
-    var classModuleFactoryFactoryModuleTest = {
+    var marshTagScanScanAllTest = {
 
         //-------------------------------------------------------------------------------
         // Setup Test
         //-------------------------------------------------------------------------------
 
         setup: function(test) {
-            this.TestClass              = Class.extend(Obj, {});
-            this.testIocContext         = new IocContext();
-            this.testIocModule          = new IocModule("testModuleName", IocModule.Scope.SINGLETON);
-            this.testClassModuleFactory = new ClassModuleFactory(this.testIocContext, this.testIocModule, this.TestClass.getClass());
+            var yarn = bugyarn.yarn(this);
+            yarn.spin([
+                "setupTestMarshTagScan"
+            ]);
+            this.TestClass = Class.extend(Obj, {});
+            this.metaContext.tag(this.TestClass).with(
+                marsh("TestClass")
+            );
+            this.marshRegistry.configureModule();
         },
+
 
         //-------------------------------------------------------------------------------
         // Run Test
         //-------------------------------------------------------------------------------
 
         test: function(test) {
-            var module = this.testClassModuleFactory.factoryModule();
-            test.assertTrue(Class.doesExtend(module, Module),
-                "Assert that ModuleFactory returned an instance of Module");
-            test.assertEqual(module.getIocModule(), this.testIocModule,
-                "Assert that Module.iocModule is the testIocModule");
-            test.assertTrue(Class.doesExtend(module.getInstance(), this.TestClass),
-                "Assert Module.instance extends TestClass");
+            this.marshTagScan.scanAll();
+            test.assertTrue(this.marshRegistry.hasMarshForClass(this.TestClass.getClass()),
+                "Assert marsh was added for TestClass");
         }
     };
 
@@ -124,10 +140,10 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.tag(classModuleFactoryInstantiationTest).with(
-        test().name("ClassModuleFactory - instantiation test")
+    bugmeta.tag(marshTagScanInstantiationTest).with(
+        test().name("MarshTagScan - instantiation test")
     );
-    bugmeta.tag(classModuleFactoryFactoryModuleTest).with(
-        test().name("ClassModuleFactory - #factoryModule test")
+    bugmeta.tag(marshTagScanScanAllTest).with(
+        test().name("MarshTagScan - #scanAll test")
     );
 });

@@ -22,6 +22,7 @@
 //@Require('EventDispatcher')
 //@Require('Exception')
 //@Require('StateMachine')
+//@Require('TypeUtil')
 //@Require('ValidationMachine')
 //@Require('Flows')
 //@Require('bugioc.IModuleProcessor')
@@ -51,6 +52,7 @@ require('bugpack').context("*", function(bugpack) {
     var EventDispatcher         = bugpack.require('EventDispatcher');
     var Exception               = bugpack.require('Exception');
     var StateMachine            = bugpack.require('StateMachine');
+    var TypeUtil                = bugpack.require('TypeUtil');
     var ValidationMachine       = bugpack.require('ValidationMachine');
     var Flows                 = bugpack.require('Flows');
     var IModuleProcessor        = bugpack.require('bugioc.IModuleProcessor');
@@ -418,13 +420,16 @@ require('bugpack').context("*", function(bugpack) {
             if (Class.doesImplement(module.getInstance(), IModuleProcessor)) {
                 this.registerModuleProcessor(module.getInstance());
             } else {
-                var moduleClass     = module.getInstance().getClass();
-                var moduleTags      = bugmeta.getTagsByReference(moduleClass);
-                moduleTags.forEach(function(moduleTag) {
-                    if (Class.doesExtend(moduleTag, ModuleProcessorTag)) {
-                        _this.buildModuleProcessor(moduleTag, module);
-                    }
-                });
+                var instance        = module.getInstance();
+                if (TypeUtil.isFunction(instance.getClass)) {
+                    var moduleClass = instance.getClass();
+                    var moduleTags = bugmeta.getTagsByReference(moduleClass);
+                    moduleTags.forEach(function (moduleTag) {
+                        if (Class.doesExtend(moduleTag, ModuleProcessorTag)) {
+                            _this.buildModuleProcessor(/** @type {ModuleProcessorTag} */(moduleTag), module);
+                        }
+                    });
+                }
             }
         },
 
@@ -433,12 +438,10 @@ require('bugpack').context("*", function(bugpack) {
          * @param {Module} module
          */
         configureModule: function(module) {
-            if (!module.isConfigured()) {
-                module.configure();
-                this.processingModuleList.add(module);
-                this.checkIfModuleIsModuleProcessor(module);
-                this.invalidateModulesStarted();
-            }
+            module.configure();
+            this.processingModuleList.add(module);
+            this.checkIfModuleIsModuleProcessor(module);
+            this.invalidateModulesStarted();
         },
 
         /**
@@ -511,6 +514,19 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
+         * @private
+         * @param {Module} module
+         */
+        doModuleConfiguration: function(module) {
+            if (!module.isPreConfigured()) {
+                this.preConfigureModule(module);
+            }
+            if (!module.isConfigured()) {
+                this.configureModule(module);
+            }
+        },
+
+        /**
          * @protected
          * @param {?function(Module)} processMethod
          * @param {?function(Module)} deprocessMethod
@@ -556,7 +572,7 @@ require('bugpack').context("*", function(bugpack) {
             var scope       = this.generateModuleScope(iocModule);
             var module      = scope.generateModule();
             this.generatedModuleSet.add(module);
-            this.configureModule(module);
+            this.doModuleConfiguration(module);
             return module;
         },
 
@@ -629,6 +645,15 @@ require('bugpack').context("*", function(bugpack) {
          */
         invalidateModulesStopped: function(callback) {
             this.moduleValidationMachine.invalidate(IocContext.ValidationTypes.MODULES_STOPPED, callback);
+        },
+
+        /**
+         * @private
+         * @param {Module} module
+         */
+        preConfigureModule: function(module) {
+            module.preConfigure();
+            this.wireModuleProperties(module);
         },
 
         /**
@@ -729,6 +754,23 @@ require('bugpack').context("*", function(bugpack) {
          */
         updateContextState: function(contextState) {
             this.contextStateMachine.changeState(contextState);
+        },
+
+        /**
+         * @private
+         * @param {Module} module
+         */
+        wireModuleProperties: function(module) {
+            var _this           = this;
+            var iocPropertySet  = module.getIocModule().getIocPropertySet();
+            var instance        = module.getInstance();
+            iocPropertySet.forEach(function(iocProperty) {
+                if (iocProperty.getRef()) {
+                    instance[iocProperty.getName()] = _this.generateModuleByName(iocProperty.getRef()).getInstance();
+                } else {
+                    instance[iocProperty.getName()] = iocProperty.getValue();
+                }
+            });
         },
 
 

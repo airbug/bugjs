@@ -16,10 +16,7 @@
 
 //@Require('Class')
 //@Require('Obj')
-//@Require('bugioc.ClassModuleFactory')
-//@Require('bugioc.IocContext')
-//@Require('bugioc.IocModule')
-//@Require('bugioc.Module')
+//@Require('bugioc.ModuleProcessorTag')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
@@ -37,10 +34,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class               = bugpack.require('Class');
     var Obj                 = bugpack.require('Obj');
-    var ClassModuleFactory  = bugpack.require('bugioc.ClassModuleFactory');
-    var IocContext          = bugpack.require('bugioc.IocContext');
-    var IocModule           = bugpack.require('bugioc.IocModule');
-    var Module              = bugpack.require('bugioc.Module');
+    var ModuleProcessorTag  = bugpack.require('bugioc.ModuleProcessorTag');
     var BugMeta             = bugpack.require('bugmeta.BugMeta');
     var TestTag             = bugpack.require('bugunit.TestTag');
     var BugYarn             = bugpack.require('bugyarn.BugYarn');
@@ -64,17 +58,14 @@ require('bugpack').context("*", function(bugpack) {
     // Declare Tests
     //-------------------------------------------------------------------------------
 
-    var classModuleFactoryInstantiationTest = {
+    var moduleProcessorTagInstantiationTest = {
 
         //-------------------------------------------------------------------------------
         // Setup Test
         //-------------------------------------------------------------------------------
 
         setup: function(test) {
-            this.TestClass              = Class.extend(Obj, {});
-            this.testIocContext         = new IocContext();
-            this.testIocModule          = new IocModule("testModuleName", IocModule.Scope.SINGLETON);
-            this.testClassModuleFactory = new ClassModuleFactory(this.testIocContext, this.testIocModule, this.TestClass.getClass());
+            this.testModuleProcessorTag = ModuleProcessorTag.moduleProcessor()
         },
 
         //-------------------------------------------------------------------------------
@@ -82,26 +73,24 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         test: function(test) {
-            test.assertEqual(this.testClassModuleFactory.getIocContext(), this.testIocContext,
-                "Assert .iocContext was set correctly");
-            test.assertEqual(this.testClassModuleFactory.getIocModule(), this.testIocModule,
-                "Assert .iocModule was set correctly");
-            test.assertEqual(this.testClassModuleFactory.getModuleClass(), this.TestClass.getClass(),
-                "Assert.moduleClass was set correctly");
+            test.assertTrue(Class.doesExtend(this.testModuleProcessorTag, ModuleProcessorTag),
+                "Assert instance of ModuleProcessorTag");
         }
     };
 
-    var classModuleFactoryFactoryModuleTest = {
+    var moduleProcessorTagDeprocessMethodAndProcessMethodTest = {
 
         //-------------------------------------------------------------------------------
         // Setup Test
         //-------------------------------------------------------------------------------
 
         setup: function(test) {
-            this.TestClass              = Class.extend(Obj, {});
-            this.testIocContext         = new IocContext();
-            this.testIocModule          = new IocModule("testModuleName", IocModule.Scope.SINGLETON);
-            this.testClassModuleFactory = new ClassModuleFactory(this.testIocContext, this.testIocModule, this.TestClass.getClass());
+            this.testProcessMethodName      = "testProcessMethodName";
+            this.testDeprocessMethodName    = "testDeprocessMethodName";
+            this.testModuleProcessorTag     = ModuleProcessorTag
+                .moduleProcessor()
+                .deprocessMethod(this.testDeprocessMethodName)
+                .processMethod(this.testProcessMethodName);
         },
 
         //-------------------------------------------------------------------------------
@@ -109,13 +98,10 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         test: function(test) {
-            var module = this.testClassModuleFactory.factoryModule();
-            test.assertTrue(Class.doesExtend(module, Module),
-                "Assert that ModuleFactory returned an instance of Module");
-            test.assertEqual(module.getIocModule(), this.testIocModule,
-                "Assert that Module.iocModule is the testIocModule");
-            test.assertTrue(Class.doesExtend(module.getInstance(), this.TestClass),
-                "Assert Module.instance extends TestClass");
+            test.assertEqual(this.testModuleProcessorTag.getDeprocessMethodName(), this.testDeprocessMethodName,
+                "Assert that ModuleProcessorTag.deprocessMethodName was set correctly");
+            test.assertEqual(this.testModuleProcessorTag.getProcessMethodName(), this.testProcessMethodName,
+                "Assert that ModuleProcessorTag.processMethodName was set correctly");
         }
     };
 
@@ -124,10 +110,10 @@ require('bugpack').context("*", function(bugpack) {
     // BugMeta
     //-------------------------------------------------------------------------------
 
-    bugmeta.tag(classModuleFactoryInstantiationTest).with(
-        test().name("ClassModuleFactory - instantiation test")
+    bugmeta.tag(moduleProcessorTagInstantiationTest).with(
+        test().name("ModuleProcessorTag - instantiation test")
     );
-    bugmeta.tag(classModuleFactoryFactoryModuleTest).with(
-        test().name("ClassModuleFactory - #factoryModule test")
+    bugmeta.tag(moduleProcessorTagDeprocessMethodAndProcessMethodTest).with(
+        test().name("ModuleProcessorTag - #deprocessMethod and #processMethod test")
     );
 });

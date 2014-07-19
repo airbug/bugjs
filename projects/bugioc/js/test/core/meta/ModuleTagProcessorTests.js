@@ -114,6 +114,6 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     bugmeta.tag(moduleTagProcessorFactoryIocModuleTest).with(
-        test().name("ModuleTagProcessor - factoryIocModule test")
+        test().name("ModuleTagProcessor - #factoryIocModule test")
     );
 });
