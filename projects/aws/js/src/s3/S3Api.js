@@ -353,6 +353,7 @@ require('bugpack').context("*", function(bugpack) {
          * @param {S3Bucket} s3Bucket
          * @param {{
          *     acl: ?string,
+         *     base: ?string,
          *     encrypt: ?boolean,
          *     grantFullControl: ?string,
          *     grantRead: ?string,
@@ -410,6 +411,9 @@ require('bugpack').context("*", function(bugpack) {
                     $task(function(flow) {
                         if (!contentType) {
                             contentType = _this.autoDiscoverContentType(filePath);
+                        }
+                        if (options.base) {
+                            s3Key = options.base + "/" + s3Key;
                         }
                         s3Object = new S3Object({
                             body: fileData,

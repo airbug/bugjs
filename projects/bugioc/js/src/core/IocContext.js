@@ -301,7 +301,11 @@ require('bugpack').context("*", function(bugpack) {
          */
         generateModuleByName: function(moduleName) {
             var iocModule = this.findIocModuleByName(moduleName);
-            return this.generateModule(iocModule);
+            if (iocModule) {
+                return this.generateModule(iocModule);
+            } else {
+                throw new Exception("NoModuleForName", {}, "Cannot find IocModule by the name '" + moduleName + "'");
+            }
         },
 
         /**
@@ -766,6 +770,7 @@ require('bugpack').context("*", function(bugpack) {
             var instance        = module.getInstance();
             iocPropertySet.forEach(function(iocProperty) {
                 if (iocProperty.getRef()) {
+
                     instance[iocProperty.getName()] = _this.generateModuleByName(iocProperty.getRef()).getInstance();
                 } else {
                     instance[iocProperty.getName()] = iocProperty.getValue();
