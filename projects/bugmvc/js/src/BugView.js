@@ -22,6 +22,7 @@
 //@Require('IdGenerator')
 //@Require('List')
 //@Require('Obj')
+//@Require('ObjectUtil')
 //@Require('Proxy')
 //@Require('RemovePropertyChange')
 //@Require('SetPropertyChange')
@@ -49,6 +50,7 @@ require('bugpack').context("*", function(bugpack) {
     var IdGenerator             = bugpack.require('IdGenerator');
     var List                    = bugpack.require('List');
     var Obj                     = bugpack.require('Obj');
+    var ObjectUtil              = bugpack.require('ObjectUtil');
     var Proxy                   = bugpack.require('Proxy');
     var RemovePropertyChange    = bugpack.require('RemovePropertyChange');
     var SetPropertyChange       = bugpack.require('SetPropertyChange');
@@ -450,21 +452,21 @@ require('bugpack').context("*", function(bugpack) {
         configureView: function() {
             var options = this.options || {};
             if (options.attributes) {
-                Obj.merge(options.attributes, this.attributes);
+                ObjectUtil.merge(options.attributes, this.attributes);
                 delete options.attributes;
             }
             if (options.config) {
-                Obj.merge(options.config, this.config);
+                ObjectUtil.merge(options.config, this.config);
                 delete options.config;
             }
             this.name   = options.name;
 
             var finalOptions = {};
             if (this.options) {
-                Obj.merge(this.options, finalOptions);
+                ObjectUtil.merge(this.options, finalOptions);
             }
             if (options) {
-                Obj.merge(options, finalOptions);
+                ObjectUtil.merge(options, finalOptions);
             }
             if (options.model) {
                 this.setModel(options.model);
@@ -536,7 +538,7 @@ require('bugpack').context("*", function(bugpack) {
          */
         renderAttributes: function() {
             var _this = this;
-            Obj.forIn(this.attributes, function(attributeName, attributeValue) {
+            ObjectUtil.forIn(this.attributes, function(attributeName, attributeValue) {
                 _this.renderAttribute(attributeName, attributeValue);
             });
         },

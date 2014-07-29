@@ -18,6 +18,7 @@
 //@Require('Bug')
 //@Require('Class')
 //@Require('Obj')
+//@Require('ObjectUtil')
 //@Require('Set')
 //@Require('TypeUtil')
 
@@ -36,6 +37,7 @@ require('bugpack').context("*", function(bugpack) {
     var Bug             = bugpack.require('Bug');
     var Class           = bugpack.require('Class');
     var Obj             = bugpack.require('Obj');
+    var ObjectUtil      = bugpack.require('ObjectUtil');
     var Set             = bugpack.require('Set');
     var TypeUtil        = bugpack.require('TypeUtil');
 
@@ -168,8 +170,8 @@ require('bugpack').context("*", function(bugpack) {
          */
         wind: function(windObject) {
             var _this = this;
-            Obj.forIn(windObject, function(yarnName, yarnValue) {
-                if (!Obj.hasProperty(_this.yarnContext, yarnName)) {
+            ObjectUtil.forIn(windObject, function(yarnName, yarnValue) {
+                if (!ObjectUtil.hasProperty(_this.yarnContext, yarnName)) {
                     _this.yarnContext[yarnName] = yarnValue;
                 }
             });

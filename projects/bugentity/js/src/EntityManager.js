@@ -19,6 +19,7 @@
 //@Require('Exception')
 //@Require('Map')
 //@Require('Obj')
+//@Require('ObjectUtil')
 //@Require('Pair')
 //@Require('Set')
 //@Require('StringUtil')
@@ -46,6 +47,7 @@ require('bugpack').context("*", function(bugpack) {
     var Exception           = bugpack.require('Exception');
     var Map                 = bugpack.require('Map');
     var Obj                 = bugpack.require('Obj');
+    var ObjectUtil          = bugpack.require('ObjectUtil');
     var Pair                = bugpack.require('Pair');
     var Set                 = bugpack.require('Set');
     var StringUtil          = bugpack.require('StringUtil');
@@ -54,7 +56,7 @@ require('bugpack').context("*", function(bugpack) {
     var ObjectChange        = bugpack.require('bugdelta.ObjectChange');
     var SetChange           = bugpack.require('bugdelta.SetChange');
     var Entity              = bugpack.require('bugentity.Entity');
-    var Flows             = bugpack.require('Flows');
+    var Flows               = bugpack.require('Flows');
     var MongoUpdateChanges  = bugpack.require('mongo.MongoUpdateChanges');
 
 
@@ -456,7 +458,7 @@ require('bugpack').context("*", function(bugpack) {
                     switch (deltaChange.getChangeType()) {
                         case DocumentChange.ChangeTypes.DATA_SET:
                             var dbObject = _this.convertDataObjectToDbObject(deltaChange.getData(), entitySchema);
-                            Obj.forIn(dbObject, function(name, value) {
+                            ObjectUtil.forIn(dbObject, function(name, value) {
                                 updateChanges.putSetChange(name, value);
                             });
                             break;

@@ -23,11 +23,11 @@
 //@Require('Map')
 //@Require('MappedThrowable')
 //@Require('Obj')
+//@Require('ObjectUtil')
 //@Require('Pair')
 //@Require('Set')
 //@Require('TypeUtil')
 //@Require('bugioc.ArgTag')
-//@Require('bugioc.IInitializingModule')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 
@@ -50,11 +50,11 @@ require('bugpack').context("*", function(bugpack) {
     var Map                 = bugpack.require('Map');
     var MappedThrowable     = bugpack.require('MappedThrowable');
     var Obj                 = bugpack.require('Obj');
+    var ObjectUtil          = bugpack.require('ObjectUtil');
     var Pair                = bugpack.require('Pair');
     var Set                 = bugpack.require('Set');
     var TypeUtil            = bugpack.require('TypeUtil');
     var ArgTag              = bugpack.require('bugioc.ArgTag');
-    var IInitializingModule   = bugpack.require('bugioc.IInitializingModule');
     var ModuleTag           = bugpack.require('bugioc.ModuleTag');
     var BugMeta             = bugpack.require('bugmeta.BugMeta');
 
@@ -75,7 +75,6 @@ require('bugpack').context("*", function(bugpack) {
     /**
      * @class
      * @extends {Obj}
-     * @implements {IInitializingModule}
      */
     var Marshaller = Class.extend(Obj, {
 
@@ -435,7 +434,7 @@ require('bugpack').context("*", function(bugpack) {
         buildObject: function(unbuiltData) {
             var _this       = this;
             var builtData   = {};
-            Obj.forIn(unbuiltData, function(key, value) {
+            ObjectUtil.forIn(unbuiltData, function(key, value) {
                 builtData[key] = _this.buildData(value);
             });
             return builtData;
@@ -653,7 +652,7 @@ require('bugpack').context("*", function(bugpack) {
         unbuildObject: function(data) {
             var _this           = this;
             var unbuiltObject   = {};
-            Obj.forIn(data, function(key, value) {
+            ObjectUtil.forIn(data, function(key, value) {
                 unbuiltObject[key] = _this.unbuildData(value);
             });
             return unbuiltObject;

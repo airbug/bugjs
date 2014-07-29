@@ -16,6 +16,7 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@Require('ObjectUtil')
 //@Require('TypeUtil')
 //@Require('bugdelta.DeltaCalculator')
 //@Require('bugdelta.ObjectChange')
@@ -33,6 +34,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class               = bugpack.require('Class');
     var Obj                 = bugpack.require('Obj');
+    var ObjectUtil          = bugpack.require('ObjectUtil');
     var TypeUtil            = bugpack.require('TypeUtil');
     var DeltaCalculator     = bugpack.require('bugdelta.DeltaCalculator');
     var ObjectChange        = bugpack.require('bugdelta.ObjectChange');
@@ -70,14 +72,14 @@ require('bugpack').context("*", function(bugpack) {
                 throw new Error("ObjectCalculator expects previousValue to be an Object");
             }
 
-            Obj.forIn(previousValue, function(propertyName, previousPropertyValue) {
-                if (!Obj.hasProperty(currentValue, propertyName)) {
+            ObjectUtil.forIn(previousValue, function(propertyName, previousPropertyValue) {
+                if (!ObjectUtil.hasProperty(currentValue, propertyName)) {
                     delta.addDeltaChange(new ObjectChange(ObjectChange.ChangeTypes.PROPERTY_REMOVED, currentPath,
                         propertyName, undefined, previousPropertyValue));
                 }
             });
-            Obj.forIn(currentValue, function(propertyName, currentPropertyValue) {
-                if (!Obj.hasProperty(previousValue, propertyName)) {
+            ObjectUtil.forIn(currentValue, function(propertyName, currentPropertyValue) {
+                if (!ObjectUtil.hasProperty(previousValue, propertyName)) {
                     delta.addDeltaChange(new ObjectChange(ObjectChange.ChangeTypes.PROPERTY_SET, currentPath,
                         propertyName, currentPropertyValue, undefined));
                 } else {

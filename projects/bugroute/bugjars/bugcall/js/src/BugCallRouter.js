@@ -20,6 +20,7 @@
 //@Require('Exception')
 //@Require('Map')
 //@Require('Obj')
+//@Require('ObjectUtil')
 //@Require('TypeUtil')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
@@ -42,6 +43,7 @@ require('bugpack').context("*", function(bugpack) {
     var Exception           = bugpack.require('Exception');
     var Map                 = bugpack.require('Map');
     var Obj                 = bugpack.require('Obj');
+    var ObjectUtil          = bugpack.require('ObjectUtil');
     var TypeUtil            = bugpack.require('TypeUtil');
     var ModuleTag           = bugpack.require('bugioc.ModuleTag');
     var BugMeta             = bugpack.require('bugmeta.BugMeta');
@@ -140,7 +142,7 @@ require('bugpack').context("*", function(bugpack) {
                     _this.add(route);
                 });
             } else if (TypeUtil.isObject(routes)) {
-                Obj.forIn(routes, function(requestType, listener) {
+                ObjectUtil.forIn(routes, function(requestType, listener) {
                     if (TypeUtil.isFunction(listener)) {
                         _this.add(new BugCallRoute(requestType, listener));
                     }

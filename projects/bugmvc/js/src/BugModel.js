@@ -18,7 +18,7 @@
 //@Require('Exception')
 //@Require('ISet')
 //@Require('LiteralUtil')
-//@Require('Obj')
+//@Require('ObjectUtil')
 //@Require('ObservableObject')
 //@Require('ObservableSet')
 //@Require('bugdispose.IDisposable')
@@ -41,7 +41,7 @@ require('bugpack').context("*", function(bugpack) {
     var Exception           = bugpack.require('Exception');
     var ISet                = bugpack.require('ISet');
     var LiteralUtil         = bugpack.require('LiteralUtil');
-    var Obj                 = bugpack.require('Obj');
+    var ObjectUtil          = bugpack.require('ObjectUtil');
     var ObservableObject    = bugpack.require('ObservableObject');
     var ObservableSet       = bugpack.require('ObservableSet');
     var IDisposable         = bugpack.require('bugdispose.IDisposable');
@@ -121,7 +121,7 @@ require('bugpack').context("*", function(bugpack) {
         _initializer: function(dataObject) {
             this._super();
             var _this = this;
-            Obj.forIn(dataObject, function(propertyName, propertyValue) {
+            ObjectUtil.forIn(dataObject, function(propertyName, propertyValue) {
                 _this.setProperty(propertyName, propertyValue);
             });
         },

@@ -16,6 +16,7 @@
 
 //@Require('Class')
 //@Require('Obj')
+//@require('ObjectUtil')
 //@Require('TypeUtil')
 //@Require('UuidGenerator')
 //@Require('mongo.DummyMongooseObjectId')
@@ -33,6 +34,7 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class                   = bugpack.require('Class');
     var Obj                     = bugpack.require('Obj');
+    var ObjectUtil              = bugpack.require('ObjectUtil');
     var TypeUtil                = bugpack.require('TypeUtil');
     var UuidGenerator           = bugpack.require('UuidGenerator');
     var DummyMongooseObjectId   = bugpack.require('mongo.DummyMongooseObjectId');
@@ -187,14 +189,14 @@ require('bugpack').context("*", function(bugpack) {
         updateDbObject: function(dbObject, updateObject) {
             var setObject = updateObject["$set"];
             if (setObject) {
-                Obj.forIn(setObject, function(propertyName, propertyValue) {
-                    Obj.setProperty(dbObject, propertyName, propertyValue);
+                ObjectUtil.forIn(setObject, function(propertyName, propertyValue) {
+                    ObjectUtil.setProperty(dbObject, propertyName, propertyValue);
                 });
             }
             var addToSetObject = updateObject["$addToSet"];
             if (addToSetObject) {
-                Obj.forIn(addToSetObject, function(propertyName, setUpdateObject) {
-                    var objectValue = Obj.findProperty(dbObject, propertyName);
+                ObjectUtil.forIn(addToSetObject, function(propertyName, setUpdateObject) {
+                    var objectValue = ObjectUtil.findProperty(dbObject, propertyName);
                     if (TypeUtil.isArray(objectValue)) {
                         if (TypeUtil.isArray(setUpdateObject.$each)) {
                             setUpdateObject.$each.forEach(function(setValue) {
@@ -218,11 +220,11 @@ require('bugpack').context("*", function(bugpack) {
             }
             var incObject = updateObject["$inc"];
             if (incObject) {
-                Obj.forIn(incObject, function(propertyName, incValue) {
-                    var objectValue = Obj.findProperty(dbObject, propertyName);
+                ObjectUtil.forIn(incObject, function(propertyName, incValue) {
+                    var objectValue = ObjectUtil.findProperty(dbObject, propertyName);
                     if (TypeUtil.isNumber(objectValue)) {
                         objectValue += incValue;
-                        Obj.setProperty(dbObject, propertyName, objectValue);
+                        ObjectUtil.setProperty(dbObject, propertyName, objectValue);
                     } else {
 
                         //TODO BRN: Add type checks
@@ -245,7 +247,7 @@ require('bugpack').context("*", function(bugpack) {
             if (queryParams.$where) {
                 delete queryParams.$where;
             }
-            updateObject = Obj.merge(queryParams, updateObject);
+            updateObject = ObjectUtil.merge(queryParams, updateObject);
             return this.create(updateObject);
         },
 
