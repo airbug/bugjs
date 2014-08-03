@@ -120,12 +120,11 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @param {string} workerName
-         * @param {boolean} debug
-         * @param {number} debugPort
+         * @param {ProcessConfig} processConfig
          * @return {WorkerContext}
          */
-        factoryWorkerContext: function(workerName, debug, debugPort) {
-            return new WorkerContext(workerName, debug, debugPort, this.logger, this.workerCommandFactory);
+        factoryWorkerContext: function(workerName, processConfig) {
+            return new WorkerContext(workerName, processConfig, this.logger, this.workerCommandFactory);
         }
     });
 

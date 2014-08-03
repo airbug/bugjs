@@ -170,7 +170,7 @@ require('bugpack').context("*", function(bugpack) {
          * @private
          */
         createWorkerProcess: function() {
-            var workerProcess  = this.workerProcessFactory.factoryWorkerProcess(this.getWorkerContext().isDebug(), this.getWorkerContext().getDebugPort());
+            var workerProcess  = this.workerProcessFactory.factoryWorkerProcess(this.getWorkerContext().getProcessConfig());
             this.getWorkerContext().updateWorkerProcess(workerProcess);
             this.addProcessListeners(workerProcess);
             workerProcess.createProcess();

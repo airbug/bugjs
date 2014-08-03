@@ -19,6 +19,7 @@
 //@Require('Event')
 //@Require('EventDispatcher')
 //@Require('Exception')
+//@Require('ObjectUtil')
 //@Require('TypeUtil')
 //@Require('bugfs.BugFs')
 //@Require('bugwork.WorkerDefines')
@@ -46,6 +47,7 @@ require('bugpack').context("*", function(bugpack) {
     var Event               = bugpack.require('Event');
     var EventDispatcher     = bugpack.require('EventDispatcher');
     var Exception           = bugpack.require('Exception');
+    var ObjectUtil          = bugpack.require('ObjectUtil');
     var TypeUtil            = bugpack.require('TypeUtil');
     var BugFs               = bugpack.require('bugfs.BugFs');
     var WorkerDefines       = bugpack.require('bugwork.WorkerDefines');
@@ -70,11 +72,10 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @constructs
-         * @param {boolean=} debug
-         * @param {number=} debugPort
          * @param {Marshaller} marshaller
+         * @param {ProcessConfig} processConfig
          */
-        _constructor: function(debug, debugPort, marshaller) {
+        _constructor: function(marshaller, processConfig) {
 
             this._super();
 
@@ -97,21 +98,15 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
-             * @type {boolean}
-             */
-            this.debug              = debug;
-
-            /**
-             * @private
-             * @type {number}
-             */
-            this.debugPort          = debugPort;
-
-            /**
-             * @private
              * @type {Marshaller}
              */
             this.marshaller         = marshaller;
+
+            /**
+             * @private
+             * @type {ProcessConfig}
+             */
+            this.processConfig      = processConfig;
 
             /**
              * @private
@@ -148,17 +143,10 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @return {boolean}
+         * @return {ProcessConfig}
          */
-        isDebug: function() {
-            return this.debug;
-        },
-
-        /**
-         * @return {number}
-         */
-        getDebugPort: function() {
-            return this.debugPort;
+        getProcessConfig: function() {
+            return this.processConfig;
         },
 
         /**
@@ -184,8 +172,12 @@ require('bugpack').context("*", function(bugpack) {
                     stdio: 'inherit'
                 };
                 var execArgv = [];
-                if (this.debug) {
-                    execArgv.push("--debug=" + this.debugPort);
+                if (this.processConfig.getDebug()) {
+                    if (this.processConfig.getDebugBreak()) {
+                        execArgv.push("--debug-brk=" + this.processConfig.getDebugPort());
+                    } else {
+                        execArgv.push("--debug=" + this.processConfig.getDebugPort());
+                    }
                 }
                 var configIndex = process.argv.indexOf("--config");
                 if (configIndex > -1) {

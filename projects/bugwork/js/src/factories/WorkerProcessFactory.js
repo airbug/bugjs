@@ -113,13 +113,11 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
-         * @param {boolean} debug
-         * @param {number} debugPort
+         * @param {ProcessConfig} processConfig
          * @return {WorkerProcess}
          */
-        factoryWorkerProcess: function(debug, debugPort) {
-            return new WorkerProcess(debug, debugPort, this.marshaller);
+        factoryWorkerProcess: function(processConfig) {
+            return new WorkerProcess(this.marshaller, processConfig);
         }
     });
 

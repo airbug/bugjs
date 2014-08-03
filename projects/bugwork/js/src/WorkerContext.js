@@ -66,12 +66,11 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @constructs
          * @param {string} workerName
-         * @param {boolean=} debug
-         * @param {number=} debugPort
+         * @param {processConfig} processConfig
          * @param {Logger} logger
          * @param {WorkerCommandFactory} workerCommandFactory
          */
-        _constructor: function(workerName, debug, debugPort, logger, workerCommandFactory) {
+        _constructor: function(workerName, processConfig, logger, workerCommandFactory) {
 
             this._super();
 
@@ -88,18 +87,6 @@ require('bugpack').context("*", function(bugpack) {
 
             /**
              * @private
-             * @type {boolean}
-             */
-            this.debug                  = debug;
-
-            /**
-             * @private
-             * @type {number}
-             */
-            this.debugPort              = debugPort;
-
-            /**
-             * @private
              * @type {WorkerDefines.State}
              */
             this.desiredWorkerState     = WorkerDefines.State.NOT_READY;
@@ -109,6 +96,12 @@ require('bugpack').context("*", function(bugpack) {
              * @type {Logger}
              */
             this.logger                 = logger;
+
+            /**
+             * @private
+             * @type {ProcessConfig}
+             */
+            this.processConfig          = processConfig;
 
             /**
              * @private
@@ -155,10 +148,10 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @return {number}
+         * @return {ProcessConfig}
          */
-        getDebugPort: function() {
-            return this.debugPort;
+        getProcessConfig: function() {
+            return this.processConfig;
         },
 
         /**

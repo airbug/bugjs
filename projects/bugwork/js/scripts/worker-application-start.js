@@ -91,7 +91,7 @@ bugpack.loadContext(module, function(error, bugpack) {
                         console.log("Worker application created!");
                         process.send({
                             messageType: WorkerDefines.MessageTypes.WORKER_READY
-                        })
+                        });
                     });
                     application.addEventListener(Application.EventTypes.STOPPED, function(event) {
                         process.exit();

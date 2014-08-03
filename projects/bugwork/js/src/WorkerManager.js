@@ -160,12 +160,10 @@ require('bugpack').context("*", function(bugpack) {
          * @param {function(Throwable=)} callback
          */
         createWorker: function(workerName, options, callback) {
-            var debug = (process.execArgv.indexOf("--debug") >= 0);
-            var workerMaster = this.factoryWorkerMaster(workerName, options.maxConcurrency, debug);
+            var debugBreak      = (process.execArgv.indexOf("--debug-brk") >= 0);
+            var debug           = (process.execArgv.indexOf("--debug") >= 0) || debugBreak;
+            var workerMaster    = this.factoryWorkerMaster(workerName, options.maxConcurrency, debug, debugBreak);
             this.workerMasterSet.add(workerMaster);
-
-            //TEST
-            console.log("WorkerManager#createWorker - workerName:", workerName, " maxConcurrency:", options.maxConcurrency, " debug:", debug);
 
             $task(function(flow) {
                 workerMaster.createAndStartWorkers(function(throwable) {
@@ -213,10 +211,11 @@ require('bugpack').context("*", function(bugpack) {
          * @param {string} workerName
          * @param {number} maxConcurrency
          * @param {boolean} debug
+         * @param {boolean} debugBreak
          * @returns {WorkerMaster}
          */
-        factoryWorkerMaster: function(workerName, maxConcurrency, debug) {
-            return new WorkerMaster(workerName, maxConcurrency, debug, this.workerContextFactory);
+        factoryWorkerMaster: function(workerName, maxConcurrency, debug, debugBreak) {
+            return new WorkerMaster(workerName, maxConcurrency, debug, debugBreak, this.workerContextFactory);
         }
     });
 

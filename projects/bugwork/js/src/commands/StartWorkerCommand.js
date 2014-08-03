@@ -186,7 +186,7 @@ require('bugpack').context("*", function(bugpack) {
             var workerName      = workerContext.getWorkerName();
             var logMessage      = "Starting worker '" + workerName + "'";
             if (workerContext.isDebug()) {
-                logMessage += " in debug mode running on port " + workerContext.getDebugPort();
+                logMessage += " in debug mode running on port " + workerContext.getProcessConfig().getDebugPort();
             }
             console.log(logMessage);
             this.addProcessListeners(workerContext.getWorkerProcess());

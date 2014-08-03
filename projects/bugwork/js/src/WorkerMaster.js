@@ -19,6 +19,7 @@
 //@Require('Obj')
 //@Require('Set')
 //@Require('Flows')
+//@Require('bugwork.ProcessConfig')
 
 
 //-------------------------------------------------------------------------------
@@ -35,7 +36,8 @@ require('bugpack').context("*", function(bugpack) {
     var Class               = bugpack.require('Class');
     var Obj                 = bugpack.require('Obj');
     var Set                 = bugpack.require('Set');
-    var Flows             = bugpack.require('Flows');
+    var Flows               = bugpack.require('Flows');
+    var ProcessConfig       = bugpack.require('bugwork.ProcessConfig');
 
 
     //-------------------------------------------------------------------------------
@@ -69,9 +71,10 @@ require('bugpack').context("*", function(bugpack) {
          * @param {string} workerName
          * @param {number} maxConcurrency
          * @param {boolean} debug
+         * @param {boolean} debugBreak
          * @param {WorkerContextFactory} workerContextFactory
          */
-        _constructor: function(workerName, maxConcurrency, debug, workerContextFactory) {
+        _constructor: function(workerName, maxConcurrency, debug, debugBreak, workerContextFactory) {
 
             this._super();
 
@@ -85,6 +88,12 @@ require('bugpack').context("*", function(bugpack) {
              * @type {boolean}
              */
             this.debug                      = debug;
+
+            /**
+             * @private
+             * @type {boolean}
+             */
+            this.debugBreak                 = debugBreak;
 
             /**
              * @private
@@ -128,6 +137,13 @@ require('bugpack').context("*", function(bugpack) {
          */
         isDebug: function() {
             return this.debug;
+        },
+
+        /**
+         * @return {boolean}
+         */
+        isDebugBreak: function() {
+            return this.debugBreak;
         },
 
 
@@ -204,13 +220,26 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @private
+         * @return {ProcessConfig}
+         */
+        buildProcessConfig: function() {
+            return new ProcessConfig({
+                debug: this.isDebug(),
+                debugBreak: this.isDebugBreak(),
+                debugPort: WorkerMaster.lastDebugPort
+            });
+        },
+
+
+        /**
+         * @private
          * @param {function(Throwable=)} callback
          */
         createAndStartWorker: function(callback) {
             var _this = this;
             $task(function(flow) {
                 WorkerMaster.lastDebugPort++;
-                var workerContext = _this.workerContextFactory.factoryWorkerContext(_this.workerName, _this.isDebug(), WorkerMaster.lastDebugPort);
+                var workerContext = _this.workerContextFactory.factoryWorkerContext(_this.workerName, _this.buildProcessConfig());
                 workerContext.createAndStartWorker(function(throwable) {
                     if (!throwable) {
                         _this.addWorkerContext(workerContext);
