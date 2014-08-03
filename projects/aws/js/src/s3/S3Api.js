@@ -16,13 +16,13 @@
 
 //@Require('Bug')
 //@Require('Class')
+//@Require('Flows')
 //@Require('Map')
 //@Require('Obj')
 //@Require('Set')
 //@Require('TypeUtil')
 //@Require('aws.AwsConfig')
 //@Require('aws.S3Object')
-//@Require('Flows')
 //@Require('bugfs.BugFs')
 
 
@@ -46,13 +46,13 @@ require('bugpack').context("*", function(bugpack) {
 
     var Bug                 = bugpack.require('Bug');
     var Class               = bugpack.require('Class');
+    var Flows               = bugpack.require('Flows');
     var Map                 = bugpack.require('Map');
     var Obj                 = bugpack.require('Obj');
     var Set                 = bugpack.require('Set');
     var TypeUtil            = bugpack.require('TypeUtil');
     var AwsConfig           = bugpack.require('aws.AwsConfig');
     var S3Object            = bugpack.require('aws.S3Object');
-    var Flows             = bugpack.require('Flows');
     var BugFs               = bugpack.require('bugfs.BugFs');
 
 

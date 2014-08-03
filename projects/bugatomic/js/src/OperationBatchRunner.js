@@ -16,9 +16,9 @@
 
 //@Require('Class')
 //@Require('EventDispatcher')
+//@Require('Flows')
 //@Require('Set')
 //@Require('bugatomic.Operation')
-//@Require('Flows')
 
 
 //-------------------------------------------------------------------------------
@@ -33,9 +33,9 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class               = bugpack.require('Class');
     var EventDispatcher     = bugpack.require('EventDispatcher');
+    var Flows               = bugpack.require('Flows');
     var Set                 = bugpack.require('Set');
     var Operation           = bugpack.require('bugatomic.Operation');
-    var Flows             = bugpack.require('Flows');
 
 
     //-------------------------------------------------------------------------------

@@ -15,12 +15,12 @@
 //@Export('bugatomic.LockOperator')
 
 //@Require('Class')
+//@Require('Flows')
 //@Require('Lock')
 //@Require('LockStriped')
 //@Require('Map')
 //@Require('Obj')
 //@Require('bugatomic.ILockOperator')
-//@Require('Flows')
 
 
 //-------------------------------------------------------------------------------
@@ -34,12 +34,12 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class           = bugpack.require('Class');
+    var Flows           = bugpack.require('Flows');
     var Lock            = bugpack.require('Lock');
     var LockStriped     = bugpack.require('LockStriped');
     var Map             = bugpack.require('Map');
     var Obj             = bugpack.require('Obj');
     var ILockOperator   = bugpack.require('bugatomic.ILockOperator');
-    var Flows         = bugpack.require('Flows');
 
 
     //-------------------------------------------------------------------------------

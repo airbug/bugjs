@@ -17,11 +17,11 @@
 
 //@Require('ArgumentBug')
 //@Require('Class')
+//@Require('Flows')
 //@Require('Obj')
 //@Require('Set')
 //@Require('bugcall.IPreProcessCall')
 //@Require('bugcall.IProcessCall')
-//@Require('Flows')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 
@@ -38,11 +38,11 @@ require('bugpack').context("*", function(bugpack) {
 
     var ArgumentBug         = bugpack.require('ArgumentBug');
     var Class               = bugpack.require('Class');
+    var Flows               = bugpack.require('Flows');
     var Obj                 = bugpack.require('Obj');
     var Set                 = bugpack.require('Set');
     var IPreProcessCall     = bugpack.require('bugcall.IPreProcessCall');
     var IProcessCall        = bugpack.require('bugcall.IProcessCall');
-    var Flows             = bugpack.require('Flows');
     var ModuleTag           = bugpack.require('bugioc.ModuleTag');
     var BugMeta             = bugpack.require('bugmeta.BugMeta');
 

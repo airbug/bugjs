@@ -46,7 +46,7 @@ require('bugpack').context("*", function(bugpack) {
     var Class                   = bugpack.require('Class');
     var Obj                     = bugpack.require('Obj');
     var Set                     = bugpack.require('Set');
-    var IConfiguringModule          = bugpack.require('bugioc.IConfiguringModule');
+    var IConfiguringModule      = bugpack.require('bugioc.IConfiguringModule');
     var ModuleTag               = bugpack.require('bugioc.ModuleTag');
     var PropertyTag             = bugpack.require('bugioc.PropertyTag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');

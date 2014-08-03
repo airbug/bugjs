@@ -18,11 +18,11 @@
 //@Require('Bug')
 //@Require('Class')
 //@Require('Exception')
-//@Require('Obj')
 //@Require('Flows')
+//@Require('Obj')
+//@Require('Tracer')
 //@Require('bugtask.Task')
 //@Require('bugtask.TaskDefines')
-//@Require('Tracer')
 
 
 //-------------------------------------------------------------------------------
@@ -39,11 +39,11 @@ require('bugpack').context("*", function(bugpack) {
     var Bug                 = bugpack.require('Bug');
     var Class               = bugpack.require('Class');
     var Exception           = bugpack.require('Exception');
+    var Flows               = bugpack.require('Flows');
     var Obj                 = bugpack.require('Obj');
-    var Flows             = bugpack.require('Flows');
+    var Tracer              = bugpack.require('Tracer');
     var Task                = bugpack.require('bugtask.Task');
     var TaskDefines         = bugpack.require('bugtask.TaskDefines');
-    var Tracer            = bugpack.require('Tracer');
 
 
     //-------------------------------------------------------------------------------

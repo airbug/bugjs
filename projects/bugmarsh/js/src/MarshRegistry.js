@@ -40,7 +40,7 @@ require('bugpack').context("*", function(bugpack) {
     var Class               = bugpack.require('Class');
     var Map                 = bugpack.require('Map');
     var Obj                 = bugpack.require('Obj');
-    var IConfiguringModule      = bugpack.require('bugioc.IConfiguringModule');
+    var IConfiguringModule  = bugpack.require('bugioc.IConfiguringModule');
     var ModuleTag           = bugpack.require('bugioc.ModuleTag');
     var MarshTagProcessor   = bugpack.require('bugmarsh.MarshTagProcessor');
     var MarshTagScan        = bugpack.require('bugmarsh.MarshTagScan');

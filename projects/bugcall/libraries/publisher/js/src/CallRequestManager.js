@@ -17,9 +17,9 @@
 
 //@Require('Class')
 //@Require('Exception')
+//@Require('Flows')
 //@Require('Obj')
 //@Require('bugcall.CallRequest')
-//@Require('Flows')
 //@Require('bugioc.ArgTag')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
@@ -37,9 +37,9 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class           = bugpack.require('Class');
     var Exception       = bugpack.require('Exception');
+    var Flows           = bugpack.require('Flows');
     var Obj             = bugpack.require('Obj');
     var CallRequest     = bugpack.require('bugcall.CallRequest');
-    var Flows         = bugpack.require('Flows');
     var ArgTag          = bugpack.require('bugioc.ArgTag');
     var ModuleTag       = bugpack.require('bugioc.ModuleTag');
     var BugMeta         = bugpack.require('bugmeta.BugMeta');

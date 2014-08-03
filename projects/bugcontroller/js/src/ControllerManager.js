@@ -17,15 +17,15 @@
 
 //@Require('ArgumentBug')
 //@Require('Class')
+//@Require('Flows')
 //@Require('Obj')
 //@Require('Set')
 //@Require('bugcontroller.Controller')
 //@Require('bugcontroller.ControllerTag')
-//@Require('Flows')
 //@Require('bugioc.ArgTag')
 //@Require('bugioc.IInitializingModule')
-//@Require('bugioc.ModuleTag')
 //@Require('bugioc.ModuleProcessorTag')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -39,29 +39,29 @@ require('bugpack').context("*", function(bugpack) {
     // Bugpack Modules
     //-------------------------------------------------------------------------------
 
-    var ArgumentBug         = bugpack.require('ArgumentBug');
-    var Class               = bugpack.require('Class');
-    var Obj                 = bugpack.require('Obj');
-    var Set                 = bugpack.require('Set');
-    var Controller          = bugpack.require('bugcontroller.Controller');
-    var ControllerTag       = bugpack.require('bugcontroller.ControllerTag');
-    var Flows             = bugpack.require('Flows');
-    var ArgTag              = bugpack.require('bugioc.ArgTag');
-    var IInitializingModule = bugpack.require('bugioc.IInitializingModule');
-    var ModuleProcessorTag  = bugpack.require('bugioc.ModuleProcessorTag');
-    var ModuleTag           = bugpack.require('bugioc.ModuleTag');
-    var BugMeta             = bugpack.require('bugmeta.BugMeta');
+    var ArgumentBug             = bugpack.require('ArgumentBug');
+    var Class                   = bugpack.require('Class');
+    var Flows                   = bugpack.require('Flows');
+    var Obj                     = bugpack.require('Obj');
+    var Set                     = bugpack.require('Set');
+    var Controller              = bugpack.require('bugcontroller.Controller');
+    var ControllerTag           = bugpack.require('bugcontroller.ControllerTag');
+    var ArgTag                  = bugpack.require('bugioc.ArgTag');
+    var IInitializingModule     = bugpack.require('bugioc.IInitializingModule');
+    var ModuleProcessorTag      = bugpack.require('bugioc.ModuleProcessorTag');
+    var ModuleTag               = bugpack.require('bugioc.ModuleTag');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                 = ArgTag.arg;
-    var bugmeta             = BugMeta.context();
-    var module              = ModuleTag.module;
-    var moduleProcessor     = ModuleProcessorTag.moduleProcessor;
-    var $iterableParallel   = Flows.$iterableParallel;
+    var arg                     = ArgTag.arg;
+    var bugmeta                 = BugMeta.context();
+    var module                  = ModuleTag.module;
+    var moduleProcessor         = ModuleProcessorTag.moduleProcessor;
+    var $iterableParallel       = Flows.$iterableParallel;
 
 
     //-------------------------------------------------------------------------------

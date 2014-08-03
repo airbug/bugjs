@@ -16,10 +16,10 @@
 //@Autoload
 
 //@Require('Class')
+//@Require('Flows')
 //@Require('List')
 //@Require('Obj')
 //@Require('bugcall.IncomingRequest')
-//@Require('Flows')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 //@Require('bugrequest.IBuildRequestContext')
@@ -38,10 +38,10 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                   = bugpack.require('Class');
+    var Flows                   = bugpack.require('Flows');
     var List                    = bugpack.require('List');
     var Obj                     = bugpack.require('Obj');
     var IncomingRequest         = bugpack.require('bugcall.IncomingRequest');
-    var Flows                 = bugpack.require('Flows');
     var ModuleTag               = bugpack.require('bugioc.ModuleTag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
     var IBuildRequestContext    = bugpack.require('bugrequest.IBuildRequestContext');

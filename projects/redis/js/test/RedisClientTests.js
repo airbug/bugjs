@@ -16,8 +16,8 @@
 
 //@Require('Class')
 //@Require('Exception')
-//@Require('bugdouble.BugDouble')
 //@Require('Flows')
+//@Require('bugdouble.BugDouble')
 //@Require('bugmeta.BugMeta')
 //@Require('bugunit.TestTag')
 //@Require('bugyarn.BugYarn')
@@ -38,8 +38,8 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class                   = bugpack.require('Class');
     var Exception               = bugpack.require('Exception');
-    var BugDouble               = bugpack.require('bugdouble.BugDouble');
     var Flows                 = bugpack.require('Flows');
+    var BugDouble               = bugpack.require('bugdouble.BugDouble');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
     var TestTag          = bugpack.require('bugunit.TestTag');
     var BugYarn                 = bugpack.require('bugyarn.BugYarn');

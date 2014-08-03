@@ -18,10 +18,10 @@
 //@Require('Bug')
 //@Require('Class')
 //@Require('Exception')
+//@Require('Flows')
 //@Require('Obj')
 //@Require('Set')
 //@Require('TypeUtil')
-//@Require('Flows')
 //@Require('bugioc.ArgTag')
 //@Require('bugioc.IInitializingModule')
 //@Require('bugioc.ModuleTag')
@@ -39,29 +39,29 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Bug                 = bugpack.require('Bug');
-    var Class               = bugpack.require('Class');
-    var Exception           = bugpack.require('Exception');
-    var Obj                 = bugpack.require('Obj');
-    var Set                 = bugpack.require('Set');
-    var TypeUtil            = bugpack.require('TypeUtil');
-    var Flows             = bugpack.require('Flows');
-    var ArgTag              = bugpack.require('bugioc.ArgTag');
-    var IInitializingModule   = bugpack.require('bugioc.IInitializingModule');
-    var ModuleTag           = bugpack.require('bugioc.ModuleTag');
-    var BugMeta             = bugpack.require('bugmeta.BugMeta');
-    var WorkerMaster        = bugpack.require('bugwork.WorkerMaster');
+    var Bug                     = bugpack.require('Bug');
+    var Class                   = bugpack.require('Class');
+    var Exception               = bugpack.require('Exception');
+    var Flows                   = bugpack.require('Flows');
+    var Obj                     = bugpack.require('Obj');
+    var Set                     = bugpack.require('Set');
+    var TypeUtil                = bugpack.require('TypeUtil');
+    var ArgTag                  = bugpack.require('bugioc.ArgTag');
+    var IInitializingModule     = bugpack.require('bugioc.IInitializingModule');
+    var ModuleTag               = bugpack.require('bugioc.ModuleTag');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+    var WorkerMaster            = bugpack.require('bugwork.WorkerMaster');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                 = ArgTag.arg;
-    var bugmeta             = BugMeta.context();
-    var module              = ModuleTag.module;
-    var $iterableParallel   = Flows.$iterableParallel;
-    var $task               = Flows.$task;
+    var arg                     = ArgTag.arg;
+    var bugmeta                 = BugMeta.context();
+    var module                  = ModuleTag.module;
+    var $iterableParallel       = Flows.$iterableParallel;
+    var $task                   = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

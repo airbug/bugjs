@@ -17,8 +17,8 @@
 //@Export('clientjs.ClientJSServer')
 
 //@Require('Class')
-//@Require('Obj')
 //@Require('Flows')
+//@Require('Obj')
 //@Require('bugfs.BugFs')
 //@Require('clientjs.ClientPackageRegistry')
 
@@ -41,8 +41,8 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class                   = bugpack.require('Class');
+    var Flows                   = bugpack.require('Flows');
     var Obj                     = bugpack.require('Obj');
-    var Flows                 = bugpack.require('Flows');
     var BugFs                   = bugpack.require('bugfs.BugFs');
     var ClientPackageRegistry   = bugpack.require('clientjs.ClientPackageRegistry');
 

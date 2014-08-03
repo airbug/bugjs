@@ -36,23 +36,23 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Bug                 = bugpack.require('Bug');
-    var Class               = bugpack.require('Class');
-    var Map                 = bugpack.require('Map');
-    var Obj                 = bugpack.require('Obj');
-    var IInitializingModule   = bugpack.require('bugioc.IInitializingModule');
-    var ModuleTag           = bugpack.require('bugioc.ModuleTag');
-    var BugMeta             = bugpack.require('bugmeta.BugMeta');
-    var WorkerTagProcessor  = bugpack.require('bugwork.WorkerTagProcessor');
-    var WorkerTagScan       = bugpack.require('bugwork.WorkerTagScan');
+    var Bug                     = bugpack.require('Bug');
+    var Class                   = bugpack.require('Class');
+    var Map                     = bugpack.require('Map');
+    var Obj                     = bugpack.require('Obj');
+    var IInitializingModule     = bugpack.require('bugioc.IInitializingModule');
+    var ModuleTag               = bugpack.require('bugioc.ModuleTag');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+    var WorkerTagProcessor      = bugpack.require('bugwork.WorkerTagProcessor');
+    var WorkerTagScan           = bugpack.require('bugwork.WorkerTagScan');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta             = BugMeta.context();
-    var module              = ModuleTag.module;
+    var bugmeta                 = BugMeta.context();
+    var module                  = ModuleTag.module;
 
 
     //-------------------------------------------------------------------------------

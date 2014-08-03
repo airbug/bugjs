@@ -15,11 +15,11 @@
 //@Export('aws.AwsUploader')
 
 //@Require('Class')
+//@Require('Flows')
 //@Require('Obj')
 //@Require('aws.AwsConfig')
 //@Require('aws.S3Api')
 //@Require('aws.S3Bucket')
-//@Require('Flows')
 //@Require('bugfs.BugFs')
 //@Require('bugfs.Path')
 
@@ -42,11 +42,11 @@ require('bugpack').context("*", function(bugpack) {
     // -------------------------------------------------------------------------------
 
     var Class               = bugpack.require('Class');
+    var Flows               = bugpack.require('Flows');
     var Obj                 = bugpack.require('Obj');
     var AwsConfig           = bugpack.require('aws.AwsConfig');
     var S3Api               = bugpack.require('aws.S3Api');
     var S3Bucket            = bugpack.require('aws.S3Bucket');
-    var Flows             = bugpack.require('Flows');
     var BugFs               = bugpack.require('bugfs.BugFs');
     var Path                = bugpack.require('bugfs.Path');
 

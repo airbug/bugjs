@@ -15,8 +15,8 @@
 //@Export('bugcli.CliRunner')
 
 //@Require('Class')
-//@Require('Obj')
 //@Require('Flows')
+//@Require('Obj')
 
 
 //-------------------------------------------------------------------------------
@@ -30,8 +30,8 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class       = bugpack.require('Class');
+    var Flows       = bugpack.require('Flows');
     var Obj         = bugpack.require('Obj');
-    var Flows     = bugpack.require('Flows');
 
 
     //-------------------------------------------------------------------------------

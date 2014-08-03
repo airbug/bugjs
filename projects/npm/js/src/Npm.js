@@ -17,9 +17,9 @@
 //@Require('Bug')
 //@Require('Class')
 //@Require('Exception')
+//@Require('Flows')
 //@Require('Obj')
 //@Require('StringUtil')
-//@Require('Flows')
 //@Require('bugfs.BugFs')
 
 
@@ -47,9 +47,9 @@ require('bugpack').context("*", function(bugpack) {
     var Bug             = bugpack.require('Bug');
     var Class           = bugpack.require('Class');
     var Exception       = bugpack.require('Exception');
+    var Flows           = bugpack.require('Flows');
     var Obj             = bugpack.require('Obj');
     var StringUtil      = bugpack.require('StringUtil');
-    var Flows         = bugpack.require('Flows');
     var BugFs           = bugpack.require('bugfs.BugFs');
 
 

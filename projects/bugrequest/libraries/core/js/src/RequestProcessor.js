@@ -16,9 +16,9 @@
 //@Autoload
 
 //@Require('Class')
+//@Require('Flows')
 //@Require('Obj')
 //@Require('Set')
-//@Require('Flows')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 //@Require('bugrequest.IPreProcessRequest')
@@ -36,9 +36,9 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class               = bugpack.require('Class');
+    var Flows               = bugpack.require('Flows');
     var Obj                 = bugpack.require('Obj');
     var Set                 = bugpack.require('Set');
-    var Flows             = bugpack.require('Flows');
     var ModuleTag           = bugpack.require('bugioc.ModuleTag');
     var BugMeta             = bugpack.require('bugmeta.BugMeta');
     var IPreProcessRequest  = bugpack.require('bugrequest.IPreProcessRequest');

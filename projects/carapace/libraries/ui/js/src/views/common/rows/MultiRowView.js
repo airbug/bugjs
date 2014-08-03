@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -70,7 +80,7 @@ require('bugpack').context("*", function(bugpack) {
         clearStackClasses: function(element) {
             element.removeClass("stack12 stack11 stack10 stack9 stack8 stack7 stack6 stack5 stack4 stack3 stack2 stack1 stack0");
         },
-        
+
         /**
          * @protected
          * @param {Array.<number>} configArray

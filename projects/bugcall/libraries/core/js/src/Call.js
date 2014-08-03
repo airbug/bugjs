@@ -18,6 +18,7 @@
 //@Require('Class')
 //@Require('EventDispatcher')
 //@Require('Exception')
+//@Require('Flows')
 //@Require('Map')
 //@Require('Queue')
 //@Require('Set')
@@ -30,7 +31,6 @@
 //@Require('bugcall.OutgoingRequest')
 //@Require('bugcall.OutgoingResponse')
 //@Require('bugcall.RequestFailedException')
-//@Require('Flows')
 
 
 //-------------------------------------------------------------------------------
@@ -47,6 +47,7 @@ require('bugpack').context("*", function(bugpack) {
     var Class                   = bugpack.require('Class');
     var EventDispatcher         = bugpack.require('EventDispatcher');
     var Exception               = bugpack.require('Exception');
+    var Flows                   = bugpack.require('Flows');
     var Map                     = bugpack.require('Map');
     var Queue                   = bugpack.require('Queue');
     var Set                     = bugpack.require('Set');
@@ -59,7 +60,6 @@ require('bugpack').context("*", function(bugpack) {
     var OutgoingRequest         = bugpack.require('bugcall.OutgoingRequest');
     var OutgoingResponse        = bugpack.require('bugcall.OutgoingResponse');
     var RequestFailedException  = bugpack.require('bugcall.RequestFailedException');
-    var Flows                 = bugpack.require('Flows');
 
 
     //-------------------------------------------------------------------------------

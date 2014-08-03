@@ -45,7 +45,7 @@ require('bugpack').context("*", function(bugpack) {
     var TypeUtil            = bugpack.require('TypeUtil');
     var EntityDataStore     = bugpack.require('bugentity.EntityDataStore');
     var ArgTag              = bugpack.require('bugioc.ArgTag');
-    var IConfiguringModule      = bugpack.require('bugioc.IConfiguringModule');
+    var IConfiguringModule  = bugpack.require('bugioc.IConfiguringModule');
     var ModuleTag           = bugpack.require('bugioc.ModuleTag');
     var BugMeta             = bugpack.require('bugmeta.BugMeta');
     var MongoManager        = bugpack.require('mongo.MongoManager');

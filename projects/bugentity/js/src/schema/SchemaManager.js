@@ -42,7 +42,7 @@ require('bugpack').context("*", function(bugpack) {
     var Obj                 = bugpack.require('Obj');
     var EntityTagProcessor  = bugpack.require('bugentity.EntityTagProcessor');
     var EntityTagScan       = bugpack.require('bugentity.EntityTagScan');
-    var IConfiguringModule      = bugpack.require('bugioc.IConfiguringModule');
+    var IConfiguringModule  = bugpack.require('bugioc.IConfiguringModule');
     var ModuleTag           = bugpack.require('bugioc.ModuleTag');
     var BugMeta             = bugpack.require('bugmeta.BugMeta');
 

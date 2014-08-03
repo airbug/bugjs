@@ -33,7 +33,7 @@ require('bugpack').context("*", function(bugpack) {
     var Class               = bugpack.require('Class');
     var Exception           = bugpack.require('Exception');
     var Obj                 = bugpack.require('Obj');
-    var Tracer            = bugpack.require('Tracer');
+    var Tracer              = bugpack.require('Tracer');
 
 
     //-------------------------------------------------------------------------------

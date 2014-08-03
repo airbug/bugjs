@@ -18,11 +18,11 @@
 //@Require('ArgUtil')
 //@Require('Class')
 //@Require('Collection')
+//@Require('Flows')
 //@Require('List')
 //@Require('Obj')
 //@Require('Set')
 //@Require('TypeUtil')
-//@Require('Flows')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 //@Require('handshaker.IHand')
@@ -41,11 +41,11 @@ require('bugpack').context("*", function(bugpack) {
     var ArgUtil             = bugpack.require('ArgUtil');
     var Class               = bugpack.require('Class');
     var Collection          = bugpack.require('Collection');
+    var Flows               = bugpack.require('Flows');
     var List                = bugpack.require('List');
     var Obj                 = bugpack.require('Obj');
     var Set                 = bugpack.require('Set');
     var TypeUtil            = bugpack.require('TypeUtil');
-    var Flows             = bugpack.require('Flows');
     var ModuleTag           = bugpack.require('bugioc.ModuleTag');
     var BugMeta             = bugpack.require('bugmeta.BugMeta');
     var IHand               = bugpack.require('handshaker.IHand');

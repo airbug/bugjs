@@ -18,10 +18,10 @@
 //@Require('Class')
 //@Require('Exception')
 //@Require('Obj')
+//@Require('Tracer')
 //@Require('bugioc.ArgTag')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
-//@Require('Tracer')
 
 
 //-------------------------------------------------------------------------------
@@ -37,10 +37,10 @@ require('bugpack').context("*", function(bugpack) {
     var Class               = bugpack.require('Class');
     var Exception           = bugpack.require('Exception');
     var Obj                 = bugpack.require('Obj');
+    var Tracer              = bugpack.require('Tracer');
     var ArgTag              = bugpack.require('bugioc.ArgTag');
     var ModuleTag           = bugpack.require('bugioc.ModuleTag');
     var BugMeta             = bugpack.require('bugmeta.BugMeta');
-    var Tracer            = bugpack.require('Tracer');
 
 
     //-------------------------------------------------------------------------------

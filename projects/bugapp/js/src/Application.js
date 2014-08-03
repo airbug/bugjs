@@ -31,11 +31,11 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                       = bugpack.require('Class');
-    var Event                       = bugpack.require('Event');
-    var EventDispatcher             = bugpack.require('EventDispatcher');
-    var BugIoc                      = bugpack.require('bugioc.BugIoc');
-    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
+    var Class               = bugpack.require('Class');
+    var Event               = bugpack.require('Event');
+    var EventDispatcher     = bugpack.require('EventDispatcher');
+    var BugIoc              = bugpack.require('bugioc.BugIoc');
+    var BugMeta             = bugpack.require('bugmeta.BugMeta');
 
 
     //-------------------------------------------------------------------------------

@@ -17,6 +17,7 @@
 //@Require('Bug')
 //@Require('Class')
 //@Require('Exception')
+//@Require('Flows')
 //@Require('Map')
 //@Require('Obj')
 //@Require('ObjectUtil')
@@ -28,7 +29,6 @@
 //@Require('bugdelta.ObjectChange')
 //@Require('bugdelta.SetChange')
 //@Require('bugentity.Entity')
-//@Require('Flows')
 //@Require('mongo.MongoUpdateChanges')
 
 
@@ -45,6 +45,7 @@ require('bugpack').context("*", function(bugpack) {
     var Bug                 = bugpack.require('Bug');
     var Class               = bugpack.require('Class');
     var Exception           = bugpack.require('Exception');
+    var Flows               = bugpack.require('Flows');
     var Map                 = bugpack.require('Map');
     var Obj                 = bugpack.require('Obj');
     var ObjectUtil          = bugpack.require('ObjectUtil');
@@ -56,7 +57,6 @@ require('bugpack').context("*", function(bugpack) {
     var ObjectChange        = bugpack.require('bugdelta.ObjectChange');
     var SetChange           = bugpack.require('bugdelta.SetChange');
     var Entity              = bugpack.require('bugentity.Entity');
-    var Flows               = bugpack.require('Flows');
     var MongoUpdateChanges  = bugpack.require('mongo.MongoUpdateChanges');
 
 

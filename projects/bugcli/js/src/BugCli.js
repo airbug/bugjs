@@ -15,6 +15,7 @@
 //@Export('bugcli.BugCli')
 
 //@Require('Class')
+//@Require('Flows')
 //@Require('Map')
 //@Require('Obj')
 //@Require('bugcli.CliAction')
@@ -22,7 +23,6 @@
 //@Require('bugcli.CliOption')
 //@Require('bugcli.CliParser')
 //@Require('bugcli.CliRunner')
-//@Require('Flows')
 
 
 //-------------------------------------------------------------------------------
@@ -43,6 +43,7 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class       = bugpack.require('Class');
+    var Flows       = bugpack.require('Flows');
     var Map         = bugpack.require('Map');
     var Obj         = bugpack.require('Obj');
     var CliAction   = bugpack.require('bugcli.CliAction');
@@ -50,7 +51,6 @@ require('bugpack').context("*", function(bugpack) {
     var CliOption   = bugpack.require('bugcli.CliOption');
     var CliParser   = bugpack.require('bugcli.CliParser');
     var CliRunner   = bugpack.require('bugcli.CliRunner');
-    var Flows     = bugpack.require('Flows');
 
 
     //-------------------------------------------------------------------------------

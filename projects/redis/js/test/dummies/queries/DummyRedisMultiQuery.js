@@ -15,8 +15,8 @@
 //@Export('redis.DummyRedisMultiQuery')
 
 //@Require('Class')
-//@Require('List')
 //@Require('Flows')
+//@Require('List')
 //@Require('redis.DummyRedisQuery')
 
 
@@ -31,8 +31,8 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class               = bugpack.require('Class');
+    var Flows               = bugpack.require('Flows');
     var List                = bugpack.require('List');
-    var Flows             = bugpack.require('Flows');
     var DummyRedisQuery     = bugpack.require('redis.DummyRedisQuery');
 
 

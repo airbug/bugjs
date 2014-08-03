@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2014 airbug Inc. All rights reserved.
+ *
+ * All software, both binary and source contained in this work is the exclusive property
+ * of airbug Inc. Modification, decompilation, disassembly, or any other means of discovering
+ * the source code of this software is prohibited. This work is protected under the United
+ * States copyright law and other international copyright treaties and conventions.
+ */
+
+
 //-------------------------------------------------------------------------------
 // Annotations
 //-------------------------------------------------------------------------------
@@ -6,11 +16,11 @@
 
 //@Require('Class')
 //@Require('LiteralUtil')
-//@Require('carapace.CarapaceView')
-//@Require('mustache.Mustache')
-//@Require('bugmeta.BugMeta')
 //@Require('bugioc.AutowiredTag')
 //@Require('bugioc.PropertyTag')
+//@Require('bugmeta.BugMeta')
+//@Require('carapace.CarapaceView')
+//@Require('mustache.Mustache')
 
 
 //-------------------------------------------------------------------------------
@@ -23,22 +33,22 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                   = bugpack.require('Class');
-    var LiteralUtil             = bugpack.require('LiteralUtil');
-    var CarapaceView            = bugpack.require('carapace.CarapaceView');
-    var Mustache                = bugpack.require('mustache.Mustache');
-    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
-    var AutowiredTag     = bugpack.require('bugioc.AutowiredTag');
-    var PropertyTag      = bugpack.require('bugioc.PropertyTag');
+    var Class           = bugpack.require('Class');
+    var LiteralUtil     = bugpack.require('LiteralUtil');
+    var AutowiredTag    = bugpack.require('bugioc.AutowiredTag');
+    var PropertyTag     = bugpack.require('bugioc.PropertyTag');
+    var BugMeta         = bugpack.require('bugmeta.BugMeta');
+    var CarapaceView    = bugpack.require('carapace.CarapaceView');
+    var Mustache        = bugpack.require('mustache.Mustache');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta                 = BugMeta.context();
-    var autowired               = AutowiredTag.autowired;
-    var property                = PropertyTag.property;
+    var bugmeta         = BugMeta.context();
+    var autowired       = AutowiredTag.autowired;
+    var property        = PropertyTag.property;
 
 
     //-------------------------------------------------------------------------------

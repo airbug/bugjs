@@ -32,22 +32,22 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class                       = bugpack.require('Class');
-    var BugDouble                   = bugpack.require('bugdouble.BugDouble');
-    var BugMeta                     = bugpack.require('bugmeta.BugMeta');
-    var TestTag                     = bugpack.require('bugunit.TestTag');
-    var WorkerProcessFactory        = bugpack.require('bugwork.WorkerProcessFactory');
-    var BugYarn                     = bugpack.require('bugyarn.BugYarn');
+    var Class                   = bugpack.require('Class');
+    var BugDouble               = bugpack.require('bugdouble.BugDouble');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+    var TestTag                 = bugpack.require('bugunit.TestTag');
+    var WorkerProcessFactory    = bugpack.require('bugwork.WorkerProcessFactory');
+    var BugYarn                 = bugpack.require('bugyarn.BugYarn');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta                     = BugMeta.context();
-    var bugyarn                     = BugYarn.context();
-    var stubObject                  = BugDouble.stubObject;
-    var test                        = TestTag.test;
+    var bugmeta                 = BugMeta.context();
+    var bugyarn                 = BugYarn.context();
+    var stubObject              = BugDouble.stubObject;
+    var test                    = TestTag.test;
 
 
     //-------------------------------------------------------------------------------

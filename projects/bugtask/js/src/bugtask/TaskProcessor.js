@@ -37,7 +37,7 @@ require('bugpack').context("*", function(bugpack) {
     var Event               = bugpack.require('Event');
     var EventDispatcher     = bugpack.require('EventDispatcher');
     var Exception           = bugpack.require('Exception');
-    var Flows             = bugpack.require('Flows');
+    var Flows               = bugpack.require('Flows');
 
 
     //-------------------------------------------------------------------------------

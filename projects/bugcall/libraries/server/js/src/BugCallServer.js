@@ -42,30 +42,30 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class               = bugpack.require('Class');
-    var EventDispatcher     = bugpack.require('EventDispatcher');
-    var Exception           = bugpack.require('Exception');
-    var Map                 = bugpack.require('Map');
-    var Proxy               = bugpack.require('Proxy');
-    var Set                 = bugpack.require('Set');
-    var Call                = bugpack.require('bugcall.Call');
-    var CallConnection      = bugpack.require('bugcall.CallConnection');
-    var CallEvent           = bugpack.require('bugcall.CallEvent');
-    var CallResponder       = bugpack.require('bugcall.CallResponder');
-    var CallServer          = bugpack.require('bugcall.CallServer');
-    var ArgTag              = bugpack.require('bugioc.ArgTag');
-    var IInitializingModule   = bugpack.require('bugioc.IInitializingModule');
-    var ModuleTag           = bugpack.require('bugioc.ModuleTag');
-    var BugMeta             = bugpack.require('bugmeta.BugMeta');
+    var Class                   = bugpack.require('Class');
+    var EventDispatcher         = bugpack.require('EventDispatcher');
+    var Exception               = bugpack.require('Exception');
+    var Map                     = bugpack.require('Map');
+    var Proxy                   = bugpack.require('Proxy');
+    var Set                     = bugpack.require('Set');
+    var Call                    = bugpack.require('bugcall.Call');
+    var CallConnection          = bugpack.require('bugcall.CallConnection');
+    var CallEvent               = bugpack.require('bugcall.CallEvent');
+    var CallResponder           = bugpack.require('bugcall.CallResponder');
+    var CallServer              = bugpack.require('bugcall.CallServer');
+    var ArgTag                  = bugpack.require('bugioc.ArgTag');
+    var IInitializingModule     = bugpack.require('bugioc.IInitializingModule');
+    var ModuleTag               = bugpack.require('bugioc.ModuleTag');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var arg                 = ArgTag.arg;
-    var bugmeta             = BugMeta.context();
-    var module              = ModuleTag.module;
+    var arg                     = ArgTag.arg;
+    var bugmeta                 = BugMeta.context();
+    var module                  = ModuleTag.module;
 
 
     //-------------------------------------------------------------------------------

@@ -45,7 +45,7 @@ require('bugpack').context("*", function(bugpack) {
     var CallConnection          = bugpack.require('bugcall.CallConnection');
     var CallDefines             = bugpack.require('bugcall.CallDefines');
     var ArgTag                  = bugpack.require('bugioc.ArgTag');
-    var IInitializingModule       = bugpack.require('bugioc.IInitializingModule');
+    var IInitializingModule     = bugpack.require('bugioc.IInitializingModule');
     var ModuleTag               = bugpack.require('bugioc.ModuleTag');
     var BugMeta                 = bugpack.require('bugmeta.BugMeta');
     var SocketIoClient          = bugpack.require('socketio.SocketIoClient');

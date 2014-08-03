@@ -17,10 +17,10 @@
 
 //@Require('Class')
 //@Require('Config')
+//@Require('Flows')
 //@Require('Map')
 //@Require('Obj')
 //@Require('TypeUtil')
-//@Require('Flows')
 //@Require('bugfs.BugFs')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
@@ -38,10 +38,10 @@ require('bugpack').context("*", function(bugpack) {
 
     var Class       = bugpack.require('Class');
     var Config      = bugpack.require('Config');
+    var Flows       = bugpack.require('Flows');
     var Map         = bugpack.require('Map');
     var Obj         = bugpack.require('Obj');
     var TypeUtil    = bugpack.require('TypeUtil');
-    var Flows     = bugpack.require('Flows');
     var BugFs       = bugpack.require('bugfs.BugFs');
     var ModuleTag   = bugpack.require('bugioc.ModuleTag');
     var BugMeta     = bugpack.require('bugmeta.BugMeta');

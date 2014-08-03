@@ -21,8 +21,8 @@
 //@Require('bugentity.EntityManager')
 //@Require('bugentity.EntityManagerTag')
 //@Require('bugioc.ArgTag')
-//@Require('bugioc.ModuleTag')
 //@Require('bugioc.ModuleProcessorTag')
+//@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
 
 
@@ -39,8 +39,8 @@ require('bugpack').context("*", function(bugpack) {
     var ArgumentBug         = bugpack.require('ArgumentBug');
     var Class               = bugpack.require('Class');
     var Obj                 = bugpack.require('Obj');
-    var EntityManager          = bugpack.require('bugentity.EntityManager');
-    var EntityManagerTag       = bugpack.require('bugentity.EntityManagerTag');
+    var EntityManager       = bugpack.require('bugentity.EntityManager');
+    var EntityManagerTag    = bugpack.require('bugentity.EntityManagerTag');
     var ArgTag              = bugpack.require('bugioc.ArgTag');
     var ModuleProcessorTag  = bugpack.require('bugioc.ModuleProcessorTag');
     var ModuleTag           = bugpack.require('bugioc.ModuleTag');

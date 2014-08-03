@@ -16,8 +16,8 @@
 //@Autoload
 
 //@Require('Class')
-//@Require('Obj')
 //@Require('Flows')
+//@Require('Obj')
 //@Require('bugfs.BugFs')
 //@Require('bugioc.IInitializingModule')
 //@Require('bugioc.ModuleTag')
@@ -36,27 +36,27 @@ require('bugpack').context("*", function(bugpack) {
     // BugPack
     //-------------------------------------------------------------------------------
 
-    var Class               = bugpack.require('Class');
-    var Obj                 = bugpack.require('Obj');
-    var Flows             = bugpack.require('Flows');
-    var BugFs               = bugpack.require('bugfs.BugFs');
-    var IInitializingModule   = bugpack.require('bugioc.IInitializingModule');
-    var ModuleTag           = bugpack.require('bugioc.ModuleTag');
-    var PropertyTag         = bugpack.require('bugioc.PropertyTag');
-    var BugMeta             = bugpack.require('bugmeta.BugMeta');
-    var MigrationModel      = bugpack.require('bugmigrate.MigrationModel');
+    var Class                   = bugpack.require('Class');
+    var Flows                   = bugpack.require('Flows');
+    var Obj                     = bugpack.require('Obj');
+    var BugFs                   = bugpack.require('bugfs.BugFs');
+    var IInitializingModule     = bugpack.require('bugioc.IInitializingModule');
+    var ModuleTag               = bugpack.require('bugioc.ModuleTag');
+    var PropertyTag             = bugpack.require('bugioc.PropertyTag');
+    var BugMeta                 = bugpack.require('bugmeta.BugMeta');
+    var MigrationModel          = bugpack.require('bugmigrate.MigrationModel');
 
 
     //-------------------------------------------------------------------------------
     // Simplify References
     //-------------------------------------------------------------------------------
 
-    var bugmeta             = BugMeta.context();
-    var module              = ModuleTag.module;
-    var property            = PropertyTag.property;
-    var $iterableSeries     = Flows.$iterableSeries;
-    var $series             = Flows.$series;
-    var $task               = Flows.$task;
+    var bugmeta                 = BugMeta.context();
+    var module                  = ModuleTag.module;
+    var property                = PropertyTag.property;
+    var $iterableSeries         = Flows.$iterableSeries;
+    var $series                 = Flows.$series;
+    var $task                   = Flows.$task;
 
 
     //-------------------------------------------------------------------------------

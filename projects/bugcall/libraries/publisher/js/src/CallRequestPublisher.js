@@ -18,14 +18,14 @@
 //@Require('ArgUtil')
 //@Require('Class')
 //@Require('Exception')
+//@Require('Flows')
 //@Require('Obj')
 //@Require('Set')
+//@Require('Tracer')
 //@Require('bugcall.CallDefines')
-//@Require('Flows')
 //@Require('bugioc.ArgTag')
 //@Require('bugioc.ModuleTag')
 //@Require('bugmeta.BugMeta')
-//@Require('Tracer')
 
 
 //-------------------------------------------------------------------------------
@@ -41,14 +41,14 @@ require('bugpack').context("*", function(bugpack) {
     var ArgUtil             = bugpack.require('ArgUtil');
     var Class               = bugpack.require('Class');
     var Exception           = bugpack.require('Exception');
+    var Flows               = bugpack.require('Flows');
     var Obj                 = bugpack.require('Obj');
     var Set                 = bugpack.require('Set');
+    var Tracer              = bugpack.require('Tracer');
     var CallDefines         = bugpack.require('bugcall.CallDefines');
-    var Flows             = bugpack.require('Flows');
     var ArgTag              = bugpack.require('bugioc.ArgTag');
     var ModuleTag           = bugpack.require('bugioc.ModuleTag');
     var BugMeta             = bugpack.require('bugmeta.BugMeta');
-    var Tracer            = bugpack.require('Tracer');
 
 
     //-------------------------------------------------------------------------------

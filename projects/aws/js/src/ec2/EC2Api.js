@@ -15,10 +15,10 @@
 //@Export('aws.EC2Api')
 
 //@Require('Class')
+//@Require('Flows')
 //@Require('Obj')
 //@Require('TypeUtil')
 //@Require('aws.EC2SecurityGroup')
-//@Require('Flows')
 
 
 //-------------------------------------------------------------------------------
@@ -39,10 +39,10 @@ require('bugpack').context("*", function(bugpack) {
     //-------------------------------------------------------------------------------
 
     var Class               = bugpack.require('Class');
+    var Flows               = bugpack.require('Flows');
     var Obj                 = bugpack.require('Obj');
     var TypeUtil            = bugpack.require('TypeUtil');
     var EC2SecurityGroup    = bugpack.require('aws.EC2SecurityGroup');
-    var Flows             = bugpack.require('Flows');
 
 
     //-------------------------------------------------------------------------------

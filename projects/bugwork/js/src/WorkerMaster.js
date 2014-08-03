@@ -16,9 +16,9 @@
 
 //@Require('Bug')
 //@Require('Class')
+//@Require('Flows')
 //@Require('Obj')
 //@Require('Set')
-//@Require('Flows')
 //@Require('bugwork.ProcessConfig')
 
 
@@ -34,9 +34,9 @@ require('bugpack').context("*", function(bugpack) {
 
     var Bug                 = bugpack.require('Bug');
     var Class               = bugpack.require('Class');
+    var Flows               = bugpack.require('Flows');
     var Obj                 = bugpack.require('Obj');
     var Set                 = bugpack.require('Set');
-    var Flows               = bugpack.require('Flows');
     var ProcessConfig       = bugpack.require('bugwork.ProcessConfig');
 
 
