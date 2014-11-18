@@ -61,7 +61,7 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @construvts
+         * @constructs
          * @param {*} model
          * @param {*} schema
          */
