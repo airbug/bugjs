@@ -20,9 +20,12 @@ npm-debug.log
 *.ipr
 *.iws
 
-# mac OS
+#mac
 .DS_Store
 
-#bug
-.bugunit
+#buildbug
 .buildbug
+buildbug.json
+
+#bugunit
+.bugunit

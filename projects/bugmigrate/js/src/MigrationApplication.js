@@ -104,9 +104,9 @@ require('bugpack').context("*", function(bugpack) {
                     "bugmigrate.MigrationConfiguration",
                     "bugmigrate.MigrationInitializer",
                     "bugmigrate.MigrationManager",
+                    "bugmongo.MongoDataStore",
                     "configbug.Configbug",
-                    "loggerbug.Logger",
-                    "mongo.MongoDataStore"
+                    "loggerbug.Logger"
                 ]);
                 this.iocContext.generate();
             } catch(throwable) {
