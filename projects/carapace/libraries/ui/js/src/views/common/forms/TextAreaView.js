@@ -108,7 +108,7 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @returns {number}
+         * @return {number}
          */
         getCaret: function() {
             var el = this.$el[0];
@@ -158,7 +158,7 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @returns {*}
+         * @return {*}
          */
         getValue: function() {
             return this.$el.val();

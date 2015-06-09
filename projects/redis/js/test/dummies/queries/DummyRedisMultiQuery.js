@@ -163,7 +163,7 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @param {string} key
          * @param {string} field
-         * @returns {DummyRedisMultiQuery}
+         * @return {DummyRedisMultiQuery}
          */
         hdel: function(key, field) {
             var query = this.queryFactory.hdel(key, field);
@@ -178,7 +178,7 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @param {string} key
          * @param {string} field
-         * @returns {DummyRedisMultiQuery}
+         * @return {DummyRedisMultiQuery}
          */
         hget: function() {
             var query = this.queryFactory.hget(key, field);
@@ -224,7 +224,7 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @param {string} channel
          * @param {*} message
-         * @returns {DummyRedisMultiQuery}
+         * @return {DummyRedisMultiQuery}
          */
         publish: function(channel, message) {
             var query = this.queryFactory.sadd(channel, message);
@@ -279,7 +279,7 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @param {string} key
          * @param {*} member
-         * @returns {DummyRedisMultiQuery}
+         * @return {DummyRedisMultiQuery}
          */
         srem: function(key, member) {
             var query = this.queryFactory.srem(key, member);
@@ -289,7 +289,7 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @param {string} channel
-         * @returns {DummyRedisMultiQuery}
+         * @return {DummyRedisMultiQuery}
          */
         subscribe: function(channel) {
             var query = this.queryFactory.subscribe(channel);
@@ -299,7 +299,7 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @param {string} channel
-         * @returns {DummyRedisMultiQuery}
+         * @return {DummyRedisMultiQuery}
          */
         unsubscribe: function(channel) {
             var query = this.queryFactory.unsubscribe(channel);

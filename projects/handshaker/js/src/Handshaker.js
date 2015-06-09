@@ -132,7 +132,7 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @returns {number}
+         * @return {number}
          */
         getHandCount: function() {
             return this.hands.getCount();

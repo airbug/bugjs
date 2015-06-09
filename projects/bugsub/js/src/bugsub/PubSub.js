@@ -306,7 +306,7 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @protected
          * @param {string} messageString
-         * @returns {Message}
+         * @return {Message}
          */
         buildMessage: function(messageString) {
             return this.marshaller.unmarshalData(messageString);
@@ -353,7 +353,7 @@ require('bugpack').context("*", function(bugpack) {
          * @param {function(Message)} subscriberFunction
          * @param {Object} subscriberContext
          * @param {boolean} once
-         * @returns {Subscriber}
+         * @return {Subscriber}
          */
         factorySubscriber: function(subscriberFunction, subscriberContext, once) {
             return new Subscriber(subscriberFunction, subscriberContext, once);
@@ -362,7 +362,7 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @protected
          * @param {Message} message
-         * @returns {string}
+         * @return {string}
          */
         generateResponseChannel: function(message) {
             return "response:" + message.getMessageUuid();

@@ -134,7 +134,7 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @returns {boolean}
+         * @return {boolean}
          */
         getConnecting: function() {
             return this.connecting;

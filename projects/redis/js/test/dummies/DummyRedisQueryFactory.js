@@ -252,7 +252,7 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @param {string} key
          * @param {*} member
-         * @returns {DummyRedisSRemQuery}
+         * @return {DummyRedisSRemQuery}
          */
         srem: function(key, member) {
             return new DummyRedisSRemQuery(this.dummyRedisClient, key, member);

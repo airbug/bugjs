@@ -269,7 +269,7 @@ var io = ('undefined' === typeof module ? {} : module.exports);
          * Generates the correct `XMLHttpRequest` for regular and cross domain requests.
          *
          * @param {Boolean} [xdomain] Create a request that can be used cross domain.
-         * @returns {XMLHttpRequest|false} If we can create a XMLHttpRequest.
+         * @return {XMLHttpRequest|false} If we can create a XMLHttpRequest.
          * @api private
          */
 
@@ -1473,7 +1473,7 @@ var io = ('undefined' === typeof module ? {} : module.exports);
          * Generates a connection url based on the Socket.IO URL Protocol.
          * See <https://github.com/learnboost/socket.io-node/> for more details.
          *
-         * @returns {String} Connection url
+         * @return {String} Connection url
          * @api private
          */
 
@@ -1697,7 +1697,7 @@ var io = ('undefined' === typeof module ? {} : module.exports);
          * Connects to the server.
          *
          * @param {Function} [fn] Callback.
-         * @returns {io.Socket}
+         * @return {io.Socket}
          * @api public
          */
 
@@ -1789,7 +1789,7 @@ var io = ('undefined' === typeof module ? {} : module.exports);
          * Sends a message.
          *
          * @param {Object} data packet.
-         * @returns {io.Socket}
+         * @return {io.Socket}
          * @api public
          */
 
@@ -1835,7 +1835,7 @@ var io = ('undefined' === typeof module ? {} : module.exports);
         /**
          * Disconnect the established connect.
          *
-         * @returns {io.Socket}
+         * @return {io.Socket}
          * @api public
          */
 
@@ -1881,7 +1881,7 @@ var io = ('undefined' === typeof module ? {} : module.exports);
          * Check if we need to use cross domain enabled transports. Cross domain would
          * be a different port or different domain name.
          *
-         * @returns {Boolean}
+         * @return {Boolean}
          * @api private
          */
 
@@ -2367,7 +2367,7 @@ var io = ('undefined' === typeof module ? {} : module.exports);
          * Initializes a new `WebSocket` connection with the Socket.IO server. We attach
          * all the appropriate listeners to handle the responses from the server.
          *
-         * @returns {Transport}
+         * @return {Transport}
          * @api public
          */
 
@@ -2405,7 +2405,7 @@ var io = ('undefined' === typeof module ? {} : module.exports);
          * Send a message to the Socket.IO server. The message will automatically be
          * encoded in the correct message format.
          *
-         * @returns {Transport}
+         * @return {Transport}
          * @api public
          */
 
@@ -2443,7 +2443,7 @@ var io = ('undefined' === typeof module ? {} : module.exports);
         /**
          * Disconnect the established `WebSocket` connection.
          *
-         * @returns {Transport}
+         * @return {Transport}
          * @api public
          */
 
@@ -2489,7 +2489,7 @@ var io = ('undefined' === typeof module ? {} : module.exports);
         /**
          * Check if the `WebSocket` transport support cross domain communications.
          *
-         * @returns {Boolean}
+         * @return {Boolean}
          * @api public
          */
 
@@ -2550,7 +2550,7 @@ var io = ('undefined' === typeof module ? {} : module.exports);
         /**
          * Establish a connection
          *
-         * @returns {Transport}
+         * @return {Transport}
          * @api public
          */
 
@@ -2587,7 +2587,7 @@ var io = ('undefined' === typeof module ? {} : module.exports);
          * Send data to the Socket.IO server.
          *
          * @param data The message
-         * @returns {Transport}
+         * @return {Transport}
          * @api public
          */
 
@@ -2641,7 +2641,7 @@ var io = ('undefined' === typeof module ? {} : module.exports);
         /**
          * Disconnects the established `XHR` connection.
          *
-         * @returns {Transport}
+         * @return {Transport}
          * @api public
          */
 
@@ -2655,7 +2655,7 @@ var io = ('undefined' === typeof module ? {} : module.exports);
          *
          * @param {String} url The url that needs to be requested.
          * @param {String} method The method the request should use.
-         * @returns {XMLHttpRequest}
+         * @return {XMLHttpRequest}
          * @api private
          */
 
@@ -2693,7 +2693,7 @@ var io = ('undefined' === typeof module ? {} : module.exports);
          * Check if the XHR transports are supported
          *
          * @param {Boolean} xdomain Check if we support cross domain requests.
-         * @returns {Boolean}
+         * @return {Boolean}
          * @api public
          */
 
@@ -2714,7 +2714,7 @@ var io = ('undefined' === typeof module ? {} : module.exports);
         /**
          * Check if the XHR transport supports cross domain requests.
          *
-         * @returns {Boolean}
+         * @return {Boolean}
          * @api public
          */
 
@@ -2846,7 +2846,7 @@ var io = ('undefined' === typeof module ? {} : module.exports);
         /**
          * Disconnects the established connection.
          *
-         * @returns {Transport} Chaining.
+         * @return {Transport} Chaining.
          * @api public
          */
 
@@ -2876,7 +2876,7 @@ var io = ('undefined' === typeof module ? {} : module.exports);
         /**
          * Check if cross domain requests are supported.
          *
-         * @returns {Boolean}
+         * @return {Boolean}
          * @api public
          */
 
@@ -2959,7 +2959,7 @@ var io = ('undefined' === typeof module ? {} : module.exports);
          * Establish a connection, for iPhone and Android this will be done once the page
          * is loaded.
          *
-         * @returns {Transport} Chaining.
+         * @return {Transport} Chaining.
          * @api public
          */
 
@@ -3304,7 +3304,7 @@ var io = ('undefined' === typeof module ? {} : module.exports);
         /**
          * Check if cross domain requests are supported
          *
-         * @returns {Boolean}
+         * @return {Boolean}
          * @api public
          */
 

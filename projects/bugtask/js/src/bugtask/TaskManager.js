@@ -440,7 +440,7 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @private
          * @param {(Task | string)} task
-         * @returns {string}
+         * @return {string}
          */
         generateTaskResultChannel: function(task) {
             var taskUuid = task;

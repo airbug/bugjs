@@ -172,7 +172,7 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @param {string} name
-         * @returns {*}
+         * @return {*}
          */
         getAttribute: function(name) {
             return this.attributes[name];
@@ -191,7 +191,7 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @returns {string}
+         * @return {string}
          */
         getCid: function() {
             return this.cid;
@@ -284,7 +284,7 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @param {string} selector
-         * @returns {jQuery}
+         * @return {jQuery}
          */
         $: function(selector) {
             return this.$el.find(selector);
@@ -616,7 +616,7 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @private
          * @param {($ | Element)} element
-         * @returns {BugView}
+         * @return {BugView}
          */
         setElement: function(element) {
             if (this.$el) {

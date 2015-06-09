@@ -57,7 +57,7 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @returns {*}
+         * @return {*}
          */
         generateTemplateData: function() {
             var data    = this._super();

@@ -62,10 +62,8 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @constructs
-         * @param {SocketIoServer} socketIoServer
-         * @param {string} namespace
          */
-        _constructor: function(socketIoServer, namespace) {
+        _constructor: function() {
 
             this._super();
 
@@ -84,13 +82,13 @@ require('bugpack').context("*", function(bugpack) {
              * @private
              * @type {string}
              */
-            this.namespace          = namespace;
+            this.namespace          = "";
 
             /**
              * @private
              * @type {SocketIoServer}
              */
-            this.socketIoServer     = socketIoServer;
+            this.socketIoServer     = null;
         },
 
 
@@ -99,12 +97,13 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
          * @param {SocketIoServer} socketIoServer
          * @param {string} namespace
          */
-        _initializer: function(socketIoServer, namespace) {
+        init: function(socketIoServer, namespace) {
             this._super();
+            this.namespace = namespace;
+            this.socketIoServer = socketIoServer;
             this.ioManager = this.socketIoServer.of(this.namespace);
             console.log("Inside SocketIoManager#initialize");
             var _this = this;

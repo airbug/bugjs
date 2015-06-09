@@ -166,7 +166,7 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @param {Object} viewConfig
-         * @returns {ViewBuilder}
+         * @return {ViewBuilder}
          */
         config: function(viewConfig) {
             this.viewConfig = viewConfig;

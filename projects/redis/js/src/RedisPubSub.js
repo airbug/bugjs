@@ -185,7 +185,7 @@ require('bugpack').context("*", function(bugpack) {
         /**
          * @private
          * @param {string} channel
-         * @returns {RedisSubscriber}
+         * @return {RedisSubscriber}
          */
         factoryRedisSubscriber: function(channel) {
             return new RedisSubscriber(this.subscriberRedisClient, channel);

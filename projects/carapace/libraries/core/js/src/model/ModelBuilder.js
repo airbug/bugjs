@@ -110,7 +110,7 @@ require('bugpack').context("*", function(bugpack) {
         build: function(container) {
             var args    = this.modelArgs || [this.modelData];
             /** @type {CarapaceModel} */
-            var model   = this.modelConstructor.getClass().newInstance(args);
+            var model   = this.modelConstructor.newInstanceWithArray(args);
             if (container) {
                 if (this.modelName) {
                     container[this.modelName] = model;

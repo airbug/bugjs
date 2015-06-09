@@ -79,9 +79,8 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @constructs
-         * @param {Object} dataObject
          */
-        _constructor: function(dataObject) {
+        _constructor: function() {
 
             this._super({});
 
@@ -111,14 +110,13 @@ require('bugpack').context("*", function(bugpack) {
 
 
         //-------------------------------------------------------------------------------
-        // Initializer
+        // Init Methods
         //-------------------------------------------------------------------------------
 
         /**
-         * @private
          * @param {Object} dataObject
          */
-        _initializer: function(dataObject) {
+        init: function(dataObject) {
             this._super();
             var _this = this;
             ObjectUtil.forIn(dataObject, function(propertyName, propertyValue) {
@@ -132,7 +130,7 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @returns {Object}
+         * @return {Object}
          */
         getData: function() {
             return this.getObservedObject();
@@ -260,7 +258,7 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @returns {*}
+         * @return {*}
          */
         toLiteral: function() {
             return LiteralUtil.convertToLiteral(this.getData());

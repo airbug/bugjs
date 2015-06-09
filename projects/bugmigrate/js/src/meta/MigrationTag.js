@@ -126,7 +126,7 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @param {string} migrationAppName
-         * @returns {MigrationTag}
+         * @return {MigrationTag}
          */
         appName: function(migrationAppName) {
             this.migrationAppName = migrationAppName;
@@ -135,7 +135,7 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @param {string} migrationAppVersion
-         * @returns {MigrationTag}
+         * @return {MigrationTag}
          */
         appVersion: function(migrationAppVersion) {
             this.migrationAppVersion = migrationAppVersion;
@@ -152,7 +152,7 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * @param {string} migrationVersion
-         * @returns {MigrationTag}
+         * @return {MigrationTag}
          */
         version: function(migrationVersion) {
             this.migrationVersion = migrationVersion;

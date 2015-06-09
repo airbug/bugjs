@@ -85,7 +85,7 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @returns {function(CallRequest, CallResponder, function(Throwable))}
+         * @return {function(CallRequest, CallResponder, function(Throwable))}
          */
         getListener: function() {
             return this.listener;

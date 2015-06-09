@@ -143,7 +143,7 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * /account/search
-         * @returns {string}
+         * @return {string}
          */
         getPathname: function() {
             return window.location.pathname;
@@ -151,7 +151,7 @@ require('bugpack').context("*", function(bugpack) {
 
         /**
          * 8000
-         * @returns {number}
+         * @return {number}
          */
         getPort: function() {
             var windowPort  = window.location.port;

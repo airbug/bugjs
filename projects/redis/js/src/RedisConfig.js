@@ -52,7 +52,7 @@ require('bugpack').context("*", function(bugpack) {
         //-------------------------------------------------------------------------------
 
         /**
-         * @returns {number}
+         * @return {number}
          */
         getPort: function() {
             var port = this.getProperty("port");
@@ -70,7 +70,7 @@ require('bugpack').context("*", function(bugpack) {
         },
 
         /**
-         * @returns {string}
+         * @return {string}
          */
         getHost: function() {
             var host = this.getProperty("host");
