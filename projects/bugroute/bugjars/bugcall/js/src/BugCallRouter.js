@@ -105,7 +105,7 @@ require('bugpack').context("*", function(bugpack) {
          * @return {Array.<ICallRoute>}
          */
         getRouteArray: function() {
-            return this.routeMap.getValueArray();
+            return this.routeMap.toValueArray();
         },
 
         /**

@@ -147,7 +147,7 @@ require('bugpack').context("*", function(bugpack) {
         removeAllListeners: function() {
             this._super();
             var _this = this;
-            this.eventListenerAdapters.getKeyArray().forEach(function(eventType) {
+            this.eventListenerAdapters.toKeyArray().forEach(function(eventType) {
                 _this.removeEventListenerAdapter(eventType);
             });
         },

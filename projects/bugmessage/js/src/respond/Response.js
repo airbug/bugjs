@@ -131,7 +131,7 @@ require('bugpack').context("*", function(bugpack) {
         toObject: function() {
             var _this = this;
             var headerMapObject = {};
-            this.headerMap.getKeyArray().forEach(function(name) {
+            this.headerMap.toKeyArray().forEach(function(name) {
                 var header = _this.headerMap.get(name);
                 headerMapObject[name] = header;
             });
